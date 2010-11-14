@@ -1,0 +1,34 @@
+Armitage Changelog
+==================
+?????????
+---------
+- fixed command shell interaction bug caused by directories with spaces.
+
+
+11 Nov 10
+---------
+- fixed file browser directory icon showing up in every field within Windows L&F
+- added an export button to the credentials view. This will save the credentials to 
+  a pwdump format file.
+- fixed console highlighting issue, sadly you'll need to click in the console input 
+  box for it to have focus again. Write once, debug everywhere.
+- added "hail mary" attack option--this launches db_autopwn
+- attack menus now honor the armitage.required_exploit_rank.string setting
+- added Ctrl+R shortcut for refreshing the target view (esp. OS info)
+- fixed db_notes parsing for latest version of MSF (3.5.x?)
+- fixed how auxiliary scans are displayed in the jobs table.
+- db connect helper now prepopulates fields with info taken from connect string
+- added an 8s timeout to abort the database connect if it fails.
+- OS from db_notes to db_hosts refresh is now guaranteed on connect
+- Packaged everything into a single jar file, now I can code in what I like 
+  without hassle from people who are too lazy to look at the code.
+- SSL handshake now fails after 8 seconds (should give those of you trying
+  an SSL connect to a non-SSL server an idea that something is up)
+- added an executable to launch Armitage on Windows
+
+2 Nov 10
+--------
+- Initial (priv8) release.
+
+
+
