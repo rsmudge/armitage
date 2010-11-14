@@ -1,0 +1,16 @@
+This process was executed on BackTrack Linux. I have no concern, desire,
+motivation, care, or need to make this work on Windows. 
+
+Requirements:
+
+1. Java 1.6.0+
+2. Apache Ant (http://ant.apache.org I think)
+
+To build this code:
+
+./package.sh
+
+To run it (after compiling):
+
+./run.sh
+
