@@ -342,11 +342,16 @@ sub connectDialog {
 	}, \$dialog, \$host, \$port, \$ssl, \$user, \$pass, \$driver, \$connect)];
 
 	[$start addActionListener: lambda({
-		local('$pass');
+		local('$pass $exception');
 		$pass = unpack("H*", digest(ticks() . rand(), "MD5"))[0];
-		$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S");
-		[$dialog setVisible: 0];
-		connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], $null);
+		try {
+			$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S");
+			[$dialog setVisible: 0];
+			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], $null);
+		}
+		catch $exception {
+			showError("Couldn't launch MSF\n" . [$exception getMessage]);
+		}
 	}, \$connect, \$driver, \$dialog)];
 
 	[$cancel addActionListener: {
