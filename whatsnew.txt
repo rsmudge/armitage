@@ -1,9 +1,5 @@
 Armitage Changelog
 ==================
-?????????
----------
-- fixed command shell interaction bug caused by directories with spaces.
-
 
 11 Nov 10
 ---------
@@ -25,6 +21,8 @@ Armitage Changelog
 - SSL handshake now fails after 8 seconds (should give those of you trying
   an SSL connect to a non-SSL server an idea that something is up)
 - added an executable to launch Armitage on Windows
+- fixed command shell interaction bug caused by directories with spaces.
+- Start MSF button now reports an error if it couldn't start MSF-RPC
 
 2 Nov 10
 --------
