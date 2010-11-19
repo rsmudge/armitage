@@ -255,6 +255,13 @@ sub scanner {
 }
 
 sub connectDialog {
+
+	# in case we ended up back here... let's kill this handle
+	if ($msfrpc_handle) {
+		closef($msfrpc_handle);
+		$msfrpc_handle = $null;
+	}
+
 	local('$dialog $host $port $ssl $user $pass $driver $connect $button $cancel $start $center $helper');
 	$dialog = dialog("Connect...", 0, 0);
 	
