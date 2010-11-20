@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+...
+---------
+- start msf button now kills msfrpcd session if db_connect fails
+
 13 Nov 10
 ---------
 - fixed file browser directory icon showing up in every field within Windows L&F
