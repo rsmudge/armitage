@@ -16,6 +16,12 @@ import java.awt.event.*;
 
 global('%hosts $targets $FIXONCE');
 
+sub sessionToOS {
+	local('$host');
+	$host = sessionToHost($1);
+	return iff($host in %hosts, %hosts[$host]['os_name'], $null);
+}
+
 sub sessionToHost {
 	local('$host $data');
 	foreach $host => $data (%hosts) {
