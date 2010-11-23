@@ -32,3 +32,5 @@ graph.clear_selection.shortcut=pressed ESCAPE
 graph.select_all.shortcut=ctrl pressed A
 armitage.required_exploit_rank.string=great
 graph.refresh_targets.shortcut=ctrl pressed R
+connect.db_connect.string=root\:"toor"@127.0.0.1/msf3
+connect.db_driver.string=mysql

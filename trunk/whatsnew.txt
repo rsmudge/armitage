@@ -4,6 +4,7 @@ Armitage Changelog
 ...
 ---------
 - start msf button now kills msfrpcd session if db_connect fails
+- set default database options to mysql with BackTrack 4 R2 settings.
 
 13 Nov 10
 ---------
