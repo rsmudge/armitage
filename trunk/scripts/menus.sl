@@ -68,6 +68,10 @@ sub armitage_items {
 	separator($1);
 
 	item($1, 'Exit', 'x', { 
+		if ($msfrpc_handle !is $null) {
+			closef($msfrpc_handle);
+		}
+
 		[System exit: 0]; 
 	});
 
