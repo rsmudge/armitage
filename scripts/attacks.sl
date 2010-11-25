@@ -147,7 +147,7 @@ sub addAdvanced {
 # pop up a dialog to start our attack with... fun fun fun
 #
 sub attack_dialog {
-	local('$dialog $north $center $south $center @targets $combobox');
+	local('$dialog $north $center $south $center @targets $combobox $label $textarea $scroll $model $key $table $sorter $col $d $b $c $button $x $value');
 	$dialog = dialog("Attack " . join(', ', $3), 590, 360);
 
 	$north = [new JPanel];
@@ -225,7 +225,7 @@ sub attack_dialog {
 
 	$button = [new JButton: "Launch"];
 	[$button addActionListener: lambda({
-		local('$options $table $host');
+		local('$options $table $host $x');
 		$options = %();
 	
 		for ($x = 0; $x < [$model getRowCount]; $x++) {
