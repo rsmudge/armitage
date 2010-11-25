@@ -154,13 +154,19 @@ sub launch_service {
 
 	sleep(500);
 
-	[$c sendString: "use $2\n"];	
+	if ($4 eq "payload" && $format eq "multi/handler") {
+		[$c sendString: "use exploit/multi/handler\n"];	
+		[$c sendString: "set PAYLOAD ". substr($2, 8) . "\n"];
+	}
+	else {
+		[$c sendString: "use $2\n"];	
+	}
 
 	foreach $key => $value ($3) {
 		[$c sendString: "set $key $value $+ \n"];		
 	}
 	
-	if ($4 eq "exploit") {
+	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
 		[$c sendString: "exploit -j\n"];
 	}
 	else if ($4 eq "payload") {
@@ -250,12 +256,18 @@ sub launch_dialog {
 	}
 
 	$center = [new JScrollPane: $table];
-	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vbs,loop-vbs,asp,war")), "exe");
+	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vbs,loop-vbs,asp,war,multi/handler")), "multi/handler");
 	$button = [new JButton: "Launch"];
 
 	[$button addActionListener: lambda({
 		local('$options $table $host $x');
-		$options = %(PAYLOAD => "windows/meterpreter/reverse_tcp", DisablePayloadHandler => "1");
+
+		if ($type eq "payload") {
+			$options = %();
+		}
+		else {
+			$options = %(PAYLOAD => "windows/meterpreter/reverse_tcp", DisablePayloadHandler => "1");
+		}
 
 		for ($x = 0; $x < [$model getRowCount]; $x++) {
 			if ([$model getValueAt: $x, 1] ne "") { 
@@ -266,6 +278,7 @@ sub launch_dialog {
 		[$dialog setVisible: 0];
 
 		if ($visible) {
+			warn($options);
 			launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
 		}
 		else {

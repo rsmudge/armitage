@@ -6,6 +6,7 @@ Armitage Changelog
 - start msf button now kills msfrpcd session if db_connect fails
 - set default database options to mysql with BackTrack 4 R2 settings.
 - Armitage -> Exit menu now kills msfrpcd, if the "Start MSF" button was used
+- Added ability to set up a multi/handler from Payload launch dialog
 
 13 Nov 10
 ---------
