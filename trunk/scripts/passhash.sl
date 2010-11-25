@@ -155,6 +155,7 @@ sub pass_the_hash {
 
 		foreach $host ($hosts) {
 			%options["RHOST"] = $host;
+			warn(%options);
 			call($client, "module.execute", "exploit", "windows/smb/psexec", %options);
 		}
 		[$dialog setVisible: 0];
