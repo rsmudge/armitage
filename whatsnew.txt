@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+?? ??? 10
+---------
+- added -y filename.yml command line option for specifying a YAML file with
+  database parameters
+- updated "Start MSF" to launch "ruby msfrpcd" on Windows. This requires the 
+  current working directory of Armitage be set to the Metasploit base directory.
+
 25 Nov 10
 ---------
 - start msf button now kills msfrpcd session if db_connect fails

@@ -11,7 +11,31 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import org.ho.yaml.*;
+import java.io.*;
+
 global('$preferences');
+
+sub parseYaml {
+	# all heil the Yaml file... holder of the database info.
+
+	local('$database $user $pass $host $port $driver $object $file $setting');
+	($file, $setting) = $2;
+	try {
+		$object = convertAll([Yaml load: [new File: $file]]);
+		$object = $object[$setting];
+
+		if ($object !is $null) {
+			($user, $pass, $database, $driver, $host, $port) = values($object, @("username", "password", "database", "adapter", "host", "port"));
+
+			[$1 setProperty: "connect.db_connect.string", "$user $+ :\" $+ $pass $+ \"@ $+ $host $+ : $+ $port $+ / $+ $database"];
+			[$1 setProperty: "connect.db_driver.string", $driver];
+		}
+	}
+	catch $exception {
+		showError("Couldn't load yaml file: $file $+ \n $+ $exception");
+	}
+}
 
 sub loadPreferences {
 	local('$file $prefs');
@@ -23,6 +47,31 @@ sub loadPreferences {
 	else {
 		[$prefs load: resource("resources/armitage.prop")];
 	}
+
+	# parse command line options here.
+
+	local('$yaml_file $yaml_entry');
+	$yaml_entry = "production";
+
+	while (size(@ARGV) > 0) {
+		if (@ARGV[0] eq "-y" && -exists @ARGV[1]) {
+			$yaml_file = @ARGV[1];
+			@ARGV = sublist(@ARGV, 2);
+		}
+		else if (@ARGV[0] eq "-e") {
+			$yaml_entry = @ARGV[1];
+			@ARGV = sublist(@ARGV, 2);
+		}
+		else {
+			showError("I don't understand these arguments:\n" . join("\n", @ARGV));
+			break;
+		}
+	}
+
+	if ($yaml_file ne "") {
+		parseYaml($prefs, @($yaml_file, $yaml_entry));
+	}
+
 	return $prefs;
 }
 
@@ -184,3 +233,4 @@ sub createPreferencesTab {
 
 #	[$frame addTab: "Preferences", $panel, $null];
 }
+

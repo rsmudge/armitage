@@ -66,6 +66,9 @@ http://www.metasploit.com/
 lib/jgraphx.jar is used here within the terms of the BSD license offered by
 JGraphX Ltd. http://www.jgraphx.com/
 
+lib/jyaml-1.3.jar is used here within the terms of the BSD licensed offered
+by http://jyaml.sourceforge.net/
+
 src/graph/CircleLayout.java is based on the BSD licensed code from JGraphX,
 this file is considered BSD license as well.
 

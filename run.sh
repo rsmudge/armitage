@@ -1,1 +1,1 @@
-java -classpath bin:lib/\*:. armitage.ArmitageMain
+java -classpath bin:lib/\*:. armitage.ArmitageMain $*

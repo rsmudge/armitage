@@ -5,6 +5,7 @@ import sleep.interfaces.*;
 import sleep.console.*;
 import sleep.bridges.*;
 import sleep.error.*;
+import sleep.engine.*;
 
 import java.util.*;
 
@@ -38,9 +39,12 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 	public void scriptUnloaded(ScriptInstance script) {
 	}
 
-	public ArmitageMain() {
+	public ArmitageMain(String[] args) {
 		Hashtable environment = new Hashtable();
 		environment.put("&resource", this);
+
+		/* set our command line arguments into a var */
+		variables.putScalar("@ARGV", ObjectUtilities.BuildScalar(false, args));
 
 		ScriptLoader loader = new ScriptLoader();
 		loader.addSpecificBridge(this);
@@ -87,6 +91,6 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 	}
 
 	public static void main(String args[]) {
-		new ArmitageMain();
+		new ArmitageMain(args);
 	}
 }
