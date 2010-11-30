@@ -8,6 +8,8 @@ Armitage Changelog
 - updated "Start MSF" to launch "ruby msfrpcd" on Windows. This requires the 
   current working directory of Armitage be set to the Metasploit base directory.
 - jobs view now parses job output with only 3 columns of information.
+- reduced MSF Scans thread count from 24 to 10. This should reduce lag for those
+  of you using MySQL.
 
 25 Nov 10
 ---------
