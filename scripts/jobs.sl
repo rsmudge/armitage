@@ -324,6 +324,9 @@ sub updateJobsTable {
 			}
 			else if (size($d) == 4) {
 				($jid, $jname, $lport, $date, $payload, $url) = $d;
+			}	
+			else if (size($d) == 3) {
+				($jid, $jname, $date, $lport, $payload, $url) = $d;
 			}
 			else {
 				($jid, $jname, $payload, $lport, $url, $date) = $d;
