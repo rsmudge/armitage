@@ -163,10 +163,10 @@ sub enumerateMenu {
 		$hosts = ask("Enter range (e.g., 192.168.1.0/24):");
 		if ($hosts !is $null) {
 			if ($pivot !is $null) {
-				%options = %(THREADS => 24, RHOSTS => $hosts, CHOST => "$pivot");
+				%options = %(THREADS => 10, RHOSTS => $hosts, CHOST => "$pivot");
 			}
 			else {
-				%options = %(THREADS => 24, RHOSTS => $hosts);
+				%options = %(THREADS => 10, RHOSTS => $hosts);
 			}
 
 			foreach $scanner (@modules) {
