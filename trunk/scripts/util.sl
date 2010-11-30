@@ -352,7 +352,14 @@ sub connectDialog {
 		local('$pass $exception');
 		$pass = unpack("H*", digest(ticks() . rand(), "MD5"))[0];
 		try {
-			$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S");
+			# check for MSF on Windows
+			if ("*Windows*" iswm systemProperties()["os.name"]) {
+				$msfrpc_handle = exec("ruby msfrpcd -f -U msf -P $pass -t Basic -S");
+			}
+			else {
+				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S");
+			}
+
 			[$dialog setVisible: 0];
 			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], $null);
 		}
