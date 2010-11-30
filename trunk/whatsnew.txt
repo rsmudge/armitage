@@ -10,6 +10,7 @@ Armitage Changelog
 - jobs view now parses job output with only 3 columns of information.
 - reduced MSF Scans thread count from 24 to 10. This should reduce lag for those
   of you using MySQL.
+- connect dialog is now centered on your screen when you start Armitage
 
 25 Nov 10
 ---------

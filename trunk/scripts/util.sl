@@ -373,5 +373,6 @@ sub connectDialog {
 	}];
 
 	[$dialog pack];
+	[$dialog setLocationRelativeTo: $null];
 	[$dialog setVisible: 1];
 }
