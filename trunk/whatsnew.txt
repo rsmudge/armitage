@@ -11,6 +11,7 @@ Armitage Changelog
 - reduced MSF Scans thread count from 24 to 10. This should reduce lag for those
   of you using MySQL.
 - connect dialog is now centered on your screen when you start Armitage
+- Armitage now saves your settings when you use Start MSF.
 
 25 Nov 10
 ---------

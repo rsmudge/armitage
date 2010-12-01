@@ -361,7 +361,7 @@ sub connectDialog {
 			}
 
 			[$dialog setVisible: 0];
-			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], $null);
+			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], 1);
 		}
 		catch $exception {
 			showError("Couldn't launch MSF\n" . [$exception getMessage]);
