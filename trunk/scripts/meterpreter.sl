@@ -165,15 +165,9 @@ sub enumerateMenu {
 		thread(lambda({
 			local('%options $scanner $count $pivot');
 
-			# TODO: find pivot host... for $hosts
-
 			if ($hosts !is $null) {
-				if ($pivot !is $null) {
-					%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts, CHOST => "$pivot");
-				}
-				else {
-					%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
-				}
+				# we don't need to set CHOST as the discovery modules will honor any pivots already in place
+				%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
 
 				foreach $scanner (@modules) {
 					call($client, "module.execute", "auxiliary", $scanner, %options);
