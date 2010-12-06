@@ -28,6 +28,8 @@ Armitage Changelog
 - Current environment variables are now passed to msfrpcd when executed from
   Armitage. This will allow msfrpcd to inherit any PATH changes and other 
   necessary things when Armitage is run from a shell script or batch file.
+- Added .svn folders to the Armitage distribution. Now you can use svn update .
+  to keep your install of Armitage up to date.
 
 25 Nov 10
 ---------
