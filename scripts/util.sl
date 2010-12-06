@@ -263,7 +263,7 @@ sub connectDialog {
 	}
 
 	local('$dialog $host $port $ssl $user $pass $driver $connect $button $cancel $start $center $helper');
-	$dialog = dialog("Connect...", 0, 0);
+	$dialog = window("Connect...", 0, 0);
 	
 	# setup our nifty form fields..
 

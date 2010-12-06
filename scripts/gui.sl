@@ -188,6 +188,21 @@ sub dialog {
 	return $dialog;
 }
 
+sub window {
+	local('$dialog $4');
+        $dialog = [new JFrame: $1];
+	[$dialog setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
+        [$dialog addWindowListener: {
+                if ($0 eq "windowClosing" && $msfrpc_handle !is $null) {
+                        closef($msfrpc_handle);
+                }
+        }];
+	[$dialog setDefaultCloseOperation: [JFrame EXIT_ON_CLOSE]];
+        [$dialog setSize: $2, $3];
+        [$dialog setLayout: [new BorderLayout]];
+	return $dialog;
+}
+
 # overlay_images(@("image.png", "image2.png", "..."))
 #   constructs an image by overlaying all the specified images over eachother.
 #   this function caches the result so each combination is only created once.
