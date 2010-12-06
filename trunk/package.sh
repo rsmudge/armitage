@@ -48,9 +48,11 @@ rm -rf armitage
 # update the release directory
 #
 cd release/
+rm -rf armitage
 tar zxvf ../armitage.tgz
 mv armitage/* armitage-unix
 
 cd ../release/
+rm -rf armitage
 unzip -o ../armitage.zip
 cp -r armitage/* armitage-windows

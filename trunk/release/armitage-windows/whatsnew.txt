@@ -30,6 +30,10 @@ Armitage Changelog
   necessary things when Armitage is run from a shell script or batch file.
 - Added .svn folders to the Armitage distribution. Now you can use svn update .
   to keep your install of Armitage up to date.
+- File browser upload and make directory commands now allow files with spaces
+  in them.
+- Armitage will now exit if it takes longer than 5 seconds to shutdown msfrpcd
+  when cancel is pressed during the connecting phase.
 
 25 Nov 10
 ---------
