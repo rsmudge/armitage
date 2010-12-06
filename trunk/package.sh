@@ -44,3 +44,9 @@ zip -r armitage.zip armitage
 
 rm -rf armitage
 
+#
+# update the release directory
+#
+cp armitage.jar release/
+cp readme.txt release/
+cp whatsnew.txt release/
