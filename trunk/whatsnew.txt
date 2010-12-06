@@ -18,8 +18,10 @@ Armitage Changelog
   Armitage from "locking up" while the scans launch. A dialog also comes up to
   state how many scans were launched.
 - MSF Discovery Scans are now limited to 2 threads/scan on Windows and 8 on
-  other operating systems. This fixes serious lag issues caused by starting 
-  all of the threads.
+  other operating systems. This prevents serious lag issues caused by 
+  starting too many threads.
+- connect dialog is now a window, meaning it has an icon in whatever your 
+  window manager is and if you close it Armitage exits.
 
 25 Nov 10
 ---------
