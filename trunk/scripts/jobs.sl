@@ -260,7 +260,8 @@ sub launch_dialog {
 	$button = [new JButton: "Launch"];
 
 	[$button addActionListener: lambda({
-		local('$options $table $host $x');
+		local('$options $host $x');
+		syncTable($table);
 
 		if ($type eq "payload") {
 			$options = %();
@@ -284,7 +285,7 @@ sub launch_dialog {
 		else {
 			showError(call($client, "module.execute", $type, $command, $options)["result"]);
 		}
-	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo)];
+	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table)];
 
 	local('$advanced');
 	$advanced = addAdvanced(\$model);

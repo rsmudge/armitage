@@ -287,3 +287,10 @@ sub thread {
 sub compareHosts {
 	return [Route ipToLong: $1] <=> [Route ipToLong: $2];
 }
+
+# tells table to save any edited cells before going forward...
+sub syncTable {
+	if ([$1 isEditing]) {
+		[[$1 getCellEditor] stopCellEditing];
+	}
+}
