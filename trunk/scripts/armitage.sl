@@ -106,7 +106,15 @@ sub _connectToMetasploit {
 		try {
 			if ([$progress isCanceled]) {
 				if ($msfrpc_handle !is $null) {
-					closef($msfrpc_handle);
+					try {
+						warn("Trying to kill msfrpc_handle");
+						wait(fork({ closef($msfrpc_handle); }, \$msfrpc_handle), 5 * 1024);
+						$msfrpc_handle = $null;
+					}
+					catch $exception {
+						[JOptionPane showMessageDialog: $null, "Unable to shutdown MSFRPC programatically\nRestart Armitage and try again"];
+						[System exit: 0];
+					}
 				}
 				connectDialog();
 				return;

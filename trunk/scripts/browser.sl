@@ -192,7 +192,7 @@ sub createFileBrowser {
 		local('$file');
 		$file = chooseFile();
 		if ($file !is $null) {
-			m_cmd($sid, "upload $file " . getFileName($file));
+			m_cmd($sid, "upload \" $+ $file $+ \" \"" . getFileName($file) . "\"");
 			m_cmd($sid, "ls");
 		}
 		# refresh?!?
@@ -203,7 +203,7 @@ sub createFileBrowser {
 		local('$name');
 		$name = ask("Directory name:");
 		if ($name !is $null) {
-			m_cmd($sid, "mkdir $name");
+			m_cmd($sid, "mkdir \" $+ $name $+ \"");
 			m_cmd($sid, "ls");
 		}
 		# refresh?
