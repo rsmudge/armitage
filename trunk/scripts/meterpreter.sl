@@ -152,7 +152,7 @@ sub enumerateMenu {
 	local('$2');
 
 	item($1, "MSF Scans", 'S', lambda({
-		local('$hosts %options @modules $scanner');
+		local('$hosts @modules');
 
 		@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
 		push(@modules, "scanner/discovery/udp_sweep");
@@ -161,17 +161,28 @@ sub enumerateMenu {
 		push(@modules, "scanner/mssql/mssql_ping");
 
 		$hosts = ask("Enter range (e.g., 192.168.1.0/24):");
-		if ($hosts !is $null) {
-			if ($pivot !is $null) {
-				%options = %(THREADS => 10, RHOSTS => $hosts, CHOST => "$pivot");
-			}
-			else {
-				%options = %(THREADS => 10, RHOSTS => $hosts);
-			}
 
-			foreach $scanner (@modules) {
-				call($client, "module.execute", "auxiliary", $scanner, %options);
+		thread(lambda({
+			local('%options $scanner $count $pivot');
+
+			# TODO: find pivot host... for $hosts
+
+			if ($hosts !is $null) {
+				if ($pivot !is $null) {
+					%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts, CHOST => "$pivot");
+				}
+				else {
+					%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
+				}
+
+				foreach $scanner (@modules) {
+					call($client, "module.execute", "auxiliary", $scanner, %options);
+					$count++;
+					yield 250;
+				}
+
+				showError("Launched $count discovery modules");
 			}
-		}
+		}, \$hosts, \@modules));
 	}, $pivot => $2));
 }

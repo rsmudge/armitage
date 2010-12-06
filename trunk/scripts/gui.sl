@@ -294,3 +294,7 @@ sub syncTable {
 		[[$1 getCellEditor] stopCellEditing];
 	}
 }
+
+sub isWindows {
+	return iff("*Windows*" iswm systemProperties()["os.name"], 1);
+}

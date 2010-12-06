@@ -1,20 +1,25 @@
 Armitage Changelog
 ==================
 
-?? ??? 10
+?? ??? 10 Changes
 ---------
+
 - added -y filename.yml command line option for specifying a YAML file with
   database parameters
 - updated "Start MSF" to launch "ruby msfrpcd" on Windows. This requires the 
   current working directory of Armitage be set to the Metasploit base directory.
 - jobs view now parses job output with only 3 columns of information.
-- reduced MSF Scans thread count from 24 to 10. This should reduce lag for those
-  of you using MySQL.
 - connect dialog is now centered on your screen when you start Armitage
 - Armitage now saves your settings when you use Start MSF.
 - Armitage now forces cells in editor mode to save before launching a module or
   an exploit. This should prevent a few surprises where things seemed like they
   weren't working for a few of you.
+- MSF Discovery Scans are now started from a separate thread, preventing 
+  Armitage from "locking up" while the scans launch. A dialog also comes up to
+  state how many scans were launched.
+- MSF Discovery Scans are now limited to 2 threads/scan on Windows and 8 on
+  other operating systems. This fixes serious lag issues caused by starting 
+  all of the threads.
 
 25 Nov 10
 ---------
