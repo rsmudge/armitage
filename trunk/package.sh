@@ -47,6 +47,10 @@ rm -rf armitage
 #
 # update the release directory
 #
-cp armitage.jar release/
-cp readme.txt release/
-cp whatsnew.txt release/
+cd release/
+tar zxvf ../armitage.tgz
+mv armitage armitage-unix
+
+cd ../release/
+unzip -o ../armitage.zip
+mv armitage armitage-windows
