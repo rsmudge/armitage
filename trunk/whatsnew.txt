@@ -22,6 +22,9 @@ Armitage Changelog
   starting too many threads.
 - connect dialog is now a window, meaning it has an icon in whatever your 
   window manager is and if you close it Armitage exits.
+- updated DB Connect String helper dialog to ask for DB user, DB pass, DB host, 
+  and DB name. This should prevent some of you from confusing the database 
+  user/pass with the MSFRPCD user/pass.
 
 25 Nov 10
 ---------
