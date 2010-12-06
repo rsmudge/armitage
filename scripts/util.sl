@@ -313,10 +313,10 @@ sub connectDialog {
 
 		[$cancel addActionListener: lambda({ [$dialog setVisible: 0]; }, \$dialog)];
 
-		[$dialog add: label_for("User", 75, $user)];
-		[$dialog add: label_for("Pass", 75, $pass)];
-		[$dialog add: label_for("Host", 75, $host)];
-		[$dialog add: label_for("DB", 75, $db)];
+		[$dialog add: label_for("DB User", 75, $user)];
+		[$dialog add: label_for("DB Pass", 75, $pass)];
+		[$dialog add: label_for("DB Host", 75, $host)];
+		[$dialog add: label_for("DB Name", 75, $db)];
 		[$dialog add: center($action, $cancel)];
 		[$dialog pack];
 
@@ -353,7 +353,7 @@ sub connectDialog {
 		$pass = unpack("H*", digest(ticks() . rand(), "MD5"))[0];
 		try {
 			# check for MSF on Windows
-			if ("*Windows*" iswm systemProperties()["os.name"]) {
+			if (isWindows()) {
 				$msfrpc_handle = exec("ruby msfrpcd -f -U msf -P $pass -t Basic -S");
 			}
 			else {
