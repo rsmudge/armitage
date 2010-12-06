@@ -131,6 +131,7 @@ sub requireDatabase {
 			$r = call($client, "db.status");
 			if ($r['driver'] eq "None" || $r['db'] is $null) {
 				call($client, "console.destroy", $console);
+				showError("Unable to connect to database.\nMake sure it's running");
 				[$retry];
 			}
 		}, $retry => $5, \$console));
@@ -362,10 +363,12 @@ sub connectDialog {
 
 			# consume bytes so msfrpcd doesn't block when the output buffer is filled
 			fork({
-				local('$text');
-				while $text (readln($msfrpc_handle)) {
-					[Thread yield];
-				}
+				while (1) {
+					if (available($msfrpc_handle) > 0) {
+						readb($msfrpc_handle, available($msfrpc_handle));
+					}
+					sleep(2048);
+				}	
 			}, \$msfrpc_handle);
 
 			[$dialog setVisible: 0];

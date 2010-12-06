@@ -107,7 +107,6 @@ sub _connectToMetasploit {
 			if ([$progress isCanceled]) {
 				if ($msfrpc_handle !is $null) {
 					try {
-						warn("Trying to kill msfrpc_handle");
 						wait(fork({ closef($msfrpc_handle); }, \$msfrpc_handle), 5 * 1024);
 						$msfrpc_handle = $null;
 					}
