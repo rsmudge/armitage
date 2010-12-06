@@ -360,6 +360,14 @@ sub connectDialog {
 				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
 			}
 
+			# consume bytes so msfrpcd doesn't block when the output buffer is filled
+			fork({
+				local('$text');
+				while $text (readln($msfrpc_handle)) {
+					[Thread yield];
+				}
+			}, \$msfrpc_handle);
+
 			[$dialog setVisible: 0];
 			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], 1);
 		}
