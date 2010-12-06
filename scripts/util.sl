@@ -354,10 +354,10 @@ sub connectDialog {
 		try {
 			# check for MSF on Windows
 			if (isWindows()) {
-				$msfrpc_handle = exec("ruby msfrpcd -f -U msf -P $pass -t Basic -S");
+				$msfrpc_handle = exec("ruby msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
 			}
 			else {
-				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S");
+				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
 			}
 
 			[$dialog setVisible: 0];

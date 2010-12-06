@@ -25,6 +25,9 @@ Armitage Changelog
 - updated DB Connect String helper dialog to ask for DB user, DB pass, DB host, 
   and DB name. This should prevent some of you from confusing the database 
   user/pass with the MSFRPCD user/pass.
+- Current environment variables are now passed to msfrpcd when executed from
+  Armitage. This will allow msfrpcd to inherit any PATH changes and other 
+  necessary things when Armitage is run from a shell script or batch file.
 
 25 Nov 10
 ---------
