@@ -225,7 +225,9 @@ sub attack_dialog {
 
 	$button = [new JButton: "Launch"];
 	[$button addActionListener: lambda({
-		local('$options $table $host $x');
+		local('$options $host $x');
+		syncTable($table);
+
 		$options = %();
 	
 		for ($x = 0; $x < [$model getRowCount]; $x++) {
@@ -242,7 +244,7 @@ sub attack_dialog {
 		}
 
 		[$dialog setVisible: 0];
-	}, $exploit => $4, \$model, \$combobox, \$dialog, \$b)];
+	}, $exploit => $4, \$model, \$combobox, \$dialog, \$b, \$table)];
 
 	[$c add: $button];
 

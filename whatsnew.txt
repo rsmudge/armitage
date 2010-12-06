@@ -12,6 +12,9 @@ Armitage Changelog
   of you using MySQL.
 - connect dialog is now centered on your screen when you start Armitage
 - Armitage now saves your settings when you use Start MSF.
+- Armitage now forces cells in editor mode to save before launching a module or
+  an exploit. This should prevent a few surprises where things seemed like they
+  weren't working for a few of you.
 
 25 Nov 10
 ---------
