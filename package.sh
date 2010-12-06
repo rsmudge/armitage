@@ -49,8 +49,8 @@ rm -rf armitage
 #
 cd release/
 tar zxvf ../armitage.tgz
-mv armitage armitage-unix
+mv armitage/* armitage-unix
 
 cd ../release/
 unzip -o ../armitage.zip
-mv armitage armitage-windows
+cp -r armitage/* armitage-windows
