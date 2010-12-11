@@ -173,10 +173,13 @@ sub client_workspace_items {
 			}
 
 			call($client, "db.add_workspace", $name);
+			call($client, "db.set_workspace", $name);
+
 			@workspaces = getWorkspaces();
 
 			[$parent removeAll];
 			client_workspace_items($parent);
+			refreshTargets();
 		}, $parent => $1));
 
 	if ($current ne "default") {
