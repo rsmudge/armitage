@@ -135,6 +135,7 @@ sub showMeterpreterMenu {
 			item($j, "Show Processes", 'P', lambda({ createProcessBrowser($sid); }, $sid => "$sid"));
 			item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
 			item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
+			item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
 
 	$j = menu($1, "Pivoting", 'P');
 			item($j, "Setup...", 'A', setupPivotDialog("$sid"));
