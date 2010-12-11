@@ -64,7 +64,10 @@ sub image_viewer
 }
 
 sub update_viewer {
-	if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
+	if ($0 eq "update" && "*Operation failed*" iswm $2) {
+		showError($2);
+	}
+	else if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
 		local('$file $image $panel');
 		($file) = matched();
 		$image = [ImageIO read: [new File: $file]];
