@@ -5,6 +5,7 @@ In Progress
 --------
 
 - Added Meterpreter -> Browse -> Webcam Shot to grab webcam snap shots.
+- You may now click the image in the webcam/screenshot view to save it.
 
 6 Dec 10 Changes
 --------

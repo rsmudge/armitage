@@ -6,6 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.imageio.*;
+import java.io.File;
 
 import armitage.*;
 
@@ -22,6 +24,16 @@ sub image_viewer
 
 		$viewer = [new JLabel];
 		[$panel add: [new JScrollPane: $viewer], [BorderLayout CENTER]];
+
+			[$viewer addMouseListener: lambda({
+				if ($0 eq "mouseClicked") {
+					local('$location');
+					$location = saveFile2();
+					if ($location !is $null) {
+						[ImageIO write: [[$viewer getIcon] getImage], "jpg", [new File: $location]];
+					}
+				}
+			}, \$viewer)];
 
 		$buttons = [new JPanel];
 		[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
@@ -55,9 +67,9 @@ sub update_viewer {
 	if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
 		local('$file $image $panel');
 		($file) = matched();
-		$image = [new ImageIcon: $file];
+		$image = [ImageIO read: [new File: $file]];
 
-		[$container[$1] setIcon: $image];
+		[$container[$1] setIcon: [new ImageIcon: $image]];
 
 		if (-isFile $file && "*.jpeg" iswm $file) { 
 			deleteFile($file);
