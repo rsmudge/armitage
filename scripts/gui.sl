@@ -110,6 +110,11 @@ sub chooseFile {
 sub saveFile2 {
 	local('$fc $file');
 	$fc = [new JFileChooser];
+
+	if ($sel !is $null) {
+		[$fc setSelectedFile: [new java.io.File: $sel]];
+	}
+
 	[$fc showSaveDialog: $frame];
 	$file = [$fc getSelectedFile];
 	if ($file !is $null) {
