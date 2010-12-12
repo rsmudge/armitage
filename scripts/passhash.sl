@@ -110,7 +110,7 @@ sub createCredentialsTab {
 		}
 	}];
 
-	[$panel add: center($export, $refresh), [BorderLayout SOUTH]];
+	[$panel add: center($refresh, $export), [BorderLayout SOUTH]];
 	[$frame addTab: "Credentials", $panel, $null];
 }
 
