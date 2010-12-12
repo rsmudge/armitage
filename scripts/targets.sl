@@ -231,7 +231,7 @@ sub refreshHosts {
 
 	%hosts = %newh;
 
-	if ($FIXONCE is $null) {
+	if ($FIXONCE is $null && size(%hosts) > 0) {
 		fixOSInfo(keys(%hosts));
 		$FIXONCE = 1;
 	}
@@ -328,6 +328,7 @@ sub clearHosts {
 		call($client, "db.del_host", %(address => $host));
 	}
 	%hosts = %();
+	refreshTargets();
 }
 
 # called when a target is clicked on...

@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-12 Dec 10 Changes
+13 Dec 10 Changes
 ---------
 
 - Added Meterpreter -> Browse -> Webcam Shot to grab webcam snap shots.
@@ -19,6 +19,8 @@ Armitage Changelog
   on another file to set the MACE values to the currently known attributes.
 - Dump hashes menu item no longer pulls up a new credentials tab. 
 - Added a Refresh button to the credentials tab.
+- Updated db refresh code to be a little smarter about when it needs to merge
+  db_notes hints into the MSF database.
 
 6 Dec 10 Changes
 --------
