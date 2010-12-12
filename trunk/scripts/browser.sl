@@ -16,9 +16,10 @@ import javax.swing.text.*;
 
 import java.io.*;
 
-global('%files %icons %paths');
+global('%files %icons %paths %attribs');
 %files = ohash();
 %paths = ohash();
+%attribs = ohasha();
 setMissPolicy(%paths, { return [new PlainDocument]; });
 
 %icons = ohash();
@@ -235,6 +236,15 @@ sub createFileBrowser {
 	m_cmd($1, "ls");
 }
 
+# automagically store timestomp attributes...
+%handlers["timestomp"] = {
+	if ($0 eq "update" && $2 ismatch '([MACE].*?)\s*: (.*)') {
+		local('$type $value');
+		($type, $value) = matched();
+		%attribs[[$type trim]] = formatDate(parseDate('yyyy-MM-dd HH:mm:ss', $value), 'MM/dd/yyyy HH:mm:ss');
+	}
+};
+
 sub buildFileBrowserMenu {
 	# ($popup, [$model getSelectedValue: $table], @rows);
 	
@@ -256,6 +266,47 @@ sub buildFileBrowserMenu {
 
 	separator($1);
 
+	# use timestomp to make sure the date/time stamp is the same. :)
+	local('$t $key $value');
+	$t = menu($1, "Timestomp", 'T');
+	item($t, "Get MACE values", 'G', lambda({
+		m_cmd($sid, "timestomp \" $+ $f $+ \" -v");
+	}, \$sid, $f => $2[0]));
+
+	if (size(%attribs) > 0) {
+		separator($t);
+
+		foreach $key => $value (%attribs) {
+			item($t, "Set $key to $value", $null, lambda({
+				local('%switches $s');
+				%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
+				%switches["Entry Modified"] = '-e';
+				$s = %switches[$key];
+				m_cmd($sid, "timestomp \" $+ $f $+ \" $s \" $+ $value $+ \"");
+			}, $f => $2[0], \$sid, $key => "$key", $value => "$value"));
+		}
+
+		separator($t);
+		item($t, "Set MACE values", 'S', lambda({
+			local('$f %switches $s $cmd $key $value');
+			%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
+			%switches["Entry Modified"] = '-e';
+
+			foreach $f ($files) {
+				$cmd = "timestomp \" $+ $f $+ \"";
+
+				foreach $key => $value (%attribs) {
+					$s = %switches[$key];
+					$cmd = "$cmd $s \" $+ $value $+ \"";
+				}
+
+				m_cmd($sid, $cmd);
+			}
+
+			m_cmd($sid, "ls"); 
+		}, $files => $2, \$sid));
+	}
+	
 	item($1, "Delete", 'l', lambda({ 
 		local('$f');
 		foreach $f ($file) {
