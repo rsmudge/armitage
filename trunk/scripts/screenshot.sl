@@ -28,12 +28,12 @@ sub image_viewer
 			[$viewer addMouseListener: lambda({
 				if ($0 eq "mouseClicked") {
 					local('$location');
-					$location = saveFile2();
+					$location = saveFile2($sel => "$title $+ _ $+ $sid $+ .jpg");
 					if ($location !is $null) {
 						[ImageIO write: [[$viewer getIcon] getImage], "jpg", [new File: $location]];
 					}
 				}
-			}, \$viewer)];
+			}, \$viewer, \$title, $sid => $2)];
 
 		$buttons = [new JPanel];
 		[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
