@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+12 Dec 10 Changes
+---------
 
 - Added Meterpreter -> Browse -> Webcam Shot to grab webcam snap shots.
 - You may now click the image in the webcam/screenshot view to save it.
