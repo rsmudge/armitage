@@ -25,22 +25,12 @@ import table.*;
 	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
 		local('$user $gid $hash');
 		($user, $gid, $hash) = matched();
-		push(@commands, "db_add_cred $host 445 $user $hash pass true");
+		call($client, "db.report_auth_info", %(host => $host, port => "445", sname => "smb", user => $user, pass => $hash, type => "smb_hash", active => "true"));
 	}
 	else if ($0 eq "end" && $host !is $null) {
-		local('$tmp_console');
-		$tmp_console = createConsole($client);
-		push(@commands, "db_status");
-
-		cmd_all_async($client, $tmp_console, @commands, lambda({
-			if ($1 eq "db_status\n") {
-				call($client, "console.destroy", $tmp_console);
-				createCredentialsTab();
-			}
-		}, \$tmp_console));
-
+		showError("Hashes dumped.\nUse View -> Credentials to see them.");
 		$host = $null;
-		@commands = @();
+		return;
 	}
 };
 
@@ -56,26 +46,32 @@ sub explode_cred {
 	return %r;
 }
 
-sub show_hashes {
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $tmp_console');	
-
-	$dialog = dialog($1, 480, 320);
-
-        $model = [new GenericTableModel: @("user", "pass", "host"), "user", 128];
+sub refreshCredsTable {
+	local('$tmp_console $model');
+	($model) = $1;
 	$tmp_console = createConsole($client);
 	cmd($client, $tmp_console, "db_creds", lambda({
+		[$model clear: 128];
+
 		local('$c $line');
 		foreach $line (split("\n", $3)) {
 			$c = explode_cred($line);
 			if ($c["user"] ne "") {
-				if ($filter is $null || $c["host"] eq $filter) {
-					[$model addEntry: $c];
-				}
+				[$model addEntry: $c];
 			}
 		}
+
 		[$model fireListeners];
 		call($client, "console.destroy", $tmp_console);
-	}, \$model, $filter => $2, \$tmp_console));
+	}, \$model, \$tmp_console));
+}
+
+sub show_hashes {
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain');	
+
+	$dialog = dialog($1, 480, 320);
+
+        $model = [new GenericTableModel: @("user", "pass", "host"), "user", 128];
  	
         $table = [new JTable: $model];
         $sorter = [new TableRowSorter: $model];
@@ -83,18 +79,25 @@ sub show_hashes {
 	[$sorter setComparator: 2, &compareHosts];
         [$table setRowSorter: $sorter];
 
+	refreshCredsTable($model);
+
 	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	return @($dialog, $table, $model);
 }
 
 sub createCredentialsTab {
-	local('$dialog $table $model $panel $export');
-	($dialog, $table, $model) = show_hashes("", $null);
+	local('$dialog $table $model $panel $export $refresh');
+	($dialog, $table, $model) = show_hashes("");
 	[$dialog removeAll];
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
+
+	$refresh = [new JButton: "Refresh"];
+	[$refresh addActionListener: lambda({
+		refreshCredsTable($model, $null);
+	}, \$model)];
 
 	$export = [new JButton: "Export"];
 	[$export addActionListener: {
@@ -106,14 +109,15 @@ sub createCredentialsTab {
 			}, \$file));
 		}
 	}];
-	[$panel add: center($export), [BorderLayout SOUTH]];
+
+	[$panel add: center($export, $refresh), [BorderLayout SOUTH]];
 	[$frame addTab: "Credentials", $panel, $null];
 }
 
 sub pass_the_hash {
 	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2');	
 
-	($dialog, $table, $model) = show_hashes("Pass the Hash", $null);
+	($dialog, $table, $model) = show_hashes("Pass the Hash");
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 
 	$bottom = [new JPanel];
@@ -179,7 +183,7 @@ sub show_login_dialog {
 
 	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2');	
 
-	($dialog, $table, $model) = show_hashes("login", $null);
+	($dialog, $table, $model) = show_hashes("login");
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 
 	$bottom = [new JPanel];
