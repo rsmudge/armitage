@@ -154,11 +154,16 @@ sub main {
 	[$frame setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
         [$frame show];
 	[$frame setExtendedState: [JFrame MAXIMIZED_BOTH]];
-	[$frame addWindowListener: {
-		if ($0 eq "windowClosing" && $msfrpc_handle !is $null) {
-			closef($msfrpc_handle);
-		}
-	}];
+
+	# this window listener is dead-lock waiting to happen. That's why we're adding it in a
+	# separate thread (Sleep threads don't share data/locks).
+	fork({
+		[$frame addWindowListener: {
+			if ($0 eq "windowClosing" && $msfrpc_handle !is $null) {
+				closef($msfrpc_handle);
+			}
+		}];
+	}, \$msfrpc_handle, \$frame);
 
 	createDashboard();
 	createConsoleTab();
