@@ -1,6 +1,25 @@
 Armitage Changelog
 ==================
 
+12 Dec 10 Changes
+---------
+
+- Added Meterpreter -> Browse -> Webcam Shot to grab webcam snap shots.
+- You may now click the image in the webcam/screenshot view to save it.
+- Workspace -> Create menu now automatically switches you to the net workspace.
+- UNIX shell sessions now have an Upload... menu. This item will open a local
+  file and use the printf command on the remote host to put it together. It's 
+  slow but it works. 
+- Removed the rename file menu item from the file browser. It turns out I had 
+  my Windows command shell vs. meterpreter command interface crossed. The 
+  command doesn't exist in Meterpreter.
+- Upload button now waits until file is uploaded to refresh file listing
+- Added Timestomp item to File Browser popup menu. This works like a clipboard.
+  Select Get MACE to capture the MACE values of the current file. Use Set MACE
+  on another file to set the MACE values to the currently known attributes.
+- Dump hashes menu item no longer pulls up a new credentials tab. 
+- Added a Refresh button to the credentials tab.
+
 6 Dec 10 Changes
 --------
 
@@ -68,6 +87,3 @@ Armitage Changelog
 2 Nov 10
 --------
 - Initial (priv8) release.
-
-
-
