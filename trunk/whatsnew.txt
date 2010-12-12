@@ -10,6 +10,10 @@ In Progress
 - UNIX shell sessions now have an Upload... menu. This item will open a local
   file and use the echo command on the remote host to put it together. It's 
   slow but it works. 
+- Removed the rename file menu item from the file browser. It turns out I had 
+  my Windows command shell vs. meterpreter command interface crossed. The 
+  command doesn't exist in Meterpreter.
+- Upload button now waits until file is uploaded to refresh file listing
 
 6 Dec 10 Changes
 --------
