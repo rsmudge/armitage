@@ -161,21 +161,20 @@ sub showShellMenu {
 					$start = ticks();
 
 					while $bytes (readb($handle, 768)) {
+						yield 1;
+
 						if ([$progress isCanceled]) {
 							call($client, "session.shell_write", $sid, [Base64 encode: "rm -f $name $+ \n"]);
 							closef($handle);
 							return;
 						}
 
-						# convert the bytes to \x##\x## ...
+						# convert the bytes to to octal escapes
 						$string = join("", map({ 
-							if ($1 <= 0xf) {
-								return "\\x0" . formatNumber($1, 10, 16); 
-							}
-							return "\\x" . formatNumber($1, 10, 16); 
+							return "\\" . formatNumber($1, 10, 8); 
 						}, unpack("B*", $bytes)));
 
-						call($client, "session.shell_write", $sid, [Base64 encode: "echo \" $+ $string $+ \\c\" >> $+ $name $+ \n"]);
+						call($client, "session.shell_write", $sid, [Base64 encode: "`which printf` \" $+ $string $+ \" >> $+ $name $+ \n"]);
 
 						$t += strlen($bytes);
 						[$progress setProgress: $t]; 
@@ -183,8 +182,6 @@ sub showShellMenu {
 						if ($n > 0) {
 							[$progress setNote: "Speed: " . round($t / $n) . " bytes/second"];
 						}
-
-						yield 1;
 
 						if (available($handle) == 0) {
 							closef($handle);
