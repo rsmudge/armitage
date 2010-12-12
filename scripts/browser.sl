@@ -192,8 +192,13 @@ sub createFileBrowser {
 		local('$file');
 		$file = chooseFile();
 		if ($file !is $null) {
+			%handlers["upload"] = lambda({
+				if ($0 eq "update" && "*uploaded*" iswm $2) {
+					m_cmd($sid, "ls");
+					%handlers["upload"] = $null;
+				}
+			}, \$sid);
 			m_cmd($sid, "upload \" $+ $file $+ \" \"" . getFileName($file) . "\"");
-			m_cmd($sid, "ls");
 		}
 		# refresh?!?
 	}, $sid => $1)];
@@ -263,17 +268,6 @@ sub buildFileBrowserMenu {
 		}
 		m_cmd($sid, "ls");
 	}, $file => $2, \$sid, \%types));
-
-	item($1, "Rename", 'R', lambda({ 
-		local('$name $f');
-		foreach $f ($file) {
-			$name = ask("New name for $+ $f $+ ?");
-			if ($name !is $null) {
-				m_cmd($sid, "rename \" $+ $f $+ \" \" $+ $name $+ \""); 
-			}
-		}
-		m_cmd($sid, "ls");
-	}, $file => $2, \$sid));
 }
  
 # Buttons:
