@@ -239,9 +239,17 @@ sub createFileBrowser {
 # automagically store timestomp attributes...
 %handlers["timestomp"] = {
 	if ($0 eq "update" && $2 ismatch '([MACE].*?)\s*: (.*)') {
-		local('$type $value');
+		local('$type $value $d');
 		($type, $value) = matched();
-		%attribs[[$type trim]] = formatDate(parseDate('yyyy-MM-dd HH:mm:ss', $value), 'MM/dd/yyyy HH:mm:ss');
+
+		# two different formats... what a treat!
+		if ($d ismatch '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d .*') {
+			$d = parseDate('yyyy-MM-dd HH:mm:ss', $value);
+		}
+		else {
+			$d = parseDate("EEE MMM dd HH:mm:ss Z yyyy", $value);
+		}
+		%attribs[["$type" trim]] = formatDate($d, 'MM/dd/yyyy HH:mm:ss');
 	}
 };
 
@@ -278,12 +286,15 @@ sub buildFileBrowserMenu {
 
 		foreach $key => $value (%attribs) {
 			item($t, "Set $key to $value", $null, lambda({
-				local('%switches $s');
-				%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
-				%switches["Entry Modified"] = '-e';
-				$s = %switches[$key];
-				m_cmd($sid, "timestomp \" $+ $f $+ \" $s \" $+ $value $+ \"");
-			}, $f => $2[0], \$sid, $key => "$key", $value => "$value"));
+				local('%switches $s $f');
+				foreach $f ($files) {
+					%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
+					%switches["Entry Modified"] = '-e';
+					$s = %switches[$key];
+					m_cmd($sid, "timestomp \" $+ $f $+ \" $s \" $+ $value $+ \"");
+				}
+				m_cmd($sid, "ls");
+			}, $files => $2, \$sid, $key => "$key", $value => "$value"));
 		}
 
 		separator($t);
