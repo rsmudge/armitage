@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Updated meterpreter shell and command shell console to honor your set
+  preferences. I forgot to pass $preferences to the console constructor. Doh!
+
 13 Dec 10 Changes
 ---------
 
