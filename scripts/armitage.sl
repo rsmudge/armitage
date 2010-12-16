@@ -119,7 +119,7 @@ sub _connectToMetasploit {
 				return;
 			}
 
-		        $client = [new RpcConnection: $4, $5, $1, long($2), $3];
+		        $client = [new RpcConnection: $4, $5, $1, long($2), $3, $debug];
 			$flag = $null;
 			[$progress close];
 		}
