@@ -36,7 +36,7 @@ global('%shells $ashell $achannel %maxq');
 	else if ($0 eq "end") {
 		local('$console');
 
-		$console = [new Console];
+		$console = [new Console: $preferences];
 
 		%shells[$1][$channel] = $console;
 
@@ -204,7 +204,7 @@ sub showShellMenu {
 
 sub createShellSessionTab {
 	local('$console $thread');
-	$console = [new Console];
+	$console = [new Console: $preferences];
 	[$console setDefaultPrompt: '$ '];
         [$console setPopupMenu: lambda(&shellPopup, \$session, \$sid)];
 	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", "session.stop", $sid, 0];
