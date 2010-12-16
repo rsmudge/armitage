@@ -23,8 +23,39 @@ public class RpcConnection {
 	private OutputStream sout; //socket output/input
 	private InputStream sin;
 
+	private PrintStream debug = null;
+
+	public void setDebug(boolean d) {
+		synchronized(this) {
+			if (d && debug == null) {
+				try {
+					debug = new PrintStream("debug.log", "UTF-8");
+					debug.println(System.currentTimeMillis() + "\tproperties\t" + System.getProperties());
+				}
+				catch (Exception ex) {
+				}
+			}
+			else if (d && debug != null) {
+				setDebug(false);
+				setDebug(true);
+			}
+			else {
+				try {
+					if (debug != null) 
+						debug.close();
+				}
+				catch (Exception ex) {
+					// I don't really care about this...
+				}
+				finally {
+					debug = null;
+				}
+			}
+		}
+	}
+
 	/** Constructor sets up a connection and authenticates. */
-	public RpcConnection(String username, String password, String host, int port, boolean secure) {
+	public RpcConnection(String username, String password, String host, int port, boolean secure, boolean debugf) {
 		boolean haveRpcd = false;
 		String message = "";
 		try {
@@ -37,6 +68,8 @@ public class RpcConnection {
 			}
 			sout = connection.getOutputStream();
 			sin = connection.getInputStream();
+
+			setDebug(debugf);
 
 			Object[] params = new Object[]{ username, password };
 			Map results = exec("auth.login",params);
@@ -116,6 +149,12 @@ public class RpcConnection {
 		}
 		ByteArrayOutputStream bout = new  ByteArrayOutputStream();
 		TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(bout));
+
+		if (debug != null) {
+			debug.print(System.currentTimeMillis() + "\twriteResp()\t");
+			debug.println(bout.toString("UTF-8"));
+		}
+
 		sout.write(bout.toByteArray());
 		sout.write(0);
 	}
@@ -135,6 +174,11 @@ public class RpcConnection {
 		} 
 		catch (IOException ex) {
 			throw new RuntimeException("Error reading response.");
+		}
+
+		if (debug != null) {
+			debug.print(System.currentTimeMillis() + "\treadResp()\t");
+			debug.println(cache.toString("UTF-8"));
 		}
 
 		//parse the response: <methodResponse><params><param><value>...

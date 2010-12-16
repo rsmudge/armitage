@@ -14,7 +14,7 @@ import javax.swing.table.*;
 import org.ho.yaml.*;
 import java.io.*;
 
-global('$preferences');
+global('$preferences $debug');
 
 sub parseYaml {
 	# all heil the Yaml file... holder of the database info.
@@ -61,6 +61,10 @@ sub loadPreferences {
 		else if (@ARGV[0] eq "-e") {
 			$yaml_entry = @ARGV[1];
 			@ARGV = sublist(@ARGV, 2);
+		}
+		else if (@ARGV[0] eq "-d" || @ARGV[0] eq "--debug") {
+			$debug = 1;
+			@ARGV = sublist(@ARGV, 1);
 		}
 		else {
 			showError("I don't understand these arguments:\n" . join("\n", @ARGV));
