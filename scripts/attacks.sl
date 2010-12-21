@@ -266,7 +266,7 @@ sub attack_dialog {
 sub db_autopwn {
 	local('$console');
 	$console = createConsoleTab("db_autopwn", 1);
-	[$console sendString: "db_autopwn -r -e - $+ $1 -R $2 $+ \n"];
+	[$console sendString: "db_autopwn -r -e - $+ $1 -R $2 -T 20\n"];
 }
 
 sub min_rank {
