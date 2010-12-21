@@ -54,6 +54,11 @@ sub showHost {
 	else if ("*BSD*" iswm $os) {
 		push(@overlay, 'resources/bsd.png');
 	}
+	else if ("*Cisco*" iswm $os) {
+		# this needs to be tested with a Cisco device
+		#push(@overlay, 'resources/cisco.png');
+		push(@overlay, 'resources/unknown.png');
+	}
 	else if ($os eq "Solaris") {
 		push(@overlay, 'resources/solaris.png');
 	}
