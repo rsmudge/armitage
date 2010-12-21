@@ -11,6 +11,7 @@ In Progress
 - To play nice with existing conventions, Armitage is now licensed under the
   BSD license. Distribute, use, reuse, recycle.... have fun.
 - Fixed a deadlock condition that arose when a large nmap scan is imported
+- About dialog now shows up centered.
 
 13 Dec 10 Changes
 ---------
