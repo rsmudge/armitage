@@ -196,7 +196,7 @@ sub createNmapFunction
 				call($client, "console.destroy", $tmp_console);
 				$FIXONCE = $null;
 				refreshTargets();
-				showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets.");
+				fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
 			}, \$tmp_console)
 		);
 	}, $args => $1);
