@@ -156,6 +156,7 @@ sub help_items {
 		
 		[$dialog add: $label, [BorderLayout CENTER]];
 		[$dialog pack];
+		[$dialog setLocationRelativeTo: $null];
 		[$dialog setVisible: 1];
 	});
 }
