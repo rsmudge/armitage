@@ -280,7 +280,7 @@ sub importHosts {
 				showError("Import failed:\n $+ $result");
 			}
 			else {
-				showError("Import Complete");
+				fork({ showError("Import Complete"); }, \$frame);
 				refreshTargets();
 			}
 		}
