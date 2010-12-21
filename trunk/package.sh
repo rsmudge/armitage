@@ -17,7 +17,6 @@ ant jar
 #
 mkdir armitage
 cp armitage.jar armitage
-cp license.txt armitage
 cp readme.txt armitage
 cp whatsnew.txt armitage
 cp -r dist/unix/* armitage
@@ -33,7 +32,6 @@ rm -rf armitage
 #
 mkdir armitage
 cp armitage.jar armitage
-cp license.txt armitage
 cp readme.txt armitage
 cp whatsnew.txt armitage
 cp -r dist/windows/* armitage
