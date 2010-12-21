@@ -391,6 +391,7 @@ sub createDashboard {
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.refresh_targets.shortcut", "ctrl pressed R", {
 		$FIXONCE = $null;
+		%hosts = %();
 		refreshTargets();
 	}];
 }
