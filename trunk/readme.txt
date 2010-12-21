@@ -61,26 +61,19 @@ sure you peruse the FAQ and Manual first.
    -------
 
 (c) 2010 Raphael Mudge. Minus the exceptions below, this project is 
-licensed under the GNU GPLv2. See license.txt for more information.
-
-8. BSD Licensed Exceptions
-   -----------------------
-
-src/msf/Base64.java, src/msf/RpcConnection.java are (c) 2010 scriptjunkie 
-and used here within the terms of the BSD license they're distributed under.
-Modifications to these files are distributed under the BSD license too.
-http://www.metasploit.com/  
+licensed under the BSD license. See section 8 for more information.
 
 lib/jgraphx.jar is used here within the terms of the BSD license offered by
 JGraphX Ltd. http://www.jgraphx.com/
-
+-
 lib/jyaml-1.3.jar is used here within the terms of the BSD licensed offered
 by http://jyaml.sourceforge.net/
 
-src/graph/CircleLayout.java is based on the BSD licensed code from JGraphX,
-this file is considered BSD license as well.
+The binary distribution of this projects, includes the LGPL Sleep scripting
+language with no modifications. Sleep's source is available at:
+http://sleep.dashnine.org/
 
-9. The BSD License
+8. The BSD License
     --------------
 
 Redistribution and use in source and binary forms are permitted provided 

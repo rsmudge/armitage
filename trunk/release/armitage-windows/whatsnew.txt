@@ -8,6 +8,8 @@ In Progress
 - Added a -d/--debug command line option. This will dump System.getProperties()
   and a log of all exchanges with the MSF server to debug.log in the current
   working directory.
+- To play nice with existing conventions, Armitage is now licensed under the
+  BSD license. Distribute, use, reuse, recycle.... have fun.
 
 13 Dec 10 Changes
 ---------
