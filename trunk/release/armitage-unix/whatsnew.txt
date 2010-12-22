@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+22 Dec 10 Changes
 ---------
 - Updated meterpreter shell and command shell console to honor your set
   preferences. I forgot to pass $preferences to the console constructor. Doh!
@@ -10,6 +10,16 @@ In Progress
   working directory.
 - To play nice with existing conventions, Armitage is now licensed under the
   BSD license. Distribute, use, reuse, recycle.... have fun.
+- Fixed a deadlock condition that arose when a large nmap scan is imported
+- About dialog now shows up centered.
+- Armitage now has a graphic for Cisco IOS. You can mark a host as a Cisco IOS 
+  device. Also Armitage recognizes IOS from an NMAP Scan.	
+- Fixed Armitage "crash" due to read timeouts. This would occur for those of
+  you who ran a really taxing operation (e.g., db_autopwn).
+- Added a time limit flag to db_autopwn (20s)
+- Ctrl+R is now even more aggressive clearing internal data structures.
+- Shell N -> Meterpreter... no longer blocks waiting for the operation to
+  complete.
 
 13 Dec 10 Changes
 ---------
