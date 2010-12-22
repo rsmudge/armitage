@@ -69,6 +69,8 @@ public class RpcConnection {
 			sout = connection.getOutputStream();
 			sin = connection.getInputStream();
 
+			connection.setSoTimeout(0); /* prevent reads from timing out */
+
 			setDebug(debugf);
 
 			Object[] params = new Object[]{ username, password };
@@ -100,9 +102,20 @@ public class RpcConnection {
 			}
 		} 
 		catch (RuntimeException rex) { 
+			if (debug != null) {
+				debug.println("Exception: " + rex.getMessage());
+				rex.printStackTrace(debug);
+				debug.println("");
+			}
+
 			throw rex;
 		}
 		catch (Exception ex) { 
+			if (debug != null) {
+				debug.println("Exception: " + ex.getMessage());
+				ex.printStackTrace(debug);
+				debug.println("");
+			}
 			throw new RuntimeException(ex);
 		}
 	}
@@ -173,7 +186,7 @@ public class RpcConnection {
 			}
 		} 
 		catch (IOException ex) {
-			throw new RuntimeException("Error reading response.");
+			throw new RuntimeException("Error reading response: " + ex.getMessage());
 		}
 
 		if (debug != null) {
@@ -189,6 +202,9 @@ public class RpcConnection {
 
 		Node methResp = root.getFirstChild();
 		if (methResp.getFirstChild().getNodeName().equals("fault")) {
+			if (debug != null)
+				debug.println(System.currentTimeMillis() + "\tfault\t" + cache.toString());
+
 			throw new IOException(methResp.getFirstChild()//fault 
 					.getFirstChild() // value
 					.getFirstChild() // struct
