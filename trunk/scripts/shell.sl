@@ -1,5 +1,5 @@
 #
-# creates a tab for interacting with a meterpreter channel...
+# creates a tab for interacting with a shell...
 #
 
 import console.*; 
@@ -140,7 +140,9 @@ sub showShellMenu {
 
 	if ("*Windows*" iswm sessionToOS($sid)) {
 		item($1, "Meterpreter...", 'M', lambda({
-			call($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
+			fork({
+				call($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
+			}, \$client, \$sid, \$MY_ADDRESS);
 		}, \$sid));
 	}
 	else {
