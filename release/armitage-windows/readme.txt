@@ -60,21 +60,22 @@ sure you peruse the FAQ and Manual first.
 7. License
    -------
 
-(c) 2010 Raphael Mudge. Minus the exceptions below, this project is 
-licensed under the BSD license. See section 8 for more information.
+(c) 2010 Raphael Mudge. This project is licensed under the BSD license. 
+See section 8 for more information.
 
 lib/jgraphx.jar is used here within the terms of the BSD license offered by
 JGraphX Ltd. http://www.jgraphx.com/
 -
 lib/jyaml-1.3.jar is used here within the terms of the BSD licensed offered
 by http://jyaml.sourceforge.net/
-
-The binary distribution of this projects, includes the LGPL Sleep scripting
-language with no modifications. Sleep's source is available at:
-http://sleep.dashnine.org/
+-
+Code in src/msf/* comes from msfgui by scriptjunkie. 
+-
+This project uses the LGPL Sleep scripting language with no modifications. 
+Sleep's source is available at: http://sleep.dashnine.org/
 
 8. The BSD License
-    --------------
+   ---------------
 
 Redistribution and use in source and binary forms are permitted provided 
 that the above copyright notice and this paragraph are duplicated in all 
