@@ -3,8 +3,9 @@ Armitage Changelog
 
 In Progress
 ---------
-- Fixed bug where nmap scans completed after Hosts -> Clear Hosts didn't
-  refresh OS info.
+- Fixed bug where nmap scans completed after Hosts -> Clear Hosts didn't refresh 
+  OS info. Now those pretty OS pictures should show up in most circumstances. :)
+- Hosts reported as Windows Me now display W2K era Windows logo.
 
 22 Dec 10 Changes
 ---------
