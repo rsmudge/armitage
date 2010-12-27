@@ -35,7 +35,7 @@ sub showHost {
 		return overlay_images(@('resources/printer.png'));
 	}
 	else if ($os eq "Windows") {
-		if ("*2000*" iswm $match || "*95*" iswm $match || "*98*" iswm $match || "*ME*" iswm $match) {
+		if ("*2000*" iswm $match || "*95*" iswm $match || "*98*" iswm $match || "*ME*" iswm $match || "*Me*" iswm $match) {
 			push(@overlay, 'resources/windows2000.png');
 		}
 		else if ("*XP*" iswm $match || "*2003*" iswm $match) {
