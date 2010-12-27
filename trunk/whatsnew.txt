@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Fixed bug where nmap scans completed after Hosts -> Clear Hosts didn't
+  refresh OS info.
+
 22 Dec 10 Changes
 ---------
 - Updated meterpreter shell and command shell console to honor your set
