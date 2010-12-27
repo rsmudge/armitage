@@ -16,10 +16,12 @@ import java.awt.event.*;
 
 global('%hosts $targets $FIXONCE');
 
+sub getHostOS {
+	return iff($1 in %hosts, %hosts[$1]['os_name'], $null);
+}
+
 sub sessionToOS {
-	local('$host');
-	$host = sessionToHost($1);
-	return iff($host in %hosts, %hosts[$host]['os_name'], $null);
+	return getHostOS(sessionToHost($1));
 }
 
 sub sessionToHost {
@@ -143,6 +145,7 @@ sub _fixOSInfo {
 			$info['os_name'] = $note['os_family'];
 			$info['os_version'] = $note['os_version'];
 			call($client, "db.report_host", %(host => $host, os_name => $info['os_name'], os_flavor => $info['os_version']));
+			$FIXONCE = 1;
 		}
 		$info['os_match'] = $note['os_match'];
 
@@ -156,6 +159,7 @@ sub _fixOSInfo {
 			$info['os_version'] = $note['os_flavor'];
 			if ($info['os_name'] ne "Unknown") {
 				call($client, "db.report_host", %(host => $host, os_name => $info['os_name'], os_flavor => $info['os_version']));
+				$FIXONCE = 1;
 			}
 		}
 
@@ -233,7 +237,6 @@ sub refreshHosts {
 
 	if ($FIXONCE is $null && size(%hosts) > 0) {
 		fixOSInfo(keys(%hosts));
-		$FIXONCE = 1;
 	}
 	else if (size(@fixes) > 0) {
 		fixOSInfo(@fixes);
@@ -328,6 +331,7 @@ sub clearHosts {
 		call($client, "db.del_host", %(address => $host));
 	}
 	%hosts = %();
+	$FIXONCE = $null;
 	refreshTargets();
 }
 
