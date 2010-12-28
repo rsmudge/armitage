@@ -85,7 +85,7 @@ sub main_attack_items {
 		item($k, "by vulnerability", 'V', { findAttacks("x", min_rank()); });
 
 	cmd($client, $console, "show exploits", lambda({
-		local('%menus $menu %mm $line $os $type $id $rank $name $k');
+		local('%menus $menu %mm $line $os $type $id $rank $name $k $date $exploit');
 
 		separator($parent);
 		%menus["browser"] = menu($parent, "Browser Attacks", "B");
@@ -99,6 +99,17 @@ sub main_attack_items {
 			@ranks = @('normal', 'good', 'great', 'excellent');
 			while (size(@ranks) > 0 && @ranks[0] ne min_rank()) {
 				@ranks = sublist(@ranks, 1);
+			}
+
+			if ($line ismatch '\s+((.*?)\/.*?\/.*?)\s+(\d\d\d\d-\d\d-\d\d)\s+(' . join('|', @ranks) . ')\s+(.*?)') {
+				($exploit, $os, $date, $rank, $name) = matched();
+				%exploits[$exploit] = %(
+					name => $name,
+					os => $os,
+					date => parseDate('yyyy-MM-dd', $date),
+					rank => $rank,
+					rankScore => %(normal => 1, good => 2, great => 3, excellent => 4)[$rank]
+				);
 			}
 
 			if ($line ismatch '\s+(.*?)\/(browser|email|fileformat)\/(.*?)\s+.*?\s+(' . join('|', @ranks) . ')\s+(.*?)') {
@@ -121,10 +132,10 @@ sub main_attack_items {
 		separator($parent);
 		$k = menu($parent, "Hail Mary", 'H');
 		item($k, "by port", 'P', { 
-			db_autopwn("p", min_rank()); 
+			smarter_autopwn("p", min_rank()); 
 		});
 		item($k, "by vulnerability", 'V', {
-			db_autopwn("x", min_rank()); 
+			smarter_autopwn("x", min_rank()); 
 		});
 	}, $parent => $1));
 }

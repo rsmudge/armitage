@@ -6,6 +6,10 @@ In Progress
 - Fixed bug where nmap scans completed after Hosts -> Clear Hosts didn't refresh 
   OS info. Now those pretty OS pictures should show up in most circumstances. :)
 - Hosts reported as Windows Me now display W2K era Windows logo.
+- "Hail Mary" attack is now launched and managed by Armitage. Exploits are 
+  selected using the output of db_autopwn AND the operating system information
+  Armitage knows. Also attacks are launched in a more optimal order (sorted by 
+  exploit rank/age). This is a big improvement over db_autopwn by itself. 
 
 22 Dec 10 Changes
 ---------
