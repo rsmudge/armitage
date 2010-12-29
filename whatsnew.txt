@@ -10,6 +10,7 @@ In Progress
   selected using the output of db_autopwn AND the operating system information
   Armitage knows. Also attacks are launched in a more optimal order (sorted by 
   exploit rank/age). This is a big improvement over db_autopwn by itself. 
+- Added a link to the Armitage Issue Tracker in the Help menu.
 
 22 Dec 10 Changes
 ---------
