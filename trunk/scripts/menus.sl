@@ -147,8 +147,9 @@ sub gotoURL {
 }
 
 sub help_items {
-	item($1, "Tutorial", 'T', gotoURL("http://www.fastandeasyhacking.com/manual")); 
 	item($1, "Homepage", 'H', gotoURL("http://www.fastandeasyhacking.com/")); 
+	item($1, "Tutorial", 'T', gotoURL("http://www.fastandeasyhacking.com/manual")); 
+	item($1, "Issue Tracker", 'I', gotoURL("http://code.google.com/p/armitage/issues/list")); 
 	separator($1);
 	item($1, "About", 'A', {
 		local('$dialog $handle $label');
