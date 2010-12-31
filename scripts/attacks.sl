@@ -185,10 +185,32 @@ sub smarter_autopwn {
 	}, \$console));
 }
 
-#
+# choose a payload...
+# best_client_payload(exploit, target) 
+sub best_client_payload {
+	local('$os');
+	$os = split('/', $1)[0];
+
+	if ($os eq "windows" || "*Windows*" iswm $2) {
+		return "windows/meterpreter/reverse_tcp";
+	}
+	else if ("*Generic*Java*" iswm $2) {
+		return "java/meterpreter/reverse_tcp";
+	}
+	else if ("*Mac*OS*PPC*" iswm $2 || ($os eq "osx" && "*PPC*" iswm $2)) {
+		return "osx/ppc/shell/reverse_tcp";
+	}
+	else if ("*Mac*OS*x86*" iswm $2 || $os eq "osx") {
+		return "osx/x86/vforkshell/reverse_tcp";
+	}
+	else {
+		# *Linux*x86* is covered here...
+		return "generic/shell_reverse_tcp";
+	}
+}
+
 # choose a payload...
 # best_payload(host, exploit, reverse preference)
-#
 sub best_payload {
 	local('$compatible $os');
 	$compatible = call($client, "module.compatible_payloads", $2)["payloads"];
@@ -210,11 +232,8 @@ sub best_payload {
 		else if ("java/jsp_shell_reverse_tcp" in $compatible) {
 			return "java/jsp_shell_reverse_tcp";
 		}
-		else if ("generic/shell_reverse_tcp" in $compatible) {
-			return "generic/shell_reverse_tcp";
-		}
 		else {
-			return "cmd/unix/reverse";
+			return "generic/shell_reverse_tcp";
 		}
 	}
 	
@@ -233,14 +252,9 @@ sub best_payload {
 	else if ("java/jsp_shell_bind_tcp" in $compatible) {
 		return "java/jsp_shell_bind_tcp";
 	}
-	else if ("generic/shell_bind_tcp" in $compatible) {
+	else {
 		return "generic/shell_bind_tcp";
 	}
-	else {
-		return "cmd/unix/generic";
-	}
-
-	return best_payload($1, $2, 1);
 }
 
 sub addAdvanced {
