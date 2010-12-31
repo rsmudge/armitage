@@ -11,6 +11,8 @@ In Progress
   Armitage knows. Also attacks are launched in a more optimal order (sorted by 
   exploit rank/age). This is a big improvement over db_autopwn by itself. 
 - Added a link to the Armitage Issue Tracker in the Help menu.
+- Updated remote exploit payload selection to choose Java payloads or Windows 
+  shell payloads before resorting to the generic/* payloads.
 
 22 Dec 10 Changes
 ---------
