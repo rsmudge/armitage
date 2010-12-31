@@ -198,6 +198,18 @@ sub best_payload {
 		if (($os eq "Windows" || "windows" isin $2) && "windows/meterpreter/reverse_tcp" in $compatible) {
 			return "windows/meterpreter/reverse_tcp";
 		}
+		else if (($os eq "Windows" || "windows" isin $2) && "windows/shell/reverse_tcp" in $compatible) {
+			return "windows/shell/reverse_tcp";
+		}
+		else if ("java/meterpreter/reverse_tcp" in $compatible) {
+			return "java/meterpreter/reverse_tcp";
+		}
+		else if ("java/shell/reverse_tcp" in $compatible) {
+			return "java/shell/reverse_tcp";
+		}
+		else if ("java/jsp_shell_reverse_tcp" in $compatible) {
+			return "java/jsp_shell_reverse_tcp";
+		}
 		else if ("generic/shell_reverse_tcp" in $compatible) {
 			return "generic/shell_reverse_tcp";
 		}
@@ -208,6 +220,18 @@ sub best_payload {
 	
 	if (($os eq "Windows" || "windows" isin $2) && "windows/meterpreter/bind_tcp" in $compatible) {
 		return "windows/meterpreter/bind_tcp";
+	}
+	else if (($os eq "Windows" || "windows" isin $2) && "windows/shell/bind_tcp" in $compatible) {
+		return "windows/shell/bind_tcp";
+	}
+	else if ("java/meterpreter/bind_tcp" in $compatible) {
+		return "java/meterpreter/bind_tcp";
+	}
+	else if ("java/shell/bind_tcp" in $compatible) {
+		return "java/shell/bind_tcp";
+	}
+	else if ("java/jsp_shell_bind_tcp" in $compatible) {
+		return "java/jsp_shell_bind_tcp";
 	}
 	else if ("generic/shell_bind_tcp" in $compatible) {
 		return "generic/shell_bind_tcp";
