@@ -13,6 +13,9 @@ In Progress
 - Added a link to the Armitage Issue Tracker in the Help menu.
 - Updated remote exploit payload selection to choose Java payloads or Windows 
   shell payloads before resorting to the generic/* payloads.
+- Updated client-side exploit launcher to let you select the target. Armitage 
+  uses this target (plus the exploit name) to determine which payload to use.
+  multi/java_signed_applet works very nicely now ;)
 
 22 Dec 10 Changes
 ---------
