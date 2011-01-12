@@ -259,15 +259,30 @@ sub launch_dialog {
 	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vbs,loop-vbs,asp,war,multi/handler")), "multi/handler");
 	$button = [new JButton: "Launch"];
 
+	local('$combobox');
+	if ('targets' in $info) {
+		$combobox = targetsCombobox($info);
+	}
+
 	[$button addActionListener: lambda({
-		local('$options $host $x');
+		local('$options $host $x $best');
 		syncTable($table);
 
 		if ($type eq "payload") {
 			$options = %();
 		}
 		else {
-			$options = %(PAYLOAD => "windows/meterpreter/reverse_tcp", DisablePayloadHandler => "1");
+			$best = best_client_payload($command, [$combobox getSelectedItem]);
+			if ($best eq "windows/meterpreter/reverse_tcp") {
+				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1");
+			}
+			else {
+				$options = %(PAYLOAD => $best, LPORT => randomPort());
+			}
+
+			if ($combobox !is $null) {
+				$options["TARGET"] = split(' \=\> ', [$combobox getSelectedItem])[0];
+			}
 		}
 
 		for ($x = 0; $x < [$model getRowCount]; $x++) {
@@ -285,7 +300,7 @@ sub launch_dialog {
 		else {
 			showError(call($client, "module.execute", $type, $command, $options)["result"]);
 		}
-	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table)];
+	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table, \$combobox)];
 
 	local('$advanced');
 	$advanced = addAdvanced(\$model);
@@ -296,6 +311,9 @@ sub launch_dialog {
 
 	if ($2 eq "payload") {
 		[$panel add: left([new JLabel: "Output: "], $combo)];
+	}
+	else if ($combobox !is $null) {
+		[$panel add: left([new JLabel: "Targets: "], $combobox)];
 	}
 
 	[$panel add: left($advanced)];
