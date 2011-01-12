@@ -191,7 +191,7 @@ sub fixOSInfo {
 	# db.notes MSF call keeps locking up... *sigh*
 	local('$tmp_console');
 	$tmp_console = createConsole($client);
-	cmd($client, $console, "db_notes", lambda({
+	cmd($client, $tmp_console, "db_notes", lambda({
 		local('$line $r');
 		foreach $line (split("\n", $3)) {
 			$r = quickParse($line);
@@ -318,8 +318,9 @@ sub clearHostFunction {
 		foreach $host (@hosts) {
 			call($client, "db.del_host", %(address => $host));
 			%hosts[$host] = $null;
-			refreshTargets();
 		}
+		$FIXONCE = $null;
+		refreshTargets();
 	}, @hosts => $1);
 }
 
