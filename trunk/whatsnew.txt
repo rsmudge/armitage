@@ -3,8 +3,6 @@ Armitage Changelog
 
 In Progress
 ---------
-- Fixed bug where nmap scans completed after Hosts -> Clear Hosts didn't refresh 
-  OS info. Now those pretty OS pictures should show up in most circumstances. :)
 - Hosts reported as Windows Me now display W2K era Windows logo.
 - "Hail Mary" attack is now launched and managed by Armitage. Exploits are 
   selected using the output of db_autopwn AND the operating system information
@@ -16,6 +14,8 @@ In Progress
 - Updated client-side exploit launcher to let you select the target. Armitage 
   uses this target (plus the exploit name) to determine which payload to use.
   multi/java_signed_applet works very nicely now ;)
+- Fixed (once and for all now) the mysterious OS info not refreshing bug.
+  Now those pretty OS pictures will show up if Metasploit knows about the OS.
 
 22 Dec 10 Changes
 ---------
