@@ -13,6 +13,7 @@ import javax.swing.table.*;
 
 sub createModuleBrowser {
 	local('$tree $split $scroll1 $t $2');
+#	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), post => buildTree(@post), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
 	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
 	[$split setOneTouchExpandable: 1];
 	return $split;
@@ -39,7 +40,7 @@ sub createModuleList {
 		if (size($selected) > 2) {
 			$type = $selected[1];
 			$path = join('/', sublist($selected, 2));
-			if ($path in @exploits || $path in @auxiliary || $path in @payloads) {
+			if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
 				if ($type eq "exploit") {
 					if ('browser' in $selected || 'fileformat' in $selected) {
 						launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
@@ -66,15 +67,17 @@ sub createModuleList {
 	[$search addActionListener: lambda({
 		local('$model');
 		if ([$1 getActionCommand] ne "") {
-			local('$filter %list $a $e $p $x');
+			local('$filter %list $a $e $p $o $x');
 			$filter = lambda({ return iff(lc("* $+ $s $+ *") iswm lc($1), $1); }, $s => [$1 getActionCommand]);
 			%list = ohash();
 			$a = filter($filter, @auxiliary);
 			$e = filter($filter, @exploits);
 			$p = filter($filter, @payloads);
+			$o = filter($filter, @post);
 			if (size($a) > 0) { %list["auxiliary"] = buildTree($a); }
 			if (size($e) > 0) { %list["exploit"] = buildTree($e); }
 			if (size($p) > 0) { %list["payload"] = buildTree($p); }
+			if (size($o) > 0) { %list["post"] = buildTree($o); }
 			$model = treeNodes($null, %list);
 			[[$tree getModel] setRoot: $model];
 
