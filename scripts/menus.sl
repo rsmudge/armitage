@@ -35,6 +35,7 @@ sub host_selected_items {
 		item($o, "Linux", 'L', setHostValueFunction($2, "os_name", "Linux"));
 		item($o, "NetBSD", 'N', setHostValueFunction($2, "os_name", "NetBSD"));
 		item($o, "Mac OS X", 'M', setHostValueFunction($2, "os_name", "Mac OS X"));
+		item($o, "OpenBSD", 'O', setHostValueFunction($2, "os_name", "OpenBSD"));
 		item($o, "Printer", 'P', setHostValueFunction($2, "os_name", "Printer"));
 		item($o, "Solaris", 'S', setHostValueFunction($2, "os_name", "Solaris"));
 		item($o, "Unknown", 'U', setHostValueFunction($2, "os_name", ""));
