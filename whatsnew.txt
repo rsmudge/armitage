@@ -22,6 +22,7 @@ In Progress
 - Added an OpenBSD option to the hosts menu.
 - Armitage now does a setg AutoLoadStdapi true when setting up MSF.
 - Last modified field of file browser now sorts properly.
+- Jobs console and its kill feature should now work.
 
 22 Dec 10 Changes
 ---------

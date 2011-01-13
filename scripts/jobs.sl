@@ -98,7 +98,7 @@ sub find_job {
 	#
 	local('$tmp_console');
 	$tmp_console = createConsole($client);
-	cmd($client, $console, "jobs", lambda({
+	cmd($client, $tmp_console, "jobs", lambda({
 		call($client, "console.destroy", $tmp_console);
 
 		local('$temp $jid $jname $confirm');
@@ -134,7 +134,12 @@ sub manage_job {
 				local('$confirm');
 				$confirm = askYesNo([$stopf : $jid, $job], "Stop Job");
 				if ($confirm eq "0") {
-					cmd($client, $console, "jobs -k $jid", { if ($3 ne "") { showError($3); } }); 
+					local('$tmp_console');
+					$tmp_console = createConsole($client);
+					cmd($client, $tmp_console, "jobs -k $jid", lambda({
+						call($client, "console.destroy", $tmp_console);
+						if ($3 ne "") { showError($3); }
+					}, \$tmp_console));
 				}
 			}, \$stopf, \$job, $jid => $1);
 
@@ -272,7 +277,7 @@ sub launch_dialog {
 			$options = %();
 		}
 		else {
-			$best = best_client_payload($command, [$combobox getSelectedItem]);
+			$best = best_client_payload($command, iff($combobox !is $null, [$combobox getSelectedItem]));
 			if ($best eq "windows/meterpreter/reverse_tcp") {
 				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1");
 			}
@@ -298,6 +303,7 @@ sub launch_dialog {
 			launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
 		}
 		else {
+			warn($options);
 			showError(call($client, "module.execute", $type, $command, $options)["result"]);
 		}
 	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table, \$combobox)];
