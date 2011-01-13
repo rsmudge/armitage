@@ -88,9 +88,13 @@ sub meterpreterPopup {
 }
 
 sub showMeterpreterMenu {
-	local('$j');
+	local('$j $platform');
+	
+	$platform = lc($session['platform']);
 
-	$j = menu($1, "Access", 'A');
+	if ("*win*" iswm $platform) {
+		$j = menu($1, "Access", 'A');
+	
 		item($j, "Duplicate", 'D', lambda({
 			meterpreterPayload("meterpreter-upload.exe", lambda({
 				if ($1 eq "generate -t exe -f meterpreter-upload.exe\n") {
@@ -134,16 +138,26 @@ sub showMeterpreterMenu {
 		#	oneTimeShow("run");
 		#	m_cmd($sid, "run persistence");
 		#}, $sid => "$sid"));
+	}
 			
 	$j = menu($1, "Interact", 'I');
-			item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
+
+			if ("*win*" iswm $platform) {
+				item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
+			}
+
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));
-			item($j, "Run VNC", 'V', lambda({ m_cmd($sid, "run vnc -t -i"); }, $sid => "$sid"));
+
+			if ("*win*" iswm $platform) {
+				item($j, "Run VNC", 'V', lambda({ m_cmd($sid, "run vnc -t -i"); }, $sid => "$sid"));
+			}
 
 	$j = menu($1, "Explore", 'E');
 			item($j, "Browse Files", 'B', lambda({ createFileBrowser($sid); }, $sid => "$sid"));
 			item($j, "Show Processes", 'P', lambda({ createProcessBrowser($sid); }, $sid => "$sid"));
-			item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
+			if ("*win*" iswm $platform) {
+				item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
+			}
 			item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
 			item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
 
