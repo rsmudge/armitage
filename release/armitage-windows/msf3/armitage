@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+#
+# $Id: armitage 11426 2010-12-28 15:50:52Z hdm $
+#
+# Ruby front-end to the Armitage Java user interface
+#
+# $Revision: 11426 $
+#
+
+msfbase = __FILE__
+while File.symlink?(msfbase)
+	msfbase = File.expand_path(File.readlink(msfbase), File.dirname(msfbase))
+end
+
+if RUBY_PLATFORM =~ /mswin|mingw/i
+	exec "javaw -jar #{File.dirname(msfbase)}/data/armitage/armitage.jar #{ARGV.join(" ")}"
+else
+	exec "java -jar #{File.dirname(msfbase)}/data/armitage/armitage.jar #{ARGV.join(" ")}"
+end
