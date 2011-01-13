@@ -20,6 +20,7 @@ In Progress
   dropdown. This stops weird GUI layouts caused by long target descriptions.
 - Exploit recommendations now take into account FreeBSD hosts.
 - Added an OpenBSD option to the hosts menu.
+- Armitage now does a setg AutoLoadStdapi true when setting up MSF.
 
 22 Dec 10 Changes
 ---------
