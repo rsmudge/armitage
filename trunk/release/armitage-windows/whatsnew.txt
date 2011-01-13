@@ -1,6 +1,30 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Hosts reported as Windows Me now display W2K era Windows logo.
+- "Hail Mary" attack is now launched and managed by Armitage. Exploits are 
+  selected using the output of db_autopwn AND the operating system information
+  Armitage knows. Also attacks are launched in a more optimal order (sorted by 
+  exploit rank/age). This is a big improvement over db_autopwn by itself. 
+- Added a link to the Armitage Issue Tracker in the Help menu.
+- Updated remote exploit payload selection to choose Java payloads or Windows 
+  shell payloads before resorting to the generic/* payloads.
+- Updated client-side exploit launcher to let you select the target. Armitage 
+  uses this target (plus the exploit name) to determine which payload to use.
+  multi/java_signed_applet works very nicely now ;)
+- Fixed (once and for all now) the mysterious OS info not refreshing bug.
+  Now those pretty OS pictures will show up if Metasploit knows about the OS.
+- Added a 52 character length limit to a target's description in the target
+  dropdown. This stops weird GUI layouts caused by long target descriptions.
+- Exploit recommendations now take into account FreeBSD hosts.
+- Added an OpenBSD option to the hosts menu.
+- Armitage now does a setg AutoLoadStdapi true when setting up MSF.
+- Last modified field of file browser now sorts properly.
+- Jobs console and its kill feature should now work.
+- Session menus for meterpreter now limited for non-Win meterp sessions.
+
 22 Dec 10 Changes
 ---------
 - Updated meterpreter shell and command shell console to honor your set
