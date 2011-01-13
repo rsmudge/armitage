@@ -87,7 +87,7 @@ sub createFileBrowser {
 
 	# last modified column
 	[$sorter setComparator: 3, {
-		return parseDate('EEE MMM dd HH:mm:ss Z yyyy', $1) <=> parseDate('EEE MMM dd HH:mm:ss Z yyyy', $2);
+		return convertDate($1) <=> convertDate($2);
 	}];
 
 	[[$table getColumn: "D"] setMaxWidth: 32];
@@ -241,20 +241,21 @@ sub createFileBrowser {
 	m_cmd($1, "ls");
 }
 
+sub convertDate {
+	if ($1 ismatch '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d .*') {
+		return parseDate('yyyy-MM-dd HH:mm:ss Z', $1);
+	}
+	else {
+		return parseDate("EEE MMM dd HH:mm:ss Z yyyy", $1);
+	}
+}
+
 # automagically store timestomp attributes...
 %handlers["timestomp"] = {
 	if ($0 eq "update" && $2 ismatch '([MACE].*?)\s*: (.*)') {
 		local('$type $value $d');
 		($type, $value) = matched();
-
-		# two different formats... what a treat!
-		if ($d ismatch '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d .*') {
-			$d = parseDate('yyyy-MM-dd HH:mm:ss', $value);
-		}
-		else {
-			$d = parseDate("EEE MMM dd HH:mm:ss Z yyyy", $value);
-		}
-		%attribs[["$type" trim]] = formatDate($d, 'MM/dd/yyyy HH:mm:ss');
+		%attribs[["$type" trim]] = formatDate(convertDate($value), 'MM/dd/yyyy HH:mm:ss');
 	}
 };
 
