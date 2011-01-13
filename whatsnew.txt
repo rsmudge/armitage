@@ -21,6 +21,7 @@ In Progress
 - Exploit recommendations now take into account FreeBSD hosts.
 - Added an OpenBSD option to the hosts menu.
 - Armitage now does a setg AutoLoadStdapi true when setting up MSF.
+- Last modified field of file browser now sorts properly.
 
 22 Dec 10 Changes
 ---------

@@ -80,10 +80,15 @@ sub createFileBrowser {
 	[$sorter toggleSortOrder: 0];
         [$table setRowSorter: $sorter];
 
+	# file size column
         [$sorter setComparator: 2, {
                 return long($1) <=> long($2);
         }];
 
+	# last modified column
+	[$sorter setComparator: 3, {
+		return parseDate('EEE MMM dd HH:mm:ss Z yyyy', $1) <=> parseDate('EEE MMM dd HH:mm:ss Z yyyy', $2);
+	}];
 
 	[[$table getColumn: "D"] setMaxWidth: 32];
 
