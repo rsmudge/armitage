@@ -24,6 +24,8 @@ Armitage Changelog
 - Last modified field of file browser now sorts properly.
 - Jobs console and its kill feature should now work.
 - Session menus for meterpreter now limited for non-Win meterp sessions.
+- Updated Armitage/Windows to provide a better startup experience. Simply
+  extract the archive over your MSF install and rock n' roll.
 
 22 Dec 10 Changes
 ---------
