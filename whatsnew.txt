@@ -16,6 +16,8 @@ In Progress
   multi/java_signed_applet works very nicely now ;)
 - Fixed (once and for all now) the mysterious OS info not refreshing bug.
   Now those pretty OS pictures will show up if Metasploit knows about the OS.
+- Added a 52 character length limit to a target's description in the target
+  dropdown. This stops weird GUI layouts caused by long target descriptions.
 
 22 Dec 10 Changes
 ---------
