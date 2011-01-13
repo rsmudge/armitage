@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+13 Jan 11 Changes
 ---------
 - Hosts reported as Windows Me now display W2K era Windows logo.
 - "Hail Mary" attack is now launched and managed by Armitage. Exploits are 
