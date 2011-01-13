@@ -18,6 +18,8 @@ In Progress
   Now those pretty OS pictures will show up if Metasploit knows about the OS.
 - Added a 52 character length limit to a target's description in the target
   dropdown. This stops weird GUI layouts caused by long target descriptions.
+- Exploit recommendations now take into account FreeBSD hosts.
+- Added an OpenBSD option to the hosts menu.
 
 22 Dec 10 Changes
 ---------

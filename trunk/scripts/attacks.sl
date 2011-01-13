@@ -81,6 +81,7 @@ sub getOS {
 	else if ($1 eq "Solaris") { @allowed = @("solaris", "multi", "unix"); }
 	else if ($1 eq "Linux") { @allowed = @("linux", "multi", "unix"); }
 	else if ($1 eq "Mac OS X") { @allowed = @("osx", "multi", "unix"); }
+	else if ($1 eq "FreeBSD") { @allowed = @("freebsd", "multi", "unix"); }
 	else { @allowed = @("multi", "unix"); }
 	return @allowed;
 }
