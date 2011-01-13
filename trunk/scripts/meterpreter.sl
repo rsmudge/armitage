@@ -1,3 +1,4 @@
+
 #
 # this code maintains the client threads (one per meterpreter session) and
 # the data structures for each meterpreter session.
@@ -100,9 +101,18 @@ sub showMeterpreterMenu {
 
 		item($j, "Escalate Privileges", 'E', lambda({
 			%handlers["getsystem"] = {
+				this('$safe');
+
 				if ($0 eq "begin" && "*Unknown command*getsystem*" iswm $2) {
-					m_cmd($1, "use priv");
-					m_cmd($1, "getsystem -t 0");
+					if ($safe is $null) {
+						$safe = 1;
+						m_cmd($1, "use priv");
+						m_cmd($1, "getsystem -t 0");
+					}
+					else {
+						$safe = $null;
+						showError("getsystem is not available here");
+					}
 				}
 				else if ($0 eq "begin") {
 					showError($2);
