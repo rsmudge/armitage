@@ -41,6 +41,7 @@ rm -rf armitage/.svn
 rm -rf armitage/msf3/.svn
 rm -rf armitage/msf3/data/.svn
 rm -rf armitage/msf3/data/armitage/.svn
+rm -rf armitage/icons/.svn
 cd armitage
 zip -r ../armitage.zip .
 cd ..
