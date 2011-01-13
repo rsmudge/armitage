@@ -12,12 +12,20 @@ import msf.*;
 import table.*;
 
 %handlers["hashdump"] = {
-	this('$host @commands');
+	this('$host @commands $safe');
 
 	if ($0 eq "begin" && "*Unknown command*hashdump*" iswm $2) {
 		$host = $null;
-		m_cmd($1, "use priv");
-		m_cmd($1, "hashdump");
+
+		if ($safe is $null) {
+			$safe = 1;
+			m_cmd($1, "use priv");
+			m_cmd($1, "hashdump");
+		}
+		else {
+			showError("hashdump is not available here");
+			$safe = $null;
+		}
 	}
 	else if ($0 eq "execute") {
 		$host = sessionToHost($1);
@@ -30,7 +38,6 @@ import table.*;
 	else if ($0 eq "end" && $host !is $null) {
 		showError("Hashes dumped.\nUse View -> Credentials to see them.");
 		$host = $null;
-		return;
 	}
 };
 
