@@ -57,7 +57,12 @@ sub exploit_menus {
 sub targetsCombobox {
 	local('$key $value @targets $combobox');
 	foreach $key => $value ($1["targets"]) {
-		push(@targets, "$key => $value");
+		if (strlen($value) > 53) {
+			push(@targets, "$key => " . substr($value, 0, 50) . "...");
+		}
+		else {
+			push(@targets, "$key => $value");
+		}
 	}
 
 	$combobox = [new JComboBox: sort({
