@@ -399,11 +399,13 @@ sub createJobsTab {
 	[$refresh addActionListener: $jobsf];
 
 	$kill = [new JButton: "Kill"];
-	[$kill addActionListener: lambda({ 
-		cmd($client, $console, "jobs -k " . [$model getSelectedValue: $table], lambda({ 
+	[$kill addActionListener: lambda({
+		local('$tmp_console');
+		$tmp_console = createConsole($client); 
+		cmd($client, $tmp_console, "jobs -k " . [$model getSelectedValue: $table], lambda({ 
 			showError($3); 
 			[$jobsf];
-		}, \$jobsf));
+		}, \$jobsf, \$tmp_console));
 	}, \$table, \$model, \$jobsf)];
 
 	[$panel add: center($refresh, $kill), [BorderLayout SOUTH]];
