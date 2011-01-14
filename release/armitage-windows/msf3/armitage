@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 #
-# $Id: armitage 11426 2010-12-28 15:50:52Z hdm $
+# $Id: armitage 11571 2011-01-13 16:04:42Z egypt $
 #
 # Ruby front-end to the Armitage Java user interface
 #
-# $Revision: 11426 $
+# $Revision: 11571 $
 #
 
 msfbase = __FILE__
@@ -13,7 +13,7 @@ while File.symlink?(msfbase)
 end
 
 if RUBY_PLATFORM =~ /mswin|mingw/i
-	exec "javaw -jar #{File.dirname(msfbase)}/data/armitage/armitage.jar #{ARGV.join(" ")}"
+	exec "javaw", "-jar", "#{File.dirname(msfbase)}/data/armitage/armitage.jar", *ARGV
 else
-	exec "java -jar #{File.dirname(msfbase)}/data/armitage/armitage.jar #{ARGV.join(" ")}"
+	exec "java", "-jar", "#{File.dirname(msfbase)}/data/armitage/armitage.jar", *ARGV
 end
