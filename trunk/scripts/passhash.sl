@@ -35,6 +35,10 @@ import table.*;
 		($user, $gid, $hash) = matched();
 		call($client, "db.report_auth_info", %(host => $host, port => "445", sname => "smb", user => $user, pass => $hash, type => "smb_hash", active => "true"));
 	}
+	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
+		showError("Hash dump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.");
+		$host = $null;
+	}
 	else if ($0 eq "end" && $host !is $null) {
 		showError("Hashes dumped.\nUse View -> Credentials to see them.");
 		$host = $null;
