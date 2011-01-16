@@ -6,6 +6,8 @@ In progress
 - Added a Migrate Now! item to Meterpreter Access menu. Runs migrate -f.
 - Right-click in Meterpreter console now shows menu as before (silly bugs).
 - Armitage now detects hashdump failure and reports possible causes to you.
+- Armitage now binds default handler to 0.0.0.0. 
+- Added setg AutoSystemInfo true to Armitage's Metasploit staging
 
 13 Jan 11 Changes
 ---------
