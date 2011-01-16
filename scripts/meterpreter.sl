@@ -73,7 +73,7 @@ sub createMeterpreterTab {
         $console = [new Console: $preferences];
         [$session setWindow: $console];
 
-	[$console setPopupMenu: lambda(&meterpreterPopup, \$session, $sid => $1)];
+	[$console setPopupMenu: lambda(&meterpreterPopup, $session => sessionData($1), $sid => $1)];
 
         [$frame addTab: "Meterpreter $1", $console, $null];
 }

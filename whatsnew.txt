@@ -4,6 +4,7 @@ Armitage Changelog
 In progress
 ---------
 - Added a Migrate Now! item to Meterpreter Access menu. Runs migrate -f.
+- Right-click in Meterpreter console now shows menu as before (silly bugs).
 
 13 Jan 11 Changes
 ---------

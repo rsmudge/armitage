@@ -24,6 +24,16 @@ sub sessionToOS {
 	return getHostOS(sessionToHost($1));
 }
 
+sub sessionData {
+	local('$host $data');
+	foreach $host => $data (%hosts) {
+		if ('sessions' in $data && $1 in $data['sessions']) {
+			return $data['sessions'][$1];
+		}
+	}
+	return $null;
+}
+
 sub sessionToHost {
 	local('$host $data');
 	foreach $host => $data (%hosts) {
