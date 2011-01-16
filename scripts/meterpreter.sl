@@ -103,6 +103,11 @@ sub showMeterpreterMenu {
 			}, \$sid));
 		}, $sid => "$sid"));
 
+		item($j, "Migrate Now!", 'M', lambda({
+			oneTimeShow("run");
+			m_cmd($sid, "run migrate -f");
+		}, $sid => "$sid"));
+
 		item($j, "Escalate Privileges", 'E', lambda({
 			%handlers["getsystem"] = {
 				this('$safe');
