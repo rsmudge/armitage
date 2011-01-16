@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In progress
+---------
+- Added a Migrate Now! item to Meterpreter Access menu. Runs migrate -f.
+
 13 Jan 11 Changes
 ---------
 - Hosts reported as Windows Me now display W2K era Windows logo.
