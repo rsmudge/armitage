@@ -29,7 +29,7 @@ sub import_items {
 }
 
 sub addHostDialog {
-	local('$dialog');
+	local('$dialog $label $text $finish $button');
 	$dialog = [new JDialog: $frame, "Add Hosts", 0];
 	[$dialog setSize: 320, 240];
 	[$dialog setLayout: [new BorderLayout]];
