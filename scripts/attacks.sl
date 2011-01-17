@@ -218,8 +218,12 @@ sub best_client_payload {
 	else if ("*Mac*OS*x86*" iswm $2 || $os eq "osx") {
 		return "osx/x86/vforkshell/reverse_tcp";
 	}
+	else if ("linux/x86/shell_reverse_tcp" in $compatible && "*Linux*" iswm $2) {
+		# this is a temporary hack until http://www.metasploit.com/redmine/issues/3477
+		# is resolved. generic/shell_reverse_tcp should work to pick the right shell payload for the OS/architecture
+		return "linux/x86/shell_reverse_tcp";
+	}	
 	else {
-		# *Linux*x86* is covered here...
 		return "generic/shell_reverse_tcp";
 	}
 }
@@ -247,6 +251,11 @@ sub best_payload {
 		else if ("java/jsp_shell_reverse_tcp" in $compatible) {
 			return "java/jsp_shell_reverse_tcp";
 		}
+		else if ("linux/x86/shell_reverse_tcp" in $compatible && $os eq "Linux") {
+			# this is a temporary hack until http://www.metasploit.com/redmine/issues/3477
+			# is resolved. generic/shell_reverse_tcp should work to pick the right shell payload for the OS/architecture
+			return "linux/x86/shell_reverse_tcp";
+		}	
 		else {
 			return "generic/shell_reverse_tcp";
 		}
@@ -267,6 +276,11 @@ sub best_payload {
 	else if ("java/jsp_shell_bind_tcp" in $compatible) {
 		return "java/jsp_shell_bind_tcp";
 	}
+	else if ("linux/x86/shell_bind_tcp" in $compatible && $os eq "Linux") {
+		# this is a temporary hack until http://www.metasploit.com/redmine/issues/3477
+		# is resolved. generic/shell_bind_tcp should work to pick the right shell payload for the OS/architecture
+		return "linux/x86/shell_bind_tcp";
+	}	
 	else {
 		return "generic/shell_bind_tcp";
 	}
