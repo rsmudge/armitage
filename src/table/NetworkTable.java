@@ -142,16 +142,17 @@ public class NetworkTable extends JComponent implements ActionListener {
 			model.addEntry((Map)i.next());
 		}
 		rows.clear();
-		model.fireListeners();
 
 		if (SwingUtilities.isEventDispatchThread()) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
+					model.fireListeners();
 					fixSelection(selected);
 				}
 			});
 		}
 		else {
+			model.fireListeners();
 			fixSelection(selected);
 		}
 	}
