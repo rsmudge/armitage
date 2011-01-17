@@ -34,3 +34,4 @@ armitage.required_exploit_rank.string=great
 graph.refresh_targets.shortcut=ctrl pressed R
 connect.db_connect.string=root\:"toor"@127.0.0.1/msf3
 connect.db_driver.string=mysql
+armitage.string.target_view=graph

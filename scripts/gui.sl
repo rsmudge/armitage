@@ -222,7 +222,7 @@ sub overlay_images {
 		[$graphics drawImage: $image, 0, 0, 1000, 776, $null];
 	}
 
-	$buffered = [$buffered getScaledInstance: 250, 194, [Image SCALE_SMOOTH]];
+	$buffered = [$buffered getScaledInstance: 250 / $scale, 194 / $scale, [Image SCALE_SMOOTH]];
 
 	%cache[join(';', $1)] = $buffered;
         return $buffered;
