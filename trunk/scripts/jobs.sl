@@ -281,7 +281,7 @@ sub launch_dialog {
 		local('$options $host $x $best');
 		syncTable($table);
 
-		if ($type eq "payload") {
+		if ($type eq "payload" || $type eq "post") {
 			$options = %();
 		}
 		else {
