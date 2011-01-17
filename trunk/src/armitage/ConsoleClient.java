@@ -83,6 +83,9 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 			public void actionPerformed(ActionEvent ev) {
 				String text = window.getInput().getText();
+	
+				if (text.length() == 0)
+					return;
 
 				if (tabs != null && tabs.hasNext() && text.equals(last)) {
 					last = (String)tabs.next();
