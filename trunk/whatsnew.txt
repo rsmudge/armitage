@@ -15,8 +15,6 @@ In progress
   OS info if it doesn't know it. This also means Armitage will auto-populate
   the host OS when a client-side attack is successful.
 - Tab completion is now ignored when input field is empty
-- Added a hack to select linux/x86/shell_*_tcp payload for remote exploits 
-  against Linux systems.
 
 13 Jan 11 Changes
 ---------
