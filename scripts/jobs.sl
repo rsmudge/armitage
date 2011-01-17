@@ -232,6 +232,14 @@ sub launch_dialog {
 		else if ($key eq "RHOSTS") {
 			$default = join(", ", $5);
 		}
+		else if ($key eq "SESSION" && size($5) > 0) {
+			local('$host');
+			$host = $5[0];
+
+			if ($host in %hosts && 'sessions' in %hosts[$host] && size(%hosts[$host]['sessions']) > 0) {
+				$default = keys(%hosts[$host]['sessions'])[0];
+			}
+		}
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
 		}

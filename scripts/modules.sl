@@ -13,8 +13,7 @@ import javax.swing.table.*;
 
 sub createModuleBrowser {
 	local('$tree $split $scroll1 $t $2');
-#	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), post => buildTree(@post), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
-	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
+	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), post => buildTree(@post), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
 	[$split setOneTouchExpandable: 1];
 	return $split;
 }
