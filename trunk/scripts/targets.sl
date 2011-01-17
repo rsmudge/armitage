@@ -376,14 +376,14 @@ sub targetPopup {
         $popup = [new JPopupMenu];
 
         # no hosts are selected, create a menu related to the graph itself
-        if (size($1) == 0) {
-                graph_items($popup, $graph);
+        if (size($1) == 0 && [$preferences getProperty: "armitage.string.target_view", "graph"] eq "graph") {
+		graph_items($popup, $graph);
+		[$popup show: [$2 getSource], [$2 getX], [$2 getY]];
         }
-        else {
+        else if (size($1) > 0) {
 		host_selected_items($popup, $1);
+		[$popup show: [$2 getSource], [$2 getX], [$2 getY]];
         }
-
-        [$popup show: [$2 getSource], [$2 getX], [$2 getY]];
 }
 
 sub refreshTargets {
