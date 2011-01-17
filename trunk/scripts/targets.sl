@@ -7,6 +7,7 @@ import msf.*;
 
 import armitage.*;
 import graph.*;
+import table.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -390,9 +391,20 @@ sub setDefaultAutoLayout {
 }
 
 sub createDashboard {
+	if ($targets !is $null) {
+		[$targets actionPerformed: $null];
+	}
+
 	local('$graph %hosts $console $split');
 
-        $graph = [new NetworkGraph: $preferences];
+	if ([$preferences getProperty: "armitage.string.target_view", "graph"] eq "graph") {
+                setf('&overlay_images', lambda(&overlay_images, $scale => 1.0));
+	        $graph = [new NetworkGraph: $preferences];
+	}
+	else {
+                setf('&overlay_images', lambda(&overlay_images, $scale => 11.0));
+	        $graph = [new NetworkTable: $preferences];
+	}
 	setDefaultAutoLayout($graph);
 
 	[$frame setTop: createModuleBrowser($graph)];

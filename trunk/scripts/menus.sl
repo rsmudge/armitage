@@ -49,7 +49,21 @@ sub host_selected_items {
 
 sub view_items {
 	item($1, 'Console', 'C', &createConsoleTab);
-	item($1, 'Targets', 'T', &createTargetTab);
+	
+	local('$t');
+	$t = menu($1, 'Targets', 'T');
+	item($t, 'Graph View', 'G', {
+		[$preferences setProperty: "armitage.string.target_view", "graph"];
+		createDashboard();
+		savePreferences();
+	});
+
+	item($t, 'Table View', 'T', {
+		[$preferences setProperty: "armitage.string.target_view", "table"];
+		createDashboard();
+		savePreferences();
+	});
+
 	item($1, 'Credentials', 'r', &createCredentialsTab);
 	item($1, 'Jobs', 'J', &createJobsTab);
 }
