@@ -1,6 +1,21 @@
 Armitage Changelog
 ==================
 
+18 Jan 11 Changes
+---------
+- Added a Migrate Now! item to Meterpreter Access menu. Runs migrate -f.
+- Right-click in Meterpreter console now shows menu as before (silly bugs).
+- Armitage now detects hashdump failure and reports possible causes to you.
+- Armitage now binds default handler to 0.0.0.0. 
+- Added a table view for the targets area. Go to View -> Targets to change the
+  setting. If you're working with many hosts, table view may be better for you.
+- Added preliminary support for Metasploit post/ modules. You can launch them 
+  and if a host is highlighted, Armitage will populate the SESSION var for you.
+- Armitage now uses the sysinfo command in a meterpreter session to pull host
+  OS info if it doesn't know it. This also means Armitage will auto-populate
+  the host OS when a client-side attack is successful.
+- Tab completion is now ignored when input field is empty
+
 13 Jan 11 Changes
 ---------
 - Hosts reported as Windows Me now display W2K era Windows logo.
