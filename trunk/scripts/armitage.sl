@@ -138,7 +138,7 @@ sub _connectToMetasploit {
 	@exploits  = sorta(call($client, "module.exploits")["modules"]);
 	@auxiliary = sorta(call($client, "module.auxiliary")["modules"]);
 	@payloads  = sorta(call($client, "module.payloads")["modules"]);
-	#@post      = sorta(call($client, "module.post")["modules"]);
+	@post      = sorta(call($client, "module.post")["modules"]);
 
 	requireDatabase($client, $6, $7, {
 		@workspaces = getWorkspaces();

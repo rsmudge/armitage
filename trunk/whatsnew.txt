@@ -10,6 +10,8 @@ In progress
 - Added setg AutoSystemInfo true to Armitage's Metasploit staging
 - Added a table view for the targets area. Go to View -> Targets to change the
   setting. If you're working with many hosts, table view may be better for you.
+- Added preliminary support for Metasploit post/ modules. You can launch them 
+  and if a host is highlighted, Armitage will populate the SESSION var for you.
 
 13 Jan 11 Changes
 ---------
