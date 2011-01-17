@@ -21,6 +21,10 @@ sub getHostOS {
 	return iff($1 in %hosts, %hosts[$1]['os_name'], $null);
 }
 
+sub getSessions {
+	return iff($1 in %hosts && 'sessions' in %hosts[$1], %hosts[$1]['sessions']);
+}
+
 sub sessionToOS {
 	return getHostOS(sessionToHost($1));
 }
@@ -199,6 +203,25 @@ sub quickParse {
 }
 
 sub fixOSInfo {
+	# let's try using sysinfo as well
+	local('$host $sessions $hosts $sid $session $flag');
+	$hosts = copy($1);
+
+	foreach $host ($hosts) {
+		$sessions = getSessions($host);
+		if (size($sessions) > 0) {
+			$flag = $null;
+			foreach $sid => $session ($sessions) {
+				if ($session['type'] eq "meterpreter") {
+					$flag = 1;
+					m_cmd($sid, "sysinfo");
+				}
+			}
+	
+			iff($flag, remove());
+		}
+	}
+
 	# db.notes MSF call keeps locking up... *sigh*
 	local('$tmp_console');
 	$tmp_console = createConsole($client);
@@ -211,7 +234,7 @@ sub fixOSInfo {
 			}
 		}
 		call($client, "console.destroy", $tmp_console);
-	}, $hosts => $1, \$tmp_console));
+	}, \$hosts, \$tmp_console));
 }
 
 sub refreshHosts {

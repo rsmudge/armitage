@@ -162,8 +162,8 @@ sub setupHandlers {
 				"set PAYLOAD windows/meterpreter/reverse_tcp",
 				"setg LPORT " . randomPort(),
 				"set LHOST 0.0.0.0",
-				"setg AutoLoadStdapi true",
-				"setg AutoSystemInfo true",
+				#"setg AutoLoadStdapi true",
+				#"setg AutoSystemInfo true",
 				"exploit -j")
 			, { });
 		}
