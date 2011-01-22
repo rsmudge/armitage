@@ -130,7 +130,7 @@ sub _connectToMetasploit {
 			[$progress setNote: [$exception getMessage]];
 			[$progress setProgress: $flag];
 			$flag++;
-			sleep(1000);
+			sleep(2500);
 		}
 	}	
 	$console = createConsole($client);
