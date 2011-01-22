@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In progress
+--------- 
+- Slowed down time between connection attempts on start up.
+
 18 Jan 11 Changes
 ---------
 - Added a Migrate Now! item to Meterpreter Access menu. Runs migrate -f.

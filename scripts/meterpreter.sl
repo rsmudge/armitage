@@ -216,6 +216,7 @@ sub setHostInfo {
 	%hosts[$1]['os_flavor'] = $3;
 	%hosts[$1]['os_match'] = $4;
 	call($client, "db.report_host", %(host => $1, os_name => $2, os_flavor => $3));
+	$FIXONCE = 1;
 }
 
 %handlers["sysinfo"] = {
