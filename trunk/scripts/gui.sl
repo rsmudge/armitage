@@ -60,15 +60,19 @@ sub item {
 	return $item;
 }
 
-sub showError {
+sub dispatchEvent {
 	if ([SwingUtilities isEventDispatchThread]) {
-		[JOptionPane showMessageDialog: $frame, $1];
+		[$1];
 	}
 	else {
-		[SwingUtilities invokeLater: lambda({
-			[JOptionPane showMessageDialog: $frame, $message];
-		}, $message => $1)];
+		[SwingUtilities invokeLater: $1];
 	}
+}
+
+sub showError {
+	dispatchEvent(lambda({
+		[JOptionPane showMessageDialog: $frame, $message];
+	}, $message => $1));
 }
 
 sub ask {

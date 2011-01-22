@@ -204,17 +204,20 @@ sub quickParse {
 
 sub fixOSInfo {
 	# let's try using sysinfo as well
-	local('$host $sessions $hosts $sid $session $flag');
+	local('$host $sessions $hosts $sid $session $flag $os');
 	$hosts = copy($1);
 
 	foreach $host ($hosts) {
 		$sessions = getSessions($host);
-		if (size($sessions) > 0) {
+		$os = getHostOS($host);
+		if (size($sessions) > 0 && ($os eq "Unknown" || $os is $null)) {
 			$flag = $null;
 			foreach $sid => $session ($sessions) {
 				if ($session['type'] eq "meterpreter") {
 					$flag = 1;
-					m_cmd($sid, "sysinfo");
+					dispatchEvent(lambda({ 
+						m_cmd($sid, "sysinfo");
+					}, \$sid));
 				}
 			}
 	

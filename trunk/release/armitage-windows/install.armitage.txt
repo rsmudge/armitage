@@ -2,6 +2,10 @@ This text file documents how to install Armitage on Windows.
 
 (1) Download and Install the Metasploit Framework from http://www.metasploit.com/
 (2) Go to Start -> All Programs -> Metasploit Framework -> Metasploit Update
+
+    Don't skip this step or you will have headaches later. If Metasploit tells you 
+    any Armitage files conflict, then delete the files and repeat this step.
+
 (3) Unzip this archive into the Metasploit directory (e.g., c:\framework)
 (4) Create a shortcut (on your desktop maybe?) to armitage.bat and set the icon
     to icons\armitage.ico
