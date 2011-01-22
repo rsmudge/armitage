@@ -54,7 +54,7 @@ global('%shells $ashell $achannel %maxq');
 			writeb($handle, "$text $+ \r\n");
 			closef($handle);
 
-			m_cmd($sid, "write -f \"" . strrep(getFileProper("command.txt"), "\\", "\\\\") . "\" $channel");
+			m_cmd($sid, "write -f \"" . strrep(getFileProper("command.txt"), "\\", "/") . "\" $channel");
 		}, $sid => $1, \$console, \$channel)];
 
 		[$frame addTab: "$command $pid $+ @ $+ $1", $console, lambda({
