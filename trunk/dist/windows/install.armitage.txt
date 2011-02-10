@@ -10,7 +10,8 @@ This text file documents how to install Armitage on Windows.
 (3) Go to Start -> All Programs -> Metasploit Framework -> MSF Console. This will
     launch the Metasploit console and ready the database for use with Metasploit.
 
-(4) Unzip this archive into the Metasploit directory (e.g., c:\framework)
+(4) Unzip this archive into the Metasploit directory 
+    (e.g., c:\program files\rapid7\framework\)
 
 (5) Create a shortcut (on your desktop maybe?) to armitage.bat and set the icon
     to icons\armitage.ico
