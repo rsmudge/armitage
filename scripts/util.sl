@@ -12,7 +12,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-global('$MY_ADDRESS');
+global('$MY_ADDRESS $RPC_CONSOLE');
 
 # cmd($client, "console", "command here", &callback);
 #    invokes a metasploit command... calls the specified callback with the output when the command is complete.
@@ -364,17 +364,24 @@ sub connectDialog {
 				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
 			}
 
+			$RPC_CONSOLE = [new Console: $preferences];
+			[$RPC_CONSOLE noInput];
+
 			# consume bytes so msfrpcd doesn't block when the output buffer is filled
 			fork({
+				[$RPC_CONSOLE append: "$ msfrpcd -f -U msf -P ... -t Basic -S\n"];
+				[[Thread currentThread] setPriority: [Thread MIN_PRIORITY]];
+
 				while (1) {
 					if (available($msfrpc_handle) > 0) {
-						readb($msfrpc_handle, available($msfrpc_handle));
+						[$RPC_CONSOLE append: readb($msfrpc_handle, available($msfrpc_handle))];
 					}
-					sleep(2048);
-				}	
-			}, \$msfrpc_handle);
+					sleep(1024);
+				}
+			}, \$msfrpc_handle, \$RPC_CONSOLE);
 
 			[$dialog setVisible: 0];
+
 			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], 1);
 		}
 		catch $exception {
