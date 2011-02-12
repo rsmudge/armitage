@@ -50,6 +50,19 @@ sub host_selected_items {
 sub view_items {
 	item($1, 'Console', 'C', &createConsoleTab);
 	
+	if ($RPC_CONSOLE !is $null) {
+		item($1, 'RPC Console', 'P', {
+			[$frame addTab: "msfrpcd", $RPC_CONSOLE, {}];
+		});
+	}
+
+	separator($1);
+
+	item($1, 'Credentials', 'r', &createCredentialsTab);
+	item($1, 'Jobs', 'J', &createJobsTab);
+
+	separator($1);
+
 	local('$t');
 	$t = menu($1, 'Targets', 'T');
 	item($t, 'Graph View', 'G', {
@@ -63,9 +76,6 @@ sub view_items {
 		createDashboard();
 		savePreferences();
 	});
-
-	item($1, 'Credentials', 'r', &createCredentialsTab);
-	item($1, 'Jobs', 'J', &createJobsTab);
 }
 
 sub armitage_items {
