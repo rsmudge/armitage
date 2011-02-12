@@ -325,6 +325,14 @@ public class Console extends JPanel implements FocusListener {
 			}
 		});
 
+		/* Ctrl+A - select all */
+		addActionForKeySetting("console.select_all.shortcut", "ctrl A", new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				console.requestFocus();
+				console.selectAll();
+			}
+		});
+
 		/* Escape - clear input buffer */
 		addActionForKeySetting("console.clear_buffer.shortcut", "ESCAPE", new AbstractAction() {
 			public void actionPerformed(ActionEvent ev) {
