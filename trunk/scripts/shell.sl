@@ -148,7 +148,7 @@ sub showShellMenu {
 	else {
 		item($1, "Upload...", 'U', lambda({
 			local('$file $name $n');
-			$file = chooseFile($title => "Select file to upload");
+			$file = chooseFile($title => "Select file to upload", $always => 1);
 			$name = getFileName($file);
 
 			if ($file !is $null) {

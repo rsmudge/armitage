@@ -15,7 +15,7 @@ import graph.*;
 
 import java.awt.image.*;
 
-global('$frame $tabs $menubar $msfrpc_handle');
+global('$frame $tabs $menubar $msfrpc_handle $REMOTE');
 
 sub describeHost {
 	local('$sessions $os @overlay $ver');
@@ -103,6 +103,9 @@ sub _connectToMetasploit {
 
 	local('$progress');
 	$progress = [new ProgressMonitor: $null, "Connecting to $1 $+ : $+ $2", "first try... wish me luck.", 0, 100];
+
+	# keep track of whether we're connected to a local or remote Metasploit instance. This will affect what we expose.
+	$REMOTE = iff($1 eq "127.0.0.1", $null, 1);
 
 	$flag = 1;
 	while ($flag) {

@@ -150,13 +150,13 @@ sub showMeterpreterMenu {
 			
 	$j = menu($1, "Interact", 'I');
 
-			if ("*win*" iswm $platform) {
+			if ("*win*" iswm $platform && !$REMOTE) {
 				item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
 			}
 
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));
 
-			if ("*win*" iswm $platform) {
+			if ("*win*" iswm $platform && !$REMOTE) {
 				item($j, "Run VNC", 'V', lambda({ m_cmd($sid, "run vnc -t -i"); }, $sid => "$sid"));
 			}
 
@@ -166,8 +166,11 @@ sub showMeterpreterMenu {
 			if ("*win*" iswm $platform) {
 				item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
 			}
-			item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
-			item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
+
+			if (!$REMOTE) {
+				item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
+				item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
+			}
 
 	$j = menu($1, "Pivoting", 'P');
 			item($j, "Setup...", 'A', setupPivotDialog("$sid"));

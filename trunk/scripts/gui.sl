@@ -85,7 +85,12 @@ sub askYesNo {
 }
 
 sub chooseFile {
-	local('$fc $file $title $sel $dir $multi');
+	local('$fc $file $title $sel $dir $multi $always');
+
+	if ($REMOTE && $always is $null) {
+		return ask("Please type a file name:");
+	}
+
 
 	$fc = [new JFileChooser];
 
