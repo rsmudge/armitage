@@ -85,7 +85,7 @@ sub askYesNo {
 }
 
 sub chooseFile {
-	local('$fc $file $title $sel $dir');
+	local('$fc $file $title $sel $dir $multi');
 
 	$fc = [new JFileChooser];
 
@@ -101,13 +101,23 @@ sub chooseFile {
 		[$fc setCurrentDirectory: [new java.io.File: $dir]];
 	}
 
+	if ($multi !is $null) {
+		[$fc setMultiSelectionEnabled: 1];
+	}
+
 	[$fc showOpenDialog: $frame];
-	$file = [$fc getSelectedFile];
-	if ($file !is $null) {
-		if (-exists $file) {
-			return $file;
+
+	if ($multi) {
+		return [$fc getSelectedFiles];
+	}
+	else {
+		$file = [$fc getSelectedFile];
+		if ($file !is $null) {
+			if (-exists $file) {
+				return $file;
+			}
+			showError("$file does not exist!");
 		}
-		showError("$file does not exist!");
 	}
 }
 

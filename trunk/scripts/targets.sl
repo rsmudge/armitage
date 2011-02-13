@@ -306,25 +306,26 @@ sub graph_items {
 
 # need to pass this function a $command local...
 sub importHosts {
-	local('$file $handle $data $result');
-	$file = iff(size(@_) > 0, $1, chooseFile());
-	if ($file !is $null) {
+	local('$files $file $handle $data $result $name');
+	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1));
+	foreach $file ($files) {
 		$handle = openf($file);
 		$data   = [Base64 encode: readb($handle, -1)];
 		closef($handle);
 
+		$name = getFileName($file);
+
 		$result = call($client, "db. $+ $command", %(data => $data));
 
-		if (size(@_) == 0) {
-			if ($result is $null || $result['result'] != "success") {
-				showError("Import failed:\n $+ $result");
-			}
-			else {
-				fork({ showError("Import Complete"); }, \$frame);
-				refreshTargets();
-			}
+		if ($result is $null || $result['result'] != "success") {
+			showError("Import $name failed:\n $+ $result");
+		}
+		else {
+			fork({ showError("Import $name Complete"); }, \$frame, \$name);
 		}
 	}
+
+	refreshTargets();
 }
 
 # setHostValueFunction(@hosts, varname, value)
