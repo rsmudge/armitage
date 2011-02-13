@@ -115,7 +115,7 @@ sub createCredentialsTab {
 		local('$file');
 		$file = saveFile2();
 		if ($file !is $null) {
-			cmd($client, $console, "db_export -f pwdump -a $file", lambda({
+			cmd_safe("db_export -f pwdump -a $file", lambda({
 				showError("Exported credentials to:\n $+ $file");
 			}, \$file));
 		}

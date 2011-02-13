@@ -175,7 +175,7 @@ sub showMeterpreterMenu {
 
 	separator($1);
 
-	item($1, "Kill", 'K', lambda({ cmd($client, $console, "sessions -k $sid", {}); }, $sid => "$sid"));
+	item($1, "Kill", 'K', lambda({ cmd_safe("sessions -k $sid"); }, $sid => "$sid"));
 }
 
 sub enumerateMenu {

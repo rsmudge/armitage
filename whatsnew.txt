@@ -5,8 +5,11 @@ In Progress
 ---------
 - Organized View menu (it was getting out of control)
 - Added RPC Console item to view menu (Start MSF only). This item will show
-  the STDOUT for msfrpcd. Use this to view nmap's output.
+  the STDOUT for msfrpcd. Use this to watch nmap's output.
 - Added Ctrl+A shortcut to select all text in a console tab
+- Kill meterpreter, kill pivots, and credential dumps now use fresh 
+  consoles to execute. This ensures they will execute even if the global
+  console is stale (this sometimes happens.)
 
 21 Jan 11 Changes
 --------- 

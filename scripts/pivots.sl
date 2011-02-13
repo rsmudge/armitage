@@ -93,7 +93,8 @@ sub setupPivotDialog {
 
 # killPivots(sid, session data
 sub killPivots {
+	local('$route');
 	foreach $route (split(',', $2['routes'])) {
-		cmd($client, $console, "route remove ".strrep($route, '/', ' ')." $1", {});
+		cmd_safe("route remove " . strrep($route, '/', ' ') . " $1");
 	}
 }

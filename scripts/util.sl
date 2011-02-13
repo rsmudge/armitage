@@ -185,6 +185,20 @@ sub getWorkspaces
 	return sorta(filter({ return $1["name"]; }, call($client, "db.workspaces")["workspaces"]));
 }
 
+# creates a new console and execs a cmd in it.
+# cmd_safe("command to execute");
+sub cmd_safe
+{
+	local('$tmp_console $2');
+	$tmp_console = createConsole($client);
+	cmd($client, $tmp_console, $1, lambda({
+		call($client, "console.destroy", $tmp_console);
+		if ($f) {
+			invoke($f, @_);
+		}
+	}, \$tmp_console, $f => $2));
+}
+
 sub createNmapFunction
 {
 	return lambda({
