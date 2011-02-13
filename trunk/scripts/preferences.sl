@@ -82,7 +82,9 @@ sub loadPreferences {
 sub savePreferences {
 	local('$file');
 	$file = getFileProper(systemProperties()["user.home"], ".armitage.prop");
-	[$preferences save: [new java.io.FileOutputStream: $file], "Armitage Configuration"];
+	if (-exists getFileParent($file)) {
+		[$preferences save: [new java.io.FileOutputStream: $file], "Armitage Configuration"];
+	}
 }
 
 $preferences = loadPreferences();
