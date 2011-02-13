@@ -75,6 +75,9 @@ sub createMeterpreterTab {
 
 	[$console setPopupMenu: lambda(&meterpreterPopup, $session => sessionData($1), $sid => $1)];
 
+	# tab completion for Meterpreter... :D
+	[new TabCompletion: $console, $client, $1, "session.meterpreter_tabs"];
+
         [$frame addTab: "Meterpreter $1", $console, $null];
 }
 
