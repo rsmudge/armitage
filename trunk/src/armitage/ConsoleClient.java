@@ -69,6 +69,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 		new Thread(this).start();
 	}
 
+
 	/* call this if the console client is referencing a metasploit console with tab completion */
 	public void setMetasploitConsole() {
 		window.addActionForKey("ctrl pressed Z", new AbstractAction() {
@@ -77,69 +78,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 			}
 		});
 
-		window.addActionForKey("pressed TAB", new AbstractAction() {
-			protected String last      = null;
-			protected Iterator tabs    = null;
-
-			public void actionPerformed(ActionEvent ev) {
-				String text = window.getInput().getText();
-	
-				if (text.length() == 0)
-					return;
-
-				if (tabs != null && tabs.hasNext() && text.equals(last)) {
-					last = (String)tabs.next();
-					window.getInput().setText(last);
-				}
-				else {
-					try {
-						Map response = (Map)connection.execute("console.tabs", new Object[] { session, text });
-
-						if (response.get("tabs") == null)
-							return;
-
-						LinkedHashSet responses = new LinkedHashSet();
-
-						/* cycle through all of our options, we want to split items up to the
-						   first slash. We also want them to be unique and ordered (hence the
-						   linked hash set */
-						Object[] options = (Object[])response.get("tabs");
-						for (int x = 0; x < options.length; x++) {
-							String option = options[x] + "";
-
-							String begin; 
-							String end; 
-
-							if (text.length() > option.length()) {
-								begin = option;
-								end = "";
-							}
-							else {
-								begin = option.substring(0, text.length());
-								end = option.substring(text.length());							
-							}					
-
-							int nextSlash;
-							if ((nextSlash = end.indexOf('/')) > -1 && (nextSlash + 1) < end.length()) {
-								end = end.substring(0, nextSlash);
-							}
-
-							responses.add(begin + end);
-						}
-
-						responses.add(text);
-
-						tabs = responses.iterator();
-						last = (String)tabs.next();
-
-						window.getInput().setText(last);
-					}	
-					catch (Exception ex) {
-						ex.printStackTrace();
-					}		
-				}
-			}
-		});
+		new TabCompletion(window, connection, session, "console.tabs");
 	}
 
 	/* called when the associated tab is closed */
