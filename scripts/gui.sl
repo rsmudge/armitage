@@ -112,7 +112,7 @@ sub chooseFile {
 }
 
 sub saveFile2 {
-	local('$fc $file');
+	local('$fc $file $sel');
 	$fc = [new JFileChooser];
 
 	if ($sel !is $null) {
