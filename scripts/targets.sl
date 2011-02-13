@@ -306,7 +306,7 @@ sub graph_items {
 
 # need to pass this function a $command local...
 sub importHosts {
-	local('$files $file $handle $data $result $name');
+	local('$files $file $handle $data $result $name $success');
 	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1));
 	foreach $file ($files) {
 		$handle = openf($file);
@@ -321,11 +321,15 @@ sub importHosts {
 			showError("Import $name failed:\n $+ $result");
 		}
 		else {
-			fork({ showError("Import $name Complete"); }, \$frame, \$name);
+			$success++;
 		}
 	}
 
-	refreshTargets();
+
+	if ($success > 0) {
+		fork({ showError("Imported $success file" . iff($success != 1, "s")); }, \$frame, \$success);
+		refreshTargets();
+	}
 }
 
 # setHostValueFunction(@hosts, varname, value)
