@@ -289,7 +289,7 @@ sub connectDialog {
 	$port = [new JTextField: [$preferences getProperty: "connect.port.string", "55553"], 10];
 	
 	$ssl = [new JCheckBox: "Use SSL"];
-	if ([$preferences getProperty: "connect.ssl.boolean", ""] ne "") {
+	if ([$preferences getProperty: "connect.ssl.boolean", iff(isWindows(), "", "1")] ne "") {
 		[$ssl setSelected: 1];
 	}
 
