@@ -11,6 +11,7 @@ In Progress
   consoles to execute. This ensures they will execute even if the global
   console is stale (this sometimes happens.)
 - Added tab completion to Meterpreter window.
+- Hosts -> Import Hosts now lets you select multiple files to import at once.
 
 21 Jan 11 Changes
 --------- 
