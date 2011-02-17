@@ -110,10 +110,9 @@ global('%shells $ashell $achannel %maxq');
 		[$ashell append: [$ashell getPromptText] . join("\n", $v)];
 		$ashell = $null;
 
-		if (strlen($2) >= 1024 && strlen($2) >= %maxq[$achannel]) {
-			if (strlen($2) > %maxq[$achannel]) {
-				%maxq[$achannel] = strlen($2) - (strlen($2) % 1000);
-			}
+		# look for a prompt at the end of the text... if there isn't one,
+		# then it's time to do another read.
+		if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
 			sleep(250);
 			m_cmd($1, "read $achannel");
 		}
