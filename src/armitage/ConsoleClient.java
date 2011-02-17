@@ -17,9 +17,14 @@ public class ConsoleClient implements Runnable, ActionListener {
 	protected String        destroyCommand;
 	protected String        session;
 	protected LinkedList	listeners = new LinkedList();
+	protected boolean       echo = true;
 
 	public Console getWindow() {
 		return window;
+	}
+
+	public void setEcho(boolean b) {
+		echo = b;
 	}
 
 	public void setWindow(Console console) {
@@ -97,25 +102,27 @@ public class ConsoleClient implements Runnable, ActionListener {
 	}
 
 	public void sendString(String text) {
-		try {
-			synchronized (this) {
-				Map response = (Map)connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
+		Map read = null;
 
-				if (window != null) {
+		try {
+			Map response = (Map)connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
+
+			synchronized (this) {
+				if (window != null && echo) {
 					window.append(window.getPromptText() + text);
 					if (! "".equals( response.get("prompt") )) {
 						window.updatePrompt(cleanText(new String(Base64.decode( response.get("prompt") + "" ), "UTF-8")));
 					}
 				}
+			}
 
-				Map read = readResponse();
-				if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
-					System.err.println("Sending: " + text + " again!");
-					connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
-				}
-				else {
-					processRead(read);
-				}
+			read = readResponse();
+			if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
+				System.err.println("Sending: " + text + " again!");
+				connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
+			}
+			else {
+				processRead(read);
 			}
 
 			fireSessionWroteEvent(text);
@@ -157,13 +164,18 @@ public class ConsoleClient implements Runnable, ActionListener {
 	private void processRead(Map read) throws Exception {
 		if (! "".equals( read.get("data") )) {
 			String text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
-			if (window != null)
-				window.append(text);
+
+			synchronized (this) {
+				if (window != null)
+					window.append(text);
+			}
 			fireSessionReadEvent(text);	
 		}
 
-		if (! "".equals( read.get("prompt") ) && window != null) {
-			window.updatePrompt(cleanText(new String(Base64.decode( read.get("prompt") + "" ), "UTF-8")));
+		synchronized (this) {
+			if (! "".equals( read.get("prompt") ) && window != null) {
+				window.updatePrompt(cleanText(new String(Base64.decode( read.get("prompt") + "" ), "UTF-8")));
+			}
 		}
 	}
 
@@ -172,14 +184,12 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 		try {
 			while (true) {
-				synchronized (this) {
-					read = readResponse();
+				read = readResponse();
 
-					if (read == null || "failure".equals( read.get("result") + "" ))
-						break;
+				if (read == null || "failure".equals( read.get("result") + "" ))
+					break;
 
-					processRead(read);
-				} 
+				processRead(read);
 
 				Thread.sleep(200);
 			}
