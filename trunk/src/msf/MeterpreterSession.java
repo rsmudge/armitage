@@ -127,7 +127,8 @@ public class MeterpreterSession implements Runnable {
 		while (true) {
 			try {
 				Command next = grabCommand();
-				if (next == null && (System.currentTimeMillis() - lastRead) > 100) {
+				if (next == null && (System.currentTimeMillis() - lastRead) > 250) {
+					lastRead = System.currentTimeMillis();
 					emptyRead();
 				}
 				else if (next == null) {

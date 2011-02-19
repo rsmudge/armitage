@@ -81,9 +81,11 @@ public class Console extends JPanel implements FocusListener {
 				Iterator i = listeners.iterator();
 				ActionEvent event = new ActionEvent(parent, 0, result);
 
-				while (i.hasNext()) {
-					ActionListener l = (ActionListener)i.next();
-					l.actionPerformed(new ActionEvent(parent, 0, result));
+				if (!"".equals(result)) {
+					while (i.hasNext()) {
+						ActionListener l = (ActionListener)i.next();
+						l.actionPerformed(new ActionEvent(parent, 0, result));
+					}
 				}
 			}
 			else {
