@@ -6,6 +6,7 @@
 
 import armitage.*;
 import console.*;
+import msf.*;
 
 import javax.swing.*;
 
@@ -13,8 +14,8 @@ global('%sessions %handlers $handler');
 
 sub session {
 	if ($1 !in %sessions) {
-		%sessions[$1] = [new ConsoleClient: $null, $client, "session.meterpreter_read", "session.meterpreter_write", "session.stop", "$1", $null];
-		[%sessions[$1] addSessionListener: lambda(&parseMeterpreter)];		
+		%sessions[$1] = [new MeterpreterSession: $client, $1];
+		[%sessions[$1] addListener: lambda(&parseMeterpreter)];		
 	}
 
 	return %sessions[$1];
@@ -31,30 +32,37 @@ sub oneTimeShow {
 
 # m_cmd("session", "command here")
 sub m_cmd {
-	local('$command');
-	$command = split('\s+', [$2 trim])[0];
-
-	$handler = %handlers[$command];
-	if ($handler !is $null) {
-		[$handler execute: $1, [$2 trim]];
-	}
-
-	[session($1) sendString: "$2 $+ \n"];
+	[session($1) addCommand: $2, "$2 $+ \n"];
 }
 
 sub parseMeterpreter {
-	local('@temp $command $line');
+	local('@temp $command $line $sid $token $response $data $command');
 
-	if ($0 eq "sessionRead" && $handler !is $null) {
+	# called with: sid, token, response 
+	($sid, $token, $response) = @_;
+
+	$response = convertAll($3);
+
+	if ($token isa ^MeterpreterClient) {
+		return;
+	}
+        $command = split('\s+', [$token trim])[0];
+
+	$data = [Base64 decode: $response['data']];
+	$handler = %handlers[$command];
+
+	if ($handler !is $null) {
 		local('$h');
 		$h = $handler;
 
-		[$h begin: $1, $2];
-		@temp = split("\n", $2);
+		[$handler execute: $1, [$token trim]];
+
+		[$h begin: $1, $data];
+		@temp = split("\n", $data);
 		foreach $line (@temp) {
 			[$h update: $1, $line];
 		}	
-		[$h end: $1, $2];
+		[$h end: $1, $data];
 	}
 }
 
@@ -65,18 +73,16 @@ sub createMeterpreterTab {
         local('$session $result $thread $console $old');
 
         $session = session($1);
-	$old = [$session getWindow];
-	if ($old !is $null) {
-		[$frame removeTab: $old];
-	}
 
+	# set up a meterpreter console window
         $console = [new Console: $preferences];
-        [$session setWindow: $console];
-
 	[$console setPopupMenu: lambda(&meterpreterPopup, $session => sessionData($1), $sid => $1)];
 
 	# tab completion for Meterpreter... :D
 	[new TabCompletion: $console, $client, $1, "session.meterpreter_tabs"];
+
+	# set up a listener to read input from the console and dump output back to it.
+	[new MeterpreterClient: $console, $session];
 
         [$frame addTab: "Meterpreter $1", $console, $null];
 }
