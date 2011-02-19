@@ -8,6 +8,15 @@ In Progress
   read command that blocks until the universe is recreated.
 - Fixed a potential deadlock using Armitage's meterpreter dialogs with a 
   meterpreter tab open.
+- Command shell tab now only opens when Armitage knows channel and PID 
+  settings
+- Rewrote how Armitage interfaces with Meterpreter. This has a few impacts:
+  -- Armitage now waits for a command to execute and reads its output
+     before executing another command. This prevents Armitage from getting
+     confused when you're doing a lot of stuff at once.
+  -- You can now open multiple meterpreter console tabs for a session 
+  -- Commands executed by Armitage's dialogs will not show up in your 
+     Meterpreter tab(s).
 
 13 Feb 11 Changes
 ---------

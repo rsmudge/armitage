@@ -44,7 +44,7 @@ public class MeterpreterSession implements Runnable {
 			Map read = readResponse();
 			while (!"".equals(read.get("data"))) {
 				fireEvent(null, read);
-				System.err.println("Orphaned event:\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
+				//System.err.println("Orphaned event:\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				read = readResponse();
 			}
 		}
@@ -59,7 +59,7 @@ public class MeterpreterSession implements Runnable {
 		long maxwait = 10000;
 		try {
 			emptyRead();
-			System.err.println("Processing: " + c.text);
+			//System.err.println("Processing: " + c.text);
 			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, Base64.encode(c.text) });
 		
 			/* white list any commands that are not expected to return output */
@@ -69,12 +69,15 @@ public class MeterpreterSession implements Runnable {
 			if (c.text.startsWith("rm "))
 				return;
 
+			if (c.text.equals("shell\n") || c.text.equals("exit\n"))
+				return;
+
 			read = readResponse();
 			start = System.currentTimeMillis();
 			while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
 				/* our goal here is to timeout any command after 10 seconds if it returns nothing */
 				if ((System.currentTimeMillis() - start) > maxwait) {
-					System.err.println(c.text + " - holding things up " + maxwait);
+					//System.err.println(c.text + " - holding things up " + maxwait);
 					return;
 				}
 
@@ -89,7 +92,7 @@ public class MeterpreterSession implements Runnable {
 			Thread.sleep(50);
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
-				System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
+				//System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				fireEvent(c, read);
 				read = readResponse();
 			}
@@ -124,7 +127,7 @@ public class MeterpreterSession implements Runnable {
 		while (true) {
 			try {
 				Command next = grabCommand();
-				if (next == null && (System.currentTimeMillis() - lastRead) > 1000) {
+				if (next == null && (System.currentTimeMillis() - lastRead) > 100) {
 					emptyRead();
 				}
 				else if (next == null) {
