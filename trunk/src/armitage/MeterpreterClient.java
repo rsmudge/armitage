@@ -20,7 +20,7 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 	}
 
 	public void commandComplete(String sid, Object token, Map response) {
-		if (token == this) 
+		if (token == this || token == null) 
 			processRead(response);
 	}
 

@@ -198,12 +198,6 @@ sub createFileBrowser {
 		local('$file');
 		$file = chooseFile();
 		if ($file !is $null) {
-			%handlers["upload"] = lambda({
-				if ($0 eq "update" && "*uploaded*" iswm $2) {
-					m_cmd($sid, "ls");
-					%handlers["upload"] = $null;
-				}
-			}, \$sid);
 			m_cmd($sid, "upload \" $+ $file $+ \" \"" . getFileName($file) . "\"");
 		}
 		# refresh?!?
