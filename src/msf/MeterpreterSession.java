@@ -29,7 +29,7 @@ public class MeterpreterSession implements Runnable {
 	public void fireEvent(Command command, Map response) {
 		Iterator i = listeners.iterator();
 		while (i.hasNext()) {
-			((MeterpreterCallback)i.next()).commandComplete(session, command.token, response);
+			((MeterpreterCallback)i.next()).commandComplete(session, command != null ? command.token : null, response);
 		}
 	}
 
@@ -39,26 +39,47 @@ public class MeterpreterSession implements Runnable {
 		new Thread(this).start();
 	}
 
-	protected void processCommand(Command c) {
-		Map response = null;
-		int count = 0;
+	protected void emptyRead() {
 		try {
+			Map read = readResponse();
+			while (!"".equals(read.get("data"))) {
+				fireEvent(null, read);
+				System.err.println("Orphaned event:\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
+				read = readResponse();
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	protected void processCommand(Command c) {
+		Map response = null, read = null;
+		long start;
+		long maxwait = 10000;
+		try {
+			emptyRead();
+			System.err.println("Processing: " + c.text);
 			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, Base64.encode(c.text) });
 		
-			/* white list any commands that don't return output */
+			/* white list any commands that are not expected to return output */
 			if (c.text.startsWith("cd "))
 				return;
 
-			Map read = readResponse();
-			while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
-				Thread.sleep(10);
-				read = readResponse();
-				count++;
+			if (c.text.startsWith("rm "))
+				return;
 
-				if (count > 1000) {
-					System.err.println(session + " -> " + c.text + " ( " + response + ") - holding things up :(");
-					break;
+			read = readResponse();
+			start = System.currentTimeMillis();
+			while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
+				/* our goal here is to timeout any command after 10 seconds if it returns nothing */
+				if ((System.currentTimeMillis() - start) > maxwait) {
+					System.err.println(c.text + " - holding things up " + maxwait);
+					return;
 				}
+
+				Thread.sleep(100);
+				read = readResponse();
 			}
 
 			/* process the read command ... */
@@ -68,7 +89,7 @@ public class MeterpreterSession implements Runnable {
 			Thread.sleep(50);
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
-				System.err.println("Firing additional event: " + c.text + " (" + read + ")");
+				System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				fireEvent(c, read);
 				read = readResponse();
 			}
@@ -98,10 +119,15 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	public void run() {
+		long lastRead = System.currentTimeMillis();
+
 		while (true) {
 			try {
 				Command next = grabCommand();
-				if (next == null) {
+				if (next == null && (System.currentTimeMillis() - lastRead) > 1000) {
+					emptyRead();
+				}
+				else if (next == null) {
 					Thread.sleep(50);
 				}
 				else {

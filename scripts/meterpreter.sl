@@ -14,7 +14,7 @@ global('%sessions %handlers $handler');
 
 sub session {
 	if ($1 !in %sessions) {
-		%sessions[$1] = [new MeterpreterSession: $client, $1];
+		%sessions[$1] = [new MeterpreterSession: $mclient, $1];
 		[%sessions[$1] addListener: lambda(&parseMeterpreter)];		
 	}
 
@@ -32,7 +32,18 @@ sub oneTimeShow {
 
 # m_cmd("session", "command here")
 sub m_cmd {
-	[session($1) addCommand: $2, "$2 $+ \n"];
+	local('$command $handler');
+        $command = split('\s+', [$2 trim])[0];
+	$handler = %handlers[$command];
+
+	if ($handler !is $null) {
+		[$handler execute: $1, [$2 trim]];
+	}
+	else {
+		$handler = {};
+	}
+
+	[session($1) addCommand: $handler, "$2 $+ \n"];
 }
 
 sub parseMeterpreter {
@@ -41,22 +52,23 @@ sub parseMeterpreter {
 	# called with: sid, token, response 
 	($sid, $token, $response) = @_;
 
-	$response = convertAll($3);
-
 	if ($token isa ^MeterpreterClient) {
 		return;
 	}
-        $command = split('\s+', [$token trim])[0];
 
+	$response = convertAll($3);
 	$data = [Base64 decode: $response['data']];
-	$handler = %handlers[$command];
+
+	if ("*uploaded*:*->*" iswm $data) {
+		# this is a hack to force the file browser to refresh when a file is uploaded
+		m_cmd($sid, "ls");
+	}
+
+	$handler = $token;
 
 	if ($handler !is $null) {
 		local('$h');
 		$h = $handler;
-
-		[$handler execute: $1, [$token trim]];
-
 		[$h begin: $1, $data];
 		@temp = split("\n", $data);
 		foreach $line (@temp) {
