@@ -146,7 +146,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 		}
 	}
 
-	public String cleanText(String text) {
+	public static String cleanText(String text) {
 		StringBuffer string = new StringBuffer(text.length());
 		char chars[] = text.toCharArray();
 		for (int x = 0; x < chars.length; x++) {
