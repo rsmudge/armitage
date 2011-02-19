@@ -20,6 +20,8 @@ global('%shells $ashell $achannel %maxq');
 	this('$command $channel $pid');
 
 	if ($0 eq "execute") {
+		($channel, $pid) = $null;
+
 		if ($2 ismatch "execute -H -c -f (.*?)") {
 			($command) = matched();
 		}
@@ -33,7 +35,7 @@ global('%shells $ashell $achannel %maxq');
 	else if ($0 eq "update" && $2 ismatch 'Process (\d+) created.') {
 		($pid) = matched();
 	}
-	else if ($0 eq "end") {
+	else if ($0 eq "end" && $channel !is $null && $pid !is $null) {
 		local('$console');
 
 		$console = [new Console: $preferences];
@@ -79,7 +81,7 @@ global('%shells $ashell $achannel %maxq');
 
 		local('$channel $ashell');
 		($channel) = matched();
-		sleep(100);
+		sleep(50);
 		m_cmd($1, "read $channel");
 	}
 	else if ($0 eq "update" && $2 ismatch '\[\-\] .*?' && $ashell !is $null) {
@@ -113,7 +115,7 @@ global('%shells $ashell $achannel %maxq');
 		# look for a prompt at the end of the text... if there isn't one,
 		# then it's time to do another read.
 		if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
-			sleep(250);
+			sleep(50);
 			m_cmd($1, "read $achannel");
 		}
 	}
