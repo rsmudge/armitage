@@ -17,6 +17,9 @@ In Progress
   -- You can now open multiple meterpreter console tabs for a session 
   -- Commands executed by Armitage's dialogs will not show up in your 
      Meterpreter tab(s).
+- File browser now does a cd "current directory" before each action. This 
+  means you can have multiple file browsers open to different locations 
+  and work without a problem.
 
 13 Feb 11 Changes
 ---------

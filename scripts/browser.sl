@@ -67,7 +67,7 @@ sub parseListing {
 %handlers["ls"] = &parseListing;
 
 sub createFileBrowser {
-	local('$table $tree $model $panel $split $scroll1 $sorter $up $text $fsv $chooser $upload $mkdir $refresh $top');
+	local('$table $tree $model $panel $split $scroll1 $sorter $up $text $fsv $chooser $upload $mkdir $refresh $top $setcwd');
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -160,11 +160,17 @@ sub createFileBrowser {
 		m_cmd($sid, "ls");
 	}, $sid => $1)];
 
+	# this function should be called before every browser action to keep things in sync.
+	$setcwd = lambda({
+		m_cmd($sid, "cd \"" . strrep([$text getText], "\\", "\\\\") . "\"");
+	}, \$text, $sid => $1);	
+
 	[$table addMouseListener: lambda({
 		if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
 			local('$model $sel');
 			$model = %files[$sid];
 			$sel = [$model getSelectedValue: $table];
+			[$setcwd];
 			m_cmd($sid, "cd \" $+ $sel $+ \"");
 			m_cmd($sid, "ls");
 		}
@@ -172,10 +178,10 @@ sub createFileBrowser {
 			local('$popup $model');
 			$popup = [new JPopupMenu];
 			$model = %files[$sid];
-			buildFileBrowserMenu($popup, [$model getSelectedValues: $table], convertAll([$model getRows]), \$sid);
+			buildFileBrowserMenu($popup, [$model getSelectedValues: $table], convertAll([$model getRows]), \$sid, \$setcwd);
 			[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 		}
-	}, $sid => $1, \$table)];
+	}, $sid => $1, \$table, \$setcwd)];
 	
 	$fsv = [FileSystemView getFileSystemView];
 	$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];
@@ -187,9 +193,10 @@ sub createFileBrowser {
 	[$up setToolTipText: "Go up one directory"];
 
 	[$up addActionListener: lambda({ 
+		[$setcwd];
 		m_cmd($sid, "cd ..");
 		m_cmd($sid, "ls");
-	}, $sid => $1)];
+	}, $sid => $1, \$setcwd)];
 
 	# setup the whatever it's called...
 
@@ -198,26 +205,29 @@ sub createFileBrowser {
 		local('$file');
 		$file = chooseFile();
 		if ($file !is $null) {
+			[$setcwd];
 			m_cmd($sid, "upload \" $+ $file $+ \" \"" . getFileName($file) . "\"");
 		}
 		# refresh?!?
-	}, $sid => $1)];
+	}, $sid => $1, \$setcwd)];
 
 	$mkdir = [new JButton: "Make Directory"];
 	[$mkdir addActionListener: lambda({
 		local('$name');
 		$name = ask("Directory name:");
 		if ($name !is $null) {
+			[$setcwd];
 			m_cmd($sid, "mkdir \" $+ $name $+ \"");
 			m_cmd($sid, "ls");
 		}
 		# refresh?
-	}, $sid => $1)];
+	}, $sid => $1, \$setcwd)];
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
+		[$setcwd];
 		m_cmd($sid, "ls");
-	}, $sid => $1)];
+	}, $sid => $1, \$setcwd)];
 
 	# do the overall layout...
 
@@ -263,6 +273,7 @@ sub buildFileBrowserMenu {
 	item($1, "Download", 'D', lambda({ 
 		local('$f');
 		foreach $f ($file) {
+			[$setcwd];
 			if (%types[$f] eq "dir") {
 				m_cmd($sid, "download -r \" $+ $f $+ \""); 
 			}
@@ -270,7 +281,7 @@ sub buildFileBrowserMenu {
 				m_cmd($sid, "download \" $+ $f $+ \""); 
 			}
 		}
-	}, $file => $2, \$sid, \%types));
+	}, $file => $2, \$sid, \%types, \$setcwd));
 
 	separator($1);
 
@@ -278,8 +289,9 @@ sub buildFileBrowserMenu {
 	local('$t $key $value');
 	$t = menu($1, "Timestomp", 'T');
 	item($t, "Get MACE values", 'G', lambda({
+		[$setcwd];
 		m_cmd($sid, "timestomp \" $+ $f $+ \" -v");
-	}, \$sid, $f => $2[0]));
+	}, \$sid, $f => $2[0], \$setcwd));
 
 	if (size(%attribs) > 0) {
 		separator($t);
@@ -287,6 +299,7 @@ sub buildFileBrowserMenu {
 		foreach $key => $value (%attribs) {
 			item($t, "Set $key to $value", $null, lambda({
 				local('%switches $s $f');
+				[$setcwd];
 				foreach $f ($files) {
 					%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
 					%switches["Entry Modified"] = '-e';
@@ -294,7 +307,7 @@ sub buildFileBrowserMenu {
 					m_cmd($sid, "timestomp \" $+ $f $+ \" $s \" $+ $value $+ \"");
 				}
 				m_cmd($sid, "ls");
-			}, $files => $2, \$sid, $key => "$key", $value => "$value"));
+			}, $files => $2, \$sid, $key => "$key", $value => "$value", \$setcwd));
 		}
 
 		separator($t);
@@ -302,6 +315,8 @@ sub buildFileBrowserMenu {
 			local('$f %switches $s $cmd $key $value');
 			%switches = %(Modified => '-m', Accessed => '-a', Created => '-c');
 			%switches["Entry Modified"] = '-e';
+
+			[$setcwd];
 
 			foreach $f ($files) {
 				$cmd = "timestomp \" $+ $f $+ \"";
@@ -315,11 +330,12 @@ sub buildFileBrowserMenu {
 			}
 
 			m_cmd($sid, "ls"); 
-		}, $files => $2, \$sid));
+		}, $files => $2, \$sid, \$setcwd));
 	}
 	
 	item($1, "Delete", 'l', lambda({ 
 		local('$f');
+		[$setcwd];
 		foreach $f ($file) {
 			if (%types[$f] eq "dir") {
 				m_cmd($sid, "rmdir \" $+ $f $+ \""); 
@@ -329,7 +345,7 @@ sub buildFileBrowserMenu {
 			}
 		}
 		m_cmd($sid, "ls");
-	}, $file => $2, \$sid, \%types));
+	}, $file => $2, \$sid, \%types, \$setcwd));
 }
  
 # Buttons:
