@@ -48,12 +48,19 @@ sub host_selected_items {
 }
 
 sub view_items {
+	# make it so we can recreate this menu if necessary...
+	setf('&recreate_view_items', lambda({ [$parent removeAll]; view_items($parent); }, $parent => $1));
+
 	item($1, 'Console', 'C', &createConsoleTab);
 	
 	if ($RPC_CONSOLE !is $null) {
 		item($1, 'RPC Console', 'P', {
 			[$frame addTab: "msfrpcd", $RPC_CONSOLE, {}];
 		});
+	}
+
+	if ($mclient !is $client) {
+		item($1, 'Event Log', 'E', &createEventLogTab);
 	}
 
 	separator($1);
@@ -87,7 +94,7 @@ sub armitage_items {
 
 	item($1, 'SOCKS Proxy...', 'r', &manage_proxy_server);
 
-	$m = menu($1, 'Listeners', 'S');
+	$m = menu($1, 'Listeners', 'L');
 		item($m, 'Bind (connect to)', 'B', &connect_for_shellz);
 		item($m, 'Reverse (wait for)', 'R', &listen_for_shellz); 
 

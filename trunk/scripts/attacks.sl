@@ -319,7 +319,7 @@ sub attack_dialog {
 					Value => $value["default"], 
 					Tooltip => $value["desc"], 
 					Hide => 
-			iff($value["advanced"] eq '0' && $value["evasion"] eq '0', '0', '1')
+						iff($value["advanced"] eq '0' && $value["evasion"] eq '0', '0', '1')
 				)
 		]; 
 	}
@@ -382,6 +382,8 @@ sub attack_dialog {
 		}
 
 		[$dialog setVisible: 0];
+
+		elog("exploit $exploit @ " . $options["RHOST"]);
 	}, $exploit => $4, \$model, \$combobox, \$dialog, \$b, \$table)];
 
 	[$c add: $button];

@@ -207,6 +207,8 @@ sub createNmapFunction
 		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
 		
 		if ($address eq "") { return; }
+		
+		elog("started a scan: nmap $args $address");
 
 		cmd_async($client, $tmp_console, "db_nmap $args $address", 
 			lambda({ 
@@ -410,4 +412,10 @@ sub connectDialog {
 	[$dialog pack];
 	[$dialog setLocationRelativeTo: $null];
 	[$dialog setVisible: 1];
+}
+
+sub elog {
+	if ($client !is $mclient) {
+		call($mclient, "armitage.log", $1);
+	}
 }
