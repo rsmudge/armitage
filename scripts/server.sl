@@ -33,9 +33,37 @@ sub result {
 	return $rv;
 }
 
-sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv');
+sub event {
+	local('$result');
+	$result = [Base64 encode: formatDate("HH:mm:ss") . " $1"];
+	acquire($poll_lock);
+	push(@events, $result);
+	release($poll_lock);
+}
 
+sub client {
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid');
+
+	#
+	# verify the client
+	#
+	$temp = readObject($handle);
+	($method, $args) = $temp;
+	if ($method ne "armitage.validate") {
+		warn("Invalid client... killing now!");
+		writeObject($handle, result(%(error => "Invalid Token")));
+		return;
+	}
+	else {
+		($null, $eid) = $args;
+		warn("Validated: $args");
+		writeObject($handle, result(%(success => "1")));
+		event("*** $eid joined\n");
+	}
+
+	#
+	# on our merry way processing it...
+	#
 	while $temp (readObject($handle)) {
 		($method, $args) = $temp;
 
@@ -44,9 +72,9 @@ sub client {
 			$result = $null;
 
 			acquire($read_lock);
-			if (-isarray $queue[$sid] && size($queue[$sid]) > 0) {
-				$result = shift($queue[$sid]);
-			}
+				if (-isarray $queue[$sid] && size($queue[$sid]) > 0) {
+					$result = shift($queue[$sid]);
+				}
 			release($read_lock);
 
 			if ($result !is $null) {
@@ -72,22 +100,12 @@ sub client {
 		}
 		else if ($method eq "armitage.log") {
 			($data) = $args;
-			$result = [Base64 encode: formatDate("HH:mm:ss") . " * $eid $data $+ \n"];
-
-			acquire($poll_lock);
-			push(@events, $result);
-			release($poll_lock);
-
+			event("* $eid $data $+ \n");
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.push") {
-			($eid, $data) = $args;
-			$result = [Base64 encode: formatDate("HH:mm:ss") . " < $+ $[10]eid $+ > " . [Base64 decode: $data]];
-
-			acquire($poll_lock);
-			push(@events, $result);
-			release($poll_lock);
-
+			($null, $data) = $args;
+			event("< $+ $[10]eid $+ > " . [Base64 decode: $data]);
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.poll") {
@@ -105,13 +123,11 @@ sub client {
 		}
 		else {
 			warn("$method -> $args");
+			writeObject($handle, result(%()));
 		}
 	}
 
-	$result = [Base64 encode: formatDate("HH:mm:ss") . " *** $eid left.\n"];
-	acquire($poll_lock);
-	push(@events, $result);
-	release($poll_lock);
+	event("*** $eid left.\n");
 }
 
 sub main {

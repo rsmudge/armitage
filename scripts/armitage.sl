@@ -81,7 +81,7 @@ sub connectToMetasploit {
 }
 
 sub _connectToMetasploit {
-	global('$client $console @exploits @auxiliary @payloads @post @workspaces $flag $exception');
+	global('$client $mclient $console @exploits @auxiliary @payloads @post @workspaces $flag $exception');
 
 	local('%props $property $value');
 
@@ -126,6 +126,7 @@ sub _connectToMetasploit {
 			}
 
 		        $client = [new RpcConnectionImpl: $4, $5, $1, long($2), $3, $debug];
+			$mclient = $client;
 			$flag = $null;
 			[$progress close];
 		}
@@ -142,6 +143,8 @@ sub _connectToMetasploit {
 	@auxiliary = sorta(call($client, "module.auxiliary")["modules"]);
 	@payloads  = sorta(call($client, "module.payloads")["modules"]);
 	@post      = sorta(call($client, "module.post")["modules"]);
+
+	checkForCollaborationServer($client);
 
 	requireDatabase($client, $6, $7, {
 		@workspaces = getWorkspaces();
