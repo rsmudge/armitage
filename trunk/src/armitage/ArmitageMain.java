@@ -39,17 +39,8 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 	public void scriptUnloaded(ScriptInstance script) {
 	}
 
-	public ArmitageMain(String[] args) {
-		Hashtable environment = new Hashtable();
-		environment.put("&resource", this);
-
-		/* set our command line arguments into a var */
-		variables.putScalar("@ARGV", ObjectUtilities.BuildScalar(false, args));
-
-		ScriptLoader loader = new ScriptLoader();
-		loader.addSpecificBridge(this);
-
-		String[] scripts = new String[] {
+	protected String[] getGUIScripts() {
+		return new String[] {
 			"scripts/gui.sl",
 			"scripts/util.sl",
 			"scripts/targets.sl",
@@ -68,10 +59,30 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			"scripts/preferences.sl",
 			"scripts/modules.sl",
 			"scripts/menus.sl",
+			"scripts/collaborate.sl",
 			"scripts/armitage.sl"
 		};
+	}
+
+	protected String[] getServerScripts() {
+		return new String[] {
+			"scripts/util.sl",
+			"scripts/server.sl"
+		};
+	}
+
+	public ArmitageMain(String[] args) {
+		Hashtable environment = new Hashtable();
+		environment.put("&resource", this);
+
+		/* set our command line arguments into a var */
+		variables.putScalar("@ARGV", ObjectUtilities.BuildScalar(false, args));
+
+		ScriptLoader loader = new ScriptLoader();
+		loader.addSpecificBridge(this);
 
 		int x = 0;
+		String[] scripts = args.length > 0 && args[0].equals("--server") ? getServerScripts() : getGUIScripts();
 
 		try {
 			for (x = 0; x < scripts.length; x++) {
