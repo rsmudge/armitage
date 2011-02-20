@@ -49,14 +49,12 @@ sub client {
 	#
 	$temp = readObject($handle);
 	($method, $args) = $temp;
-	if ($method ne "armitage.validate") {
-		warn("Invalid client... killing now!");
-		writeObject($handle, result(%(error => "Invalid Token")));
+	if ($method ne "armitage.validate" || $args[0] ne $auth) {
+		writeObject($handle, result(%(error => "Invalid")));
 		return;
 	}
 	else {
 		($null, $eid) = $args;
-		warn("Validated: $args");
 		writeObject($handle, result(%(success => "1")));
 		event("*** $eid joined\n");
 	}
@@ -132,7 +130,9 @@ sub client {
 
 sub main {
 	global('$client');
-	local('$server %sessions $sess_lock $read_lock $poll_lock %readq $id @events $error');
+	local('$server %sessions $sess_lock $read_lock $poll_lock %readq $id @events $error $auth');
+
+	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
 
 	#
 	# chastise the user if they're wrong...
@@ -163,7 +163,7 @@ sub main {
 	$port += 1;
 
 	# setg ARMITAGE_SERVER host:port/token
-	cmd_safe("setg ARMITAGE_SERVER $host $+ : $+ $port $+ /wiggles");
+	cmd_safe("setg ARMITAGE_SERVER $host $+ : $+ $port $+ / $+ $auth");
 
 	#
 	# This lock protects the %sessions variable
@@ -226,7 +226,7 @@ sub main {
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth);
 
 		$id++;
 	}

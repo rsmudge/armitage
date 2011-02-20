@@ -35,22 +35,33 @@ sub checkForCollaborationServer {
 		if ($3 ismatch "ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n") {
 			local('$host $port $token');
 			($host, $port, $token) = matched();
-			setup_collaboration($host, $port, $token);
+			dispatchEvent(lambda({
+				setup_collaboration($host, $port, $token);
+			}, \$host, \$port, \$token));
 		}
 	});
 }
 
 
 sub setup_collaboration {
-	local('$host $port $ex');
+	local('$host $port $ex $nick');
 	
+	$nick = ask("What is your nickname?");
+
 	try {
 		$mclient = c_client($1, $2);	
-		call($mclient, "armitage.validate", $3, ask("What is your nickname?"));
-		showError("Collaboration Setup!");
-		recreate_view_items();
+		%r = call($mclient, "armitage.validate", $3, $nick);
+		if (%r["success"] eq '1') {
+			showError("Collaboration Setup!");
+			recreate_view_items();
+		}
+		else {
+			showError("Collaboration Connection Failed");
+			$mclient = $client;
+		}
 	}
 	catch $ex {
 		showError("Collaboration Connection Failed. :(\n" . [$ex getMessage]);
+		$mclient = $client;
 	}
 }
