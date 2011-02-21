@@ -39,6 +39,10 @@ sub checkForCollaborationServer {
 				setup_collaboration($host, $port, $token);
 			}, \$host, \$port, \$token));
 		}
+		else {
+			warn("No collaboration server is present!");
+			$mclient = $client;
+		}
 	});
 }
 
