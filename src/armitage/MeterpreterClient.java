@@ -47,7 +47,7 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 
 		setupListener();
 
-		window.updatePrompt("meterpreter> ");
+		window.updatePrompt("meterpreter > ");
 	}
 
 	/* called when the associated tab is closed */

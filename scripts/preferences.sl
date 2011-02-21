@@ -50,9 +50,14 @@ sub loadPreferences {
 
 	# parse command line options here.
 
-	local('$yaml_file $yaml_entry');
+	local('$yaml_file $yaml_entry %env');
 	$yaml_entry = "production";
 
+	%env = convertAll([System getenv]);
+	if ("MSF_DATABASE_CONFIG" in %env) {
+		$yaml_file = %env["MSF_DATABASE_CONFIG"];
+	}
+	
 	while (size(@ARGV) > 0) {
 		if (@ARGV[0] eq "-y" && -exists @ARGV[1]) {
 			$yaml_file = @ARGV[1];
