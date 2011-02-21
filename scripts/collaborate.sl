@@ -44,7 +44,7 @@ sub checkForCollaborationServer {
 
 
 sub setup_collaboration {
-	local('$host $port $ex $nick');
+	local('$host $port $ex $nick %r');
 	
 	$nick = ask("What is your nickname?");
 
