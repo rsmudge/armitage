@@ -218,8 +218,22 @@ sub createShellSessionTab {
 	$console = [new Console: $preferences];
 	[$console setDefaultPrompt: '$ '];
         [$console setPopupMenu: lambda(&shellPopup, \$session, \$sid)];
+
+	if ($client !is $mclient) {
+		local('%r');
+		%r = call($mclient, "armitage.lock", $sid);
+		if (%r["error"]) {
+			showError(%r["error"]);
+			return;
+		}
+	}
+
 	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", "session.stop", $sid, 0];
-        [$frame addTab: "Shell $sid", $console, $null];
+        [$frame addTab: "Shell $sid", $console, lambda({ 
+		if ($client !is $mclient) {
+			call($mclient, "armitage.unlock", $sid);
+		}
+	}, \$sid)];
 }
 
 sub listen_for_shellz {
