@@ -40,6 +40,7 @@ import table.*;
 		$host = $null;
 	}
 	else if ($0 eq "end" && $host !is $null) {
+		elog("dumped hashes on $host");
 		showError("Hashes dumped.\nUse View -> Credentials to see them.");
 		$host = $null;
 	}
