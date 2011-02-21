@@ -70,6 +70,12 @@ sub update_viewer {
 	else if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
 		local('$file $image $panel');
 		($file) = matched();
+
+		# we're collaborating, so download the file please...
+		if ($client !is $mclient) {
+			$file = downloadFile($file);
+		}
+
 		$image = [ImageIO read: [new File: $file]];
 
 		[$container[$1] setIcon: [new ImageIcon: $image]];

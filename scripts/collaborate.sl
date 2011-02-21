@@ -65,3 +65,13 @@ sub setup_collaboration {
 		$mclient = $client;
 	}
 }
+
+sub downloadFile {
+	local('$file $handle %r');
+	%r = call($mclient, "armitage.download", $1);
+	$file = getFileName($1);	
+	$handle = openf("> $+ $file");
+	writeb($handle, %r['data']);
+	closef($handle);
+	return $file;
+}
