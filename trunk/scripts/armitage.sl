@@ -138,13 +138,12 @@ sub _connectToMetasploit {
 		}
 	}	
 	$console = createConsole($client);
+	checkForCollaborationServer($client);
 
 	@exploits  = sorta(call($client, "module.exploits")["modules"]);
 	@auxiliary = sorta(call($client, "module.auxiliary")["modules"]);
 	@payloads  = sorta(call($client, "module.payloads")["modules"]);
 	@post      = sorta(call($client, "module.post")["modules"]);
-
-	checkForCollaborationServer($client);
 
 	requireDatabase($client, $6, $7, {
 		@workspaces = getWorkspaces();
