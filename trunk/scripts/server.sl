@@ -42,7 +42,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value');
 
 	#
 	# verify the client
@@ -100,6 +100,32 @@ sub client {
 
 			writeObject($handle, [new HashMap]);
 		}
+		else if ($method eq "armitage.lock") {
+			($sid) = $args;
+			acquire($lock_lock);
+			$data = %locks[$sid];
+			if ($data is $null) {
+				%locks[$sid] = $eid;
+				$data = $eid;
+			}
+			release($lock_lock);
+			if ($data eq $eid) {
+				writeObject($handle, result(%()));
+			}
+			else {
+				writeObject($handle, result(%(error => "$data owns this session.")));
+			}
+		}
+		else if ($method eq "armitage.unlock") {
+			($sid) = $args;
+			acquire($lock_lock);
+			$data = %locks[$sid];
+			if ($data is $null || $data eq $eid) {
+				%locks[$sid] = $null;
+			}
+			release($lock_lock);
+			writeObject($handle, result(%()));
+		}
 		else if ($method eq "armitage.log") {
 			($data) = $args;
 			event("* $eid $data $+ \n");
@@ -156,11 +182,20 @@ sub client {
 	}
 
 	event("*** $eid left.\n");
+
+	# cleanup any locked sessions.
+	acquire($lock_lock);
+	foreach $key => $value (%locks) {
+		if ($value eq $eid) {
+			remove();
+		}
+	}
+	release($lock_lock);
 }
 
 sub main {
 	global('$client');
-	local('$server %sessions $sess_lock $read_lock $poll_lock %readq $id @events $error $auth');
+	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
 
@@ -201,6 +236,7 @@ sub main {
 	$sess_lock = semaphore(1);
 	$read_lock = semaphore(1);
 	$poll_lock = semaphore(1);
+	$lock_lock = semaphore(1);
 
 	#
 	# create a thread to push console messages to the event queue for all clients.
@@ -256,7 +292,7 @@ sub main {
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock);
 
 		$id++;
 	}
