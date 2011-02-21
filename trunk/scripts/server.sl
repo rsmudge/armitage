@@ -59,9 +59,7 @@ sub client {
 		event("*** $eid joined\n");
 	}
 
-	acquire($poll_lock);
-	$index = size(@events);
-	release($poll_lock);
+	$index = 0;
 
 	#
 	# on our merry way processing it...

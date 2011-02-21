@@ -220,6 +220,7 @@ sub client_workspace_items {
 
 			call($client, "db.add_workspace", $name);
 			call($client, "db.set_workspace", $name);
+			elog("set workspace to $name");
 
 			@workspaces = getWorkspaces();
 
@@ -232,6 +233,7 @@ sub client_workspace_items {
 		item($1, 'Delete', 'D', 
 			lambda({
 				call($client, "db.del_workspace", $current);
+				elog("deleted workspace $current");
 
 				@workspaces = getWorkspaces();
 
@@ -247,6 +249,7 @@ sub client_workspace_items {
 		item($1, iff($workspace eq $current, "$index $+ . $workspace *", "$index $+ . $workspace"), $index, lambda({
 			call($client, "db.set_workspace", $ws);
 			[$parent removeAll];
+			elog("set workspace to $ws");
 			client_workspace_items($parent);
 			refreshTargets();
 		}, $ws => $workspace, $parent => $1));

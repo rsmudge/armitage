@@ -376,6 +376,7 @@ sub clearHosts {
 	%hosts = %();
 	$FIXONCE = $null;
 	refreshTargets();
+	elog("cleared all hosts");
 }
 
 # called when a target is clicked on...
