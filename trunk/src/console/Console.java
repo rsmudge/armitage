@@ -545,7 +545,7 @@ public class Console extends JPanel implements FocusListener {
 		if (!ev.isTemporary() && ev.getComponent() == console) {
 			/* this is a work-around for Windows where the user can't highlight
 			   text because of this attempt to get focus back to the input area */
-			if ((System.getProperty("os.name") + "").indexOf("Windows") == -1)
+			if ((System.getProperty("os.name") + "").indexOf("Windows") == -1 && (System.getProperty("os.name") + "").indexOf("Mac") == -1)
 				input.requestFocusInWindow();
 		}
 	}
