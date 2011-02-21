@@ -20,6 +20,24 @@ In Progress
 - File browser now does a cd "current directory" before each action. This 
   means you can have multiple file browsers open to different locations 
   and work without a problem.
+- Added a network attack collaboration feature to Armitage. This is as 
+  beta as it gets (although it *should* work). To use it, start msfrpcd
+  and connect Armitage's collaboration server (on the same box as msfrcpd!)
+
+  ./armitage --server host port user pass [ssl? 1 or 0]
+
+  This will connect Armitage's collaboration server to the Metasploit RPC 
+  daemon you specify. This server will then bind port+1 and tell future 
+  Armitage clients to use it for extra collaboration features.
+
+  Connect one or more remote Armitage clients as normal. Some of the 
+  features you get in this mode:
+
+  1. View -> Event Log for chatting and watching major events
+  2. Command shell and webcam/screenshot features work for remote clients
+  3. Armitage clients automatically lock a shell session when they're in use
+     and notify other clients that it's locked if they try to use it.
+  4. Transparent real-time sharing of meterpreter amongst multiple clients.
 
 13 Feb 11 Changes
 ---------

@@ -13,7 +13,7 @@ import javax.swing.*;
 global('%sessions %handlers $handler');
 
 sub session {
-	if ($1 !in %sessions) {
+	if ($1 !in %sessions && $mclient !is $null) {
 		%sessions[$1] = [new MeterpreterSession: $mclient, $1];
 		[%sessions[$1] addListener: lambda(&parseMeterpreter)];		
 	}
@@ -32,6 +32,11 @@ sub oneTimeShow {
 
 # m_cmd("session", "command here")
 sub m_cmd {
+	if ($mclient is $null) {
+		warn("Dropping: " . @_ . " - collab check not complete!");
+		return;
+	}
+
 	local('$command $handler');
         $command = split('\s+', [$2 trim])[0];
 	$handler = %handlers[$command];

@@ -126,7 +126,6 @@ sub _connectToMetasploit {
 			}
 
 		        $client = [new RpcConnectionImpl: $4, $5, $1, long($2), $3, $debug];
-			$mclient = $client;
 			$flag = $null;
 			[$progress close];
 		}
@@ -138,7 +137,6 @@ sub _connectToMetasploit {
 		}
 	}	
 	$console = createConsole($client);
-	checkForCollaborationServer($client);
 
 	@exploits  = sorta(call($client, "module.exploits")["modules"]);
 	@auxiliary = sorta(call($client, "module.auxiliary")["modules"]);
@@ -149,6 +147,7 @@ sub _connectToMetasploit {
 		@workspaces = getWorkspaces();
 		getBindAddress();
 		main();
+		checkForCollaborationServer($client);
 	}, &connectDialog);
 }
 
