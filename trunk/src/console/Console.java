@@ -21,7 +21,7 @@ public class Console extends JPanel implements FocusListener {
 
 	protected ClickListener clickl;
 
-	protected String defaultPrompt = "meterpreter> ";
+	protected String defaultPrompt = "meterpreter > ";
 
 	protected LinkedList components = new LinkedList();
 	protected ListIterator history = new LinkedList().listIterator(0);
