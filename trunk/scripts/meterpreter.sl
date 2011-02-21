@@ -173,7 +173,7 @@ sub showMeterpreterMenu {
 			
 	$j = menu($1, "Interact", 'I');
 
-			if ("*win*" iswm $platform && !$REMOTE) {
+			if ("*win*" iswm $platform && (!$REMOTE || $mclient !is $client)) {
 				item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
 			}
 
