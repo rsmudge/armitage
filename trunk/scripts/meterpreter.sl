@@ -185,7 +185,7 @@ sub showMeterpreterMenu {
 				item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
 			}
 
-			if (!$REMOTE) {
+			if (!$REMOTE || $mclient !is $client) {
 				item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
 				item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
 			}

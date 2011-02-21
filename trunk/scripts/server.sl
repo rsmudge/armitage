@@ -42,7 +42,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h');
 
 	#
 	# verify the client
@@ -58,6 +58,10 @@ sub client {
 		writeObject($handle, result(%(success => "1")));
 		event("*** $eid joined\n");
 	}
+
+	acquire($poll_lock);
+	$index = size(@events);
+	release($poll_lock);
 
 	#
 	# on our merry way processing it...
@@ -118,6 +122,21 @@ sub client {
 			release($poll_lock);
 
 			writeObject($handle, $rv);
+		}
+		else if ($method eq "armitage.download") {
+			if (-exists $args[0] && -isFile $args[0]) {
+				$h = openf($args[0]);
+				$data = readb($h, -1);
+				closef($h);
+				writeObject($handle, result(%(data => $data)));
+				deleteFile($args[0]);
+			}
+			else {
+				writeObject($handle, result(%(error => "file does not exist")));
+			}
+		}
+		else if ($method eq "armitage.upload") {
+			# wait on this one...
 		}
 		else {
 			warn("$method -> $args");
