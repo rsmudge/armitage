@@ -43,6 +43,8 @@ global('%shells $ashell $achannel %maxq');
 		%shells[$1][$channel] = $console;
 
 		[[$console getInput] addActionListener: lambda({
+			local('$file');
+
 			if (-exists "command.txt") {
 				warn("Dropping command, old one not sent yet");
 				return;
@@ -52,11 +54,17 @@ global('%shells $ashell $achannel %maxq');
 			$text = [[$console getInput] getText];
 			[[$console getInput] setText: ""];
 
-			$handle = openf(">command.txt");
-			writeb($handle, "$text $+ \r\n");
-			closef($handle);
+			if ($client !is $mclient) {
+				$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+			}
+			else {
+				$handle = openf(">command.txt");
+				writeb($handle, "$text $+ \r\n");
+				closef($handle);
+				$file = getFileProper("command.txt");
+			}
 
-			m_cmd($sid, "write -f \"" . strrep(getFileProper("command.txt"), "\\", "/") . "\" $channel");
+			m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
 		}, $sid => $1, \$console, \$channel)];
 
 		[$frame addTab: "$command $pid $+ @ $+ $1", $console, lambda({
