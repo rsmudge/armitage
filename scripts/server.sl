@@ -42,7 +42,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel');
 
 	#
 	# verify the client
@@ -135,8 +135,19 @@ sub client {
 				writeObject($handle, result(%(error => "file does not exist")));
 			}
 		}
-		else if ($method eq "armitage.upload") {
-			# wait on this one...
+		else if ($method eq "armitage.write") {
+			($sid, $data, $channel) = $args;
+
+			acquire($sess_lock);
+				$session = %sessions[$sid];
+			release($sess_lock);
+
+			# write the data to our command file
+			$h = openf(">command $+ $sid $+ . $+ $channel $+ .txt");
+			writeb($h, $data);
+			closef($h);
+
+			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
 		}
 		else {
 			warn("$method -> $args");
