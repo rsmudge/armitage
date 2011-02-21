@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+21 Feb 11 Changes
+---------
 - Improved shell "when should I read more data from this channel" heuristic. 
   This means command shell sessions should not freeze on an errant Meterp.
   read command that blocks until the universe is recreated.
