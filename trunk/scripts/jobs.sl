@@ -176,9 +176,10 @@ sub launch_service {
 	}
 	else if ($4 eq "payload") {
 		local('$file');
-		$file = saveFile2();
+		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
 		if ($file !is $null) {
-			[$c sendString: "generate -t $format -f $file $+ \n"];
+			$file = strrep($file, '\\', '\\\\'); 
+			[$c sendString: "generate -t $format -f \" $+ $file $+ \"\n"];
 		}
 	}
 	else {

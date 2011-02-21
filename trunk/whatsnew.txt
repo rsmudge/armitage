@@ -38,6 +38,10 @@ In Progress
   3. Armitage clients automatically lock a shell session when they're in use
      and notify other clients that it's locked if they try to use it.
   4. Transparent real-time sharing of meterpreter amongst multiple clients.
+- Payload generation now works on Windows (I wasn't escaping the backslashes
+  in the paths... doh!)
+- Armitage now prompts you for a path (and not a file chooser) when generating
+  a payload using a remote connection to Metasploit.
 
 13 Feb 11 Changes
 ---------
