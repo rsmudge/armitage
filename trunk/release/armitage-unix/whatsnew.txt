@@ -41,6 +41,7 @@ Armitage Changelog
 - Armitage now prompts you for a path (and not a file chooser) when generating
   a payload using a remote connection to Metasploit.
 - Armitage now loads database settings from file in MSF_DATABASE_CONFIG env var
+- You can now highlight text in the Armitage console tabs on MacOS X.
 
 13 Feb 11 Changes
 ---------
