@@ -234,6 +234,7 @@ sub enumerateMenu {
 					yield 250;
 				}
 
+				elog("launched $count discovery modules at: $hosts");
 				showError("Launched $count discovery modules");
 			}
 		}, \$hosts, \@modules));
