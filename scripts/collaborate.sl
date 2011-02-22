@@ -7,13 +7,16 @@ import armitage.*;
 import console.*;
 
 sub createEventLogTab {
-        local('$client $console');
+	this('$console $client');
 
-	$client = [new ConsoleClient: $null, $mclient, "armitage.poll", "armitage.push", $null, "", $null];
-        $console = [new Console: $preferences];
-        [$client setWindow: $console];
-	[$client setEcho: $null];
-	[$console updatePrompt: "> "];
+	if ($client is $null && $console is $null) {
+		$client = [new ConsoleClient: $null, $mclient, "armitage.poll", "armitage.push", $null, "", $null];
+        	$console = [new Console: $preferences];
+	        [$client setWindow: $console];
+		[$client setEcho: $null];
+		[$console updatePrompt: "> "];
+	}
+
         [$frame addTab: "Event Log", $console, $null];
 }
 
