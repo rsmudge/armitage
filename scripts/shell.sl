@@ -36,44 +36,46 @@ global('%shells $ashell $achannel %maxq');
 		($pid) = matched();
 	}
 	else if ($0 eq "end" && $channel !is $null && $pid !is $null) {
-		local('$console');
+		dispatchEvent(lambda({
+			local('$console');
 
-		$console = [new Console: $preferences];
+			$console = [new Console: $preferences];
 
-		%shells[$1][$channel] = $console;
+			%shells[$sid][$channel] = $console;
 
-		[[$console getInput] addActionListener: lambda({
-			local('$file');
+			[[$console getInput] addActionListener: lambda({
+				local('$file');
 
-			if (-exists "command.txt") {
-				warn("Dropping command, old one not sent yet");
-				return;
-			}
-			
-			local('$text $handle');
-			$text = [[$console getInput] getText];
-			[[$console getInput] setText: ""];
+				if (-exists "command.txt") {
+					warn("Dropping command, old one not sent yet");
+					return;
+				}
+				
+				local('$text $handle');
+				$text = [[$console getInput] getText];
+				[[$console getInput] setText: ""];
 
-			if ($client !is $mclient) {
-				$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
-			}
-			else {
-				$handle = openf(">command.txt");
-				writeb($handle, "$text $+ \r\n");
-				closef($handle);
-				$file = getFileProper("command.txt");
-			}
+				if ($client !is $mclient) {
+					$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+				}
+				else {
+					$handle = openf(">command.txt");
+					writeb($handle, "$text $+ \r\n");
+					closef($handle);
+					$file = getFileProper("command.txt");
+				}
+	
+				m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+			}, \$sid, \$console, \$channel)];
 
-			m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
-		}, $sid => $1, \$console, \$channel)];
+			[$frame addTab: "$command $pid $+ @ $+ $sid", $console, lambda({
+				m_cmd($sid, "close $channel");
+				m_cmd($sid, "kill $pid");
+				%shells[$sid][$channel] = $null;
+			}, \$sid, \$channel, \$console, \$pid)];
 
-		[$frame addTab: "$command $pid $+ @ $+ $1", $console, lambda({
-			m_cmd($sid, "close $channel");
-			m_cmd($sid, "kill $pid");
-			%shells[$sid][$channel] = $null;
-		}, $sid => $1, \$channel, \$console, \$pid)];
-
-		m_cmd($1, "read $channel");
+			m_cmd($sid, "read $channel");
+		}, \$command, \$channel, \$pid, $sid => $1));
 	}
 };
 

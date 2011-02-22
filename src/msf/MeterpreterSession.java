@@ -56,7 +56,7 @@ public class MeterpreterSession implements Runnable {
 	protected void processCommand(Command c) {
 		Map response = null, read = null;
 		long start;
-		long maxwait = 10000;
+		long maxwait = 12000;
 		try {
 			emptyRead();
 			//System.err.println("Processing: " + c.text);
@@ -77,7 +77,7 @@ public class MeterpreterSession implements Runnable {
 			while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
 				/* our goal here is to timeout any command after 10 seconds if it returns nothing */
 				if ((System.currentTimeMillis() - start) > maxwait) {
-					//System.err.println(c.text + " - holding things up " + maxwait);
+					System.err.println("(" + session + ") - '" + c.text + "' - timed out");
 					return;
 				}
 
