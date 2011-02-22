@@ -22,7 +22,7 @@ include("scripts/util.sl");
 
 debug(7);
 
-import msf.* from: 'bin';
+import msf.*;
 
 sub result {
 	local('$rv $key $value');
