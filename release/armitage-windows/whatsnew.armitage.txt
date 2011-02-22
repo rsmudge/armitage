@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-21 Feb 11 Changes
+22 Feb 11 Changes
 ---------
 - Improved shell "when should I read more data from this channel" heuristic. 
   This means command shell sessions should not freeze on an errant Meterp.
@@ -42,6 +42,7 @@ Armitage Changelog
   a payload using a remote connection to Metasploit.
 - Armitage now loads database settings from file in MSF_DATABASE_CONFIG env var
 - You can now highlight text in the Armitage console tabs on MacOS X.
+- Fixed a potential deadlock when opening a Windows command shell tab
 
 13 Feb 11 Changes
 ---------
