@@ -18,8 +18,6 @@
 # Any takers? :)
 #
 
-include("scripts/util.sl");
-
 debug(7);
 
 import msf.*;
