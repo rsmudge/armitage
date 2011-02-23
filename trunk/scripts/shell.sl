@@ -233,7 +233,9 @@ sub createShellSessionTab {
 	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", "session.stop", $sid, 0];
         [$frame addTab: "Shell $sid", $console, lambda({ 
 		if ($client !is $mclient) {
-			call($mclient, "armitage.unlock", $sid);
+			fork({
+				call($mclient, "armitage.unlock", $sid);
+			}, \$mclient, \$sid);
 		}
 	}, \$sid)];
 }
