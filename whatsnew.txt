@@ -9,6 +9,7 @@ In Progress
 - added event logs for pivoting, login actions, and pass-the-hash.
 - Pass-the-hash dialog is now available via [host] -> Login -> psexec.
 - Fixed bug causing Event Log menu to be present outside of collab mode.
+- armitage.sh start-up shell script is now named armitage
   
 22 Feb 11 Changes
 ---------

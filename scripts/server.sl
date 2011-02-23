@@ -200,7 +200,7 @@ sub main {
 	#
 	if (size(@ARGV) < 5) {
 		println("Armitage remote enhanced mode requires the following arguments:
-	./armitage.sh --server host port user pass [ssl]
+	./armitage --server host port user pass [ssl]
 		host - the address of this host (where msfrpcd is running as well)
 		port - the port msfrpcd is listening on
 		user - the username for msfrpcd
