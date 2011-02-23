@@ -392,9 +392,13 @@ sub connectDialog {
 					if (available($msfrpc_handle) > 0) {
 						[$RPC_CONSOLE append: readb($msfrpc_handle, available($msfrpc_handle))];
 					}
+
+					if (available($msfrpc_error) > 0) {
+						[$RPC_CONSOLE append: readb($msfrpc_error, available($msfrpc_error))];
+					}
 					sleep(1024);
 				}
-			}, \$msfrpc_handle, \$RPC_CONSOLE);
+			}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null], \$RPC_CONSOLE);
 
 			[$dialog setVisible: 0];
 
