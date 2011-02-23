@@ -88,12 +88,17 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 	/* called when the associated tab is closed */
 	public void actionPerformed(ActionEvent ev) {
-		try {
-			if (destroyCommand != null)
-				connection.execute(destroyCommand, new Object[] { session }); 
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
+		if (destroyCommand != null) {
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						connection.execute(destroyCommand, new Object[] { session }); 
+					}
+					catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}).start();
 		}
 	}
 

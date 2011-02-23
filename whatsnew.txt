@@ -10,6 +10,8 @@ In Progress
 - Pass-the-hash dialog is now available via [host] -> Login -> psexec.
 - Fixed bug causing Event Log menu to be present outside of collab mode.
 - armitage.sh start-up shell script is now named armitage
+- Console destroy and shell unlocking commands on tab close now happen in a
+  new thread to prevent the GUI from blocking.
   
 22 Feb 11 Changes
 ---------
