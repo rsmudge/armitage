@@ -66,6 +66,7 @@ sub pivot_dialog {
 	
 			if ($host ne "" && $mask ne "") {
 				$tmp_console = createConsole($client);
+				elog("added pivot: $host $mask $sid");
 				cmd($client, $tmp_console, "route add $host $mask $sid", lambda({ 
 					call($client, "console.destroy", $tmp_console);
 					if ($3 ne "") { showError($3); } 
@@ -87,7 +88,7 @@ sub pivot_dialog {
 sub setupPivotDialog {
 	return lambda({
 		%handlers["route"] = lambda(&pivot_dialog, \$sid);
-		m_cmd($sid, "route");			
+		m_cmd($sid, "route");
 	}, $sid => "$1");
 }
 
@@ -97,4 +98,6 @@ sub killPivots {
 	foreach $route (split(',', $2['routes'])) {
 		cmd_safe("route remove " . strrep($route, '/', ' ') . " $1");
 	}
+
+	elog("removed pivot: " . $2['routes']);
 }
