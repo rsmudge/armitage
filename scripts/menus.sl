@@ -59,7 +59,7 @@ sub view_items {
 		});
 	}
 
-	if ($mclient !is $client) {
+	if ($mclient !is $client && $mclient !is $null) {
 		item($1, 'Event Log', 'E', &createEventLogTab);
 	}
 

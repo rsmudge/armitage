@@ -174,6 +174,7 @@ sub pass_the_hash {
 			warn(%options);
 			call($client, "module.execute", "exploit", "windows/smb/psexec", %options);
 		}
+		elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		[$dialog setVisible: 0];
 	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts)];
 
@@ -221,6 +222,7 @@ sub show_login_dialog {
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
 		warn("$srvc $+ : $port => " . %options);
+		elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
 		call($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port)];

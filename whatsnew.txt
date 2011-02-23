@@ -6,7 +6,10 @@ In Progress
 - Armitage now consumes data from msfrpcd's stderr when Start MSF button is
   used. This means Armitage won't lock up when database tables are 
   initialized during the first run on Windows.
-
+- added event logs for pivoting, login actions, and pass-the-hash.
+- Pass-the-hash dialog is now available via [host] -> Login -> psexec.
+- Fixed bug causing Event Log menu to be present outside of collab mode.
+  
 22 Feb 11 Changes
 ---------
 - Improved shell "when should I read more data from this channel" heuristic. 

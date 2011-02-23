@@ -462,19 +462,23 @@ sub host_attack_items {
 		}
 	}
 
-	local('$service $name @options $a $port');
+	local('$service $name @options $a $port $foo');
 
 	foreach $port => $service (%hosts[$2[0]]['services']) {
 		$name = $service['name'];
 		if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
-			push(@options, $service);
+			push(@options, @($name, lambda(&show_login_dialog, \$service, $hosts => $2)));
+		}
+		else if ($name eq "microsoft-ds") {
+			push(@options, @("psexec", lambda(&pass_the_hash, $hosts => $2)));
 		}
 	}
 
 	if (size(@options) > 0) {
 		$a = menu($1, 'Login', 'L');
 		foreach $service (@options) {
-			item($a, $service['name'], $null, lambda(&show_login_dialog, \$service, $hosts => $2));
+			($name, $foo) = $service;
+			item($a, $name, $null, $foo);
 		}
 	}
 }
