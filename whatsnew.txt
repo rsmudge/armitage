@@ -12,6 +12,7 @@ In Progress
 - armitage.sh start-up shell script is now named armitage
 - Console destroy and shell unlocking commands on tab close now happen in a
   new thread to prevent the GUI from blocking.
+- Armitage now stops meterpreter read thread when it detects a dead session.
   
 22 Feb 11 Changes
 ---------

@@ -49,7 +49,7 @@ public class MeterpreterSession implements Runnable {
 			}
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -139,7 +139,8 @@ public class MeterpreterSession implements Runnable {
 				}
 			}
 			catch (Exception ex) {
-				ex.printStackTrace();
+				System.err.println("This session appears to be dead! " + session + ", " + ex);
+				return;
 			}
 		}
 	}
