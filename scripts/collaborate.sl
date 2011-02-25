@@ -80,7 +80,7 @@ sub uploadFile {
 	$data = readb($handle, -1);
 	closef($handle);
 
-	%r = call($mclient, "armitage.upload", $1, $data);
+	%r = call($mclient, "armitage.upload", getFileName($1), $data);
 	return %r['file'];
 }
 
