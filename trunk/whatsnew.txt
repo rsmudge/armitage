@@ -17,6 +17,7 @@ In Progress
   for a double number. This was screwing up connecting to postgres for some
   of you.
 - Upload button in file browser now works through Armitage's collab server
+- Added Ctrl+S shortcut to save screen capture of hosts graph view 
   
 22 Feb 11 Changes
 ---------

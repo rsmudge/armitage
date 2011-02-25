@@ -18,6 +18,8 @@ import com.mxgraph.swing.handler.*;
 import com.mxgraph.swing.view.*; 
 import com.mxgraph.util.*;
 
+import java.awt.image.*;
+
 public class NetworkGraph extends JComponent implements ActionListener {
 	protected mxGraph graph;
 	protected mxGraphComponent component;
@@ -82,6 +84,19 @@ public class NetworkGraph extends JComponent implements ActionListener {
 
 	public NetworkGraph() {
 		this(new Properties());
+	}
+
+	public Image getScreenshot() {
+//		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+//		paintAll(image.getGraphics());
+		return mxCellRenderer.createBufferedImage(
+			graph,
+			nodes.values().toArray(),
+			zoom,
+			null,
+			true,
+			null,
+			new NetworkGraphCanvas());
 	}
 
 	public void clearSelection() {

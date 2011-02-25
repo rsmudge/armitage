@@ -25,7 +25,6 @@
 	<target name="jar" depends="compile">
 		<unzip src="lib/sleep.jar" dest="bin" />
 		<unzip src="lib/jgraphx.jar" dest="bin" />
-		<unzip src="lib/jyaml-1.3.jar" dest="bin" />
 		
 		<jar destfile="armitage.jar" basedir="bin" includes="**/*">
 			<manifest>
