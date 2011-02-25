@@ -40,7 +40,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file');
 
 	#
 	# verify the client
@@ -144,6 +144,15 @@ sub client {
 			release($poll_lock);
 
 			writeObject($handle, $rv);
+		}
+		else if ($method eq "armitage.upload") {
+			($file, $data) = $args;
+
+			$h = openf(">" . getFileName($file));
+			writeb($h, $data);
+			closef($h);
+
+			writeObject($handle, result(%(file => getFileProper($file))));
 		}
 		else if ($method eq "armitage.download") {
 			if (-exists $args[0] && -isFile $args[0]) {
@@ -281,6 +290,11 @@ sub main {
 			return $session;
 		});
 	}, \%sessions, \$client, \%readq, \$read_lock));
+
+	println(rand(@("I'm ready to accept you or other clients for who they are",
+		"multi-player metasploit... ready to go",
+		"hacking is such a lonely thing, until now",
+		"feel free to connect now, Armitage is ready for collaboration")));
 
 	$id = 0;
 	while (1) {

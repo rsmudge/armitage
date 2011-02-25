@@ -73,6 +73,17 @@ sub setup_collaboration {
 	}
 }
 
+sub uploadFile {
+	local('$handle %r $data');
+
+	$handle = openf($1);
+	$data = readb($handle, -1);
+	closef($handle);
+
+	%r = call($mclient, "armitage.upload", $1, $data);
+	return %r['file'];
+}
+
 sub downloadFile {
 	local('$file $handle %r');
 	%r = call($mclient, "armitage.download", $1);
