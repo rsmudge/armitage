@@ -13,6 +13,9 @@ In Progress
 - Console destroy and shell unlocking commands on tab close now happen in a
   new thread to prevent the GUI from blocking.
 - Armitage now stops meterpreter read thread when it detects a dead session.
+- Replaced jyaml with a quick and dirty parser that doesn't mistake ####e#
+  for a double number. This was screwing up connecting to postgres for some
+  of you.
   
 22 Feb 11 Changes
 ---------
