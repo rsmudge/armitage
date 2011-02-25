@@ -203,9 +203,12 @@ sub createFileBrowser {
 	$upload = [new JButton: "Upload..."];
 	[$upload addActionListener: lambda({
 		local('$file');
-		$file = chooseFile();
+		$file = chooseFile($always => iff($client !is $mclient));
 		if ($file !is $null) {
 			[$setcwd];
+			if ($client !is $mclient) {
+				$file = uploadFile($file);
+			}
 			m_cmd($sid, "upload \" $+ $file $+ \" \"" . getFileName($file) . "\"");
 		}
 		# refresh?!?

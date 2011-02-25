@@ -16,6 +16,7 @@ In Progress
 - Replaced jyaml with a quick and dirty parser that doesn't mistake ####e#
   for a double number. This was screwing up connecting to postgres for some
   of you.
+- Upload button in file browser now works through Armitage's collab server
   
 22 Feb 11 Changes
 ---------
