@@ -11,10 +11,25 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.ho.yaml.*;
 import java.io.*;
 
 global('$preferences $debug');
+
+sub iHateYaml {
+	local('$handle %result $current $text $key $value');
+	$handle = openf($1);
+	$current = "default";
+	while $text (readln($handle)) {
+		if ($text ismatch '(\w+):') {
+			$current = matched()[0];
+		} 
+		else if ($text ismatch '\s+([\w\\.]+): ([\w\\.]+)') {
+			($key, $value) = matched();
+			%result[$current][$key] = $value;
+		}
+	}
+	return %result;
+}
 
 sub parseYaml {
 	# all heil the Yaml file... holder of the database info.
@@ -22,7 +37,7 @@ sub parseYaml {
 	local('$database $user $pass $host $port $driver $object $file $setting');
 	($file, $setting) = $2;
 	try {
-		$object = convertAll([Yaml load: [new File: $file]]);
+		$object = iHateYaml($file);
 		$object = $object[$setting];
 
 		if ($object !is $null) {
