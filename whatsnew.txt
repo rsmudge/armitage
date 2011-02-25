@@ -1,8 +1,14 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+25 Feb 11 Changes
+---------
+
+This release is primarily bug fixes. The network attack collaboration 
+feature is further tested and ready for your use.
+
+See: http://www.youtube.com/watch?v=coF8dVLBnOQ
+
 - Armitage now consumes data from msfrpcd's stderr when Start MSF button is
   used. This means Armitage won't lock up when database tables are 
   initialized during the first run on Windows.
