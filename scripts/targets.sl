@@ -453,4 +453,11 @@ sub createDashboard {
 		%hosts = %();
 		refreshTargets();
 	}];
+	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed S", lambda({
+		local('$location');
+		$location = saveFile2($sel => "hosts.png");
+		if ($location !is $null) {
+			[javax.imageio.ImageIO write: [$graph getScreenshot], "png", [new java.io.File: $location]];
+		}
+	}, \$graph)];
 }
