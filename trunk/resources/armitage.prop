@@ -3,6 +3,7 @@
 graph.font.font=Monospaced-BOLD-14
 console.clear_screen.shortcut=ctrl pressed K
 graph.zoom_out.shortcut=ctrl pressed MINUS
+graph.save_screenshot.shortcut=ctrl pressed P
 console.font_size_reset.shortcut=ctrl pressed 0
 console.page_down.shortcut=pressed PAGE_DOWN
 graph.arrange_icons_circle.shortcut=ctrl pressed C

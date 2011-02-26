@@ -453,7 +453,7 @@ sub createDashboard {
 		%hosts = %();
 		refreshTargets();
 	}];
-	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed S", lambda({
+	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed P", lambda({
 		local('$location');
 		$location = saveFile2($sel => "hosts.png");
 		if ($location !is $null) {
