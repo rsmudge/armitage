@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Armitage YAML parser now accepts quoted strings in the YAML fields
+
 27 Feb 11 Changes
 ---------
 - Webcam snap features works again. Sorry about that. :)

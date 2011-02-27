@@ -23,7 +23,7 @@ sub iHateYaml {
 		if ($text ismatch '(\w+):') {
 			$current = matched()[0];
 		} 
-		else if ($text ismatch '\s+([\w\\.]+): ([\w\\.]+)') {
+		else if ($text ismatch '\s+([\w\\.]+): [\'"]{0,1}([\w\\.]+)[\'"]{0,1}') {
 			($key, $value) = matched();
 			%result[$current][$key] = $value;
 		}
