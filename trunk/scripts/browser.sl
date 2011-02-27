@@ -275,10 +275,26 @@ sub buildFileBrowserMenu {
 	map(lambda({ %types[$1["Name"]] = $1["D"]; }, \%types), $3);
 
 	item($1, "Download", 'D', lambda({ 
-		local('$f');
+		# this handler won't catch everything but it makes it easy to download small files
+		# that take < 12s to grab. I'll take this over nothing.
+		%handlers["download"] = {
+			if ($0 eq "update" && $2 ismatch '... downloaded : .*? -> (.*?)') {
+				local('$f');
+				($f) = matched();
+				if ($client !is $mclient) {
+					downloadFile($f);
+					if (-exists $f && lof($f) > 0) {
+						showError("Saved $f");
+					}
+				}
+			}
+		};
+
+		local('$f ');
 		foreach $f ($file) {
 			[$setcwd];
 			if (%types[$f] eq "dir") {
+				%handlers["download"] = $null;
 				m_cmd($sid, "download -r \" $+ $f $+ \""); 
 			}
 			else {
