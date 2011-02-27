@@ -27,6 +27,11 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	public void fireEvent(Command command, Map response) {
+		//try {
+		//	System.err.println("Read: " + new String(Base64.decode(response.get("data") + ""), "UTF-8"));
+		//}
+		//catch (Exception ex) { }
+
 		Iterator i = listeners.iterator();
 		while (i.hasNext()) {
 			((MeterpreterCallback)i.next()).commandComplete(session, command != null ? command.token : null, response);
@@ -57,6 +62,7 @@ public class MeterpreterSession implements Runnable {
 		Map response = null, read = null;
 		long start;
 		long maxwait = 12000;
+		int expectedReads = 1;
 		try {
 			emptyRead();
 			//System.err.println("Processing: " + c.text);
@@ -72,21 +78,33 @@ public class MeterpreterSession implements Runnable {
 			if (c.text.equals("shell\n") || c.text.equals("exit\n"))
 				return;
 
-			read = readResponse();
-			start = System.currentTimeMillis();
-			while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
-				/* our goal here is to timeout any command after 10 seconds if it returns nothing */
-				if ((System.currentTimeMillis() - start) > maxwait) {
-					System.err.println("(" + session + ") - '" + c.text + "' - timed out");
-					return;
-				}
-
-				Thread.sleep(100);
-				read = readResponse();
+			if (c.text.startsWith("webcam_snap ")) {
+				expectedReads = 3;
+			}
+			else if (c.text.startsWith("download ")) {
+				expectedReads = 2;
+			}
+			else if (c.text.startsWith("upload ")) {
+				expectedReads = 2;
 			}
 
-			/* process the read command ... */
-			fireEvent(c, read);
+			for (int x = 0; x < expectedReads; x++) {
+				read = readResponse();
+				start = System.currentTimeMillis();
+				while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
+					/* our goal here is to timeout any command after 10 seconds if it returns nothing */
+					if ((System.currentTimeMillis() - start) > maxwait) {
+						System.err.println("(" + session + ") - '" + c.text + "' - timed out");
+						return;
+					}
+
+					Thread.sleep(100);
+					read = readResponse();
+				}
+
+				/* process the read command ... */
+				fireEvent(c, read);
+			}
 
 			/* grab any additional readable data */
 			Thread.sleep(50);
