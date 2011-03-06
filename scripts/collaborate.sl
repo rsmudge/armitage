@@ -40,13 +40,13 @@ sub checkForCollaborationServer {
 			($host, $port, $token) = matched();
 			dispatchEvent(lambda({
 				setup_collaboration($host, $port, $token);
-				createDashboard();
+				postSetup();
 			}, \$host, \$port, \$token));
 		}
 		else {
 			warn("No collaboration server is present!");
 			$mclient = $client;
-			dispatchEvent(&createDashboard);
+			dispatchEvent(&postSetup);
 		}
 	});
 }
@@ -62,7 +62,6 @@ sub setup_collaboration {
 		%r = call($mclient, "armitage.validate", $3, $nick);
 		if (%r["success"] eq '1') {
 			showError("Collaboration Setup!");
-			recreate_view_items();
 		}
 		else {
 			showError("Collaboration Connection Failed");
