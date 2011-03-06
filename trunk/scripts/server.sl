@@ -180,6 +180,33 @@ sub client {
 
 			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
 		}
+		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
+			# never underestimate the power of caching to alleviate load.
+			local('$response $time');
+			($response, $time) = $null;
+
+			acquire($cach_lock);
+			if ($method in %cache) {
+				($response, $time) = %cache[$method];
+			}
+			release($cach_lock);
+
+			if ($response is $null || (ticks() - $time) > 5000) {
+				if ($args) {
+					$response = [$client execute: $method, $args];
+				}
+				else {
+					$response = [$client execute: $method];
+				}
+				$time = ticks();
+
+				acquire($cach_lock);
+				%cache[$method] = @($response, $time);
+				release($cach_lock);
+			}
+
+			writeObject($handle, $response);
+		}
 		else {
 			warn("$method -> $args");
 			writeObject($handle, result(%()));
@@ -200,7 +227,7 @@ sub client {
 
 sub main {
 	global('$client');
-	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth');
+	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth %cache $cach_lock');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
 
@@ -242,6 +269,7 @@ sub main {
 	$read_lock = semaphore(1);
 	$poll_lock = semaphore(1);
 	$lock_lock = semaphore(1);
+	$cach_lock = semaphore(1);
 
 	#
 	# create a thread to push console messages to the event queue for all clients.
@@ -302,7 +330,7 @@ sub main {
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache);
 
 		$id++;
 	}
