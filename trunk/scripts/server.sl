@@ -207,6 +207,27 @@ sub client {
 
 			writeObject($handle, $response);
 		}
+		else if ("module.*" iswm $method) {
+			# never underestimate the power of caching to alleviate load.
+			local('$response $time');
+			$response = $null;
+
+			acquire($cach_lock);
+			if ($method in %cache) {
+				$response = %cache[$method];
+			}
+			release($cach_lock);
+
+			if ($response is $null) {
+				$response = [$client execute: $method];
+
+				acquire($cach_lock);
+				%cache[$method] = $response;
+				release($cach_lock);
+			}
+
+			writeObject($handle, $response);
+		} 
 		else {
 			warn("$method -> $args");
 			writeObject($handle, result(%()));
