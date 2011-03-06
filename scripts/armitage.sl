@@ -173,7 +173,6 @@ sub main {
 		}];
 	}, \$msfrpc_handle, \$frame);
 
-	createDashboard();
 	createConsoleTab();
 
 	if (-exists "command.txt") {

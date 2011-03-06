@@ -40,11 +40,13 @@ sub checkForCollaborationServer {
 			($host, $port, $token) = matched();
 			dispatchEvent(lambda({
 				setup_collaboration($host, $port, $token);
+				createDashboard();
 			}, \$host, \$port, \$token));
 		}
 		else {
 			warn("No collaboration server is present!");
 			$mclient = $client;
+			dispatchEvent(&createDashboard);
 		}
 	});
 }
