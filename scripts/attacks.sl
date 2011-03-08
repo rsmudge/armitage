@@ -380,7 +380,10 @@ sub attack_dialog {
 			$options["PAYLOAD"] = best_payload($host, $exploit, [$b isSelected]);
 			$options["RHOST"] = $host;
 			warn("$host -> $exploit -> $options");
-			call($client, "module.execute", "exploit", $exploit, $options);
+
+			fork({
+				call($client, "module.execute", "exploit", $exploit, $options);
+			}, \$exploit, \$options, \$client);
 		}
 
 		[$dialog setVisible: 0];

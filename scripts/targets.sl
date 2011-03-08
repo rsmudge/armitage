@@ -306,30 +306,33 @@ sub graph_items {
 
 # need to pass this function a $command local...
 sub importHosts {
-	local('$files $file $handle $data $result $name $success');
+	local('$files');
 	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1));
-	foreach $file ($files) {
-		$handle = openf($file);
-		$data   = [Base64 encode: readb($handle, -1)];
-		closef($handle);
 
-		$name = getFileName($file);
+	thread(lambda({
+		local('$file $handle $data $result $name $success');
+		foreach $file ($files) {
+			$handle = openf($file);
+			$data   = [Base64 encode: readb($handle, -1)];
+			closef($handle);
 
-		$result = call($client, "db. $+ $command", %(data => $data));
+			$name = getFileName($file);
+	
+			$result = call($client, "db. $+ $command", %(data => $data));
 
-		if ($result is $null || $result['result'] != "success") {
-			showError("Import $name failed:\n $+ $result");
+			if ($result is $null || $result['result'] != "success") {
+				showError("Import $name failed:\n $+ $result");
+			}
+			else {
+				$success++;
+			}
 		}
-		else {
-			$success++;
+
+		if ($success > 0) {
+			fork({ showError("Imported $success file" . iff($success != 1, "s")); }, \$frame, \$success);
+			refreshTargets();
 		}
-	}
-
-
-	if ($success > 0) {
-		fork({ showError("Imported $success file" . iff($success != 1, "s")); }, \$frame, \$success);
-		refreshTargets();
-	}
+	}, \$files, \$command));
 }
 
 # setHostValueFunction(@hosts, varname, value)
@@ -367,16 +370,19 @@ sub clearHostFunction {
 }
 
 sub clearHosts {
-	local('@hosts $r $host');
-	$r = call($client, "db.hosts", %());
-	@hosts = map({ return $1["address"]; }, $r["hosts"]);
-	foreach $host (@hosts) {
-		call($client, "db.del_host", %(address => $host));
-	}
-	%hosts = %();
-	$FIXONCE = $null;
-	refreshTargets();
-	elog("cleared all hosts");
+	thread({
+		local('@hosts $r $host');
+
+		$r = call($client, "db.hosts", %());
+		@hosts = map({ return $1["address"]; }, $r["hosts"]);
+		foreach $host (@hosts) {
+			call($client, "db.del_host", %(address => $host));
+		}
+		%hosts = %();
+		$FIXONCE = $null;
+		refreshTargets();
+		elog("cleared all hosts");
+	});
 }
 
 # called when a target is clicked on...
@@ -396,9 +402,10 @@ sub targetPopup {
 }
 
 sub refreshTargets {
-	[new ArmitageTimer: $client, "db.hosts", @([new HashMap]), 0L, lambda(&refreshHosts, $graph => $targets)];
-	[new ArmitageTimer: $client, "db.services", @([new HashMap]), 0L, lambda(&refreshServices, $graph => $targets)];
-	[new ArmitageTimer: $client, "session.list", $null, 0L, lambda(&refreshSessions, $graph => $targets)];
+	warn("refreshTargets was called");
+	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 0L, lambda(&refreshHosts, $graph => $targets)];
+	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 0L, lambda(&refreshServices, $graph => $targets)];
+	[new ArmitageTimer: $mclient, "session.list", $null, 0L, lambda(&refreshSessions, $graph => $targets)];
 }
 
 sub createTargetTab {
@@ -409,9 +416,9 @@ sub createTargetTab {
 
 	[$frame addTab: "Targets", $graph, $graph];
 
-	[new ArmitageTimer: $client, "db.hosts", @([new HashMap]), 10 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $client, "db.services", @([new HashMap]), 15 * 1000L, lambda(&refreshServices, \$graph)];
-	[new ArmitageTimer: $client, "session.list", $null, 5 * 1000L, lambda(&refreshSessions, \$graph)];
+	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 10 * 1000L, lambda(&refreshHosts, \$graph)];
+	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 15 * 1000L, lambda(&refreshServices, \$graph)];
+	[new ArmitageTimer: $mclient, "session.list", $null, 5 * 1000L, lambda(&refreshSessions, \$graph)];
 
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 }
