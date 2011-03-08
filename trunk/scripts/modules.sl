@@ -34,28 +34,30 @@ sub createModuleList {
 			return;
 		}
 
-		local('$selected $type $path');
-		$selected = map({ return "$1"; }, [$p getPath]);
-		if (size($selected) > 2) {
-			$type = $selected[1];
-			$path = join('/', sublist($selected, 2));
-			if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
-				if ($type eq "exploit") {
-					if ('browser' in $selected || 'fileformat' in $selected) {
-						launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
+		thread(lambda({
+			local('$selected $type $path');
+			$selected = map({ return "$1"; }, [$p getPath]);
+			if (size($selected) > 2) {
+				$type = $selected[1];
+				$path = join('/', sublist($selected, 2));
+				if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
+					if ($type eq "exploit") {
+						if ('browser' in $selected || 'fileformat' in $selected) {
+							launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
+						}
+						else {
+							local('$a $b');
+							$a = call($client, "module.info", "exploit", $path);
+							$b = call($client, "module.options", "exploit", $path);
+                        		                attack_dialog($a, $b, [$targets getSelectedHosts], $path);
+						}
 					}
 					else {
-						local('$a $b');
-						$a = call($client, "module.info", "exploit", $path);
-						$b = call($client, "module.options", "exploit", $path);
-                        	                attack_dialog($a, $b, [$targets getSelectedHosts], $path);
+						launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
 					}
 				}
-				else {
-					launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
-				}
 			}
-		}
+		}, \$p));
 	})];
 
 	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_NEVER]];
