@@ -370,19 +370,17 @@ sub clearHostFunction {
 }
 
 sub clearHosts {
-	thread({
-		local('@hosts $r $host');
+	local('@hosts $r $host');
 
-		$r = call($client, "db.hosts", %());
-		@hosts = map({ return $1["address"]; }, $r["hosts"]);
-		foreach $host (@hosts) {
-			call($client, "db.del_host", %(address => $host));
-		}
-		%hosts = %();
-		$FIXONCE = $null;
-		refreshTargets();
-		elog("cleared all hosts");
-	});
+	$r = call($client, "db.hosts", %());
+	@hosts = map({ return $1["address"]; }, $r["hosts"]);
+	foreach $host (@hosts) {
+		call($client, "db.del_host", %(address => $host));
+	}
+	%hosts = %();
+	$FIXONCE = $null;
+	refreshTargets();
+	elog("cleared all hosts");
 }
 
 # called when a target is clicked on...

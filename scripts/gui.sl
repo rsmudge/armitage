@@ -53,7 +53,9 @@ sub item {
 	if ($4 is $null) { warn("Incomplete: " . @_); }
 
 	[$item addActionListener: lambda({ 
-		invoke($function);
+		thread(lambda({ 
+			invoke($function);
+		}, \$function));
 	}, $function => $4)];
 
 	[$1 add: $item];
