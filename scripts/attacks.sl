@@ -376,15 +376,16 @@ sub attack_dialog {
 
 		$options["TARGET"] = split(' \=\> ', [$combobox getSelectedItem])[0];
 
-		foreach $host (split(', ', $options["RHOST"])) {
-			$options["PAYLOAD"] = best_payload($host, $exploit, [$b isSelected]);
-			$options["RHOST"] = $host;
-			warn("$host -> $exploit -> $options");
+		fork({
+			local('$host');
+			foreach $host (split(', ', $options["RHOST"])) {
+				$options["PAYLOAD"] = best_payload($host, $exploit, [$b isSelected]);
+				$options["RHOST"] = $host;
+				warn("$host -> $exploit -> $options");
 
-			fork({
 				call($client, "module.execute", "exploit", $exploit, $options);
-			}, \$exploit, \$options, \$client);
-		}
+			}
+		}, \$options, \$client, \$exploit, \$b);
 
 		[$dialog setVisible: 0];
 
