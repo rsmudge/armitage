@@ -13,6 +13,7 @@ In Progress
      own thread
   -- Console interaction now sends text to server in a separate thread
      to avoid blocking while waiting for the server to ack the text.
+  -- menu item actions now execute in a new thread to prevent blocking.
 
 27 Feb 11 Changes
 ---------
