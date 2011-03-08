@@ -8,6 +8,8 @@ In Progress
 - Added caching of sessions.list, db.hosts, and db.services to Armitage 
   collaboration server. This should help prevent msfrpcd from overloading
   when many clients are connected and owning at once.
+- Import hosts, clear hosts, and attack launches now happen in their own
+  thread to make the GUI feel more responsive
 
 27 Feb 11 Changes
 ---------
