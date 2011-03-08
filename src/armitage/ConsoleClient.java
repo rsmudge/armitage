@@ -106,7 +106,15 @@ public class ConsoleClient implements Runnable, ActionListener {
 		actionPerformed(null);
 	}
 
-	public void sendString(String text) {
+	public void sendString(final String text) {
+		new Thread(new Runnable() {
+			public void run() {
+				_sendString(text);
+			}
+		}).start();
+	}
+
+	public void _sendString(String text) {
 		Map read = null;
 
 		try {

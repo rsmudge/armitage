@@ -160,6 +160,7 @@ public class Console extends JPanel implements FocusListener {
 			prompt.setText(defaultPrompt);
 		}	
 		else {
+			defaultPrompt = text;
 			prompt.setText(text);
 		}
 	}
