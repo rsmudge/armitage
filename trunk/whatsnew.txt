@@ -15,6 +15,8 @@ In Progress
   to a remote Metasploit instance.
 - Export credentials and payload generate output now transparently  
   downloads to your local host when connected to Armitage's collab server.
+- Armitage now loads stdapi in Meterpreter if it finds it's not loaded. 
+  Armitage also prompts you to rerun the failed command when this happens.
 
 27 Feb 11 Changes
 ---------

@@ -56,7 +56,7 @@ global('%shells $ashell $achannel %maxq');
 				[[$console getInput] setText: ""];
 
 				thread(lambda({
-					local('$handle');
+					local('$handle $file');
 					if ($client !is $mclient) {
 						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
 					}
