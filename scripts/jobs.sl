@@ -180,6 +180,13 @@ sub launch_service {
 		if ($file !is $null) {
 			$file = strrep($file, '\\', '\\\\'); 
 			[$c sendString: "generate -t $format -f \" $+ $file $+ \"\n"];
+
+			if ($client !is $mclient) {
+				thread(lambda({
+					yield 4096;
+					downloadFile($file);
+				}, \$file));
+			}
 		}
 	}
 	else {
