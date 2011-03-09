@@ -68,6 +68,11 @@ sub parseMeterpreter {
 		# this is a hack to force the file browser to refresh when a file is uploaded
 		m_cmd($sid, "ls");
 	}
+	else if ("[-]*Unknown command: *" iswm $data) {
+		m_cmd($sid, "use stdapi");
+		showError("Loading stdapi. Try command again");
+		return;
+	}
 
 	$handler = $token;
 
