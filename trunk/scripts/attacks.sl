@@ -385,7 +385,7 @@ sub attack_dialog {
 
 				call($client, "module.execute", "exploit", $exploit, $options);
 			}
-		}, \$options, \$client, \$exploit, \$b);
+		}, \$options, \$client, \$exploit, \$b, \%hosts);
 
 		[$dialog setVisible: 0];
 
