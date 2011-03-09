@@ -68,8 +68,8 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 		window.getInput().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				String text = window.getInput().getText() + "\n";
-				sendString(text);
 				window.getInput().setText("");
+				sendString(text);
 			}
 		});
 	}

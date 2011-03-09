@@ -51,21 +51,24 @@ global('%shells $ashell $achannel %maxq');
 					return;
 				}
 				
-				local('$text $handle');
+				local('$text');
 				$text = [[$console getInput] getText];
 				[[$console getInput] setText: ""];
 
-				if ($client !is $mclient) {
-					$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
-				}
-				else {
-					$handle = openf(">command.txt");
-					writeb($handle, "$text $+ \r\n");
-					closef($handle);
-					$file = getFileProper("command.txt");
-				}
-	
-				m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+				thread(lambda({
+					local('$handle');
+					if ($client !is $mclient) {
+						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+					}
+					else {
+						$handle = openf(">command.txt");
+						writeb($handle, "$text $+ \r\n");
+						closef($handle);
+						$file = getFileProper("command.txt");
+					}
+				
+					m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+				}, \$channel, \$sid, \$text));
 			}, \$sid, \$console, \$channel)];
 
 			[$frame addTab: "$command $pid $+ @ $+ $sid", $console, lambda({

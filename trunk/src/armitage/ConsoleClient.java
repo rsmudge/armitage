@@ -106,15 +106,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 		actionPerformed(null);
 	}
 
-	public void sendString(final String text) {
-		new Thread(new Runnable() {
-			public void run() {
-				_sendString(text);
-			}
-		}).start();
-	}
-
-	public void _sendString(String text) {
+	public void sendString(String text) {
 		Map read = null;
 
 		try {
@@ -150,9 +142,13 @@ public class ConsoleClient implements Runnable, ActionListener {
 			if (window != null) {
 				window.getInput().addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ev) {
-						String text = window.getInput().getText() + "\n";
-						sendString(text);
+						final String text = window.getInput().getText() + "\n";
 						window.getInput().setText("");
+						new Thread(new Runnable() {
+							public void run() {
+								sendString(text);
+							}
+						}).start();
 					}
 				});
 			}
