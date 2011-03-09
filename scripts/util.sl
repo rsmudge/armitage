@@ -344,7 +344,9 @@ sub connectDialog {
 	}, \$connect)];
 
 	$button = [new JButton: "Connect"];
+	[$button setToolTipText: "<html>Use this button to connect to a running Metasploit<br />RPC server. Metasploit must already be running.</html>"];
 	$start  = [new JButton: "Start MSF"];
+	[$start setToolTipText: "<html>Use this button to start a new Metasploit instance<br />and have Armitage automatically connect to it.</html>"];
 	$cancel = [new JButton: "Exit"];
 
 	# lay them out

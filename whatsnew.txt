@@ -10,6 +10,7 @@ In Progress
   when many clients are connected and owning at once.
 - Improved GUI responsiveness by making several parts of the Armitage GUI
   spawn a new thread to avoid blocking while communicating with Metasploit
+- Added a tooltip to the "Start MSF" and "Connect" buttons to clarify use
 
 27 Feb 11 Changes
 ---------
