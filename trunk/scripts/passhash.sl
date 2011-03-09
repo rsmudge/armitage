@@ -118,6 +118,10 @@ sub createCredentialsTab {
 		if ($file !is $null) {
 			cmd_safe("db_export -f pwdump -a $file", lambda({
 				showError("Exported credentials to:\n $+ $file");
+
+				if ($mclient !is $client) {
+					downloadFile($file);
+				}
 			}, \$file));
 		}
 	}];

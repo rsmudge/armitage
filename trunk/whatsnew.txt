@@ -13,6 +13,8 @@ In Progress
 - Added a tooltip to the "Start MSF" and "Connect" buttons to clarify use
 - Export credentials button now prompts for a remote file when connected 
   to a remote Metasploit instance.
+- Export credentials and payload generate output now transparently  
+  downloads to your local host when connected to Armitage's collab server.
 
 27 Feb 11 Changes
 ---------
