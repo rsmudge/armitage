@@ -63,9 +63,6 @@ See section 8 for more information.
 lib/jgraphx.jar is used here within the terms of the BSD license offered by
 JGraphX Ltd. http://www.jgraphx.com/
 -
-lib/jyaml-1.3.jar is used here within the terms of the BSD licensed offered
-by http://jyaml.sourceforge.net/
--
 Code in src/msf/* comes from msfgui by scriptjunkie. 
 -
 This project uses the LGPL Sleep scripting language with no modifications. 
