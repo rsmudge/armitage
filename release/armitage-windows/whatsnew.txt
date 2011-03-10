@@ -30,6 +30,11 @@ that.
   start at boot and at login.
 - Added an Armitage.app file for MacOS X. Use Armitage from OS X as a
   client to connect to Metasploit hosted in other places.
+- Added a check for whether current working directory is writeable or not.  
+  If it's not, Armitage does all of its read/write operations in home dir.
+
+Tested with 10 concurrent Armitage clients from four boxes with 140+ shell 
+sessions and a few meterpreter sessions. I think we're ready to rock now.
 
 27 Feb 11 Changes
 ---------
