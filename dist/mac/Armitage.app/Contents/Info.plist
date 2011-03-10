@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>CFBundleName</key>
+	<string>Armitage</string>
+	<key>CFBundleVersion</key>
+	<string>03.03.11</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>faha</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>aquaicon2.icns</string>
+	<key>Java</key>
+	<dict>
+		<key>MainClass</key>
+		<string>armitage.ArmitageMain</string>
+		<key>JVMVersion</key>
+		<string>1.6+</string>
+		<key>ClassPath</key>
+			<string>$JAVAROOT/armitage.jar</string>
+		<key>Properties</key>
+		<dict>
+			<key>apple.awt.graphics.UseQuartz</key>
+			<string>true</string>
+			<key>apple.awt.showGrowBox</key>
+			<string>false</string>
+			<key>com.apple.smallTabs</key>
+			<string>true</string>
+			<key>com.apple.macos.useScreenMenuBar</key>
+			<string>true</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
