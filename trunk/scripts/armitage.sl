@@ -157,6 +157,11 @@ sub postSetup {
 sub main {
         local('$console $panel');
 
+	if (!-canwrite cwd()) {
+		chdir(systemProperties()["user.home"]);
+		showError("Can't write to current directory... files will save to:\n" . cwd());
+	}
+
 	$frame = [new ArmitageApplication];
         [$frame setSize: 800, 600];
 
@@ -185,5 +190,4 @@ sub main {
 
 setLookAndFeel();
 connectDialog();
-
 

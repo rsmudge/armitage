@@ -73,7 +73,7 @@ sub update_viewer {
 
 		# we're collaborating, so download the file please...
 		if ($client !is $mclient) {
-			$file = downloadFile($file);
+			$file = getFileProper(cwd(), downloadFile($file));
 		}
 
 		$image = [ImageIO read: [new File: $file]];
