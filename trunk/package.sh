@@ -32,16 +32,12 @@ rm -rf armitage
 #
 mkdir armitage
 cp -r dist/windows/* armitage
-cp armitage.jar armitage/msf3/data/armitage
-cp readme.txt armitage/readme.armitage.txt
-cp whatsnew.txt armitage/whatsnew.armitage.txt
+cp armitage.jar armitage/
+cp readme.txt armitage/readme.txt
+cp whatsnew.txt armitage/whatsnew.txt
 
 	# kill that silly .svn file
 rm -rf armitage/.svn
-rm -rf armitage/msf3/.svn
-rm -rf armitage/msf3/data/.svn
-rm -rf armitage/msf3/data/armitage/.svn
-rm -rf armitage/icons/.svn
 cd armitage
 zip -r ../armitage.zip .
 cd ..
