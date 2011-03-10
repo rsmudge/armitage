@@ -28,6 +28,8 @@ that (I hope).
 - Added Access -> Persist to Meterpreter menu. This will run Meterpreter's
   persistence script using the default Armitage handler. Meterpreter will
   start at boot and at login.
+- Added an Armitage.app file for MacOS X. Use Armitage from OS X as a
+  client to connect to Metasploit hosted in other places.
 
 27 Feb 11 Changes
 ---------
