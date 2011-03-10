@@ -25,6 +25,8 @@ that (I hope).
   Armitage also prompts you to rerun the failed command when this happens.
 - Right-click in services now shows popup for taking actions against 
   selected hosts. Now you can do mass actions against hosts sorted by port.
+- Added Access -> Persist to Meterpreter menu. This will start a handler,
+  upload meterpreter, and add it to the Windows scheduler on boot/login.
 
 27 Feb 11 Changes
 ---------
