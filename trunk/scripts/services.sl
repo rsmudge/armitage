@@ -27,7 +27,7 @@ sub updateServiceModel {
 sub createServiceBrowser {
 	local('$table $model $panel $refresh $buttons $sorter $host');
 
-	$model = [new GenericTableModel: @("host", "name", "port", "proto", "state", "info"), "port", 16];
+	$model = [new GenericTableModel: @("host", "name", "port", "proto", "state", "info"), "host", 16];
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -36,6 +36,24 @@ sub createServiceBrowser {
 	$sorter = [new TableRowSorter: $model];
         [$sorter toggleSortOrder: 2];
 	[$table setRowSorter: $sorter];
+
+	[$table addMouseListener: lambda({
+		if ([$1 isPopupTrigger]) {
+			local('$popup $hosts %r $val');
+			$popup = [new JPopupMenu];
+
+			%r = %();
+			foreach $val ([$model getSelectedValues: $table]) {
+				%r[$val] = 1;
+			}
+			$hosts = keys(%r);
+			
+			if (size($hosts) > 0) {
+				host_selected_items($popup, $hosts);
+				[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
+			}
+		}
+	}, \$table, \$model)];
 	
 	[[$table getColumn: "info"] setPreferredWidth: 300];
 	[[$table getColumn: "host"] setPreferredWidth: 125];
