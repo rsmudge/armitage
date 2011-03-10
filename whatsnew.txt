@@ -1,14 +1,14 @@
 Armitage Changelog
 ==================
 
-In Progress
+10 Mar 11 Changes
 ---------
 
 Quick story: NECCDC 2011 Red Team. TJ launches a script that lands 70
 sessions in the first few seconds. 11 red team members are connected to
 Armitage eager to carry out their pieces of pwnage. The Ruby process pegs
 the CPU and Armitage fails spectacularly. Very funny. This releases fixes
-that (I hope). 
+that. 
 
 - Armitage YAML parser now accepts quoted strings in the YAML fields
 - Added caching of sessions.list, db.hosts, and db.services to Armitage 
