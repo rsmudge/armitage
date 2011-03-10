@@ -51,8 +51,11 @@ sub addHostDialog {
 		closef($handle);
 
 		importHosts("upload.hosts", $command => "import_ip_list");
-	
-		deleteFile("upload.hosts");
+
+		thread({		
+			yield 8192;
+			deleteFile("upload.hosts");
+		});
 
 		[$dialog setVisible: 0];
 	}, \$text, \$dialog)];

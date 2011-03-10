@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+10 Mar 11 Update (2200h EST)
+---------
+- Fixed race condition importing manual list of hosts (sometimes the file
+  would get deleted). Grr.
+
 10 Mar 11 Changes
 ---------
 
