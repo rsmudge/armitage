@@ -49,7 +49,9 @@ sub createModuleList {
 							local('$a $b');
 							$a = call($client, "module.info", "exploit", $path);
 							$b = call($client, "module.options", "exploit", $path);
-                        		                attack_dialog($a, $b, [$targets getSelectedHosts], $path);
+							dispatchEvent(lambda({
+								attack_dialog($a, $b, [$targets getSelectedHosts], $path);
+							}, \$a, \$b, \$targets, \$path));
 						}
 					}
 					else {
