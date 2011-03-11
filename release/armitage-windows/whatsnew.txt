@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+10 Mar 11 Update (2230h EST)
+---------
+- Fixed race condition importing manual list of hosts (sometimes the file
+  would get deleted). Grr.
+- Added a lock to prevent multiple Armitage clients from trying to 
+  determine what OS a box has. This should help in CTF situations.
+
 10 Mar 11 Changes
 ---------
 
