@@ -200,11 +200,16 @@ sub launch_service {
 
 # launch_dialog("title", "type", "name", "visible", "hosts...")
 sub launch_dialog {
-	local('$dialog $north $center $center $label $textarea $scroll $model $table $default $combo $key $sorter $value $col $button');
-
 	local('$info $options');
 	$info = call($client, "module.info", $2, $3);
 	$options = call($client, "module.options", $2, $3);
+	dispatchEvent(lambda({
+		invoke(lambda(&_launch_dialog, \$info, \$options), $args);
+	}, \$info, \$options, $args => @_));
+}
+
+sub _launch_dialog {
+	local('$dialog $north $center $center $label $textarea $scroll $model $table $default $combo $key $sorter $value $col $button');
 
 	$dialog = dialog($1, 520, 360);
 
@@ -266,14 +271,20 @@ sub launch_dialog {
 	[$table setRowSorter: $sorter];
 	addFileListener($table, $model);
 
+	local('$TABLE_RENDERER');
+	$TABLE_RENDERER = 
+		wait(fork({
+			return lambda({
+				local('$render $v');
+				$render = [$table getDefaultRenderer: ^String];
+				$v = [$render getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
+				[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
+				return $v;
+			}, \$table, \$model);
+		}, \$table, \$model));
+
 	foreach $col (@("Option", "Value")) {
-		[[$table getColumn: $col] setCellRenderer: lambda({
-			local('$render $v');
-			$render = [$table getDefaultRenderer: ^String];
-			$v = [$render getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
-			[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
-			return $v;
-		}, \$table, \$model)];
+		[[$table getColumn: $col] setCellRenderer: $TABLE_RENDERER];
 	}
 
 	$center = [new JScrollPane: $table];

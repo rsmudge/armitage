@@ -334,14 +334,20 @@ sub attack_dialog {
 	[$table setRowSorter: $sorter];
 	addFileListener($table, $model);
 
+	local('$TABLE_RENDERER');
+	$TABLE_RENDERER = 
+		wait(fork({
+			return lambda({
+				local('$render $v');
+				$render = [$table getDefaultRenderer: ^String];
+				$v = [$render getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
+				[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
+				return $v;
+			}, \$table, \$model);
+		}, \$table, \$model));
+
 	foreach $col (@("Option", "Value")) {
-		[[$table getColumn: $col] setCellRenderer: lambda({
-			local('$render $v');
-			$render = [$table getDefaultRenderer: ^String];
-			$v = [$render getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
-			[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
-			return $v;
-		}, \$table, \$model)];
+		[[$table getColumn: $col] setCellRenderer: $TABLE_RENDERER];
 	}
 
 	$center = [new JScrollPane: $table];
