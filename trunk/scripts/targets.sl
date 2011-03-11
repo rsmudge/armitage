@@ -272,11 +272,37 @@ sub refreshHosts {
 
 	%hosts = %newh;
 
-	if ($FIXONCE is $null && size(%hosts) > 0) {
-		fixOSInfo(keys(%hosts));
+	# lock this host resolving nonsense so X hosts are not bombarding
+	# one poor meterpreter session
+        if ($client !is $mclient && ($FIXONCE is $null || size(@fixes) > 0)) {
+                local('%r');
+		%r = call($mclient, "armitage.lock", "sessions");
+		if (%r["error"]) {
+			warn(%r["error"] . " - not resolving OS info (this is OK--FYI)");
+		}
+		else {
+			if ($FIXONCE is $null && size(%hosts) > 0) {
+				fixOSInfo(keys(%hosts));
+			}
+			else if (size(@fixes) > 0) {
+				fixOSInfo(@fixes);
+			}
+
+			# lock this var for 3 seconds. That should be enough time for the database to update
+			# with the changes made to the host information for these boxes
+			thread({
+				yield 3000;
+				call($mclient, "armitage.unlock", "sessions");
+			});
+		}
 	}
-	else if (size(@fixes) > 0) {
-		fixOSInfo(@fixes);
+	else if ($client is $mclient) {
+		if ($FIXONCE is $null && size(%hosts) > 0) {
+			fixOSInfo(keys(%hosts));
+		}
+		else if (size(@fixes) > 0) {
+			fixOSInfo(@fixes);
+		}
 	}
 
 	return [$graph isAlive];

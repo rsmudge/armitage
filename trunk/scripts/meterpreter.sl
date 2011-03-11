@@ -70,7 +70,14 @@ sub parseMeterpreter {
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		m_cmd($sid, "use stdapi");
-		showError("Loading stdapi. Try command again");
+
+		if ($token !is %handlers["sysinfo"]) {
+			showError("Loading stdapi. Try command again");
+		}
+		else {
+			warn("Retrying sysinfo");
+			m_cmd($sid, "sysinfo");
+		}
 		return;
 	}
 
