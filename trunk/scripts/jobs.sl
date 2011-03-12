@@ -183,9 +183,10 @@ sub launch_service {
 
 			if ($client !is $mclient) {
 				thread(lambda({
-					yield 4096;
+					yield 8192;
 					downloadFile($file);
-				}, \$file));
+					[[$c getWindow] append: "[*] Downloaded \" $+ $file $+ \" to local host\n"];
+				}, \$file, \$c));
 			}
 		}
 	}
