@@ -333,7 +333,7 @@ sub graph_items {
 # need to pass this function a $command local...
 sub importHosts {
 	local('$files');
-	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1));
+	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1, $always => 1));
 
 	thread(lambda({
 		local('$file $handle $data $result $name $success');
