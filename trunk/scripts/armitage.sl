@@ -161,6 +161,9 @@ sub main {
 		chdir(systemProperties()["user.home"]);
 		showError("Can't write to current directory... files will save to:\n" . cwd());
 	}
+	else {
+		warn("Writing to: " . cwd());
+	}
 
 	$frame = [new ArmitageApplication];
         [$frame setSize: 800, 600];
