@@ -13,6 +13,8 @@ public class MeterpreterSession implements Runnable {
 	protected LinkedList    commands  = new LinkedList();
 	protected String        session;
 
+	public static long DEFAULT_WAIT = 12000;
+
 	private static class Command {
 		public Object   token;
 		public String   text;
@@ -61,7 +63,7 @@ public class MeterpreterSession implements Runnable {
 	protected void processCommand(Command c) {
 		Map response = null, read = null;
 		long start;
-		long maxwait = 12000;
+		long maxwait = DEFAULT_WAIT;
 		int expectedReads = 1;
 		try {
 			emptyRead();

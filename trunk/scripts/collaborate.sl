@@ -39,6 +39,7 @@ sub checkForCollaborationServer {
 			local('$host $port $token');
 			($host, $port, $token) = matched();
 			dispatchEvent(lambda({
+				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
 				setup_collaboration($host, $port, $token);
 				postSetup();
 			}, \$host, \$port, \$token));
