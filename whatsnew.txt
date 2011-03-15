@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Shell -> Disconnect now executes in a separate thread.
+
 12 Mar 11 (MACCDC Post Day 1 Update)
 ---------
 - Fixed a bug preventing host import from working with a remote connection

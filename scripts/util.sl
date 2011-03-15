@@ -43,6 +43,12 @@ sub cmd_async {
 	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, 1];
 }
 
+sub call_async {
+	fork({
+		invoke(&call, $args);
+	}, $args => @_);
+}
+
 # invokes an RPC call: call($console, "function", arg1, arg2, ...)
 sub call {
 	local('$exception');

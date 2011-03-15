@@ -154,9 +154,7 @@ sub showShellMenu {
 
 	if ("*Windows*" iswm sessionToOS($sid)) {
 		item($1, "Meterpreter...", 'M', lambda({
-			fork({
-				call($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
-			}, \$client, \$sid, \$MY_ADDRESS);
+			call_async($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());
 		}, \$sid));
 	}
 	else {
@@ -214,7 +212,7 @@ sub showShellMenu {
 
 	separator($1);
 	item($1, "Disconnect", 'D', lambda({
-		call($client, "session.stop", $sid);
+		call_async($client, "session.stop", $sid);
 	}, \$sid));
 }
 
@@ -236,9 +234,7 @@ sub createShellSessionTab {
 	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", "session.stop", $sid, 0];
         [$frame addTab: "Shell $sid", $console, lambda({ 
 		if ($client !is $mclient) {
-			fork({
-				call($mclient, "armitage.unlock", $sid);
-			}, \$mclient, \$sid);
+			call_async($mclient, "armitage.unlock", $sid);
 		}
 	}, \$sid)];
 }
