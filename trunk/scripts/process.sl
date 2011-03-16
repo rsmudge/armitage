@@ -62,7 +62,7 @@ sub createProcessBrowser {
 	local('$a $b $c $buttons');
 	$a = [new JButton: "Kill"];
 	[$a addActionListener: lambda({ 
-		local('$procs');
+		local('$procs $v');
 		$procs = [$model getSelectedValues: $table];
 		foreach $v ($procs) {
 			m_cmd($m, "kill $v"); 

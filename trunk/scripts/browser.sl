@@ -66,6 +66,15 @@ sub parseListing {
 
 %handlers["ls"] = &parseListing;
 
+sub safeColumnRenderer {
+	# this function creates a new sleep thread (a separate script environment for locking purposes)
+	# and sanitizes the specified function through it. This returned function is now safe for use
+	# in a swing thread and will not cause deadlock.
+	return wait(fork({
+		return lambda($function, \$table, \$parent);
+	}, \$table, \$parent, $function => $1));
+}
+
 sub createFileBrowser {
 	local('$table $tree $model $panel $split $scroll1 $sorter $up $text $fsv $chooser $upload $mkdir $refresh $top $setcwd');
 
@@ -92,7 +101,7 @@ sub createFileBrowser {
 
 	[[$table getColumn: "D"] setMaxWidth: 32];
 
-	[[$table getColumn: "D"] setCellRenderer: lambda({
+	[[$table getColumn: "D"] setCellRenderer: safeColumnRenderer({
 		# getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
 		local('$label');
 
@@ -112,14 +121,14 @@ sub createFileBrowser {
 	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
 
 	# make sure subsequent columns do not have an icon associated with them...
-	[[$table getColumn: "Name"] setCellRenderer: lambda({ 
+	[[$table getColumn: "Name"] setCellRenderer: safeColumnRenderer({
 		local('$label');
 		$label = [$parent getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
 		[$label setIcon: $null];
 		return $label;
 	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
 
-	[[$table getColumn: "Size"] setCellRenderer: lambda({ 
+	[[$table getColumn: "Size"] setCellRenderer: safeColumnRenderer({ 
 		local('$label');
 
 		$label = [$parent getTableCellRendererComponent: $1, $null, $3, $4, $5, $6];
@@ -187,6 +196,9 @@ sub createFileBrowser {
 	$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];
 	
 	$up = [new JButton: $chooser];
+	[$up setPressedIcon: 
+		[new ImageIcon: iconToImage($chooser, 2, 2)]
+	];
 	[$up setBorder: [BorderFactory createEmptyBorder: 2, 2, 2, 8]];
 	[$up setOpaque: 0];
 	[$up setContentAreaFilled: 0];
@@ -302,6 +314,23 @@ sub buildFileBrowserMenu {
 			}
 		}
 	}, $file => $2, \$sid, \%types, \$setcwd));
+
+	item($1, "Execute", 'E', lambda({ 
+		local('$f $args');
+		[$setcwd];
+
+		$args = ask("Arguments?");
+
+		foreach $f ($file) {
+			if ($args eq "") {
+				m_cmd($sid, "execute -f \" $+ $f $+ \" -k"); 
+			}
+			else {
+				$args = strrep($args, '\\', '\\\\');
+				m_cmd($sid, "execute -f \" $+ $f $+ \" -k -a \" $+ $args $+ \""); 
+			}
+		}
+	}, $file => $2, \$sid, \$setcwd));
 
 	separator($1);
 

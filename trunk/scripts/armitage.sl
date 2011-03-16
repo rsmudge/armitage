@@ -155,10 +155,14 @@ sub postSetup {
 }
 
 sub main {
-        local('$console $panel');
+        local('$console $panel $dir');
 
-	if (!-canwrite cwd()) {
-		chdir(systemProperties()["user.home"]);
+	if (cwd() eq "/Applications" || !-canwrite cwd()) {
+		$dir = getFileProper(systemProperties()["user.home"], "armitage-tmp");
+		if (!-exists $dir) {
+			mkdir($dir);
+		}
+		chdir($dir);
 		showError("Can't write to current directory... files will save to:\n" . cwd());
 	}
 	else {
