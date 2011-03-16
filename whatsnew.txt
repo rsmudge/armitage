@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+16 Mar 11
 ---------
 - Shell -> Disconnect now executes in a separate thread.
 - Armitage now creates ~/armitage-tmp and writes there if the current dir
