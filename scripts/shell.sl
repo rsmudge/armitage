@@ -46,7 +46,7 @@ global('%shells $ashell $achannel %maxq');
 			[[$console getInput] addActionListener: lambda({
 				local('$file');
 
-				if (-exists "command.txt") {
+				if (-exists "command $+ $sid $+ .txt") {
 					warn("Dropping command, old one not sent yet");
 					return;
 				}
@@ -61,10 +61,10 @@ global('%shells $ashell $achannel %maxq');
 						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
 					}
 					else {
-						$handle = openf(">command.txt");
+						$handle = openf(">command $+ $sid $+ .txt");
 						writeb($handle, "$text $+ \r\n");
 						closef($handle);
-						$file = getFileProper("command.txt");
+						$file = getFileProper("command $+ $sid $+ .txt");
 					}
 				
 					m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
@@ -90,11 +90,10 @@ global('%shells $ashell $achannel %maxq');
 		$ashell = %shells[$1][$channel];
 	}
 	else if ($0 eq "update" && $2 ismatch '\[\*]\ Wrote \d+ bytes to channel (\d+)\.') {
-		deleteFile("command.txt");
+		deleteFile("command $+ $1 $+ .txt");
 
 		local('$channel $ashell');
 		($channel) = matched();
-		sleep(50);
 		m_cmd($1, "read $channel");
 	}
 	else if ($0 eq "update" && $2 ismatch '\[\-\] .*?' && $ashell !is $null) {
@@ -128,7 +127,6 @@ global('%shells $ashell $achannel %maxq');
 		# look for a prompt at the end of the text... if there isn't one,
 		# then it's time to do another read.
 		if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
-			sleep(50);
 			m_cmd($1, "read $achannel");
 		}
 	}

@@ -100,7 +100,7 @@ public class MeterpreterSession implements Runnable {
 						return;
 					}
 
-					Thread.sleep(100);
+					Thread.sleep(10);
 					read = readResponse();
 				}
 
@@ -109,7 +109,7 @@ public class MeterpreterSession implements Runnable {
 			}
 
 			/* grab any additional readable data */
-			Thread.sleep(50);
+			Thread.sleep(10);
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
 				//System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
@@ -152,7 +152,7 @@ public class MeterpreterSession implements Runnable {
 					emptyRead();
 				}
 				else if (next == null) {
-					Thread.sleep(50);
+					Thread.sleep(10);
 				}
 				else {
 					processCommand(next);

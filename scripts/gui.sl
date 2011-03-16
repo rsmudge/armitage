@@ -247,6 +247,20 @@ sub overlay_images {
         return $buffered;
 }
 
+sub iconToImage {
+	if ($1 isa ^ImageIcon) {
+		return [$1 getImage];
+	}
+	else {
+		local('$buffered $g');
+	        $buffered = [new BufferedImage: [$1 getIconWidth], [$1 getIconHeight], [BufferedImage TYPE_INT_ARGB]];
+		$g = [$buffered createGraphics];
+		[$1 paintIcon: $null, $g, $2, $3];
+		[$g dispose];
+		return $buffered;
+	}
+}
+
 sub select {
 	local('$combo');
 	$combo = [new JComboBox: cast($1, ^String)];
