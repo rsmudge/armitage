@@ -89,6 +89,12 @@ public class MeterpreterSession implements Runnable {
 			else if (c.text.startsWith("upload ")) {
 				expectedReads = 2;
 			}
+			else if (c.text.startsWith("keyscan_dump")) {
+				expectedReads = 2;
+			}
+			else if (c.text.startsWith("migrate")) {
+				expectedReads = 2;
+			}
 
 			for (int x = 0; x < expectedReads; x++) {
 				read = readResponse();

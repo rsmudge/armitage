@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Fixed key logger dump button.
+- Process migrate function displays success or fail message again.
+
 16 Mar 11
 ---------
 - Shell -> Disconnect now executes in a separate thread.
