@@ -222,8 +222,9 @@ sub showMeterpreterMenu {
 			item($j, "Setup...", 'A', setupPivotDialog("$sid"));
 			item($j, "Remove", 'R', lambda({ killPivots($sid, $session); }, \$session, $sid => "$sid"));
 
-
-	item($1, "ARP Scan...", 'A', setupArpScanDialog("$sid"));
+	if ("*win*" iswm $platform) {
+		item($1, "ARP Scan...", 'A', setupArpScanDialog("$sid"));
+	}
 
 	separator($1);
 
