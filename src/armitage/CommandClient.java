@@ -18,12 +18,21 @@ public class CommandClient implements Runnable {
 	protected static final Object lock = new Integer(100);
 	protected CommandCallback callback;
 	protected boolean       asynchronous;
+	protected Console	display = null;
 
 	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
-		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, async);
+		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, null, async);
+	}
+
+	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
+		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, display, async);
 	}
 
 	public CommandClient(RpcConnection connection, String command[], String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
+		this(connection, command, readCommand, writeCommand, session, callback, null, async);
+	}
+
+	public CommandClient(RpcConnection connection, String command[], String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
 		this.command = command;
 		this.connection = connection;
 		this.readCommand = readCommand;
@@ -31,6 +40,7 @@ public class CommandClient implements Runnable {
 		this.session = session;
 		this.callback = callback;
 		this.asynchronous = async;
+		this.display = display;
 		new Thread(this).start();
 	}
 
@@ -67,6 +77,10 @@ public class CommandClient implements Runnable {
 				if (! isEmptyData( read.get("data") + "" )  ) {
 					text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
 					output.append(text);
+
+					if (display != null) {
+						display.append(text);
+					}
 				}
 				else if ("false".equals( read.get("busy") + "" ) && isEmptyData( read.get("data") + "" )) {
 					/* this is a bug that annoys the hell out of me. Sometimes an
