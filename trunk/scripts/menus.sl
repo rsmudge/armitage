@@ -23,7 +23,8 @@ sub host_selected_items {
 		}
 	}
 
-	$s = item($1, "Services", 'v', lambda({ createServiceBrowser($hosts) }, $hosts => $2));
+	item($1, "Services", 'v', lambda({ createServiceBrowser($hosts) }, $hosts => $2));
+	item($1, "Scan", 'c', lambda({ launch_msf_scans(join(", ", $hosts)); }, $hosts => $2));
 
 	separator($1);
 

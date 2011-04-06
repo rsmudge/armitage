@@ -223,45 +223,45 @@ sub showMeterpreterMenu {
 			item($j, "Remove", 'R', lambda({ killPivots($sid, $session); }, \$session, $sid => "$sid"));
 
 
-	enumerateMenu($1, sessionToHost($session)); 
+	item($1, "ARP Scan...", 'A', setupArpScanDialog("$sid"));
 
 	separator($1);
 
 	item($1, "Kill", 'K', lambda({ cmd_safe("sessions -k $sid"); }, $sid => "$sid"));
 }
 
-sub enumerateMenu {
-	local('$2');
+sub launch_msf_scans {
+	local('@modules $1 $hosts');
 
-	item($1, "MSF Scans", 'S', lambda({
-		local('$hosts @modules');
+	@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
+	push(@modules, "scanner/discovery/udp_sweep");
+	push(@modules, "scanner/netbios/nbname");
+	push(@modules, "scanner/dcerpc/tcp_dcerpc_auditor");
+	push(@modules, "scanner/mssql/mssql_ping");
 
-		@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
-		push(@modules, "scanner/discovery/udp_sweep");
-		push(@modules, "scanner/netbios/nbname");
-		push(@modules, "scanner/dcerpc/tcp_dcerpc_auditor");
-		push(@modules, "scanner/mssql/mssql_ping");
+	$hosts = iff($1 is $null, ask("Enter range (e.g., 192.168.1.0/24):"), $1);
 
-		$hosts = ask("Enter range (e.g., 192.168.1.0/24):");
+	thread(lambda({
+		local('%options $scanner $count $pivot');
 
-		thread(lambda({
-			local('%options $scanner $count $pivot');
+		if ($hosts !is $null) {
+			# we don't need to set CHOST as the discovery modules will honor any pivots already in place
+			%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
 
-			if ($hosts !is $null) {
-				# we don't need to set CHOST as the discovery modules will honor any pivots already in place
-				%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
-
-				foreach $scanner (@modules) {
-					call($client, "module.execute", "auxiliary", $scanner, %options);
-					$count++;
-					yield 250;
-				}
-
-				elog("launched $count discovery modules at: $hosts");
-				showError("Launched $count discovery modules");
+			foreach $scanner (@modules) {
+				call($client, "module.execute", "auxiliary", $scanner, %options);
+				$count++;
+				yield 250;
 			}
-		}, \$hosts, \@modules));
-	}, $pivot => $2));
+
+			elog("launched $count discovery modules at: $hosts");
+			showError("Launched $count discovery modules");
+		}
+	}, \$hosts, \@modules));
+}
+
+sub enumerateMenu {
+	item($1, "MSF Scans", 'S', &launch_msf_scans);
 }
 
 sub setHostInfo {

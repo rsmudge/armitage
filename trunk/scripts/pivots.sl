@@ -11,6 +11,42 @@ import javax.swing.table.*;
 import msf.*;
 import table.*;
 
+import graph.*;
+
+sub maskToCIDR {
+	local ('$x');
+	$x = strlen(strrep(formatNumber([Route ipToLong: $1], 10, 2), "0", ""));
+	return $x;
+}
+
+sub arp_scan_function  {
+	local('$host $mask $tmp_console');
+	$host = [$model getSelectedValueFromColumn: $table, "host"];
+	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
+	
+	if ($host ne "" && $mask ne "") {
+		elog("added pivot: $host $mask $sid");
+		warn(call($client, "module.execute", "post", "windows/gather/arp_scanner", %(SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask))));
+	}
+	[$dialog setVisible: 0];
+}
+
+sub add_pivot_function  {
+	local('$host $mask $tmp_console');
+	$host = [$model getSelectedValueFromColumn: $table, "host"];
+	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
+	
+	if ($host ne "" && $mask ne "") {
+		$tmp_console = createConsole($client);
+		elog("added pivot: $host $mask $sid");
+		cmd($client, $tmp_console, "route add $host $mask $sid", lambda({ 
+			call($client, "console.destroy", $tmp_console);
+			if ($3 ne "") { showError($3); } 
+		}, \$tmp_console));
+	}
+	[$dialog setVisible: 0];
+}
+
 #
 # pop up a dialog to start our attack with... fun fun fun
 #
@@ -36,7 +72,7 @@ sub pivot_dialog {
 		%handlers["route"] = $null;
 
 		local('$dialog $model $table $sorter $center $a $route $button');
-		$dialog = [new JDialog: $frame, "Add Pivots", 0];
+		$dialog = [new JDialog: $frame, $title, 0];
 		[$dialog setSize: 320, 240];
 		[$dialog setLayout: [new BorderLayout]];
 		[$dialog setLocationRelativeTo: $frame];
@@ -58,22 +94,8 @@ sub pivot_dialog {
 		$a = [new JPanel];
 		[$a setLayout: [new FlowLayout: [FlowLayout CENTER]]];
 
-		$button = [new JButton: "Add Pivot"];
-		[$button addActionListener: lambda({
-			local('$host $mask $tmp_console');
-			$host = [$model getSelectedValueFromColumn: $table, "host"];
-			$mask = [$model getSelectedValueFromColumn: $table, "mask"];
-	
-			if ($host ne "" && $mask ne "") {
-				$tmp_console = createConsole($client);
-				elog("added pivot: $host $mask $sid");
-				cmd($client, $tmp_console, "route add $host $mask $sid", lambda({ 
-					call($client, "console.destroy", $tmp_console);
-					if ($3 ne "") { showError($3); } 
-				}, \$tmp_console));
-			}
-			[$dialog setVisible: 0];
-		}, \$table, \$model, \$dialog, \$sid)];
+		$button = [new JButton: $label];
+		[$button addActionListener: lambda($function, \$table, \$model, \$dialog, \$sid)];
 
 		[$a add: $button];
 
@@ -87,7 +109,14 @@ sub pivot_dialog {
 
 sub setupPivotDialog {
 	return lambda({
-		%handlers["route"] = lambda(&pivot_dialog, \$sid);
+		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "Add Pivots", $label => "Add Pivot", $function => &add_pivot_function);
+		m_cmd($sid, "route");
+	}, $sid => "$1");
+}
+
+sub setupArpScanDialog {
+	return lambda({
+		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "ARP Scan", $label => "ARP Scan", $function => &arp_scan_function);
 		m_cmd($sid, "route");
 	}, $sid => "$1");
 }
