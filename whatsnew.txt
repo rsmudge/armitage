@@ -8,6 +8,12 @@ In Progress
 - Armitage now displays nmap output in a tab. You can thank scriptjunkie
   for making this work in Metasploit. Please send cash, check, or money
   order directly to him.
+- Greatly improved post-pivot host discovery workflow... here's the deal:
+  -- [host] -> Meterpreter -> ARP Scan menu now shows networks local to
+     host and lets you choose to launch an ARP scan from that Meterpreter
+     session.  
+  -- Highlight one or more hosts, right-click, and select Scan to launch
+     MSF discovery scans against the highlighted hosts.
 
 16 Mar 11
 ---------
