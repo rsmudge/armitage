@@ -43,6 +43,11 @@ sub cmd_async {
 	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, 1];
 }
 
+sub cmd_async_display {
+	#warn("cmd_async called: " . @_);
+	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, $5, 1];
+}
+
 sub call_async {
 	fork({
 		invoke(&call, $args);
@@ -91,6 +96,13 @@ sub convertAll {
 # cleans the prompt text from an MSF RPC call
 sub cleanText {
         return tr($1, "\x01\x02", "");
+}
+
+sub createDisplayTab {
+	local('$console');
+	$console = [new Console: $preferences];
+	[$frame addTab: $1, $console, $null];
+	return $console;
 }
 
 # creates a new metasploit console (with all the trimmings)
@@ -208,21 +220,25 @@ sub cmd_safe
 sub createNmapFunction
 {
 	return lambda({
-		local('$tmp_console $address');
-		$tmp_console = createConsole($client);
+		local('$tmp_console $address $display');
 		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
-		
 		if ($address eq "") { return; }
+
+		$tmp_console = createConsole($client);
+		$display = createDisplayTab("nmap");
 		
 		elog("started a scan: nmap $args $address");
 
-		cmd_async($client, $tmp_console, "db_nmap $args $address", 
+		[$display append: "msf > db_nmap $args $address\n\n"];
+
+		cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
 			lambda({ 
 				call($client, "console.destroy", $tmp_console);
 				$FIXONCE = $null;
 				refreshTargets();
 				fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
-			}, \$tmp_console)
+			}, \$tmp_console),
+			$display
 		);
 	}, $args => $1);
 }
