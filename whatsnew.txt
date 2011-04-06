@@ -5,6 +5,9 @@ In Progress
 -----------
 - Fixed key logger dump button.
 - Process migrate function displays success or fail message again.
+- Armitage now displays nmap output in a tab. You can thank scriptjunkie
+  for making this work in Metasploit. Please send cash, check, or money
+  order directly to him.
 
 16 Mar 11
 ---------
