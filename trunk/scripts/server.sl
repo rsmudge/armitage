@@ -166,6 +166,17 @@ sub client {
 				writeObject($handle, result(%(error => "file does not exist")));
 			}
 		}
+		else if ($method eq "armitage.download_nodelete") {
+			if (-exists $args[0] && -isFile $args[0]) {
+				$h = openf($args[0]);
+				$data = readb($h, -1);
+				closef($h);
+				writeObject($handle, result(%(data => $data)));
+			}
+			else {
+				writeObject($handle, result(%(error => "file does not exist")));
+			}
+		}
 		else if ($method eq "armitage.write") {
 			($sid, $data, $channel) = $args;
 
