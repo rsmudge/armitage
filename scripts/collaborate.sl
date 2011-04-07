@@ -95,3 +95,17 @@ sub downloadFile {
 	closef($handle);
 	return $file;
 }
+
+sub getFileContent {
+	local('$file $handle %r');
+	if ($mclient !is $client) {
+		%r = call($mclient, "armitage.download", $1);
+		return %r['data'];
+	}
+	else {
+		$handle = openf($1);
+		$file = readb($handle, -1);
+		closef($handle);
+		return $file;
+	}
+}

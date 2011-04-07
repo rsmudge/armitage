@@ -14,6 +14,9 @@ In Progress
      session.  
   -- Highlight one or more hosts, right-click, and select Scan to launch
      MSF discovery scans against the highlighted hosts.
+- Added a rudimentary loot browser/viewer to Armitage. Go to View -> Loot
+  to see the currently captured loots. Loot is the Metasploit term for 
+  data captured by certain post/ modules.
 
 16 Mar 11
 ---------
