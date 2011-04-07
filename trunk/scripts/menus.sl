@@ -69,6 +69,10 @@ sub view_items {
 	item($1, 'Credentials', 'r', &createCredentialsTab);
 	item($1, 'Jobs', 'J', &createJobsTab);
 
+	if (!$REMOTE || $mclient !is $client) {
+		item($1, 'Loot', 'L', &createLootBrowser);
+	}
+
 	separator($1);
 
 	local('$t');
