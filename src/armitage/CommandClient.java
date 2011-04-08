@@ -20,14 +20,6 @@ public class CommandClient implements Runnable {
 	protected boolean       asynchronous;
 	protected Console	display = null;
 
-	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
-		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, null, async);
-	}
-
-	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
-		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, display, async);
-	}
-
 	public CommandClient(RpcConnection connection, String command[], String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
 		this(connection, command, readCommand, writeCommand, session, callback, null, async);
 	}
@@ -42,6 +34,14 @@ public class CommandClient implements Runnable {
 		this.asynchronous = async;
 		this.display = display;
 		new Thread(this).start();
+	}
+
+	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
+		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, null, async);
+	}
+
+	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
+		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, display, async);
 	}
 
 	public void run() {

@@ -25,7 +25,7 @@ sub cmd_all {
 	local('$c');
 	#warn("cmd_all called: " . @_);
 	$c = cast(map({ return "$1 $+ \n"; }, $3), ^String);
-	[new CommandClient: $1, $c, "console.read", "console.write", $2, $4, 0];
+	[new CommandClient: $1, $c, "console.read", "console.write", $2, $4, $null, 0];
 }
 
 sub cmd_all_async {
