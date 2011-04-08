@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+8 Apr 11 - Change Log
+--------
 - Fixed key logger dump button.
 - Process migrate function displays success or fail message again.
 - Armitage now displays nmap output in a tab. You can thank scriptjunkie
@@ -17,6 +17,9 @@ In Progress
 - Added a rudimentary loot browser/viewer to Armitage. Go to View -> Loot
   to see the currently captured loots. Loot is the Metasploit term for 
   data captured by certain post/ modules.
+- Armitage now presents a warning when it detects a second Metasploit 
+  user connected to the same Metasploit server without the collaboration
+  server in place.
 
 16 Mar 11
 ---------

@@ -33,6 +33,47 @@ sub c_client {
 	}, $host => $1, $port => $2));
 }
 
+sub userFingerprint {
+	return unpack("H*", digest(values(systemProperties(), @("os.name", "user.dir", "os.version")) . "22", "MD5"))[0];
+}
+
+sub checkForUserConflict {
+	cmd($client, $console, "set ARMITAGE_USER", {
+		if ($3 ismatch "ARMITAGE_USER => (.*?)\n") {
+			local('$user');
+			$user = matched();
+			if ($user ne userFingerprint()) {
+				showError("Congratulations! You're eligible for a free ringtone.
+
+Just kidding. *This is serious*
+
+You're trying to connect to Metasploit when someone else is already 
+using it. This won't work. Trust me. 
+
+It is possible to connect a team to Metasploit but you have to 
+start Armitage's collaboration server on the Metasploit host. 
+
+To do this:
+
+1. Disconnect all clients from Metasploit
+
+2. Type:
+
+   cd /path/to/metasploit/
+   ./armitage --server [host] [port] [user] [pass] [1=SSL, 0=No SSL]
+
+   The [values] must be what you would use to connect Armitage to 
+   Metasploit's RPC daemon. Do not use 127.0.0.1 for [host].
+
+3. Reconnect and enjoy the collaboration features.");
+			}
+		}
+		else {
+			cmd($client, $console, "setg ARMITAGE_USER " . userFingerprint(), {});
+		}
+	});
+}
+
 sub checkForCollaborationServer {
 	cmd($client, $console, "set ARMITAGE_SERVER", {
 		if ($3 ismatch "ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n") {
@@ -47,6 +88,7 @@ sub checkForCollaborationServer {
 		else {
 			warn("No collaboration server is present!");
 			$mclient = $client;
+			checkForUserConflict();
 			dispatchEvent(&postSetup);
 		}
 	});
@@ -99,7 +141,7 @@ sub downloadFile {
 sub getFileContent {
 	local('$file $handle %r');
 	if ($mclient !is $client) {
-		%r = call($mclient, "armitage.download", $1);
+		%r = call($mclient, "armitage.download_nodelete", $1);
 		return %r['data'];
 	}
 	else {
