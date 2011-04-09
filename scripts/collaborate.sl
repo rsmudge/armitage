@@ -34,7 +34,7 @@ sub c_client {
 }
 
 sub userFingerprint {
-	return unpack("H*", digest(values(systemProperties(), @("os.name", "user.dir", "os.version")) . "22", "MD5"))[0];
+	return unpack("H*", digest(values(systemProperties(), @("os.name", "user.home", "os.version")), "MD5"))[0];
 }
 
 sub checkForUserConflict {
