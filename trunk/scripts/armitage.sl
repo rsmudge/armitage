@@ -30,6 +30,7 @@ sub describeHost {
 sub showHost {
 	local('$sessions $os @overlay $match');
 	($sessions, $os, $match) = values($1, @('sessions', 'os_name', 'os_flavor'));
+	$os = normalize($os);
 
 	if ($os eq "Printer" || "*Printer*" iswm $match || $os eq "embedded") {
 		return overlay_images(@('resources/printer.png'));
