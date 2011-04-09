@@ -26,7 +26,9 @@ sub updateLootModel {
 				$row["date"] = matched()[0];
 			}
 
-			[$model addEntry: $row];
+			if (size($row) > 0) {
+				[$model addEntry: $row];
+			}
 		}
 		[$model fireListeners];
 	}, \$model));
