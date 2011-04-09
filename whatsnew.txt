@@ -20,6 +20,8 @@ Armitage Changelog
 - Armitage now presents a warning when it detects a second Metasploit 
   user connected to the same Metasploit server without the collaboration
   server in place.
+- Armitage collaboration mode now updates with changes to targets much
+  quicker (almost as fast as without the collaboration mode).
 
 16 Mar 11
 ---------

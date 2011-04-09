@@ -232,7 +232,7 @@ sub fixOSInfo {
 		local('$line $r');
 		foreach $line (split("\n", $3)) {
 			$r = quickParse($line);
-			if ($r) {	
+			if ($r) {
 				_fixOSInfo($r, $hosts);				
 			}
 		}
@@ -291,6 +291,7 @@ sub refreshHosts {
 			# lock this var for 3 seconds. That should be enough time for the database to update
 			# with the changes made to the host information for these boxes
 			thread({
+				call($mclient, "armitage.refresh");
 				yield 3000;
 				call($mclient, "armitage.unlock", "sessions");
 			});
@@ -427,6 +428,11 @@ sub targetPopup {
 
 sub refreshTargets {
 	warn("refreshTargets was called");
+
+	if ($client !is $mclient && $mclient !is $null) {
+		call($mclient, "armitage.refresh");
+	}
+
 	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 0L, lambda(&refreshHosts, $graph => $targets)];
 	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 0L, lambda(&refreshServices, $graph => $targets)];
 	[new ArmitageTimer: $mclient, "session.list", $null, 0L, lambda(&refreshSessions, $graph => $targets)];
