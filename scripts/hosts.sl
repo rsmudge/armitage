@@ -93,3 +93,25 @@ sub host_items {
 	item($1, "Clear Hosts", 'C', &clearHosts);
 }
 
+# oh yay, Metasploit now normalizes OS info (so I don't have to). Except the new constants
+# they use are different than the ones they have used... *sigh* time to future proof my code.
+sub normalize {
+	if ("*Windows*" iswm $1) {
+		return "Windows";
+	}
+	else if ("*Mac*OS*X*" iswm $1) {
+		return "Mac OS X";
+	}
+	else if ("*Solaris*" iswm $1) {
+		return "Solaris";
+	}
+	else if ("*Cisco*" iswm $1) {
+		return "IOS";
+	}
+	else if ("*Printer*" iswm $1) {
+		return "Printer";
+	}
+	else {
+		return $1;
+	}
+}

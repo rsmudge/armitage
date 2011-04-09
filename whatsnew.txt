@@ -21,6 +21,8 @@ Armitage Changelog
   user connected to the same Metasploit server without the collaboration
   server in place.
 - Armitage collaboration mode now updates target information more often
+- Updated Armitage to work with Metasploit's new normalized host OS 
+  constants.
 
 16 Mar 11
 ---------
