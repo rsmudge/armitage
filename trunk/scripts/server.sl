@@ -191,6 +191,15 @@ sub client {
 
 			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
 		}
+		else if ($method eq "armitage.refresh") {
+			acquire($cach_lock);
+			local('$key $value');
+			foreach $key => $value (%cache) {
+				$value = $null;
+			}
+			release($cach_lock);
+			writeObject($handle, result(%()));
+		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
 			# never underestimate the power of caching to alleviate load.
 			local('$response $time');
