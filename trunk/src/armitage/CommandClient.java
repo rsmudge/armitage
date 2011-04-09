@@ -20,11 +20,15 @@ public class CommandClient implements Runnable {
 	protected boolean       asynchronous;
 	protected Console	display = null;
 
-	public CommandClient(RpcConnection connection, String command[], String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
-		this(connection, command, readCommand, writeCommand, session, callback, null, async);
+	//
+	// length is a dummy value in the API because of some whacky stuff happening with Sleep's method resolution
+	// that differs on a platform to platform basis
+	//
+	public CommandClient(RpcConnection connection, String command[], int length, String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
+		this(connection, command, length, readCommand, writeCommand, session, callback, null, async);
 	}
 
-	public CommandClient(RpcConnection connection, String command[], String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
+	public CommandClient(RpcConnection connection, String command[], int length, String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
 		this.command = command;
 		this.connection = connection;
 		this.readCommand = readCommand;
@@ -37,11 +41,11 @@ public class CommandClient implements Runnable {
 	}
 
 	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, boolean async) {
-		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, null, async);
+		this(connection, new String[] { command }, 1, readCommand, writeCommand, session, callback, null, async);
 	}
 
 	public CommandClient(RpcConnection connection, String command, String readCommand, String writeCommand, String session, CommandCallback callback, Console display, boolean async) {
-		this(connection, new String[] { command }, readCommand, writeCommand, session, callback, display, async);
+		this(connection, new String[] { command }, 1, readCommand, writeCommand, session, callback, display, async);
 	}
 
 	public void run() {
