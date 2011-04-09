@@ -25,7 +25,7 @@ sub arp_scan_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		elog("added pivot: $host $mask $sid");
+		elog("ARP scan: $host $mask $sid");
 		warn(call($client, "module.execute", "post", "windows/gather/arp_scanner", %(SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask))));
 	}
 	[$dialog setVisible: 0];
