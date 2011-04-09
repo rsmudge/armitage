@@ -25,8 +25,8 @@ sub arp_scan_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		elog("ARP scan: $host $mask $sid");
-		warn(call($client, "module.execute", "post", "windows/gather/arp_scanner", %(SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask))));
+		elog("ARP scan: $host $+ /" . maskToCIDR($mask) . " via $sid");
+		call($client, "module.execute", "post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
 	}
 	[$dialog setVisible: 0];
 }
@@ -109,7 +109,7 @@ sub pivot_dialog {
 
 sub setupPivotDialog {
 	return lambda({
-		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "Add Pivots", $label => "Add Pivot", $function => &add_pivot_function);
+		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "Add Pivot", $label => "Add Pivot", $function => &add_pivot_function);
 		m_cmd($sid, "route");
 	}, $sid => "$1");
 }
