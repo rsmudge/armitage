@@ -41,8 +41,9 @@ sub checkForUserConflict {
 	cmd($client, $console, "set ARMITAGE_USER", {
 		if ($3 ismatch "ARMITAGE_USER => (.*?)\n") {
 			local('$user');
-			$user = matched();
+			$user = matched()[0];
 			if ($user ne userFingerprint()) {
+				warn("$user vs. " . userFingerprint());
 				showError("Congratulations! You're eligible for a free ringtone.
 
 Just kidding. *This is serious*
