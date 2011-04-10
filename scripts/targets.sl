@@ -210,10 +210,11 @@ sub fixOSInfo {
 	foreach $host ($hosts) {
 		$sessions = getSessions($host);
 		$os = getHostOS($host);
-		if (size($sessions) > 0 && ($os eq "Unknown" || $os is $null)) {
+		if (size($sessions) > 0) {	
+			warn("Going to do sysinfo for $host ( $+ $os $+ )");
 			$flag = $null;
 			foreach $sid => $session ($sessions) {
-				if ($session['type'] eq "meterpreter") {
+				if ($session['type'] eq "meterpreter" && $flag is $null) {
 					$flag = 1;
 					dispatchEvent(lambda({ 
 						m_cmd($sid, "sysinfo");
@@ -243,19 +244,30 @@ sub fixOSInfo {
 sub refreshHosts {
 	if ($0 ne "result") { return; }
 
-	local('$host $data $address %newh @fixes');
+	local('$host $data $address %newh @fixes $key $value');
 	$data = convertAll($3);
 #	warn("&refreshHosts - $data");
 
 	foreach $host ($data["hosts"]) {
 		$address = $host['address'];
 		if ($address in %hosts && size(%hosts[$address]) > 1) {
+			# let's not overwrite already known values with incomplete values.
+			foreach $key => $value ($host) {
+				if ($value eq "") {
+					remove();
+				}
+			}
 			%newh[$address] = %hosts[$address];
 			putAll(%newh[$address], keys($host), values($host));
 
 			if ($host['os_name'] eq "") {
 				push(@fixes, $address);
 				%newh[$address]['os_name'] = "Unknown";
+			}
+			# we're doing this because Metasploit's new host normalization does not populate the os_flavor field
+			# AND it overwrites ours by clearing it out.... blah!
+			else if ("*Windows*" iswm $host['os_name'] && $host['os_flavor'] eq "") {
+				push(@fixes, $address);
 			}
 		}
 		else {

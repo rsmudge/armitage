@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-9 Apr 11 - Change Log
---------
+10 Apr 11 - Change Log
+---------
 - Fixed key logger dump button.
 - Process migrate function displays success or fail message again.
 - Armitage now displays nmap output in a tab. You can thank scriptjunkie
@@ -22,7 +22,7 @@ Armitage Changelog
   server in place.
 - Armitage collaboration mode now updates target information more often
 - Updated Armitage to work with Metasploit's new normalized host OS 
-  constants.
+  constants and to restore the os_flavor value when it is wiped out.
 
 16 Mar 11
 ---------
