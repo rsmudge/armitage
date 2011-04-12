@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Metasploit now has host normalization (this is great news). I've 
+  removed the OS reporting code from Armitage as a consequence. This 
+  means less overhead communicating with Metasploit + more timely OS 
+  info in the targets view.
+
 10 Apr 11 - Change Log
 ---------
 - Fixed key logger dump button.

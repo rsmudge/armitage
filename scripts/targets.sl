@@ -148,47 +148,6 @@ sub refreshServices {
 	return [$graph isAlive];
 }
 
-sub _fixOSInfo {
-	local('$note $hosts $info $host');
-	($note, $hosts) = @_;
-	$host = $note['host'];
-
-	if ($note['type'] eq "host.os.nmap_fingerprint" && $host in %hosts) {
-		$info = %hosts[$note['host']];
-
-		if ($host in $hosts) {
-			$info['os_name'] = $note['os_family'];
-			$info['os_version'] = $note['os_version'];
-			call($client, "db.report_host", %(host => $host, os_name => $info['os_name'], os_flavor => $info['os_version']));
-			$FIXONCE = 1;
-		}
-		$info['os_match'] = $note['os_match'];
-
-		return;
-	}
-	else if ($note['type'] eq "smb.fingerprint" && $host in %hosts) {
-		$info = %hosts[$note['host']];
-
-		if ($host in $hosts) {
-			$info['os_name'] = $note['os_name'];
-			$info['os_version'] = $note['os_flavor'];
-			if ($info['os_name'] ne "Unknown") {
-				call($client, "db.report_host", %(host => $host, os_name => $info['os_name'], os_flavor => $info['os_version']));
-				$FIXONCE = 1;
-			}
-		}
-
-		if ('os_sp' in $note) {
-			$info['os_match'] = $note['os_flavor'] . ", " . $note['os_sp'];
-		}
-		else {
-			$info['os_match'] = $note['os_flavor'];
-		}
-
-		return;
-	}
-}
-
 sub quickParse {
 	if ($1 ismatch '.*? host=(.*?)(?:\s*service=.*?){0,1}\s*type=(.*?)\s+data=\\{(.*?)\\}') {
 		local('$host $type $data %r $key $value');
@@ -202,45 +161,6 @@ sub quickParse {
 	}
 }
 
-sub fixOSInfo {
-	# let's try using sysinfo as well
-	local('$host $sessions $hosts $sid $session $flag $os');
-	$hosts = copy($1);
-
-	foreach $host ($hosts) {
-		$sessions = getSessions($host);
-		$os = getHostOS($host);
-		if (size($sessions) > 0) {	
-			warn("Going to do sysinfo for $host ( $+ $os $+ )");
-			$flag = $null;
-			foreach $sid => $session ($sessions) {
-				if ($session['type'] eq "meterpreter" && $flag is $null) {
-					$flag = 1;
-					dispatchEvent(lambda({ 
-						m_cmd($sid, "sysinfo");
-					}, \$sid));
-				}
-			}
-	
-			iff($flag, remove());
-		}
-	}
-
-	# db.notes MSF call keeps locking up... *sigh*
-	local('$tmp_console');
-	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, "db_notes", lambda({
-		local('$line $r');
-		foreach $line (split("\n", $3)) {
-			$r = quickParse($line);
-			if ($r) {
-				_fixOSInfo($r, $hosts);				
-			}
-		}
-		call($client, "console.destroy", $tmp_console);
-	}, \$hosts, \$tmp_console));
-}
-
 sub refreshHosts {
 	if ($0 ne "result") { return; }
 
@@ -251,23 +171,14 @@ sub refreshHosts {
 	foreach $host ($data["hosts"]) {
 		$address = $host['address'];
 		if ($address in %hosts && size(%hosts[$address]) > 1) {
-			# let's not overwrite already known values with incomplete values.
-			foreach $key => $value ($host) {
-				if ($value eq "") {
-					remove();
-				}
-			}
 			%newh[$address] = %hosts[$address];
 			putAll(%newh[$address], keys($host), values($host));
 
 			if ($host['os_name'] eq "") {
-				push(@fixes, $address);
 				%newh[$address]['os_name'] = "Unknown";
 			}
-			# we're doing this because Metasploit's new host normalization does not populate the os_flavor field
-			# AND it overwrites ours by clearing it out.... blah!
-			else if ("*Windows*" iswm $host['os_name'] && $host['os_flavor'] eq "") {
-				push(@fixes, $address);
+			else {
+				%newh[$address]['os_match'] = join(" ", values($host, @('os_name', 'os_flavor', 'os_sp')));
 			}
 		}
 		else {
@@ -277,47 +188,14 @@ sub refreshHosts {
 
 			if ($host['os_name'] eq "" || $host['os_name'] eq "Unknown") {
 				$host['os_name'] = "Unknown";
-				push(@fixes, $address);
+			}
+			else {
+				%newh[$address]['os_match'] = join(" ", values($host, @('os_name', 'os_flavor', 'os_sp')));
 			}
 		}
 	}
 
 	%hosts = %newh;
-
-	# lock this host resolving nonsense so X hosts are not bombarding
-	# one poor meterpreter session
-        if ($client !is $mclient && ($FIXONCE is $null || size(@fixes) > 0)) {
-                local('%r');
-		%r = call($mclient, "armitage.lock", "sessions");
-		if (%r["error"]) {
-			warn(%r["error"] . " - not resolving OS info (this is OK--FYI)");
-		}
-		else {
-			if ($FIXONCE is $null && size(%hosts) > 0) {
-				fixOSInfo(keys(%hosts));
-			}
-			else if (size(@fixes) > 0) {
-				fixOSInfo(@fixes);
-			}
-
-			# lock this var for 3 seconds. That should be enough time for the database to update
-			# with the changes made to the host information for these boxes
-			thread({
-				call($mclient, "armitage.refresh");
-				yield 3000;
-				call($mclient, "armitage.unlock", "sessions");
-			});
-		}
-	}
-	else if ($client is $mclient) {
-		if ($FIXONCE is $null && size(%hosts) > 0) {
-			fixOSInfo(keys(%hosts));
-		}
-		else if (size(@fixes) > 0) {
-			fixOSInfo(@fixes);
-		}
-	}
-
 	return [$graph isAlive];
 }
 
