@@ -44,31 +44,33 @@ global('%shells $ashell $achannel %maxq');
 			%shells[$sid][$channel] = $console;
 
 			[[$console getInput] addActionListener: lambda({
-				local('$file');
+				local('$file $text $handle');
 
 				if (-exists "command $+ $sid $+ .txt") {
-					warn("Dropping command, old one not sent yet");
-					return;
+					if ((ticks() - lastModified("command $+ $sid $+ .txt")) > 5000) {
+						warn((ticks() - lastModified("command $+ $sid $+ .txt")));
+						deleteFile("command $+ $sid $+ .txt");
+					}
+					else {
+						showError("Waiting for the previous command to send.");
+						return;
+					}
 				}
-				
-				local('$text');
+
 				$text = [[$console getInput] getText];
 				[[$console getInput] setText: ""];
 
-				thread(lambda({
-					local('$handle $file');
-					if ($client !is $mclient) {
-						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
-					}
-					else {
-						$handle = openf(">command $+ $sid $+ .txt");
-						writeb($handle, "$text $+ \r\n");
-						closef($handle);
-						$file = getFileProper("command $+ $sid $+ .txt");
-					}
+				if ($client !is $mclient) {
+					$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+				}
+				else {
+					$handle = openf(">command $+ $sid $+ .txt");
+					writeb($handle, "$text $+ \r\n");
+					closef($handle);
+					$file = getFileProper("command $+ $sid $+ .txt");
+				}
 				
-					m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
-				}, \$channel, \$sid, \$text));
+				m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
 			}, \$sid, \$console, \$channel)];
 
 			[$frame addTab: "$command $pid $+ @ $+ $sid", $console, lambda({
