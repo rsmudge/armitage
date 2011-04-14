@@ -205,6 +205,14 @@ sub createFileBrowser {
 	[$up setToolTipText: "Go up one directory"];
 
 	[$up addActionListener: lambda({ 
+		this('$last');
+		if ((ticks() - $last) < 500) {
+			warn("Dropping cd .. -- too fast");
+			$last = ticks();
+			return;
+		}
+		$last = ticks();
+
 		[$setcwd];
 		m_cmd($sid, "cd ..");
 		m_cmd($sid, "ls");
