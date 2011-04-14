@@ -18,6 +18,8 @@ In Progress
 - Added a check to prevent cd .. button in file browser from retriggering
   too quickly. This will prevent the meterpreter command queue from 
   becoming very backed up doing a cd/ls over and over again.
+- Graph view no longer counts edges as a selected item when creating a
+  list of hosts to apply an action to.
 
 10 Apr 11 - Change Log
 ---------
