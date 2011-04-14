@@ -257,14 +257,21 @@ public class NetworkGraph extends JComponent implements ActionListener {
 
 	public String[] getSelectedHosts() {
 		mxCell cell;
+		java.util.List sel = new LinkedList();
 
 		Object[] cells = graph.getSelectionCells();
-		String[] selected = new String[cells.length];
 
-		for (int x = 0; x < cells.length; x++) {
-			cell = (mxCell)cells[x];
-			selected[x] = cell.getId();
-		}	
+		for (int y = 0; y < cells.length; y++) {
+			cell = (mxCell)cells[y];
+			if (nodes.containsKey(cell.getId())) 
+				sel.add(cell.getId());
+		}
+
+		String[] selected = new String[sel.size()];
+		Iterator i = sel.iterator();
+		for (int x = 0; i.hasNext(); x++) {
+			selected[x] = i.next() + "";
+		}
 
 		return selected;
 	}
