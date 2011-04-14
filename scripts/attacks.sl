@@ -76,12 +76,14 @@ sub targetsCombobox {
 }
 
 sub getOS {
-	local('@allowed');
-	if ($1 eq "Windows") { @allowed = @("windows", "multi"); }
-	else if ($1 eq "Solaris") { @allowed = @("solaris", "multi", "unix"); }
-	else if ($1 eq "Linux") { @allowed = @("linux", "multi", "unix"); }
-	else if ($1 eq "Mac OS X") { @allowed = @("osx", "multi", "unix"); }
-	else if ($1 eq "FreeBSD") { @allowed = @("freebsd", "multi", "unix"); }
+	local('@allowed $os');
+	$os = normalize($1);
+
+	if ($os eq "Windows") { @allowed = @("windows", "multi"); }
+	else if ($os eq "Solaris") { @allowed = @("solaris", "multi", "unix"); }
+	else if ($os eq "Linux") { @allowed = @("linux", "multi", "unix"); }
+	else if ($os eq "Mac OS X") { @allowed = @("osx", "multi", "unix"); }
+	else if ($os eq "FreeBSD") { @allowed = @("freebsd", "multi", "unix"); }
 	else { @allowed = @("multi", "unix"); }
 	return @allowed;
 }

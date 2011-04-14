@@ -70,14 +70,7 @@ sub parseMeterpreter {
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		m_cmd($sid, "use stdapi");
-
-		if ($token !is %handlers["sysinfo"]) {
-			showError("Loading stdapi. Try command again");
-		}
-		else {
-			warn("Retrying sysinfo");
-			m_cmd($sid, "sysinfo");
-		}
+		showError("Loading stdapi. Try command again");
 		return;
 	}
 
@@ -272,34 +265,3 @@ sub setHostInfo {
 	call($client, "db.report_host", %(host => $1, os_name => $2, os_flavor => $3));
 	$FIXONCE = 1;
 }
-
-%handlers["sysinfo"] = {
-	if ($0 eq "update" && $2 ismatch 'OS.*?: (.*?)') {
-		local('$os $host');
-		$host = sessionToHost($1);
-		($os) = matched();
-		if ("*Windows*" iswm $os) {
-			if ("*Windows*2000*" iswm $os || "*Windows*.NET*" iswm $os || "*Windows*Me*" iswm $os) {
-				setHostInfo($host, "Windows", "2000", $os);
-			}
-			else if ("*Windows 7*" iswm $os || "*Windows*Vista*" iswm $os || "*Windows*2008*" iswm $os) {
-				setHostInfo($host, "Windows", "7", $os);
-			}
-			else if ("*Windows XP*" iswm $os || "*Windows*2003*" iswm $os) {
-				setHostInfo($host, "Windows", "XP", $os);
-			}
-		}
-		else if ("*Mac*OS*X*" iswm $os) {
-			setHostInfo($host, "Mac OS X", $null, $os);
-		}
-		else if ("*Linux*" iswm $os) {
-			setHostInfo($host, "Linux", $null, $os);
-		}
-		else if ("*BSD*" iswm $os) {
-			setHostInfo($host, "FreeBSD", $null, $os);
-		}
-		else if ("*Solaris*" iswm $os) {
-			setHostInfo($host, "Solaris", $null, $os);
-		}
-	}
-};
