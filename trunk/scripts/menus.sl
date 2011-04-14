@@ -31,19 +31,19 @@ sub host_selected_items {
 	$h = menu($1, "Host", 'H');
 
 		$o = menu($h, "Operating System", 'O');
-		item($o, "Cisco IOS", 'C', setHostValueFunction($2, "os_name", "IOS"));
+		item($o, "Cisco IOS", 'C', setHostValueFunction($2, "os_name", "Cisco IOS"));
 		item($o, "FreeBSD", 'F', setHostValueFunction($2, "os_name", "FreeBSD"));
 		item($o, "Linux", 'L', setHostValueFunction($2, "os_name", "Linux"));
 		item($o, "NetBSD", 'N', setHostValueFunction($2, "os_name", "NetBSD"));
-		item($o, "Mac OS X", 'M', setHostValueFunction($2, "os_name", "Mac OS X"));
+		item($o, "Mac OS X", 'M', setHostValueFunction($2, "os_name", "Apple Mac OS X"));
 		item($o, "OpenBSD", 'O', setHostValueFunction($2, "os_name", "OpenBSD"));
 		item($o, "Printer", 'P', setHostValueFunction($2, "os_name", "Printer"));
 		item($o, "Solaris", 'S', setHostValueFunction($2, "os_name", "Solaris"));
 		item($o, "Unknown", 'U', setHostValueFunction($2, "os_name", ""));
 		$i = menu($o, "Windows", 'W');
-			item($i, '1. 95/98/2000', '1', setHostValueFunction($2, "os_name", "Windows", "os_flavor", "2000"));
-			item($i, '2. XP/2003', '2', setHostValueFunction($2, "os_name", "Windows", "os_flavor", "XP"));
-			item($i, '3. Vista/7', '3', setHostValueFunction($2, "os_name", "Windows", "os_flavor", "Vista"));
+			item($i, '1. 95/98/2000', '1', setHostValueFunction($2, "os_name", "Micosoft Windows", "os_flavor", "2000"));
+			item($i, '2. XP/2003', '2', setHostValueFunction($2, "os_name", "Microsoft Windows", "os_flavor", "XP"));
+			item($i, '3. Vista/7', '3', setHostValueFunction($2, "os_name", "Microsoft Windows", "os_flavor", "Vista"));
 
 		item($h, "Remove Host", 'R', clearHostFunction($2));
 }
