@@ -299,6 +299,9 @@ sub buildFileBrowserMenu {
 						showError("Saved $f");
 					}
 				}
+				else {
+					showError("Saved $f");
+				}
 			}
 		};
 

@@ -11,7 +11,7 @@ In Progress
   command shell. Sorry about the freezes Matt and Brant.
 - Fixed a strange condition in Armitage that sometimes caused shell
   sessions to die.
-
+- Download from file browser now notifies user when a file is downloaded.
 
 10 Apr 11 - Change Log
 ---------
