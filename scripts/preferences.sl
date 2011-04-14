@@ -86,6 +86,9 @@ sub loadPreferences {
 			$debug = 1;
 			@ARGV = sublist(@ARGV, 1);
 		}
+		else if (@ARGV[0] eq "--server") {
+			break;
+		}
 		else {
 			showError("I don't understand these arguments:\n" . join("\n", @ARGV));
 			break;

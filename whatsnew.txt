@@ -12,6 +12,8 @@ In Progress
 - Fixed a strange condition in Armitage that sometimes caused shell
   sessions to die.
 - Download from file browser now notifies user when a file is downloaded.
+- Armitage server mode now prints database connect string to console to
+  assist with set up of Metasploit teaming.
 
 10 Apr 11 - Change Log
 ---------

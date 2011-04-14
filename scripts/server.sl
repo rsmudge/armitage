@@ -365,6 +365,13 @@ sub main {
 		"hacking is such a lonely thing, until now",
 		"feel free to connect now, Armitage is ready for collaboration")));
 
+	local('$str');
+	$str = [$preferences getProperty: "connect.db_connect.string", ""];
+	if ($str ne "") {
+		println("Use this database connect string:\n\t $+ $str");
+	}
+
+
 	$id = 0;
 	while (1) {
 		$server = listen($port, 0);
