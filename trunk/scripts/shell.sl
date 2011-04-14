@@ -231,12 +231,13 @@ sub createShellSessionTab {
 		}
 	}
 
-	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", "session.stop", $sid, 0];
+	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", $null, $sid, 0];
         [$frame addTab: "Shell $sid", $console, lambda({ 
 		if ($client !is $mclient) {
 			call_async($mclient, "armitage.unlock", $sid);
 		}
-	}, \$sid)];
+		[$thread kill];
+	}, \$sid, \$thread)];
 }
 
 sub listen_for_shellz {

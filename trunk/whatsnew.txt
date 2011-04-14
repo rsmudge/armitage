@@ -9,8 +9,9 @@ In Progress
   info in the targets view.
 - Fixed a potential deadlock triggered when interacting with a Windows
   command shell. Sorry about the freezes Matt and Brant.
-- Reworked how Armitage handles halting a command when it detects the
-  previous one wasn't sent yet to a Windows command shell.
+- Fixed a strange condition in Armitage that sometimes caused shell
+  sessions to die.
+
 
 10 Apr 11 - Change Log
 ---------
