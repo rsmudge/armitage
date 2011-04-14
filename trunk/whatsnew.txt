@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+13 Apr 11 - Change Log (Dayton, OH Capstone Edition)
+---------
 - Metasploit now has host normalization (this is great news). I've 
   removed the OS reporting code from Armitage as a consequence. This 
   means less overhead communicating with Metasploit
@@ -20,6 +20,8 @@ In Progress
   becoming very backed up doing a cd/ls over and over again.
 - Graph view no longer counts edges as a selected item when creating a
   list of hosts to apply an action to.
+- Added another heuristic to prevent Windows cmd.exe interaction from 
+  locking up.
 
 10 Apr 11 - Change Log
 ---------

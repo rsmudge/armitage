@@ -128,7 +128,19 @@ global('%shells $ashell $achannel %maxq');
 
 		# look for a prompt at the end of the text... if there isn't one,
 		# then it's time to do another read.
-		if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
+		if (size($v) > 0 && $v[-1] ismatch '.*?[>]{1,2}\s*[\w\d.]+') {
+			# this is to catch cases like dir /s c:\ >>somefile.txt
+			# doing an immediate read sometimes creates problems.
+			# this prevents the read from being immediate so the 
+			# channel doesn't lock up.
+
+			# if the command returns faster (e.g., echo "whatever" >somefile)
+			# then this condition will never trigger as the prompt will end 
+			# the text.
+			sleep(1500);
+			m_cmd($1, "read $achannel");
+		} 
+		else if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
 			m_cmd($1, "read $achannel");
 		}
 	}
