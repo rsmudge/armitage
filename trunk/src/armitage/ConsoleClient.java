@@ -18,6 +18,13 @@ public class ConsoleClient implements Runnable, ActionListener {
 	protected String        session;
 	protected LinkedList	listeners = new LinkedList();
 	protected boolean       echo = true;
+	protected boolean	go_read = true;
+
+	public void kill() {
+		synchronized (listeners) {
+			go_read = false;
+		}
+	}
 
 	public Console getWindow() {
 		return window;
@@ -123,7 +130,6 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 			read = readResponse();
 			if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
-				System.err.println("Sending: " + text + " again!");
 				connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
 			}
 			else {
@@ -190,17 +196,22 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 	public void run() {
 		Map read;
+		boolean shouldRead = go_read;
 
 		try {
-			while (true) {
+			while (shouldRead) {
 				read = readResponse();
 
-				if (read == null || "failure".equals( read.get("result") + "" ))
+				if (read == null || "failure".equals( read.get("result") + "" )) {
 					break;
+				}
 
 				processRead(read);
-
 				Thread.sleep(200);
+
+				synchronized (listeners) {
+					shouldRead = go_read;
+				}
 			}
 		}
 		catch (Exception javaSucksBecauseItMakesMeCatchEverythingFuckingThing) {
