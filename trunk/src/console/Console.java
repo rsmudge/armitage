@@ -490,7 +490,8 @@ public class Console extends JPanel implements FocusListener {
 	private void setupHistoryFeature() {
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				history.add(ev.getActionCommand());
+				if (!"".equals(ev.getActionCommand()))
+					history.add(ev.getActionCommand());
 
 				if (history.hasNext())
 					history.next();
