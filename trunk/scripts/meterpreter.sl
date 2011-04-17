@@ -76,7 +76,7 @@ sub parseMeterpreter {
 
 	$handler = $token;
 
-	if ($handler !is $null) {
+	if ($handler !is $null && $0 eq "commandComplete") {
 		local('$h');
 		$h = $handler;
 		[$h begin: $1, $data];
@@ -85,6 +85,9 @@ sub parseMeterpreter {
 			[$h update: $1, $line];
 		}	
 		[$h end: $1, $data];
+	}
+	else if ($handler !is $null && $0 eq "commandTimeout") {
+		[$handler timeout: $1, $data];
 	}
 }
 
