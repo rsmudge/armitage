@@ -14,7 +14,7 @@ import javax.swing.table.*;
 
 import msf.*;
 
-global('%shells $ashell $achannel %maxq');
+global('%shells $ashell $achannel %maxq %wait');
 
 %handlers["execute"] = {
 	this('$command $channel $pid');
@@ -46,19 +46,13 @@ global('%shells $ashell $achannel %maxq');
 			[[$console getInput] addActionListener: lambda({
 				local('$file $text $handle');
 
-				if (-exists "command $+ $sid $+ .txt") {
-					if ((ticks() - lastModified("command $+ $sid $+ .txt")) > 5000) {
-						warn((ticks() - lastModified("command $+ $sid $+ .txt")));
-						deleteFile("command $+ $sid $+ .txt");
-					}
-					else {
-						showError("Waiting for the previous command to send.");
-						return;
-					}
-				}
-
 				$text = [[$console getInput] getText];
 				[[$console getInput] setText: ""];
+
+				if (%wait[$channel]) {
+					[$console append: "[*] Dropped. Waiting for previous command to finish.\n" . [[$console getPromptText] trim]];
+					return;
+				}
 
 				if ($client !is $mclient) {
 					$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
@@ -70,6 +64,7 @@ global('%shells $ashell $achannel %maxq');
 					$file = getFileProper("command $+ $sid $+ .txt");
 				}
 				
+				%wait[$channel] = 1;
 				m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
 			}, \$sid, \$console, \$channel)];
 
@@ -77,7 +72,7 @@ global('%shells $ashell $achannel %maxq');
 				m_cmd($sid, "close $channel");
 				m_cmd($sid, "kill $pid");
 				%shells[$sid][$channel] = $null;
-			}, \$sid, \$channel, \$console, \$pid)];
+			}, \$sid, \$channel, \$console, \$pid, \$console)];
 
 			m_cmd($sid, "read $channel");
 		}, \$command, \$channel, \$pid, $sid => $1));
@@ -101,6 +96,10 @@ global('%shells $ashell $achannel %maxq');
 	else if ($0 eq "update" && $2 ismatch '\[\-\] .*?' && $ashell !is $null) {
 		[$ashell append: "\n $+ $2"];
 		$ashell = $null;
+	}
+	else if ($0 eq "timeout") {
+		deleteFile("command $+ $1 $+ .txt");
+		m_cmd($1, "read $channel");
 	}
 };
 
@@ -142,6 +141,9 @@ global('%shells $ashell $achannel %maxq');
 		} 
 		else if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
 			m_cmd($1, "read $achannel");
+		}
+		else {
+			%wait[$achannel] = $null;
 		}
 	}
 };
