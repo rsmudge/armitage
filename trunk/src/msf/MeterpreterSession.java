@@ -18,17 +18,19 @@ public class MeterpreterSession implements Runnable {
 	private static class Command {
 		public Object   token;
 		public String   text;
+		public long	start = System.currentTimeMillis();
 	}
 
 	public static interface MeterpreterCallback {
 		public void commandComplete(String session, Object token, Map response);
+		public void commandTimeout(String session, Object token, Map response);
 	}
 
 	public void addListener(MeterpreterCallback l) {
 		listeners.add(l);
 	}
 
-	public void fireEvent(Command command, Map response) {
+	public void fireEvent(Command command, Map response, boolean timeout) {
 		//try {
 		//	System.err.println("Read: " + new String(Base64.decode(response.get("data") + ""), "UTF-8"));
 		//}
@@ -36,7 +38,12 @@ public class MeterpreterSession implements Runnable {
 
 		Iterator i = listeners.iterator();
 		while (i.hasNext()) {
-			((MeterpreterCallback)i.next()).commandComplete(session, command != null ? command.token : null, response);
+			if (timeout) {
+				((MeterpreterCallback)i.next()).commandTimeout(session, command != null ? command.token : null, response);
+			}
+			else {
+				((MeterpreterCallback)i.next()).commandComplete(session, command != null ? command.token : null, response);
+			}
 		}
 	}
 
@@ -50,7 +57,7 @@ public class MeterpreterSession implements Runnable {
 		try {
 			Map read = readResponse();
 			while (!"".equals(read.get("data"))) {
-				fireEvent(null, read);
+				fireEvent(null, read, false);
 				//System.err.println("Orphaned event:\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				read = readResponse();
 			}
@@ -96,12 +103,15 @@ public class MeterpreterSession implements Runnable {
 				expectedReads = 2;
 			}
 
+			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
+
 			for (int x = 0; x < expectedReads; x++) {
 				read = readResponse();
 				start = System.currentTimeMillis();
 				while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
 					/* our goal here is to timeout any command after 10 seconds if it returns nothing */
 					if ((System.currentTimeMillis() - start) > maxwait) {
+						fireEvent(c, read, true);
 						System.err.println("(" + session + ") - '" + c.text + "' - timed out");
 						return;
 					}
@@ -111,7 +121,7 @@ public class MeterpreterSession implements Runnable {
 				}
 
 				/* process the read command ... */
-				fireEvent(c, read);
+				fireEvent(c, read, false);
 			}
 
 			/* grab any additional readable data */
@@ -119,7 +129,7 @@ public class MeterpreterSession implements Runnable {
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
 				//System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
-				fireEvent(c, read);
+				fireEvent(c, read, false);
 				read = readResponse();
 			}
 		}
@@ -143,6 +153,9 @@ public class MeterpreterSession implements Runnable {
 
 	protected Command grabCommand() {
 		synchronized (this) {
+			/*if (commands.size() > 0) {
+				System.err.println("Queue size is: " + commands.size());
+			}*/
 			return (Command)commands.pollFirst();
 		}
 	}
