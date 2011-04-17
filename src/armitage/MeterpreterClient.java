@@ -24,7 +24,11 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 			processRead(response);
 	}
 
-       private void processRead(Map read) {
+	public void commandTimeout(String sid, Object token, Map response) {
+		window.append("[*] Timed out waiting for command to complete.\n");
+	}
+
+	private void processRead(Map read) {
 		try {
 			if (! "".equals( read.get("data") )) {
 				String text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
