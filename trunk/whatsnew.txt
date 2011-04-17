@@ -1,6 +1,19 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Windows command shell interactions are now less likely to die. How
+  oh how did we get here? Armitage interacts wi8th cmd.exe through a
+  Meterpreter channel. If an unnecessary read happens, it ties up the
+  meterpreter session for 10-20s AND the channel dies. If you typed
+  commands in too quickly, it's probable that Armitage would do an
+  unnecessary read and the channel would die. I believe I've headed 
+  off this problem. This extra complexity (I hate complexity!!) is 
+  necessary as it also forms the underpinnings of the session sharing
+  Armitage allows.
+- Command history no longer saves empty commands.
+
 13 Apr 11 - Change Log (Dayton, OH Capstone Edition)
 ---------
 - Metasploit now has host normalization (this is great news). I've 
