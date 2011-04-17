@@ -368,7 +368,7 @@ sub main {
 	$str = [$preferences getProperty: "connect.db_connect.string", ""];
 	println("Use the following connection details to connect your clients:");
 	println("\tHost:              $host");
-	println("\tPort:              $port");
+	println("\tPort:              " . ($port - 1));
 	println("\tUse SSL?:          " . iff($ssl, "checked", "not checked"));
 	println("\tUser:              $user");
 	println("\tPass:              $pass");
