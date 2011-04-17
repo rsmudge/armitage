@@ -200,6 +200,10 @@ sub client {
 			release($cach_lock);
 			writeObject($handle, result(%()));
 		}
+		else if ($method eq "session.shell_write" || $method eq "session.shell_read") {
+			$response = [$client execute: $method, $args];
+			writeObject($handle, $response);
+		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
 			# never underestimate the power of caching to alleviate load.
 			local('$response $time');
@@ -340,7 +344,7 @@ sub main {
 			local('$session');
 			$session = [new MeterpreterSession: $client, $2]; 
 			[$session addListener: lambda({
-				if ($2 is $null) {
+				if ($0 eq "commandTimeout" || $2 is $null) {
 					return;
 				}
 
