@@ -364,16 +364,22 @@ sub main {
 		});
 	}, \%sessions, \$client, \%readq, \$read_lock));
 
-	println(rand(@("I'm ready to accept you or other clients for who they are",
+	local('$str');
+	$str = [$preferences getProperty: "connect.db_connect.string", ""];
+	println("Use the following connection details to connect your clients:");
+	println("\tHost:              $host");
+	println("\tPort:              $port");
+	println("\tUse SSL?:          " . iff($ssl, "checked", "not checked"));
+	println("\tUser:              $user");
+	println("\tPass:              $pass");
+	if ($str ne "") {
+		println("\tDB Driver:         " . [$preferences getProperty: "connect.db_driver.string", "unknown... you'll need to set this up"]);
+		println("\tDB Connect String: $str");
+	}
+	println("\n" . rand(@("I'm ready to accept you or other clients for who they are",
 		"multi-player metasploit... ready to go",
 		"hacking is such a lonely thing, until now",
 		"feel free to connect now, Armitage is ready for collaboration")));
-
-	local('$str');
-	$str = [$preferences getProperty: "connect.db_connect.string", ""];
-	if ($str ne "") {
-		println("Use this database connect string:\n\t $+ $str");
-	}
 
 
 	$id = 0;

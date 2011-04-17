@@ -13,6 +13,8 @@ In Progress
   necessary as it also forms the underpinnings of the session sharing
   Armitage allows.
 - Command history no longer saves empty commands.
+- Armitage server mode now provides all details that a client needs
+  to connect to the server.
 
 13 Apr 11 - Change Log (Dayton, OH Capstone Edition)
 ---------
