@@ -86,11 +86,11 @@ sub update_viewer {
 	}
 }
 
-setMissPolicy(%screenshots, lambda(&image_viewer, $title => "Screenshot", $command => "screenshot -v false", $container => %screenshots));
-setMissPolicy(%webcams, lambda(&image_viewer, $title => "Webcam", $command => "webcam_snap -v false", $container => %webcams));
+setMissPolicy(%screenshots, { dispatchEvent(lambda(&image_viewer, $title => "Screenshot", $command => "screenshot -v false", $container => %screenshots)); };
+setMissPolicy(%webcams, { dispatchEvent(lambda(&image_viewer, $title => "Webcam", $command => "webcam_snap -v false", $container => %webcams)); };
 
-%handlers["screenshot"] = lambda(&update_viewer, $type => "Screenshot", $container => %screenshots);
-%handlers["webcam_snap"] = lambda(&update_viewer, $type => "Webcam shot", $container => %webcams);
+%handlers["screenshot"] = { dispatchEvent(lambda(&update_viewer, $type => "Screenshot", $container => %screenshots)); };
+%handlers["webcam_snap"] = { dispatchEvent(lambda(&update_viewer, $type => "Webcam shot", $container => %webcams)); };
 
 sub createScreenshotViewer {
 	return lambda({
