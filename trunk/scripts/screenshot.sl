@@ -78,7 +78,9 @@ sub update_viewer {
 
 		$image = [ImageIO read: [new File: $file]];
 
-		[$container[$1] setIcon: [new ImageIcon: $image]];
+		dispatchEvent(lambda({
+			[$container[$id] setIcon: [new ImageIcon: $image]];
+		}, \$container, \$image, $id => $1));
 
 		if (-isFile $file && "*.jpeg" iswm $file) { 
 			deleteFile($file);
@@ -86,11 +88,11 @@ sub update_viewer {
 	}
 }
 
-setMissPolicy(%screenshots, { dispatchEvent(lambda(&image_viewer, $title => "Screenshot", $command => "screenshot -v false", $container => %screenshots)); };
-setMissPolicy(%webcams, { dispatchEvent(lambda(&image_viewer, $title => "Webcam", $command => "webcam_snap -v false", $container => %webcams)); };
+setMissPolicy(%screenshots, lambda(&image_viewer, $title => "Screenshot", $command => "screenshot -v false", $container => %screenshots));
+setMissPolicy(%webcams, lambda(&image_viewer, $title => "Webcam", $command => "webcam_snap -v false", $container => %webcams));
 
-%handlers["screenshot"] = { dispatchEvent(lambda(&update_viewer, $type => "Screenshot", $container => %screenshots)); };
-%handlers["webcam_snap"] = { dispatchEvent(lambda(&update_viewer, $type => "Webcam shot", $container => %webcams)); };
+%handlers["screenshot"] = lambda(&update_viewer, $type => "Screenshot", $container => %screenshots);
+%handlers["webcam_snap"] = lambda(&update_viewer, $type => "Webcam shot", $container => %webcams);
 
 sub createScreenshotViewer {
 	return lambda({
