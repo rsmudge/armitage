@@ -101,6 +101,10 @@ sub setup_collaboration {
 	
 	$nick = ask("What is your nickname?");
 
+	while (["$nick" trim] eq "") {
+		$nick = ask("You can't use a blank nickname. What do you want?");
+	}
+
 	try {
 		$mclient = c_client($1, $2);	
 		%r = call($mclient, "armitage.validate", $3, $nick);

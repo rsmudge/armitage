@@ -3,7 +3,9 @@ Armitage Changelog
 
 In Progress - Raffi This Better Work Edition 
 -----------
-- Fixed a deadlock condition with the screenshot/webcam tab.
+- Added a check to prevent jerk faces from entering an empty nick in
+  collaborative mode.
+- 
 
 17 Apr 11 - Change Log 
 ---------
