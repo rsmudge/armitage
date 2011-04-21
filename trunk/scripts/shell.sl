@@ -271,6 +271,7 @@ sub listen_for_shellz {
 	[$button addActionListener: lambda({
 		local('%options');
 		%options["PAYLOAD"] = iff([$type getSelectedItem] eq "shell", "generic/shell_reverse_tcp", "windows/meterpreter/reverse_tcp");
+		%options["LHOST"] = "0.0.0.0";
 		%options["LPORT"] = [$port getText];
 		call($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
