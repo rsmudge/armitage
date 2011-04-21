@@ -13,7 +13,7 @@ import javax.swing.table.*;
 
 import java.io.*;
 
-global('$preferences $debug');
+global('$preferences $debug $motd');
 
 sub iHateYaml {
 	local('$handle %result $current $text $key $value');
@@ -85,6 +85,13 @@ sub loadPreferences {
 		else if (@ARGV[0] eq "-d" || @ARGV[0] eq "--debug") {
 			$debug = 1;
 			@ARGV = sublist(@ARGV, 1);
+		}
+		else if (@ARGV[0] eq "--motd" || @ARGV[0] eq "-m") {
+			$motd = @ARGV[1];
+			@ARGV = sublist(@ARGV, 2);
+			if (!-exists $motd) {
+				warn("$motd file does not exist. Clients will not see MOTD.");
+			}
 		}
 		else if (@ARGV[0] eq "--server") {
 			break;

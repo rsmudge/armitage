@@ -83,8 +83,17 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 		ScriptLoader loader = new ScriptLoader();
 		loader.addSpecificBridge(this);
 
+		/* check for server mode option */
+		boolean serverMode = false;
+
 		int x = 0;
-		String[] scripts = args.length > 0 && args[0].equals("--server") ? getServerScripts() : getGUIScripts();
+		for (x = 0; x < args.length; x++) {
+			if (args[x].equals("--server"))
+				serverMode = true;
+		}
+
+		/* load the appropriate scripts */
+		String[] scripts = serverMode ? getServerScripts() : getGUIScripts();
 
 		try {
 			for (x = 0; x < scripts.length; x++) {

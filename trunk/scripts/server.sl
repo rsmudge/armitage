@@ -53,7 +53,15 @@ sub client {
 	}
 	else {
 		($null, $eid) = $args;
-		writeObject($handle, result(%(success => "1")));
+	
+		if ($motd ne "" && -exists $motd) {
+			$temp = openf($motd);
+			writeObject($handle, result(%(success => "1", message => readb($temp, -1))));
+			closef($temp);
+		}
+		else {
+			writeObject($handle, result(%(success => "1")));
+		}
 		event("*** $eid joined\n");
 	}
 
@@ -388,7 +396,7 @@ sub main {
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd);
 
 		$id++;
 	}
