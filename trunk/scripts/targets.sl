@@ -246,6 +246,7 @@ sub importHosts {
 		}
 
 		if ($success > 0) {
+			elog("imported hosts from $success file" . iff($success != 1, "s"));
 			fork({ showError("Imported $success file" . iff($success != 1, "s")); }, \$frame, \$success);
 			refreshTargets();
 		}

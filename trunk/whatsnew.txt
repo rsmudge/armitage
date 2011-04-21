@@ -8,6 +8,7 @@ In Progress - Raffi This Better Work Edition
 - Fixed a potential dead-lock condition with the screenshot/webcam
   shot tab.
 - Armitage -> Listeners -> Reverse now binds to 0.0.0.0. 
+- Host import now posts an event to the collab mode shared event log
 
 17 Apr 11 - Change Log 
 ---------
