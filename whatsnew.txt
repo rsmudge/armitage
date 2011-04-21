@@ -9,6 +9,13 @@ In Progress - Raffi This Better Work Edition
   shot tab.
 - Armitage -> Listeners -> Reverse now binds to 0.0.0.0. 
 - Host import now posts an event to the collab mode shared event log
+- added an option to display an MOTD message to clients that connect
+  to Armitage in the collaboration mode. Use -m or --motd before
+  --server and specify a file, e.g.:
+
+  armitage -m /path/to/motd.txt --server ...
+
+  Clients will see this message when they connect.
 
 17 Apr 11 - Change Log 
 ---------
