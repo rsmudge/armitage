@@ -7,6 +7,11 @@ public class Route {
 	public static long ipToLong(String address) {
 		String[] quads = address.split("\\.");
 		long result = 0;
+
+		/* this is a fallback in case one of the IP addresses is malformed */
+		if (quads.length != 4) 
+			return 0L;
+
 		result += Integer.parseInt(quads[3]);
 		result += Long.parseLong(quads[2]) << 8L;
 		result += Long.parseLong(quads[1]) << 16L;
