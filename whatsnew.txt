@@ -16,6 +16,8 @@ In Progress - Raffi This Better Work Edition
   armitage -m /path/to/motd.txt --server ...
 
   Clients will see this message when they connect.
+- Added Meterpreter -> Access -> Pass Session to send a meterpreter
+  session to a handler set up on another host.
 
 17 Apr 11 - Change Log 
 ---------
