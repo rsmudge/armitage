@@ -162,6 +162,7 @@ sub launch_service {
 	if ($4 eq "payload" && $format eq "multi/handler") {
 		[$c sendString: "use exploit/multi/handler\n"];	
 		[$c sendString: "set PAYLOAD ". substr($2, 8) . "\n"];
+		[$c sendString: "set ExitOnSession false\n"];
 	}
 	else {
 		[$c sendString: "use $2\n"];	
@@ -310,7 +311,7 @@ sub _launch_dialog {
 				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1");
 			}
 			else {
-				$options = %(PAYLOAD => $best, LPORT => randomPort());
+				$options = %(PAYLOAD => $best, LPORT => randomPort(), ExitOnSession => "false");
 			}
 
 			if ($combobox !is $null) {

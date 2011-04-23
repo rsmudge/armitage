@@ -273,6 +273,7 @@ sub listen_for_shellz {
 		%options["PAYLOAD"] = iff([$type getSelectedItem] eq "shell", "generic/shell_reverse_tcp", "windows/meterpreter/reverse_tcp");
 		%options["LHOST"] = "0.0.0.0";
 		%options["LPORT"] = [$port getText];
+		%options["ExitOnSession"] = "false";
 		call($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$port, \$type)];
