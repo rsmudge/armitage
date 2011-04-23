@@ -20,6 +20,7 @@ In Progress - Raffi This Better Work Edition
   session to a handler set up on another host.
 - Armitage now sets ExitOnSession to false for multi/handlers started
   within Armitage.
+- Pivoting and ARP Scan dialogs now highlight first option by default.
 
 17 Apr 11 - Change Log 
 ---------

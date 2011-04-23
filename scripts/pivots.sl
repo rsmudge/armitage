@@ -88,6 +88,10 @@ sub pivot_dialog {
 	        [[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 		$sorter = [new TableRowSorter: $model];
 		[$table setRowSorter: $sorter];
+			
+		if (size(@routes) > 0) {
+		        [[$table getSelectionModel] addSelectionInterval: 0, 0];
+		}
 
 		$center = [new JScrollPane: $table];
 	
