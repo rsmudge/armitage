@@ -175,15 +175,13 @@ sub setupHandlers {
 	find_job("Exploit: multi/handler", {
 		if ($1 == -1) {
 			# setup a handler for meterpreter
-			cmd_all($client, $console, 
-				@("use exploit/multi/handler",
-				"set PAYLOAD windows/meterpreter/reverse_tcp",
-				"setg LPORT " . randomPort(),
-				"set LHOST 0.0.0.0",
-				#"setg AutoLoadStdapi true",
-				#"setg AutoSystemInfo true",
-				"exploit -j")
-			, { });
+			cmd($client, $console, "setg LPORT " . randomPort(), {
+				call($client, "module.execute", "exploit", "multi/handler", %(
+					PAYLOAD => "windows/meterpreter/reverse_tcp",
+					LHOST => "0.0.0.0",
+					ExitOnSession => "false"
+				));
+			});
 		}
 	});
 }
