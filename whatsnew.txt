@@ -23,6 +23,8 @@ In Progress - Raffi This Better Work Edition
 - Pivoting and ARP Scan dialogs now highlight first option by default.
 - Added a sanity check to the Route class to prevent malformed IPs
   from screwing up sorting.
+- Removed sqlite3 from the database options. I should have done this
+  long ago--it has no place in Armitage.
 
 17 Apr 11 - Change Log 
 ---------

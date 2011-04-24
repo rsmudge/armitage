@@ -318,7 +318,7 @@ sub connectDialog {
 	$user = [new JTextField: [$preferences getProperty: "connect.user.string", "msf"], 20];
 	$pass = [new JTextField: [$preferences getProperty: "connect.pass.string", "test"], 20];
 
-	$driver = select(@("sqlite3", "postgresql", "mysql"), [$preferences getProperty: "connect.db_driver.string", "sqlite3"]);
+	$driver = select(@("postgresql", "mysql"), [$preferences getProperty: "connect.db_driver.string", "sqlite3"]);
 	$connect = [new JTextField: [$preferences getProperty: "connect.db_connect.string", 'armitage.db.' . ticks()], 16];
 
 	$helper = [new JButton: "?"];
