@@ -14,6 +14,7 @@ import javax.swing.*;
 public class MeterpreterClient implements ActionListener, MeterpreterSession.MeterpreterCallback {
 	protected Console		window;
 	protected MeterpreterSession	session;
+	protected ActionListener	shellCommand;
 
 	public Console getWindow() {
 		return window;
@@ -44,9 +45,10 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 		}
 	}
 
-	public MeterpreterClient(Console window, MeterpreterSession session) {
-		this.window	= window;
-		this.session	= session;
+	public MeterpreterClient(Console window, MeterpreterSession session, ActionListener shellCommand) {
+		this.window	  = window;
+		this.session	  = session;
+		this.shellCommand = shellCommand;
 		this.session.addListener(this);
 
 		setupListener();
@@ -73,7 +75,13 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 			public void actionPerformed(ActionEvent ev) {
 				String text = window.getInput().getText() + "\n";
 				window.getInput().setText("");
-				sendString(text);
+		
+				if (shellCommand != null && text.trim().equals("shell")) {
+					shellCommand.actionPerformed(new ActionEvent(this, 0, "shell"));
+				}
+				else {
+					sendString(text);
+				}
 			}
 		});
 	}

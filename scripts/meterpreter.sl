@@ -107,7 +107,12 @@ sub createMeterpreterTab {
 	[new TabCompletion: $console, $client, $1, "session.meterpreter_tabs"];
 
 	# set up a listener to read input from the console and dump output back to it.
-	[new MeterpreterClient: $console, $session];
+	if ("*Windows*" !iswm sessionToOS($1) || ($REMOTE && $mclient is $client)) {
+		[new MeterpreterClient: $console, $session, $null];
+	}
+	else {
+		[new MeterpreterClient: $console, $session, newInstance(^java.awt.event.ActionListener, lambda({ createShellTab($sid); }, $sid => $1))];
+	}
 
         [$frame addTab: "Meterpreter $1", $console, $null];
 }
