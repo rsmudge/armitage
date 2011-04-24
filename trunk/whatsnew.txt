@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress - Raffi This Better Work Edition 
+In Progress - Happy Birthday Gerry Edition
 -----------
 - Added a check to prevent jerk faces from entering an empty nick in
   collaborative mode. :)
@@ -25,6 +25,8 @@ In Progress - Raffi This Better Work Edition
   from screwing up sorting.
 - Removed sqlite3 from the database options. I should have done this
   long ago--it has no place in Armitage.
+- Armitage now intercepts meterpreter "shell" command and opens a 
+  new tab with the cmd.exe interaction in it.
 
 17 Apr 11 - Change Log 
 ---------
