@@ -13,7 +13,7 @@ sub import_items {
 			import_amap_log => "THC-Amap scan results (-o)",
 			import_amap_mlog => "THC-Amap scan results (-o -m)",
 			import_ip_list => "List of line separated IPs",
-			import_msfe_xml => "Metasploit Express Report (XML)",
+			import_msfe_xml => "Metasploit XML Report (XML)",
 			import_nessus_nbe => "Nessus scan results (NBE)",
 			import_nessus_xml => "Nessus scan results (XML)",
 			import_nessus_xml_v2 => "Nessus scan results (XML v2)",
