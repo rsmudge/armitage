@@ -480,7 +480,10 @@ sub host_attack_items {
 
 	foreach $port => $service (%hosts[$2[0]]['services']) {
 		$name = $service['name'];
-		if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
+		if ($name eq "smb" && "*Windows*" iswm getHostOS($2[0])) {
+			push(@options, @("psexec", lambda(&pass_the_hash, $hosts => $2)));
+		}
+		else if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
 			push(@options, @($name, lambda(&show_login_dialog, \$service, $hosts => $2)));
 		}
 		else if ($name eq "microsoft-ds") {
