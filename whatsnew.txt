@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Doubled wait time for Meterpreter ls command to complete.
+
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
 - Added a check to prevent jerk faces from entering an empty nick in
