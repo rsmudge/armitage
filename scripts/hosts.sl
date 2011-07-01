@@ -84,7 +84,7 @@ sub host_items {
 		item($j, "Ping Scan", $null, createNmapFunction("-T5 -sn"));
 		item($j, "Quick Scan", $null, createNmapFunction("-T5 -F"));
 		item($j, "Quick Scan (OS detect)", $null, createNmapFunction("-sV -T5 -O -F --version-light"));
-		item($j, "Comprehensive", $null, createNmapFunction("-sS -sU -T5 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53 --script all"));
+		item($j, "Comprehensive", $null, createNmapFunction("-sS -sU -T5 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
 
 	enumerateMenu($1, $null);
 

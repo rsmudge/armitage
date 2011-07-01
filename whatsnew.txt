@@ -10,6 +10,9 @@ In Progress
 - Removed automatic resending of console commands that didn't appear
   sent. This was a work-around for a msf bug that may not be present
   anymore. We'll find out.
+- Removed --script-all from NMap profiles. I saw quite a discussion
+  about this on the NMap mailing list. Oops. Oh well :)
+	http://seclists.org/nmap-dev/2011/q2/572
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
