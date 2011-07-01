@@ -13,6 +13,8 @@ In Progress
 - Removed --script-all from NMap profiles. I saw quite a discussion
   about this on the NMap mailing list. Oops. Oh well :)
 	http://seclists.org/nmap-dev/2011/q2/572
+- All host import options now use Metasploit's import_data RPC call.
+  This is what all the remote calls map to anyways.
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------

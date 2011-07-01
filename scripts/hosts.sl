@@ -24,7 +24,7 @@ sub import_items {
 	);
 
 	foreach $command => $description (%imports) {
-		item($1, $description, $null, lambda(&importHosts, \$command));
+		item($1, $description, $null, lambda(&importHosts, $command => "import_data"));
 	}
 }
 
