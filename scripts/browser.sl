@@ -334,11 +334,11 @@ sub buildFileBrowserMenu {
 
 		foreach $f ($file) {
 			if ($args eq "") {
-				m_cmd($sid, "execute -f \" $+ $f $+ \" -k"); 
+				m_cmd($sid, "execute -t -f \" $+ $f $+ \" -k"); 
 			}
 			else {
 				$args = strrep($args, '\\', '\\\\');
-				m_cmd($sid, "execute -f \" $+ $f $+ \" -k -a \" $+ $args $+ \""); 
+				m_cmd($sid, "execute -t -f \" $+ $f $+ \" -k -a \" $+ $args $+ \""); 
 			}
 		}
 	}, $file => $2, \$sid, \$setcwd));

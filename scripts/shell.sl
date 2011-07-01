@@ -22,10 +22,10 @@ global('%shells $ashell $achannel %maxq %wait');
 	if ($0 eq "execute") {
 		($channel, $pid) = $null;
 
-		if ($2 ismatch "execute -H -c -f (.*?)") {
+		if ($2 ismatch "execute -t -H -c -f (.*?)") {
 			($command) = matched();
 		}
-		else if ($2 ismatch "execute -H -f (.*?) -c") {
+		else if ($2 ismatch "execute -t -H -f (.*?) -c") {
 			($command) = matched();
 		}
 	}
@@ -149,11 +149,11 @@ global('%shells $ashell $achannel %maxq %wait');
 };
 
 sub createShellTab {
-	m_cmd($1, "execute -H -c -f cmd.exe");
+	m_cmd($1, "execute -t -H -c -f cmd.exe");
 }
 
 sub createCommandTab {
-	m_cmd($1, "execute -H -c -f $2");
+	m_cmd($1, "execute -t -H -c -f $2");
 }
 
 sub shellPopup {
