@@ -27,7 +27,6 @@ sub updateLootModel {
 			}
 
 			if (size($row) > 0) {
-				warn("$entry => $row");
 				[$model addEntry: $row];
 			}
 		}
