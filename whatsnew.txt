@@ -35,6 +35,7 @@ In Progress
   to false in the Armitage preferences.
 - Added a Reset button to preferences dialog to reset Armitage 
   preferences.
+- SSL now defaults to off on all platforms
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
