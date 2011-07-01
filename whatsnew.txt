@@ -6,6 +6,7 @@ In Progress
 - Doubled wait time for Meterpreter ls command to complete.
 - Armitage now shows psexec option instead of smb on Login menu for
   Windows hosts (when smb service is present).
+- Fixed bug preventing manual import of a single host
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------

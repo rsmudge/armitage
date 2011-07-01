@@ -47,7 +47,7 @@ sub addHostDialog {
 	[$button addActionListener: lambda({
 		local('$handle');
 		$handle = openf(">upload.hosts");
-		writeb($handle, [$text getText]);
+		writeb($handle, [$text getText] . "\n");
 		closef($handle);
 
 		importHosts("upload.hosts", $command => "import_ip_list");
