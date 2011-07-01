@@ -184,7 +184,7 @@ public class NetworkTable extends JComponent implements ActionListener {
 				if (r.shouldRoute(temp.get("Address") + ""))
 					temp.put("Pivot", r.getGateway());
 			}
-		}	
+		}
 	}
 
         public String[] getSelectedHosts() {
