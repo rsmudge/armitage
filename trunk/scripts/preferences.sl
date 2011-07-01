@@ -231,6 +231,7 @@ sub createPreferencesTab {
 				[$dialog add: center($ok, $cancel), [BorderLayout SOUTH]];
 				[$dialog pack];
 				[$dialog setVisible: 1];
+				[$dialog show];
 			}
 			else if ($type eq "shortcut") {
 				local('$dialog $label');
@@ -252,6 +253,7 @@ sub createPreferencesTab {
 				}, \$dialog, \$model, \$row)];
 
 				[$dialog setVisible: 1];
+				[$dialog show];
 				[$label requestFocus];
 			}
 		}
@@ -288,6 +290,7 @@ sub createPreferencesTab {
 	[$dialog add: $panel, [BorderLayout CENTER]];
 	[$button addActionListener: lambda({ [$dialog setVisible: 0]; }, \$dialog)];
 	[$dialog setVisible: 1];
+	[$dialog show];
 
 #	[$frame addTab: "Preferences", $panel, $null];
 }
