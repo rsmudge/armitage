@@ -19,6 +19,21 @@ In Progress
   important place to have it.
 - Armitage now opens cmd.exe and executes programs from the file 
   browser using the current process token (execute -t in Meterpreter)
+- Added logging. Armitage creates a logs/ folder off of the current
+  folder and organizes contents by [date]/[host]/[file]
+
+  The logging captures:
+
+  - all Console tab output (console.log)
+  - the collaboration event log (event.log)
+  - all Meterpreter tab output (meterpreter_[session].log)
+  - all Command Shell tab output (cmd_[session]_[pid].log)
+  - all Shell tab output (shell_[session].log)
+  - all Screenshots captured through Armitage (.../Screenshots/)
+  - all Webcam shots captured through Armitage (.../Webcam Shots/)
+
+  You can turn this off by setting armitage.log_everything.boolean
+  to false in the Armitage preferences.
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------

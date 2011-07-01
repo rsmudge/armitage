@@ -101,6 +101,7 @@ sub cleanText {
 sub createDisplayTab {
 	local('$console');
 	$console = [new Console: $preferences];
+	logCheck($console, "all", strrep($1, " ", "_"));
 	[$frame addTab: $1, $console, $null];
 	return $console;
 }
@@ -109,6 +110,8 @@ sub createDisplayTab {
 sub createConsolePanel {
 	local('$console $result $thread $1');
 	$console = [new Console: $preferences];
+	logCheck($console, "all", "console");
+
 	$result = call($client, "console.create");
 	$thread = [new ConsoleClient: $console, $client, "console.read", "console.write", "console.destroy", $result['id'], $1];
 	[$thread setMetasploitConsole];

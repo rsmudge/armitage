@@ -37,3 +37,4 @@ connect.db_connect.string=root\:"toor"@127.0.0.1/msf3
 connect.db_driver.string=mysql
 armitage.string.target_view=graph
 console.select_all.shortcut=ctrl pressed A
+armitage.log_everything.boolean=true

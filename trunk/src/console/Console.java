@@ -8,6 +8,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.io.PrintStream;
+
 import java.util.*;
 
 /** A generic multi-feature console for use in the Armitage network attack tool */
@@ -15,6 +17,8 @@ public class Console extends JPanel implements FocusListener {
 	protected JTextArea  console;
 	protected JTextField input;
 	protected JLabel     prompt;
+
+	protected PrintStream log = null;
 
 	protected Properties display;
 	protected Font       consoleFont;
@@ -28,6 +32,10 @@ public class Console extends JPanel implements FocusListener {
 
 	public void addWordClickListener(ActionListener l) {
 		clickl.addListener(l);
+	}
+
+	public void writeToLog(PrintStream p) {
+		log = p;
 	}
 
 	public void setDefaultPrompt(String p) {
@@ -182,10 +190,14 @@ public class Console extends JPanel implements FocusListener {
 
 	private void appendToConsole(String _text) {
 		if (_text.endsWith("\n") || _text.endsWith("\r")) {
-			if (!promptLock)
+			if (!promptLock) {
 				console.append(_text);
-			else
+				if (log != null)
+					log.print(_text);
+			}
+			else {
 				console.append(prompt.getText());
+			}
 
 			if (!_text.startsWith(prompt.getText()))
 				promptLock = false;
@@ -196,6 +208,8 @@ public class Console extends JPanel implements FocusListener {
 			if (breakp != -1) {
 				console.append(_text.substring(0, breakp + 1));
 				prompt.setText(_text.substring(breakp + 1) + " ");
+				if (log != null)
+					log.print(_text.substring(0, breakp + 1));
 			}
 			else {
 				prompt.setText(_text);
