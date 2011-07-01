@@ -302,7 +302,7 @@ sub connectDialog {
 		$msfrpc_handle = $null;
 	}
 
-	local('$dialog $host $port $ssl $user $pass $driver $connect $button $cancel $start $center $helper');
+	local('$dialog $host $port $ssl $user $pass $driver $connect $button $cancel $start $center $help $helper');
 	$dialog = window("Connect...", 0, 0);
 	
 	# setup our nifty form fields..
@@ -367,6 +367,9 @@ sub connectDialog {
 	[$button setToolTipText: "<html>Use this button to connect to a running Metasploit<br />RPC server. Metasploit must already be running.</html>"];
 	$start  = [new JButton: "Start MSF"];
 	[$start setToolTipText: "<html>Use this button to start a new Metasploit instance<br />and have Armitage automatically connect to it.</html>"];
+	$help   = [new JButton: "Help"];
+	[$help setToolTipText: "<html>Use this button to view the Getting Started Guide on the Armitage homepage</html>"];
+
 	$cancel = [new JButton: "Exit"];
 
 	# lay them out
@@ -383,12 +386,14 @@ sub connectDialog {
 	[$center add: label_for("DB Connect String", 130, $connect, $helper)];
 
 	[$dialog add: $center, [BorderLayout CENTER]];
-	[$dialog add: center($button, $start, $cancel), [BorderLayout SOUTH]];
+	[$dialog add: center($button, $start, $help, $cancel), [BorderLayout SOUTH]];
 
 	[$button addActionListener: lambda({
 		[$dialog setVisible: 0];
 		connectToMetasploit([$host getText], [$port getText], [$ssl isSelected], [$user getText], [$pass getText], [$driver getSelectedItem], [$connect getText], 1);
 	}, \$dialog, \$host, \$port, \$ssl, \$user, \$pass, \$driver, \$connect)];
+
+	[$help addActionListener: gotoURL("http://www.fastandeasyhacking.com/start")];
 
 	[$start addActionListener: lambda({
 		local('$pass $exception');
