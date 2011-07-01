@@ -27,6 +27,7 @@ sub updateLootModel {
 			}
 
 			if (size($row) > 0) {
+				warn("$entry => $row");
 				[$model addEntry: $row];
 			}
 		}
@@ -42,6 +43,9 @@ sub showLoot {
 		$dialog = dialog("View Loot", 640, 480);
 	
 		$text = [new JTextArea: getFileContent($v)];
+		[$text setFont: [Font decode: [$preferences getProperty: "console.font.font", "Monospaced BOLD 14"]]];
+		[$text setForeground: [Color decode: [$preferences getProperty: "console.foreground.color", "#ffffff"]]];
+		[$text setBackground: [Color decode: [$preferences getProperty: "console.background.color", "#000000"]]];
 
 		$button = [new JButton: "Close"];
 		[$button addActionListener: lambda({ [$dialog setVisible: 0]; }, \$dialog)];

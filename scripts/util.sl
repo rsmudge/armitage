@@ -368,7 +368,7 @@ sub connectDialog {
 		[$dialog add: label_for("DB Pass", 75, $pass)];
 		[$dialog add: label_for("DB Host", 75, $host)];
 		[$dialog add: label_for("DB Name", 75, $db)];
-		[$dialog add: center($action, $reset, $cancel)];
+		[$dialog add: center($action, $reset)];
 		[$dialog pack];
 
 		[$dialog setVisible: 1];
@@ -397,7 +397,7 @@ sub connectDialog {
 	[$center add: label_for("DB Connect String", 130, $connect, $helper)];
 
 	[$dialog add: $center, [BorderLayout CENTER]];
-	[$dialog add: center($button, $start, $help, $cancel), [BorderLayout SOUTH]];
+	[$dialog add: center($button, $start, $help), [BorderLayout SOUTH]];
 
 	[$button addActionListener: lambda({
 		[$dialog setVisible: 0];

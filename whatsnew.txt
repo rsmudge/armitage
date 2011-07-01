@@ -39,6 +39,7 @@ In Progress
 - Added a Default button to the database settings helper. This 
   button loads the default database settings ignoring what is in the
   config file.
+- Loot viewer now uses the same colors and font as a console tab
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
