@@ -40,6 +40,7 @@ In Progress
   button loads the default database settings ignoring what is in the
   config file.
 - Loot viewer now uses the same colors and font as a console tab
+- Fixed bug preventing Loot browser from populating data/time column
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
