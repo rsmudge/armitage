@@ -65,7 +65,8 @@ sub loadPreferences {
 
 	# parse command line options here.
 
-	local('$yaml_file $yaml_entry %env');
+	global('$yaml_file $yaml_entry');
+	local('%env');
 	$yaml_entry = "production";
 
 	%env = convertAll([System getenv]);
@@ -102,11 +103,15 @@ sub loadPreferences {
 		}
 	}
 
-	if ($yaml_file ne "") {
-		parseYaml($prefs, @($yaml_file, $yaml_entry));
-	}
+	loadDatabasePreferences($prefs);
 
 	return $prefs;
+}
+
+sub loadDatabasePreferences {
+	if ($yaml_file ne "") {
+		parseYaml($1, @($yaml_file, $yaml_entry));
+	}
 }
 
 sub savePreferences {

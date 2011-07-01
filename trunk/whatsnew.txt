@@ -36,6 +36,9 @@ In Progress
 - Added a Reset button to preferences dialog to reset Armitage 
   preferences.
 - SSL now defaults to off on all platforms
+- Added a Default button to the database settings helper. This 
+  button loads the default database settings ignoring what is in the
+  config file.
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
