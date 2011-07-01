@@ -22,7 +22,7 @@ sub updateLootModel {
 				$row["info"] = matched()[0];
 			}
 
-			if ($entry hasmatch "Time: (.*? \\d\\d\\d\\d)") {
+			if ($entry hasmatch "Time: (.*?)\\s+Loot:") {
 				$row["date"] = matched()[0];
 			}
 
