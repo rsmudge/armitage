@@ -326,7 +326,7 @@ sub connectDialog {
 
 	$helper = [new JButton: "?"];
 	[$helper addActionListener: lambda({
-		local('$dialog $user $pass $host $db $action $cancel $u $p $h $d');
+		local('$dialog $user $pass $host $db $action $cancel $u $p $h $d $reset');
 		$dialog = dialog("DB Connect String Helper", 300, 200);
 		[$dialog setLayout: [new GridLayout: 5, 1]];
 
@@ -343,7 +343,15 @@ sub connectDialog {
 		$db   = [new JTextField: $d, 20];
 
 		$action = [new JButton: "Set"];
+		$reset = [new JButton: "Default"];
 		$cancel = [new JButton: "Cancel"];
+
+		[$reset addActionListener: lambda({ 
+			loadDatabasePreferences($preferences);
+			[$driver setSelectedItem: [$preferences getProperty: "connect.db_driver.string", "sqlite3"]];
+			[$connect setText: [$preferences getProperty: "connect.db_connect.string", 'armitage.db.' . ticks()]];
+			[$dialog setVisible: 0];
+		}, \$dialog, \$connect, \$driver)];
 
 		[$action addActionListener: lambda({
 			[$connect setText: [$user getText] . ':"' . 
@@ -360,11 +368,11 @@ sub connectDialog {
 		[$dialog add: label_for("DB Pass", 75, $pass)];
 		[$dialog add: label_for("DB Host", 75, $host)];
 		[$dialog add: label_for("DB Name", 75, $db)];
-		[$dialog add: center($action, $cancel)];
+		[$dialog add: center($action, $reset, $cancel)];
 		[$dialog pack];
 
 		[$dialog setVisible: 1];
-	}, \$connect)];
+	}, \$connect, \$driver)];
 
 	$button = [new JButton: "Connect"];
 	[$button setToolTipText: "<html>Use this button to connect to a running Metasploit<br />RPC server. Metasploit must already be running.</html>"];
