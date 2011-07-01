@@ -33,6 +33,8 @@ In Progress
 
   You can turn this off by setting armitage.log_everything.boolean
   to false in the Armitage preferences.
+- Added a Reset button to preferences dialog to reset Armitage 
+  preferences.
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------

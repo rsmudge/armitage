@@ -120,8 +120,14 @@ sub savePreferences {
 $preferences = loadPreferences();
 
 sub makePrefModel {
-	local('$key $value $component $name $type $model');
+	local('$model');
 	$model = [new GenericTableModel: @("component", "name", "type", "value"), "name", 32];
+	return updatePrefModel($model);
+}
+
+sub updatePrefModel {
+	local('$key $value $component $name $type $model');
+	$model = $1;
 	[$model setCellEditable: 3];
 	
 	foreach $key => $value (convertAll($preferences)) {
@@ -246,7 +252,7 @@ sub createPreferencesTab {
 		}
 	}, \$model, \$table)];
 
-	local('$button');
+	local('$button $reset');
 	$button = [new JButton: "Save"];
 	[$button addActionListener: lambda({
 		local('$row $component $name $type $value');
@@ -259,7 +265,18 @@ sub createPreferencesTab {
 		showError("Preferences saved.");
 	}, \$model)];
 
-	[$panel add: center($button), [BorderLayout SOUTH]];
+	$reset = [new JButton: "Reset"];
+	[$reset addActionListener: lambda({
+		local('$file');
+		$file = getFileProper(systemProperties()["user.home"], ".armitage.prop");
+		deleteFile($file);
+		$preferences = loadPreferences();
+		[$model clear: 256];
+		updatePrefModel($model);
+		[$model fireListeners];
+	}, \$model)];
+
+	[$panel add: center($button, $reset), [BorderLayout SOUTH]];
 
 	local('$dialog');
 	$dialog = dialog("Preferences", 640, 480);
