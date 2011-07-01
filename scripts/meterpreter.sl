@@ -101,6 +101,7 @@ sub createMeterpreterTab {
 
 	# set up a meterpreter console window
         $console = [new Console: $preferences];
+	logCheck($console, sessionToHost($1), "meterpreter_ $+ $1");
 	[$console setPopupMenu: lambda(&meterpreterPopup, $session => sessionData($1), $sid => $1)];
 
 	# tab completion for Meterpreter... :D

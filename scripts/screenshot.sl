@@ -76,6 +76,7 @@ sub update_viewer {
 			$file = getFileProper(cwd(), downloadFile($file));
 		}
 
+		logFile($file, sessionToHost($1), $type);
 		$image = [ImageIO read: [new File: $file]];
 
 		dispatchEvent(lambda({

@@ -41,6 +41,7 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 
 	protected String[] getGUIScripts() {
 		return new String[] {
+			"scripts/log.sl",
 			"scripts/gui.sl",
 			"scripts/util.sl",
 			"scripts/targets.sl",

@@ -40,6 +40,7 @@ global('%shells $ashell $achannel %maxq %wait');
 			local('$console');
 
 			$console = [new Console: $preferences];
+			logCheck($console, sessionToHost($sid), "cmd_ $+ $sid $+ _ $+ $pid");
 
 			%shells[$sid][$channel] = $console;
 
@@ -233,6 +234,7 @@ sub showShellMenu {
 sub createShellSessionTab {
 	local('$console $thread');
 	$console = [new Console: $preferences];
+	logCheck($console, sessionToHost($sid), "shell_ $+ $sid");
 	[$console setDefaultPrompt: '$ '];
         [$console setPopupMenu: lambda(&shellPopup, \$session, \$sid)];
 
