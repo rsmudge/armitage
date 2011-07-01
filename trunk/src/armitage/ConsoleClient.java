@@ -130,8 +130,8 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 			read = readResponse();
 			if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
-				System.err.println("Resending command: " + text + " -- " + read);
-				connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
+				System.err.println("Should command be resent? " + text + " -- " + read);
+				//connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
 			}
 			else {
 				processRead(read);
