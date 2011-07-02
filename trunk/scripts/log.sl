@@ -14,8 +14,8 @@ sub logCheck {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today');
 		$today = formatDate("yyMMdd");
-		mkdir(getFileProper("logs", $today, $2));
-		[$1 writeToLog: %logs[ getFileProper("logs", $today, $2, "$3 $+ .log") ]];
+		mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2));
+		[$1 writeToLog: %logs[ getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, "$3 $+ .log") ]];
 	}
 }
 
@@ -24,7 +24,7 @@ sub logFile {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today $handle $data $out');
 		$today = formatDate("yyMMdd");
-		mkdir(getFileProper("logs", $today, $2, $3));
+		mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3));
 
 		# read in the file
 		$handle = openf($1);
@@ -32,7 +32,7 @@ sub logFile {
 		closef($handle);
 
 		# write it out.
-		$out = getFileProper("logs", $today, $2, $3, getFileName($1));
+		$out = getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3, getFileName($1));
 		$handle = openf("> $+ $out");
 		writeb($handle, $data);
 		closef($handle);
