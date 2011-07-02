@@ -41,9 +41,6 @@ In Progress
 - Fixed bug preventing Loot browser from populating data/time column
 - Preferences dialog now brings font and shortcut dialogs to front
   to prevent them from being hidden by prefs dialog.
-- Added Set Client-Side Listener button to View -> Jobs tab. Use this
-  to designate an active handler as the one to receive clients from 
-  successful Windows client-side exploits.
 
 24 Apr 11 - Happy Birthday Gerry Edition
 ---------
