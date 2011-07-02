@@ -18,10 +18,8 @@ In Progress
 - Added Help button to start dialog.
 - Armitage now opens cmd.exe and executes programs from the file 
   browser using the current process token (execute -t in Meterpreter)
-- Added logging. Armitage creates a logs/ folder off of the current
-  folder and organizes contents by [date]/[host]/[file]
-
-  The logging captures:
+- Added logging. Logs are stored in ~/.armitage organized as
+  [date]/[host]/[file]. The logging captures:
 
   - all Console tab output (console.log)
   - the collaboration event log (event.log)
