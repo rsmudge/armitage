@@ -454,7 +454,7 @@ sub createJobsTab {
 	[$kill addActionListener: lambda({
 		local('$tmp_console');
 		$tmp_console = createConsole($client); 
-		cmd($client, $tmp_console, "jobs -k " . [$model getSelectedValue: $table], lambda({ 
+		cmd_async($client, $tmp_console, "jobs -k " . [$model getSelectedValue: $table], lambda({ 
 			showError($3); 
 			[$jobsf];
 		}, \$jobsf, \$tmp_console));
