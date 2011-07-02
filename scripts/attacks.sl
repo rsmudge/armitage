@@ -211,7 +211,12 @@ sub best_client_payload {
 	$os = split('/', $1)[0];
 
 	if ($os eq "windows" || "*Windows*" iswm $2) {
-		return "windows/meterpreter/reverse_tcp";
+		if ($DEFAULT_PAYLOAD ne "") {
+			return $DEFAULT_PAYLOAD;
+		}
+		else {
+			return "windows/meterpreter/reverse_tcp";
+		}
 	}
 	else if ("*Generic*Java*" iswm $2) {
 		return "java/meterpreter/reverse_tcp";
