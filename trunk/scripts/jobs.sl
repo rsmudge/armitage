@@ -14,6 +14,8 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 
+global('$DEFAULT_PAYLOAD $DEFAULT_PORT');
+
 sub manage_file_autopwn {
 	manage_job("Auxiliary: server/file_autopwn", 
 		# start server function
@@ -136,7 +138,7 @@ sub manage_job {
 				if ($confirm eq "0") {
 					local('$tmp_console');
 					$tmp_console = createConsole($client);
-					cmd($client, $tmp_console, "jobs -k $jid", lambda({
+					cmd_async($client, $tmp_console, "jobs -k $jid", lambda({
 						call($client, "console.destroy", $tmp_console);
 						if ($3 ne "") { showError($3); }
 					}, \$tmp_console));
@@ -307,7 +309,11 @@ sub _launch_dialog {
 		}
 		else {
 			$best = best_client_payload($command, iff($combobox !is $null, [$combobox getSelectedItem]));
-			if ($best eq "windows/meterpreter/reverse_tcp") {
+			if ($best eq $DEFAULT_PAYLOAD) {
+				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1", LPORT => $DEFAULT_PORT);
+				warn("Using default payload... $options");
+			}
+			else if ($best eq "windows/meterpreter/reverse_tcp") {
 				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1");
 			}
 			else {
@@ -397,7 +403,7 @@ sub updateJobsTable {
 }
 
 sub createJobsTab {	
-	local('$table $model $refresh $kill $panel $jobsf $sorter');
+	local('$table $model $refresh $kill $panel $jobsf $sorter $default');
 	
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -427,6 +433,23 @@ sub createJobsTab {
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: $jobsf];
 
+	$default = [new JButton: "Set Client-Side Listener"];
+	[$default addActionListener: lambda({
+		local('$payload $port');
+		$payload = [$model getSelectedValueFromColumn: $table, "Payload"];
+		$port = [$model getSelectedValueFromColumn: $table, "Port"];
+	
+		if ($payload ne "" && $port ne "") {
+			showError("Armitage will now use this handler for reverse connections:\n\n $+ $payload $+ \non port: $port");
+		}
+		else {
+			showError("Not a valid reverse listener");
+		}
+
+		$DEFAULT_PAYLOAD = $payload;
+		$DEFAULT_PORT = int($port);
+	}, \$table, \$model)];
+
 	$kill = [new JButton: "Kill"];
 	[$kill addActionListener: lambda({
 		local('$tmp_console');
@@ -437,7 +460,7 @@ sub createJobsTab {
 		}, \$jobsf, \$tmp_console));
 	}, \$table, \$model, \$jobsf)];
 
-	[$panel add: center($refresh, $kill), [BorderLayout SOUTH]];
+	[$panel add: center($refresh, $default, $kill), [BorderLayout SOUTH]];
 
 	[$frame addTab: "Jobs", $panel, $null];
 }		
