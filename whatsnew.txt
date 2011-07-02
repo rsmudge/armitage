@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+02 Jul 11 - Change Log
+--------- 
 - Doubled wait time for Meterpreter ls command to complete.
 - Armitage now shows psexec option instead of smb on Login menu for
   Windows hosts (when smb service is present).
