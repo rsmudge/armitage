@@ -171,7 +171,20 @@ sub createFileBrowser {
 
 	# this function should be called before every browser action to keep things in sync.
 	$setcwd = lambda({
-		m_cmd($sid, "cd \"" . strrep([$text getText], "\\", "\\\\") . "\"");
+		if ("*Windows*" iswm sessionToOS($sid)) {
+			# a work around for cd "C:\\WINDOWS" failing without trailing slash...
+			# [-] stdapi_fs_chdir: Operation failed: The system cannot find the file specified.
+
+			local('$dir');
+			$dir = [([$text getText] . "") trim];
+			if (![$dir endsWith: "\\"]) {
+				$dir = "$dir $+ \\";
+			}
+			m_cmd($sid, "cd \" $+ $dir $+ \"");
+		}
+		else {
+			m_cmd($sid, "cd \"" . strrep([$text getText], "\\", "\\\\") . "\"");
+		}
 	}, \$text, $sid => $1);	
 
 	[$table addMouseListener: lambda({
@@ -304,10 +317,12 @@ sub buildFileBrowserMenu {
 				if ($client !is $mclient) {
 					downloadFile($f);
 					if (-exists $f && lof($f) > 0) {
+						logFile($f, sessionToHost($1), "Downloads");
 						showError("Saved $f");
 					}
 				}
 				else {
+					logFile($f, sessionToHost($1), "Downloads");
 					showError("Saved $f");
 				}
 			}

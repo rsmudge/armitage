@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress - Change Log
+---------
+- Fixed a race condition causing some file browser actions to fail on 
+  Windows hosts at times.
+- Files downloaded through file browser are now archived in:
+  [host]\Downloads
+
 02 Jul 11 - Change Log
 --------- 
 - Doubled wait time for Meterpreter ls command to complete.
