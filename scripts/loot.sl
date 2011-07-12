@@ -39,7 +39,10 @@ sub showLoot {
 	$v = [$model getSelectedValue: $table];
 
 	if ($v !is $null) {
-		$dialog = dialog("View Loot", 640, 480);
+		$dialog = [new JPanel];
+		[$dialog setLayout: [new BorderLayout]];
+
+		#$dialog = dialog("View Loot", 640, 480);
 	
 		$text = [new JTextArea: getFileContent($v)];
 		[$text setFont: [Font decode: [$preferences getProperty: "console.font.font", "Monospaced BOLD 14"]]];
@@ -53,8 +56,9 @@ sub showLoot {
 		[$refresh addActionListener: lambda({ [$text setText: getFileContent($v)]; }, \$text, \$v)];
 
 		[$dialog add: [new JScrollPane: $text], [BorderLayout CENTER]];
-		[$dialog add: center($refresh, $button), [BorderLayout SOUTH]];
-		[$dialog show];
+		[$dialog add: center($refresh), [BorderLayout SOUTH]];
+		[$frame addTab: "View", $dialog, $null];
+		#[$dialog show];
 	}	
 }
 
