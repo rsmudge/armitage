@@ -230,6 +230,10 @@ sub showMeterpreterMenu {
 				item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
 			}
 
+			separator($j);
+
+			item($j, "Post Modules", 'M', lambda({ showPostModules($sid); }, $sid => "$sid"));
+
 	$j = menu($1, "Pivoting", 'P');
 			item($j, "Setup...", 'A', setupPivotDialog("$sid"));
 			item($j, "Remove", 'R', lambda({ killPivots($sid, $session); }, \$session, $sid => "$sid"));

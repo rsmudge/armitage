@@ -225,6 +225,10 @@ sub showShellMenu {
 		}, \$sid));
 	}
 
+	item($1, "Post Modules", 'P', lambda({
+		showPostModules($sid);
+	}, \$sid));
+
 	separator($1);
 	item($1, "Disconnect", 'D', lambda({
 		call_async($client, "session.stop", $sid);
