@@ -10,6 +10,17 @@ setMissPolicy(%logs, {
 	return [new PrintStream: [new FileOutputStream: $2, 1], 1, "UTF-8"];
 });
 
+# logNow("file", "host|all", "text to log");
+sub logNow {
+	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
+		local('$today $stream');
+		$today = formatDate("yyMMdd");
+		mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2));
+		$stream = %logs[ getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, "$1 $+ .log") ];
+		[$stream println: $3];
+	}
+}
+
 sub logCheck {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today');

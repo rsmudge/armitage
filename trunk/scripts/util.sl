@@ -110,7 +110,6 @@ sub createDisplayTab {
 sub createConsolePanel {
 	local('$console $result $thread $1');
 	$console = [new Console: $preferences];
-	logCheck($console, "all", "console");
 
 	$result = call($client, "console.create");
 	$thread = [new ConsoleClient: $console, $client, "console.read", "console.write", "console.destroy", $result['id'], $1];
@@ -135,8 +134,16 @@ sub createConsolePanel {
 }
 
 sub createConsoleTab {
-	local('$id $console $thread $1 $2');
+	local('$id $console $thread $1 $2 $host $file');
 	($id, $console, $thread) = createConsolePanel($2);
+
+	if ($host is $null && $file is $null) {
+		logCheck($console, "all", "console");
+	}
+	else {
+		logCheck($console, $host, $file);
+	}
+
 	[$frame addTab: iff($1 is $null, "Console", $1), $console, $thread];
 	return $thread;
 }
