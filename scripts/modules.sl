@@ -111,18 +111,33 @@ sub createModuleList {
 # shows the post modules compatible with a session... for this to work, the
 # code that creates the module browser must call: let(&showPostModules, $tree => ..., $search => ...)
 sub showPostModules {
-	local('$modules %list $model $x');
-	$modules = call($client, "session.compatible_modules", $1)["response"];
-	$modules = map({ return substr($1, 5); }, $modules);
+	local('@allowed');
+	@allowed = getOS(sessionToOS($1));
+	fork({
+		local('$modules %list $model');
+		$modules = call($client, "session.compatible_modules", $sid)["response"];
+		$modules = map({ return substr($1, 5); }, $modules);
 
-	%list = ohash(post => buildTree($modules));
-	$model = treeNodes($null, %list);
-	[[$tree getModel] setRoot: $model];
+		# filter out operating systems.
+		$modules = filter(lambda({ 
+			local('$o');
+			($o) = split('/', $1);
+			return iff($o in @allowed, $1);		
+		}, \@allowed), $modules);
 
-	for ($x = 0; $x < [$tree getRowCount]; $x++) {
-		[$tree expandRow: $x];
-	}
-	[$search setText: ""];
+		%list = ohash(post => buildTree($modules));
+		$model = treeNodes($null, %list);
+
+		dispatchEvent(lambda({
+			local('$x');
+			[[$tree getModel] setRoot: $model];
+
+			for ($x = 0; $x < [$tree getRowCount]; $x++) {
+				[$tree expandRow: $x];
+			}
+			[$search setText: ""];
+		}, \$search, \$tree, \$model));
+	}, \$tree, \$search, $sid => $1, \$client, \@allowed);
 }
 
 sub createModuleBrowserTab {
