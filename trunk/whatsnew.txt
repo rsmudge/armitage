@@ -13,6 +13,7 @@ In Progress - Change Log
 - Added Post Modules item to Meterpreter N -> Explore and Shell N
   menus. This menu item will highlight applicable post-exploitation 
   modules in the module browser.
+- Loot browser now opens loot viewer as a tab.
 
 02 Jul 11 - Change Log
 --------- 
