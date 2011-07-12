@@ -98,7 +98,7 @@ sub show_hashes {
 }
 
 sub createCredentialsTab {
-	local('$dialog $table $model $panel $export $refresh');
+	local('$dialog $table $model $panel $export $crack $refresh');
 	($dialog, $table, $model) = show_hashes("");
 	[$dialog removeAll];
 
@@ -110,6 +110,11 @@ sub createCredentialsTab {
 	[$refresh addActionListener: lambda({
 		refreshCredsTable($model, $null);
 	}, \$model)];
+
+	$crack = [new JButton: "Crack Passwords"];
+	[$crack addActionListener: {
+		launch_dialog("Crack Passwords", "auxiliary", "analyze/jtr_crack_fast", 1);		
+	}];
 
 	$export = [new JButton: "Export"];
 	[$export addActionListener: {
@@ -126,7 +131,7 @@ sub createCredentialsTab {
 		}
 	}];
 
-	[$panel add: center($refresh, $export), [BorderLayout SOUTH]];
+	[$panel add: center($refresh, $crack, $export), [BorderLayout SOUTH]];
 	[$frame addTab: "Credentials", $panel, $null];
 }
 

@@ -8,6 +8,8 @@ In Progress - Change Log
 - Files downloaded through file browser are now archived in:
   [host]\Downloads
 - Hail Mary output nows goes to [log dir]\all\hailmary.log
+- Added Crack Passwords button to Credentials tab. This opens the 
+  launcher for John the Ripper: auxiliary/analyze/jtr_crack_fast
 
 02 Jul 11 - Change Log
 --------- 
