@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress - Change Log
+12 Jul 11 - Change Log
 ---------
 - Fixed a race condition causing some file browser actions to fail on 
   Windows hosts at times.
