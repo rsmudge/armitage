@@ -10,9 +10,9 @@ In Progress - Change Log
 - Hail Mary output nows goes to [log dir]\all\hailmary.log
 - Added Crack Passwords button to Credentials tab. This opens the 
   launcher for John the Ripper: auxiliary/analyze/jtr_crack_fast
-- Added Post Modules item to Meterpreter N -> Explore and Shell N
-  menus. This menu item will highlight applicable post-exploitation 
-  modules in the module browser.
+- Added Post Modules item to Meterpreter N -> Explore and Shell N menus. 
+  This menu item will highlight applicable post-exploitation modules in 
+  the module browser.
 - Loot browser now opens loot viewer as a tab.
 
 02 Jul 11 - Change Log
