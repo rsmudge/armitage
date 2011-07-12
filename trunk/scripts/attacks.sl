@@ -125,7 +125,7 @@ sub smarter_autopwn {
 	local('$console');
 	elog("has given up and launched the hail mary!");
 
-	$console = createConsoleTab("Hail Mary", 1);
+	$console = createConsoleTab("Hail Mary", 1, $host => "all", $file => "hailmary");
 	[[$console getWindow] append: "\n\n1) Finding exploits (via db_autopwn)\n\n"];
 
 	resolveAttacks($1, $2, lambda({

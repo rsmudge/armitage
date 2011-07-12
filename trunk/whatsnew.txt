@@ -7,6 +7,7 @@ In Progress - Change Log
   Windows hosts at times.
 - Files downloaded through file browser are now archived in:
   [host]\Downloads
+- Hail Mary output nows goes to [log dir]\all\hailmary.log
 
 02 Jul 11 - Change Log
 --------- 
