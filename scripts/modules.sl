@@ -103,7 +103,26 @@ sub createModuleList {
 	[$panel add: wrapComponent($search, 5), [BorderLayout SOUTH]];
 
 	[$panel setPreferredSize: [new Dimension: 180, 600] ];
+
+	let(&showPostModules, \$tree, \$search)
 	return $panel;
+}
+
+# shows the post modules compatible with a session... for this to work, the
+# code that creates the module browser must call: let(&showPostModules, $tree => ..., $search => ...)
+sub showPostModules {
+	local('$modules %list $model $x');
+	$modules = call($client, "session.compatible_modules", $1)["response"];
+	$modules = map({ return substr($1, 5); }, $modules);
+
+	%list = ohash(post => buildTree($modules));
+	$model = treeNodes($null, %list);
+	[[$tree getModel] setRoot: $model];
+
+	for ($x = 0; $x < [$tree getRowCount]; $x++) {
+		[$tree expandRow: $x];
+	}
+	[$search setText: ""];
 }
 
 sub createModuleBrowserTab {

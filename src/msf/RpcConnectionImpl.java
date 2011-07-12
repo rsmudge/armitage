@@ -98,7 +98,15 @@ public class RpcConnectionImpl implements RpcConnection {
 		try {
 			synchronized(this) {
 				writeCall(methname, params);
-				return (Map)readResp();
+				Object response = readResp();
+				if (response instanceof Map) {
+					return (Map)response;
+				}
+				else {
+					Map temp = new HashMap();
+					temp.put("response", response);
+					return temp;
+				}
 			}
 		} 
 		catch (RuntimeException rex) { 
