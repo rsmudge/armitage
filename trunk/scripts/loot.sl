@@ -44,7 +44,8 @@ sub showLoot {
 
 		#$dialog = dialog("View Loot", 640, 480);
 	
-		$text = [new JTextArea: getFileContent($v)];
+		$text = [new console.Display: $preferences];
+		[$text setText: getFileContent($v)];
 		[$text setFont: [Font decode: [$preferences getProperty: "console.font.font", "Monospaced BOLD 14"]]];
 		[$text setForeground: [Color decode: [$preferences getProperty: "console.foreground.color", "#ffffff"]]];
 		[$text setBackground: [Color decode: [$preferences getProperty: "console.background.color", "#000000"]]];
@@ -55,7 +56,7 @@ sub showLoot {
 		$refresh = [new JButton: "Refresh"];
 		[$refresh addActionListener: lambda({ [$text setText: getFileContent($v)]; }, \$text, \$v)];
 
-		[$dialog add: [new JScrollPane: $text], [BorderLayout CENTER]];
+		[$dialog add: $text, [BorderLayout CENTER]];
 		[$dialog add: center($refresh), [BorderLayout SOUTH]];
 		[$frame addTab: "View", $dialog, $null];
 		#[$dialog show];
