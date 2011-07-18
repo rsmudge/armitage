@@ -195,6 +195,7 @@ sub createFileBrowser {
 			[$setcwd];
 			m_cmd($sid, "cd \" $+ $sel $+ \"");
 			m_cmd($sid, "ls");
+			[$1 consume];
 		}
 		else if ([$1 isPopupTrigger]) {
 			local('$popup $model');
@@ -202,6 +203,7 @@ sub createFileBrowser {
 			$model = %files[$sid];
 			buildFileBrowserMenu($popup, [$model getSelectedValues: $table], convertAll([$model getRows]), \$sid, \$setcwd);
 			[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
+			[$1 consume];
 		}
 	}, $sid => $1, \$table, \$setcwd)];
 	
