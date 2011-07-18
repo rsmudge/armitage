@@ -6,6 +6,8 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.*;
+
 public class ArmitageApplication extends JFrame {
 	protected JTabbedPane tabs = new JTabbedPane();
 	protected JSplitPane split = null;
@@ -70,7 +72,42 @@ public class ArmitageApplication extends JFrame {
 		}
 	}
 
-	public void _addTab(String title, JComponent tab, final ActionListener removeListener) {
+	private static class ApplicationTab {
+		public String title;
+		public JComponent component;
+		public ActionListener removeListener;
+
+		public String toString() {
+			return title;
+		}
+	}
+
+	protected LinkedList apptabs = new LinkedList();
+
+	public void addAppTab(String title, JComponent component, ActionListener removeListener) {
+		ApplicationTab t = new ApplicationTab();
+		t.title = title;
+		t.component = component;
+		t.removeListener = removeListener;
+		apptabs.add(t);
+	}
+
+	public void removeAppTab(Component tab, String title, ActionEvent ev) {
+		Iterator i = apptabs.iterator();
+		while (i.hasNext()) {
+			ApplicationTab t = (ApplicationTab)i.next();
+			if (t.component == tab || t.title.equals(title)) {
+				tabs.remove(t.component);
+
+				if (t.removeListener != null)
+					t.removeListener.actionPerformed(ev);
+
+				i.remove();
+			}
+		}
+	}
+
+	public void _addTab(final String title, JComponent tab, final ActionListener removeListener) {
 		final Component component = tabs.add("", tab);
 
 		JPanel control = new JPanel();
@@ -87,13 +124,16 @@ public class ArmitageApplication extends JFrame {
 		int index = tabs.indexOfComponent(component);
 		tabs.setTabComponentAt(index, control);
 
+		addAppTab(title, tab, removeListener);
+
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				tabs.remove(component);
-
-				if (removeListener != null)
-					removeListener.actionPerformed(ev);
-
+				if  ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
+					removeAppTab(null, title, ev);
+				}
+				else {
+					removeAppTab(component, null, ev);
+				}
 				System.gc();
 			}
 		}); 

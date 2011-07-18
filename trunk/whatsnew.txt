@@ -7,6 +7,9 @@ In Progress
   Simply highlight the hosts, find your post module, double-click it
   and watch the magic happen. The drawback--each session will open a
   new tab to display the output of the post module.
+- You may now hold down shift and click on a tab to close all tabs
+  with the same title. If you run a post module against multiple hosts
+  this is a good way to get rid of all those tabs.
 
 12 Jul 11 - Change Log
 ---------
