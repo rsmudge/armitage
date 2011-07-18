@@ -15,6 +15,7 @@ In Progress
 - post module output now logs to ~/.armitage/[host]/post.log
 - Fixed some weirdness with popup menu mouse events not being consumed
 - Added View -> Activity Logs to open folder containing Armitage logs
+- Fixed command history so up arrow really gives the previous command
 
 12 Jul 11 - Change Log
 ---------

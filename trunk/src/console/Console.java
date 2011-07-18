@@ -506,9 +506,6 @@ public class Console extends JPanel implements FocusListener {
 			public void actionPerformed(ActionEvent ev) {
 				if (!"".equals(ev.getActionCommand()))
 					history.add(ev.getActionCommand());
-
-				if (history.hasNext())
-					history.next();
 			}
 		});
 
