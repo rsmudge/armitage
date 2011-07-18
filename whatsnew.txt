@@ -14,6 +14,7 @@ In Progress
   pivots.
 - post module output now logs to ~/.armitage/[host]/post.log
 - Fixed some weirdness with popup menu mouse events not being consumed
+- Added View -> Activity Logs to open folder containing Armitage logs
 
 12 Jul 11 - Change Log
 ---------
