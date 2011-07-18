@@ -37,17 +37,22 @@ sub logFile {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today $handle $data $out');
 		$today = formatDate("yyMMdd");
-		mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3));
+		if (-exists $1 && -canread $1) {
+			mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3));
 
-		# read in the file
-		$handle = openf($1);
-		$data = readb($handle, -1);
-		closef($handle);
+			# read in the file
+			$handle = openf($1);
+			$data = readb($handle, -1);
+			closef($handle);
 
-		# write it out.
-		$out = getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3, getFileName($1));
-		$handle = openf("> $+ $out");
-		writeb($handle, $data);
-		closef($handle);
+			# write it out.
+			$out = getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, $3, getFileName($1));
+			$handle = openf("> $+ $out");
+			writeb($handle, $data);
+			closef($handle);
+		}
+		else {
+			warn("Could not find file: $1");
+		}
 	}
 }
