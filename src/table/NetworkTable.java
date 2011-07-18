@@ -111,6 +111,7 @@ public class NetworkTable extends JComponent implements ActionListener {
 			public void all(MouseEvent ev) {
 				if (ev.isPopupTrigger()) {
 					popup.showGraphPopup(getSelectedHosts(), ev);
+					ev.consume();
 				}
 			}
 
