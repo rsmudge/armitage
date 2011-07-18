@@ -10,6 +10,8 @@ In Progress
 - You may now hold down shift and click on a tab to close all tabs
   with the same title. If you run a post module against multiple hosts
   this is a good way to get rid of all those tabs.
+- Graph view Ctrl+P shortcut (save screenshot of graph view) now shows
+  pivots.
 
 12 Jul 11 - Change Log
 ---------

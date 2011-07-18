@@ -87,11 +87,22 @@ public class NetworkGraph extends JComponent implements ActionListener {
 	}
 
 	public Image getScreenshot() {
-//		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-//		paintAll(image.getGraphics());
+		LinkedList cells = new LinkedList();
+
+		/* add the edges to our list of cells to render */
+		Iterator i = nodes.values().iterator();
+		while (i.hasNext()) {
+			Object node = i.next();
+			cells.addAll(Arrays.asList(graph.getEdges(node)));
+		}
+
+		/* collect all of the nodes */
+		cells.addAll(nodes.values());
+
+		/* render the cells y0 */
 		return mxCellRenderer.createBufferedImage(
 			graph,
-			nodes.values().toArray(),
+			cells.toArray(),
 			zoom,
 			null,
 			true,
