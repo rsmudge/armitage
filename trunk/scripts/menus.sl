@@ -73,6 +73,8 @@ sub view_items {
 		item($1, 'Loot', 'L', &createLootBrowser);
 	}
 
+	item($1, 'Activity Logs', 'A', gotoURL([[new File: getFileProper(systemProperties()["user.home"], ".armitage")] toURL] . ""));
+
 	separator($1);
 
 	local('$t');
