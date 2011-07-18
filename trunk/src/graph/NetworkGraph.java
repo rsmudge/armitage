@@ -292,6 +292,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 			public void handleEvent(MouseEvent ev) {
 				if (ev.isPopupTrigger() && getGraphPopup() != null) {
 					getGraphPopup().showGraphPopup(getSelectedHosts(), ev);
+					ev.consume();
 				}
 			}
 

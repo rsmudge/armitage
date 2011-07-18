@@ -13,6 +13,7 @@ In Progress
 - Graph view Ctrl+P shortcut (save screenshot of graph view) now shows
   pivots.
 - post module output now logs to ~/.armitage/[host]/post.log
+- Fixed some weirdness with popup menu mouse events not being consumed
 
 12 Jul 11 - Change Log
 ---------
