@@ -12,6 +12,7 @@ In Progress
   this is a good way to get rid of all those tabs.
 - Graph view Ctrl+P shortcut (save screenshot of graph view) now shows
   pivots.
+- post module output now logs to ~/.armitage/[host]/post.log
 
 12 Jul 11 - Change Log
 ---------

@@ -155,7 +155,16 @@ sub manage_job {
 
 sub launch_service {
 	local('$c $key $value');
-	$c = createConsoleTab("$1", 1);
+
+	if ('SESSION' in $3) {
+		$c = createConsoleTab("$1", 1, $host => sessionToHost($3['SESSION']), $file => "post");
+	}
+	else if ('RHOST' in $3) {
+		$c = createConsoleTab("$1", 1, $host => $3['RHOST'], $file => $4);
+	}
+	else {
+		$c = createConsoleTab("$1", 1);
+	}
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
 		[$c sendString: "use exploit/multi/handler\n"];	
