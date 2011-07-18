@@ -157,8 +157,6 @@ sub launch_service {
 	local('$c $key $value');
 	$c = createConsoleTab("$1", 1);
 
-	sleep(500);
-
 	if ($4 eq "payload" && $format eq "multi/handler") {
 		[$c sendString: "use exploit/multi/handler\n"];	
 		[$c sendString: "set PAYLOAD ". substr($2, 8) . "\n"];
@@ -248,12 +246,14 @@ sub _launch_dialog {
 			$default = join(", ", $5);
 		}
 		else if ($key eq "SESSION" && size($5) > 0) {
-			local('$host');
-			$host = $5[0];
+			local('$host @sessions');
 
-			if ($host in %hosts && 'sessions' in %hosts[$host] && size(%hosts[$host]['sessions']) > 0) {
-				$default = keys(%hosts[$host]['sessions'])[0];
+			foreach $host ($5) {
+				if ($host in %hosts && 'sessions' in %hosts[$host] && size(%hosts[$host]['sessions']) > 0) {
+					push(@sessions, keys(%hosts[$host]['sessions'])[0]);
+				}
 			}
+			$default = join(", ", @sessions);
 		}
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
@@ -329,7 +329,17 @@ sub _launch_dialog {
 
 		if ($visible) {
 			warn($options);
-			launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
+			if ('SESSION' in $options) {
+				local('@sessions $session $console');
+				@sessions = split(',\s+', $options['SESSION']);
+				foreach $session (@sessions) {
+					$options['SESSION'] = $session;
+					launch_service($title, "$type $+ / $+ $command", copy($options), $type, $format => [$combo getSelectedItem]);
+				}
+			}
+			else {
+				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
+			}
 		}
 		else {
 			warn($options);
