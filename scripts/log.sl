@@ -25,8 +25,10 @@ sub logCheck {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today');
 		$today = formatDate("yyMMdd");
-		mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2));
-		[$1 writeToLog: %logs[ getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, "$3 $+ .log") ]];
+		if ($2 ne "") {
+			mkdir(getFileProper(systemProperties()["user.home"], ".armitage", $today, $2));
+			[$1 writeToLog: %logs[ getFileProper(systemProperties()["user.home"], ".armitage", $today, $2, "$3 $+ .log") ]];
+		}
 	}
 }
 
