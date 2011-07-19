@@ -16,6 +16,8 @@ Armitage Changelog
 - Fixed some weirdness with popup menu mouse events not being consumed
 - Added View -> Activity Logs to open folder containing Armitage logs
 - Fixed command history so up arrow really gives the previous command
+- Keystrokes dumped using dump button on key scan dialog are now logged
+  to ~/.armitage/[host]/keyscan.log
 
 12 Jul 11 - Change Log
 ---------
