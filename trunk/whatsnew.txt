@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+19 Jul 11 - Change Log
 ---------
 - You may now execute a post module against multiple hosts at once.
   Simply highlight the hosts, find your post module, double-click it
