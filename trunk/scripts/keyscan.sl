@@ -20,6 +20,7 @@ sub parseKeyscans {
 		local('$document');
 		$document = %keyscans[$1];
 		[$document insertString: [$document getLength], "$2 $+ \n", $null];
+		logNow("keyscan", sessionToHost($1), "$2 $+ \n");
 	}
 }
 
