@@ -19,6 +19,9 @@ Armitage Changelog
 - Keystrokes dumped using dump button on key scan dialog are now logged
   to ~/.armitage/[host]/keyscan.log
 
+  *Respun* Armitage.dmg with .app file fix for MacOS X Lion. Thanks to
+  @NightLion for contributing this.
+
 12 Jul 11 - Change Log
 ---------
 - Fixed a race condition causing some file browser actions to fail on 
