@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- loots dialog is now populated by db.loots RPC call. This is faster
+  and compatible with changes made to MSF.
+
 19 Jul 11 - Change Log
 ---------
 - You may now execute a post module against multiple hosts at once.
