@@ -12,26 +12,16 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 sub updateLootModel {
-	local('$port $row $host');
-	cmd_safe("loot", lambda({
-		local('@rows $row $entry $key');
-		[$model clear: 16];
-		foreach $entry (split("\n", $3)) {
-			$row = explode_cred($entry);
-			if ($entry hasmatch "info='(.*?)'") {
-				$row["info"] = matched()[0];
-			}
+	local('$port $row $host $loots $entry');
+	[$model clear: 16];
 
-			if ($entry hasmatch "Time: (.*?)\\s+Loot:") {
-				$row["date"] = matched()[0];
-			}
-
-			if (size($row) > 0) {
-				[$model addEntry: $row];
-			}
-		}
-		[$model fireListeners];
-	}, \$model));
+	$loots = call($client, "db.loots")["loots"];
+	foreach $entry ($loots) {
+		$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
+		$entry["type"] = $entry["ltype"];
+		[$model addEntry: $entry];
+	}
+	[$model fireListeners];
 }
 
 sub showLoot {
