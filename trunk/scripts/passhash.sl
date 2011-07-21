@@ -62,14 +62,22 @@ sub refreshCredsTable {
 	local('$tmp_console $model');
 	($model) = $1;
 	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, "db_creds", lambda({
+	cmd($client, $tmp_console, "creds", lambda({
 		[$model clear: 128];
 
 		local('$c $line');
 		foreach $line (split("\n", $3)) {
-			$c = explode_cred($line);
-			if ($c["user"] ne "") {
-				[$model addEntry: $c];
+			local('$host $port $user $pass $type $active');
+			($host, $port, $user, $pass, $type, $active) = split('\s{2,}', $line);
+			if ($user ne "" && $user ne "user" && $user ne "----") {
+				[$model addEntry: %(
+					host => $host,
+					port => $port,
+					user => $user,
+					pass => $pass,
+					type => $type,
+					active => $active
+				)];
 			}
 		}
 
