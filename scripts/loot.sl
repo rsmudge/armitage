@@ -13,7 +13,7 @@ import javax.swing.table.*;
 
 sub updateLootModel {
 	local('$port $row $host');
-	cmd_safe("db_loot", lambda({
+	cmd_safe("loot", lambda({
 		local('@rows $row $entry $key');
 		[$model clear: 16];
 		foreach $entry (split("\n", $3)) {
