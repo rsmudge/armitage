@@ -5,6 +5,10 @@ In Progress
 ---------
 - loots dialog is now populated by db.loots RPC call. This is faster
   and compatible with changes made to MSF.
+- credentials dialog is now populated by.creds RPC call. This is 
+  faster and compatible with changes made to MSF.
+- RPC connection code now strips out more characters that may cause 
+  the XML parser to complain. 
 
 19 Jul 11 - Change Log
 ---------
