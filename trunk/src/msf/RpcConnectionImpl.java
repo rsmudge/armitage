@@ -189,7 +189,7 @@ public class RpcConnectionImpl implements RpcConnection {
 			while ((val = sin.read()) != 0) {
 				if (val == -1)
 					throw new IOException("Stream died.");
-				if (val != 1 && val != 2)
+				if (val >= 32 || val == 10 || val == 13)
 					cache.write(val);
 			}
 		} 
@@ -203,7 +203,10 @@ public class RpcConnectionImpl implements RpcConnection {
 		}
 
 		//parse the response: <methodResponse><params><param><value>...
-		Document root = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(cache.toByteArray()));
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setValidating(false);
+
+		Document root = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(cache.toByteArray()));
 
 		if (!root.getFirstChild().getNodeName().equals("methodResponse"))
 			throw new IOException("Error reading response: not a response.");

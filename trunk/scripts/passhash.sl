@@ -59,31 +59,16 @@ sub explode_cred {
 }
 
 sub refreshCredsTable {
-	local('$tmp_console $model');
-	($model) = $1;
-	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, "creds", lambda({
+	thread(lambda({
+		[Thread yield];
+		local('$creds $cred');
 		[$model clear: 128];
-
-		local('$c $line');
-		foreach $line (split("\n", $3)) {
-			local('$host $port $user $pass $type $active');
-			($host, $port, $user, $pass, $type, $active) = split('\s{2,}', $line);
-			if ($user ne "" && $user ne "user" && $user ne "----") {
-				[$model addEntry: %(
-					host => $host,
-					port => $port,
-					user => $user,
-					pass => $pass,
-					type => $type,
-					active => $active
-				)];
-			}
+		$creds = call($client, "db.creds")["creds"];
+		foreach $cred ($creds) {
+			[$model addEntry: $cred];
 		}
-
 		[$model fireListeners];
-		call($client, "console.destroy", $tmp_console);
-	}, \$model, \$tmp_console));
+	}, $model => $1));
 }
 
 sub show_hashes {
