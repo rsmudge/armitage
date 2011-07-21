@@ -12,16 +12,18 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 sub updateLootModel {
-	local('$port $row $host $loots $entry');
-	[$model clear: 16];
-
-	$loots = call($client, "db.loots")["loots"];
-	foreach $entry ($loots) {
-		$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
-		$entry["type"] = $entry["ltype"];
-		[$model addEntry: $entry];
-	}
-	[$model fireListeners];
+	thread(lambda({
+		[Thread yield];
+		local('$loots $entry');
+		[$model clear: 16];
+		$loots = call($client, "db.loots")["loots"];
+		foreach $entry ($loots) {
+			$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
+			$entry["type"] = $entry["ltype"];
+			[$model addEntry: $entry];
+		}
+		[$model fireListeners];
+	}, \$model));
 }
 
 sub showLoot {
