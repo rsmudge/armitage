@@ -63,7 +63,7 @@ sub refreshCredsTable {
 		[Thread yield];
 		local('$creds $cred');
 		[$model clear: 128];
-		$creds = call($client, "db.creds")["creds"];
+		$creds = call($client, "db.creds", [new HashMap])["creds"];
 		foreach $cred ($creds) {
 			[$model addEntry: $cred];
 		}
