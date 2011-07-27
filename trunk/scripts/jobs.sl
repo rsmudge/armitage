@@ -217,6 +217,29 @@ sub launch_dialog {
 	}, \$info, \$options, $args => @_));
 }
 
+# $1 = model, $2 = exploit, $3 = selected target
+sub updatePayloads {
+	thread(lambda({
+		local('$best');
+		$best = best_client_payload($exploit, $target);
+		if ($best eq "windows/meterpreter/reverse_tcp") {
+			[$model setValueForKey: "PAYLOAD", "Value", $best];
+			[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+			[$model setValueForKey: "LPORT", "Value", ""];
+			[$model setValueForKey: "DisablePayloadHandler", "Value", "true"];
+			[$model setValueForKey: "ExitOnSession", "Value", ""];
+		}
+		else {
+			[$model setValueForKey: "PAYLOAD", "Value", $best];
+			[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+			[$model setValueForKey: "LPORT", "Value", randomPort()];
+			[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+			[$model setValueForKey: "ExitOnSession", "Value", "false"];
+		}
+		[$model fireListeners];
+	}, $model => $1, $exploit => $2, $target => $3));
+}
+
 sub _launch_dialog {
 	local('$dialog $north $center $center $label $textarea $scroll $model $table $default $combo $key $sorter $value $col $button');
 
@@ -271,9 +294,21 @@ sub _launch_dialog {
 			$default = $value["default"];
 		}
 
-		if ($key ne "DisablePayloadHandler") {
+		if ($2 ne "exploit" || $key !in @("DisablePayloadHandler", "PAYLOAD", "LHOST", "LPORT", "ExitOnSession")) {
 			[$model _addEntry: %(Option => $key, Value => $default, Tooltip => $value["desc"], Hide => iff($value["advanced"] eq '0' && $value["evasion"] eq '0', '0', '1'))]; 
 		}
+	}
+
+	#
+	# give user the option to configure the client-side payload... of course we'll configure it for them
+	# by default :P~
+	#
+	if ($2 eq "exploit") {
+		[$model _addEntry: %(Option => "PAYLOAD", Value => "", Tooltip => "The payload to execute on successful exploitation", Hide => "0")]; 
+		[$model _addEntry: %(Option => "DisablePayloadHandler", Value => "1", Tooltip => "Disable the handler code for the selected payload", Hide => "0")]; 
+		[$model _addEntry: %(Option => "ExitOnSession", Value => "", Tooltip => "Close this handler after a session")];
+		[$model _addEntry: %(Option => "LHOST", Value => "$MY_ADDRESS", Tooltip => "The listen address", Hide => "0")]; 
+		[$model _addEntry: %(Option => "LPORT", Value => "", Tooltip => "The listen port", Hide => "0")]; 
 	}
 
 	$table = [new JTable: $model];
@@ -305,27 +340,20 @@ sub _launch_dialog {
 	local('$combobox');
 	if ('targets' in $info) {
 		$combobox = targetsCombobox($info);
+		[$combobox addActionListener: lambda({
+			updatePayloads($model, $exploit, [$combobox getSelectedItem]);
+		}, \$model, $exploit => $3, \$combobox)];
 	}
 
 	[$button addActionListener: lambda({
 		local('$options $host $x $best');
 		syncTable($table);
 
-		if ($type eq "payload" || $type eq "post" || $type eq "auxiliary") {
-			$options = %();
-		}
-		else {
-			$best = best_client_payload($command, iff($combobox !is $null, [$combobox getSelectedItem]));
-			if ($best eq "windows/meterpreter/reverse_tcp") {
-				$options = %(PAYLOAD => $best, DisablePayloadHandler => "1");
-			}
-			else {
-				$options = %(PAYLOAD => $best, LPORT => randomPort(), ExitOnSession => "false");
-			}
+		$options = %();
 
-			if ($combobox !is $null) {
-				$options["TARGET"] = split(' \=\> ', [$combobox getSelectedItem])[0];
-			}
+		# assume we have an exploit... set the appropriate target please...
+		if ($combobox !is $null) {
+			$options["TARGET"] = split(' \=\> ', [$combobox getSelectedItem])[0];
 		}
 
 		for ($x = 0; $x < [$model getRowCount]; $x++) {
@@ -368,6 +396,10 @@ sub _launch_dialog {
 	}
 	else if ($combobox !is $null) {
 		[$panel add: left([new JLabel: "Targets: "], $combobox)];
+	}
+
+	if ($2 eq "exploit") {
+		updatePayloads($model, "$3", iff($combobox !is $null, [$combobox getSelectedItem]));
 	}
 
 	[$panel add: left($advanced)];

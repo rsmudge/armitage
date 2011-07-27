@@ -102,6 +102,24 @@ public class GenericTableModel extends AbstractTableModel {
 		((Map)rows.get(row)).put(column, value);
 	}
 
+	public void setValueForKey(String key, String column, String value) {
+		int row = -1;
+
+		synchronized (this) {
+			Iterator i = rows.iterator();
+			for (int x = 0; i.hasNext(); x++) {
+				Map temp = (Map)i.next();
+				if (key.equals(temp.get(leadColumn))) {
+					row = x;
+					break;
+				}
+			}
+		}
+
+		if (row != -1)
+			setValueAtRow(row, column, value);
+	}
+
 	public void setValueAtRow(final int row, final String column, final String value) {
 		if (SwingUtilities.isEventDispatchThread())
 			_setValueAtRow(row, column, value);
