@@ -10,6 +10,11 @@ In Progress
   user/password first.
 - Armitage no longer sends payload related variables to auxiliary modules.
   (note to programmer: auxiliary modules don't use PAYLOADs :P~~~)
+- Module launch dialog for client-side attacks (fileformat and browser) 
+  now presents payload options to you. They're still configured to a 
+  reasonable default (and updated as the exploit target changes).
+- Client-side payload "guess" is now better about selecting an OS X specific
+  payload when appropriate.
 
 23 Jul 11 - Change Log
 ---------

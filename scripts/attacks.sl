@@ -219,7 +219,7 @@ sub best_client_payload {
 	else if ("*Mac*OS*PPC*" iswm $2 || ($os eq "osx" && "*PPC*" iswm $2)) {
 		return "osx/ppc/shell/reverse_tcp";
 	}
-	else if ("*Mac*OS*x86*" iswm $2 || $os eq "osx") {
+	else if ("*Mac*OS*x86*" iswm $2 || "*Mac*OS*" iswm $2 || "*OS X*" iswm $2 || $os eq "osx") {
 		return "osx/x86/vforkshell/reverse_tcp";
 	}
 	else {
