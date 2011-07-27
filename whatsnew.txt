@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage now sends use prive with use stdapi when it gets a command not
+  found error in Meterpreter.
+
 23 Jul 11 - Change Log
 ---------
 - Ooops! My baaad. I broke db.creds in MSF. Someone else unbroke it. Now

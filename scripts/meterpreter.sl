@@ -70,6 +70,7 @@ sub parseMeterpreter {
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		m_cmd($sid, "use stdapi");
+		m_cmd($sid, "use priv");
 		showError("Loading stdapi. Try command again");
 		return;
 	}
