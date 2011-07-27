@@ -5,6 +5,9 @@ In Progress
 -----------
 - Armitage now sends use prive with use stdapi when it gets a command not
   found error in Meterpreter.
+- Armitage now sends BLANK_PASSWORDS 0 with any Login menu items. This
+  should speed up the login by forcing Metasploit to not try a blank
+  user/password first.
 
 23 Jul 11 - Change Log
 ---------

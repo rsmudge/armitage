@@ -223,6 +223,7 @@ sub show_login_dialog {
 		%options["PASSWORD"] = [$pass getText];
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
+		%options["BLANK_PASSWORDS"] = "0";
 		warn("$srvc $+ : $port => " . %options);
 		elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
 		call($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
