@@ -501,26 +501,42 @@ sub host_attack_items {
 }
 
 sub addFileListener {
-	local('$table $model');
-	($table, $model) = @_; 
+	local('$table $model $actions');
+	($table, $model, $actions) = @_; 
+
+	if ($actions is $null) {
+		$actions = %();
+	}
+
+	# set up an action to pop up a file chooser for different file type values.
+	$actions["*FILE*"] = {
+		local('$title $temp');
+		$title = "Select $1";
+		$temp = iff($2 eq "", 
+				chooseFile(\$title, $dir => "/opt/metasploit3/msf3/data"), 
+				chooseFile(\$title, $sel => $2)
+			);
+		if ($temp !is $null) {
+			[$4: $temp];
+		}
+	};
      
 	[$table addMouseListener: lambda({
                 if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
-			local('$type $row $file $value');
+			local('$type $row $action $change $value');
 
 			$value = [$model getSelectedValueFromColumn: $table, "Value"];
 			$type = [$model getSelectedValueFromColumn: $table, "Option"];
 			$row = [$model getSelectedRow: $table];
 
-			if ("*FILE*" iswm $type) {
-				local('$title');
-				$title = "Select $type";
-				$file = iff($value eq "", chooseFile(\$title, $dir => "/opt/metasploit3/msf3/data"), chooseFile(\$title, $sel => $value));
-				if ($file !is $null) {
-					[$model setValueAtRow: $row, "Value", $file];
-					[$model fireListeners];
+			foreach $action => $change ($actions) {
+				if ($action iswm $type) {
+					[$change: $type, $value, $row, lambda({;
+						[$model setValueAtRow: $row, "Value", "$1"];
+						[$model fireListeners];
+					}, \$model, \$row)];
 				}
 			}
 		}
-	}, \$model, \$table)];
+	}, \$model, \$table, \$actions)];
 }
