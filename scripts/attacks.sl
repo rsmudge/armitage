@@ -337,16 +337,7 @@ sub attack_dialog {
 	addFileListener($table, $model);
 
 	local('$TABLE_RENDERER');
-	$TABLE_RENDERER = 
-		wait(fork({
-			return lambda({
-				local('$render $v');
-				$render = [$table getDefaultRenderer: ^String];
-				$v = [$render getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
-				[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
-				return $v;
-			}, \$table, \$model);
-		}, \$table, \$model));
+	$TABLE_RENDERER = tableRenderer($table, $model);
 
 	foreach $col (@("Option", "Value")) {
 		[[$table getColumn: $col] setCellRenderer: $TABLE_RENDERER];

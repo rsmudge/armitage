@@ -390,3 +390,25 @@ sub quickListDialog {
 	[$dialog show];
 	[$dialog setVisible: 1];
 }
+
+#
+# a convienence method to return a table cell renderer that is generated in a separate sleep environment (to prevent locking issues)
+# A quick sleep lesson for you: fork({ code }) runs { code } in a separate thread with a new interpreter. It's possible to return an
+# object from it. In this case, the returned object is a Sleep function that when called executes with a completely unrelated context
+# to the current context. It's impossible for this context to interfere with the main context. It's 1:35am. That's the best I can do.
+#
+sub tableRenderer {
+	return wait(fork({
+		return lambda({
+			local('$render $v $content');
+			$render = [$table getDefaultRenderer: ^String];
+
+			$content = iff ($2 eq "PAYLOAD" || "*FILE*" iswm $2, "$2 \u271A", $2);
+			$v = [$render getTableCellRendererComponent: $1, $content, $3, $4, $5, $6];
+			[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
+
+			return $v;
+		}, \$table, \$model);
+	}, $table => $1, $model => $2));
+}
+

@@ -15,11 +15,16 @@ In Progress
   reasonable default (and updated as the exploit target changes).
 - Client-side payload "guess" is now better about selecting an OS X specific
   payload when appropriate.
-- Double-click the PAYLOAD word in the module launch dialog to open a 
+- Double-click the PAYLOAD option in the module launch dialog to open a 
   chooser that lets you select a payload and choose whether to create a 
-  multi/handler for it or not.
+  handler for it or not. This will configure the appropriate payload vars
+  for you. You're welcome to tweak them from there.
 - Simplified some of the logic in the file browser and added better error
   reporting.
+- Added a visual hint to clickable option names in the module launcher.
+  Double-clicking these options will open a dialog to assist setting the value.
+- Fixed a potential deadlock caused by launching modules while Armitage is
+  still initializing.
 
 23 Jul 11 - Change Log
 ---------
