@@ -220,7 +220,7 @@ sub showMeterpreterMenu {
 			}
 
 	$j = menu($1, "Explore", 'E');
-			item($j, "Browse Files", 'B', lambda({ createFileBrowser($sid); }, $sid => "$sid"));
+			item($j, "Browse Files", 'B', lambda({ createFileBrowser($sid, $platform); }, $sid => "$sid", \$platform));
 			item($j, "Show Processes", 'P', lambda({ createProcessBrowser($sid); }, $sid => "$sid"));
 			if ("*win*" iswm $platform) {
 				item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
