@@ -47,7 +47,10 @@ sub parseListing {
 		}
 	}
 	else if ($0 eq "update") {
-		if ($2 ismatch 'Listing: (.*?)') {
+		if ("*Operation failed*" iswm $2) {
+			showError("$2 $+ \n\nMaybe you don't have permission to access \nthis folder? Press the directory up button.");
+		}
+		else if ($2 ismatch 'Listing: (.*?)' || $2 ismatch 'No entries exist in (.*?)') {
 			local('$path');
 			($path) = matched();
 			[%paths[$1] remove: 0, [%paths[$1] getLength]];
@@ -59,6 +62,9 @@ sub parseListing {
 
 			if ($size ismatch '\d+' && $name ne "." && $name ne "..") {
 				[$model addEntry: %(Name => $name, D => $type, Size => iff($type eq "dir", "", $size), Modified => $last, Mode => $mode)];
+			}
+			else {
+				printAll(@_);
 			}
 		}
 	}
@@ -165,35 +171,32 @@ sub createFileBrowser {
 
 	$text = [new JTextField: %paths[$1], "", 80];
 	[$text addActionListener: lambda({
-		m_cmd($sid, "cd \"" . strrep([[$1 getSource] getText], "\\", "\\\\") . "\"");
+		local('$dir');
+		$dir = [[$1 getSource] getText];
+		m_cmd($sid, "cd ' $+ $dir $+ '");
 		m_cmd($sid, "ls");
+		[[$1 getSource] setText: ""];
 	}, $sid => $1)];
 
 	# this function should be called before every browser action to keep things in sync.
 	$setcwd = lambda({
-		if ("*Windows*" iswm sessionToOS($sid)) {
-			# a work around for cd "C:\\WINDOWS" failing without trailing slash...
-			# [-] stdapi_fs_chdir: Operation failed: The system cannot find the file specified.
-
-			local('$dir');
-			$dir = [([$text getText] . "") trim];
-			if (![$dir endsWith: "\\"]) {
-				$dir = "$dir $+ \\";
-			}
-			m_cmd($sid, "cd \" $+ $dir $+ \"");
-		}
-		else {
-			m_cmd($sid, "cd \"" . strrep([$text getText], "\\", "\\\\") . "\"");
-		}
-	}, \$text, $sid => $1);	
+		m_cmd($sid, "cd '" . [$text getText] . "'");
+	}, \$text, $sid => $1, $platform => $2);	
 
 	[$table addMouseListener: lambda({
 		if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
 			local('$model $sel');
 			$model = %files[$sid];
 			$sel = [$model getSelectedValue: $table];
-			[$setcwd];
-			m_cmd($sid, "cd \" $+ $sel $+ \"");
+
+			if ("*Windows*" iswm sessionToOS($sid)) {
+				m_cmd($sid, "cd '" . [$text getText] . "\\ $+ $sel $+ '");
+			}
+			else {
+				[$setcwd];
+				m_cmd($sid, "cd ' $+ $sel $+ '");
+			}
+
 			m_cmd($sid, "ls");
 			[$1 consume];
 		}
@@ -205,7 +208,7 @@ sub createFileBrowser {
 			[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 			[$1 consume];
 		}
-	}, $sid => $1, \$table, \$setcwd)];
+	}, $sid => $1, \$table, \$setcwd, \$text)];
 	
 	$fsv = [FileSystemView getFileSystemView];
 	$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];
@@ -228,10 +231,15 @@ sub createFileBrowser {
 		}
 		$last = ticks();
 
-		[$setcwd];
-		m_cmd($sid, "cd ..");
+		if ("*Windows*" iswm sessionToOS($sid)) {
+			m_cmd($sid, "cd '" . [$text getText] . "\\..'");
+		}
+		else {
+			[$setcwd];
+			m_cmd($sid, "cd ..");
+		}
 		m_cmd($sid, "ls");
-	}, $sid => $1, \$setcwd)];
+	}, $sid => $1, \$setcwd, \$text)];
 
 	# setup the whatever it's called...
 

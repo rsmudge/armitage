@@ -324,7 +324,7 @@ sub _launch_dialog {
 			return %(payload => $1, Name => $2, Target => $3, Channel => $4);
 		};
 
-		$check = [new JCheckBox: "Start a multi/handler for this payload"];
+		$check = [new JCheckBox: "Start a handler for this payload"];
 
 		$compatible = @();
 		push($compatible, [$payload: "windows/meterpreter/reverse_tcp", "Meterpreter", "Windows", "TCP/IP"]);
