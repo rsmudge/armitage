@@ -29,6 +29,9 @@ In Progress
   still initializing.
 - Added a preference to disable displaying the MSF ASCII banner when a new
   console opens. This preference is set to show the banner by default.
+- Added a regexp to strip non-ascii chars from usernames collected with dump
+  hashes. The RPC daemon throws an exception when I try to report usernames
+  with these chars in them.
 
 23 Jul 11 - Change Log
 ---------

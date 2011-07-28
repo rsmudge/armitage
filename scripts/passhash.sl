@@ -33,6 +33,10 @@ import table.*;
 	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
 		local('$user $gid $hash');
 		($user, $gid, $hash) = matched();
+
+		# strip any funky characters that will cause this call to throw an exception
+		$user = replace($user, '\P{Graph}', "");
+
 		call($client, "db.report_auth_info", %(host => $host, port => "445", sname => "smb", user => $user, pass => $hash, type => "smb_hash", active => "true"));
 	}
 	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
