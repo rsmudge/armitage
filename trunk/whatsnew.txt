@@ -18,6 +18,8 @@ In Progress
 - Double-click the PAYLOAD word in the module launch dialog to open a 
   chooser that lets you select a payload and choose whether to create a 
   multi/handler for it or not.
+- Simplified some of the logic in the file browser and added better error
+  reporting.
 
 23 Jul 11 - Change Log
 ---------
