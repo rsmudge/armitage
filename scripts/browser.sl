@@ -63,9 +63,6 @@ sub parseListing {
 			if ($size ismatch '\d+' && $name ne "." && $name ne "..") {
 				[$model addEntry: %(Name => $name, D => $type, Size => iff($type eq "dir", "", $size), Modified => $last, Mode => $mode)];
 			}
-			else {
-				printAll(@_);
-			}
 		}
 	}
 }
@@ -174,6 +171,7 @@ sub createFileBrowser {
 		local('$dir');
 		$dir = [[$1 getSource] getText];
 		m_cmd($sid, "cd ' $+ $dir $+ '");
+		m_cmd($sid, "pwd");
 		m_cmd($sid, "ls");
 		[[$1 getSource] setText: ""];
 	}, $sid => $1)];
@@ -197,6 +195,7 @@ sub createFileBrowser {
 				m_cmd($sid, "cd ' $+ $sel $+ '");
 			}
 
+			m_cmd($sid, "pwd");
 			m_cmd($sid, "ls");
 			[$1 consume];
 		}
@@ -238,6 +237,7 @@ sub createFileBrowser {
 			[$setcwd];
 			m_cmd($sid, "cd ..");
 		}
+		m_cmd($sid, "pwd");
 		m_cmd($sid, "ls");
 	}, $sid => $1, \$setcwd, \$text)];
 
