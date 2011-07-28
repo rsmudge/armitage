@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+07.28.11 - Armed for Metasploit 4
+--------
 - Armitage now sends use prive with use stdapi when it gets a command not
   found error in Meterpreter.
 - Armitage now sends BLANK_PASSWORDS 0 with any Login menu items. This
