@@ -17,6 +17,7 @@ import java.awt.event.*;
 
 import graph.*;
 import armitage.*;
+import table.*;
 
 # Create a new menu, returns the menu, you have to attach it to something
 # menu([$parent], "Name", 'Accelerator')
@@ -345,4 +346,47 @@ sub syncTable {
 
 sub isWindows {
 	return iff("*Windows*" iswm systemProperties()["os.name"], 1);
+}
+
+# creates a list dialog,
+# $1 = title, $2 = button text, $3 = columns, $4 = rows, $5 = callback
+sub quickListDialog {
+	local('$dialog $panel $table $row $model $button $sorter $after $a');
+	$dialog = dialog($1, $width, $height);
+	$panel = [new JPanel];
+	[$panel setLayout: [new BorderLayout]];
+	
+	$model = [new GenericTableModel: sublist($3, 1), $3[0], 8];
+	foreach $row ($4) {
+		[$model _addEntry: $row];
+	}
+
+	$table = [new JTable: $model];
+	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
+	$sorter = [new TableRowSorter: $model];
+	[$table setRowSorter: $sorter];
+
+	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
+	
+	$button = [new JButton: $2];
+	[$button addActionListener: lambda({
+		[$callback : [$model getSelectedValueFromColumn: $table, $lead]]; 
+		[$dialog setVisible: 0];
+	}, \$dialog, $callback => $5, \$model, \$table, $lead => $3[0])];
+
+	local('$south');
+	$south = [new JPanel];
+        [$south setLayout: [new BoxLayout: $south, [BoxLayout Y_AXIS]]];
+
+	if ($after !is $null) {
+		foreach $a ($after) {
+			[$south add: $a];
+		}
+	}
+	[$south add: center($button)];
+
+	[$panel add: $south, [BorderLayout SOUTH]];
+	[$dialog add: $panel, [BorderLayout CENTER]];
+	[$dialog show];
+	[$dialog setVisible: 1];
 }

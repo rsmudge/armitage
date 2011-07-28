@@ -15,6 +15,9 @@ In Progress
   reasonable default (and updated as the exploit target changes).
 - Client-side payload "guess" is now better about selecting an OS X specific
   payload when appropriate.
+- Double-click the PAYLOAD word in the module launch dialog to open a 
+  chooser that lets you select a payload and choose whether to create a 
+  multi/handler for it or not.
 
 23 Jul 11 - Change Log
 ---------

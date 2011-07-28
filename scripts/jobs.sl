@@ -315,7 +315,65 @@ sub _launch_dialog {
 	$sorter = [new TableRowSorter: $model];
 	[$sorter toggleSortOrder: 0];
 	[$table setRowSorter: $sorter];
-	addFileListener($table, $model);
+
+	local('%actions');
+	%actions["PAYLOAD"] = lambda({
+		local('$compatible $payload $check');
+
+		$payload = { 
+			return %(payload => $1, Name => $2, Target => $3, Channel => $4);
+		};
+
+		$check = [new JCheckBox: "Start a multi/handler for this payload"];
+
+		$compatible = @();
+		push($compatible, [$payload: "windows/meterpreter/reverse_tcp", "Meterpreter", "Windows", "TCP/IP"]);
+		push($compatible, [$payload: "windows/meterpreter/reverse_tcp_dns", "Meterpreter", "Windows", "TCP/IP to hostname"]);
+		push($compatible, [$payload: "windows/meterpreter/reverse_ipv6_tcp", "Meterpreter", "Windows", "TCP/IPv6"]);
+		push($compatible, [$payload: "windows/meterpreter/reverse_http", "Meterpreter", "Windows", "HTTP"]);
+		push($compatible, [$payload: "windows/meterpreter/reverse_https", "Meterpreter", "Windows", "HTTPS"]);
+		push($compatible, [$payload: "java/meterpreter/reverse_tcp", "Meterpreter", "Java", "TCP/IP"]);
+		push($compatible, [$payload: "java/meterpreter/reverse_http", "Meterpreter", "Java", "HTTP"]);
+		push($compatible, [$payload: "linux/meterpreter/reverse_tcp", "Meterpreter", "Linux", "TCP/IP"]);
+		push($compatible, [$payload: "linux/meterpreter/reverse_ipv6_tcp", "Meterpreter", "Linux", "TCP/IPv6"]);
+		push($compatible, [$payload: "osx/ppc/shell/reverse_tcp", "Shell", "MacOS X (PPC)", "TCP/IP"]);
+		push($compatible, [$payload: "osx/x86/vforkshell/reverse_tcp", "Shell", "MacOS X (x86)", "TCP/IP"]);
+		push($compatible, [$payload: "generic/shell_reverse_tcp", "Shell", "UNIX (Generic)", "TCP/IP"]);
+	
+		quickListDialog("Choose a payload", "Select", @("payload", "Name", "Target", "Channel"), $compatible, $width => 640, $height => 240, $after => @(left($check)), lambda({
+			# set the payload...
+			if ($1 eq "") {
+				return;
+			}
+
+			if ([$check isSelected]) {
+				[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+				[$model setValueForKey: "ExitOnSession", "Value", "false"];
+				[$model setValueForKey: "LPORT", "Value", randomPort()];
+			}
+			else {
+				[$model setValueForKey: "DisablePayloadHandler", "Value", "true"];
+				[$model setValueForKey: "ExitOnSession", "Value", ""];
+				[$model setValueForKey: "LPORT", "Value", ""];
+			}
+
+			if ($1 eq "windows/meterpreter/reverse_tcp" || $1 eq "windows/meterpreter/reverse_tcp_dns") {
+				[$model setValueForKey: "PAYLOAD", "Value", $1];
+				[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+			}
+			else if ($1 eq "windows/meterpreter/reverse_http" || $1 eq "windows/meterpreter/reverse_https" || $1 eq "java/meterpreter/reverse_http") {
+				[$model setValueForKey: "PAYLOAD", "Value", $1];
+				[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+				[$model setValueForKey: "LPORT", "Value", iff([$1 endsWith: "http"], "80", "443")];
+			}
+			else {
+				[$model setValueForKey: "PAYLOAD", "Value", $1];
+			}
+			[$model fireListeners];
+		}, $callback => $4, \$model, \$check));
+	}, $exploit => $3, \$model);
+
+	addFileListener($table, $model, %actions);
 
 	local('$TABLE_RENDERER');
 	$TABLE_RENDERER = 
