@@ -123,7 +123,7 @@ sub main_attack_items {
 		item($k, "by port", 'P', { findAttacks("p", min_rank()); });
 		item($k, "by vulnerability", 'V', { findAttacks("x", min_rank()); });
 
-	cmd_async($client, $console, "show exploits", lambda({
+	cmd_safe("show exploits", lambda({
 		local('%menus $menu %mm $line $os $type $id $rank $name $k $date $exploit');
 
 		separator($parent);
