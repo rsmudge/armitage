@@ -135,7 +135,9 @@ sub createConsolePanel {
 
 sub createConsoleTab {
 	local('$id $console $thread $1 $2 $host $file');
-	($id, $console, $thread) = createConsolePanel($2);
+	($id, $console, $thread) = createConsolePanel(
+		iff([$preferences getProperty: "armitage.no_msf_banner.boolean", "false"] eq "true", 1, $2)
+	);
 
 	if ($host is $null && $file is $null) {
 		logCheck($console, "all", "console");
