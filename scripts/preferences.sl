@@ -137,6 +137,10 @@ sub updatePrefModel {
 	
 	foreach $key => $value (convertAll($preferences)) {
 		($component, $name, $type) = split('\\.', $key);
+		if ($type eq "color" || $type eq "shortcut" || $type eq "font") {
+			$type = "$type \u271A";
+		}
+
 		[$model addEntry: %(component => $component, name => $name, type => $type, value => $value)];
 	}
 	return $model;
@@ -181,6 +185,9 @@ sub createPreferencesTab {
 			$type = [$model getSelectedValueFromColumn: $table, "type"];
 			$row = [$model getSelectedRow: $table];
 			$value = [$model getSelectedValueFromColumn: $table, "value"];
+		
+			# strip the last two characters off.
+			$type = substr($type, 0, -2);
 
 			if ($type eq "color") {
 				$color = [JColorChooser showDialog: $table, "pick a color", [Color decode: iff($value eq "", "#000000", $value)]];

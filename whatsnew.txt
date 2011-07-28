@@ -23,6 +23,8 @@ In Progress
   reporting.
 - Added a visual hint to clickable option names in the module launcher.
   Double-clicking these options will open a dialog to assist setting the value.
+- Added a visual hint to clickable preference types in the preferences window.
+  Double-clicking these types will open a dialog to assist setting the value.
 - Fixed a potential deadlock caused by launching modules while Armitage is
   still initializing.
 
