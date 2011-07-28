@@ -27,6 +27,8 @@ In Progress
   Double-clicking these types will open a dialog to assist setting the value.
 - Fixed a potential deadlock caused by launching modules while Armitage is
   still initializing.
+- Added a preference to disable displaying the MSF ASCII banner when a new
+  console opens. This preference is set to show the banner by default.
 
 23 Jul 11 - Change Log
 ---------
