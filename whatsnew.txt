@@ -1,6 +1,12 @@
 Armitage Changelog
 ==================
 
+In Progress?
+--------
+- Loot viewer no longer displays non-text files. If you try to "view" a 
+  binary loot, it will either open a file browser to the current directory
+  (local use) or ask you where to save the file (teaming mode)
+
 07.28.11 - Armed for Metasploit 4
 --------
 - Armitage now sends use prive with use stdapi when it gets a command not

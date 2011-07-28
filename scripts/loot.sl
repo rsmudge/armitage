@@ -20,6 +20,7 @@ sub updateLootModel {
 		foreach $entry ($loots) {
 			$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
 			$entry["type"] = $entry["ltype"];
+			warn($entry);
 			[$model addEntry: $entry];
 		}
 		[$model fireListeners];
@@ -27,10 +28,30 @@ sub updateLootModel {
 }
 
 sub showLoot {
-	local('$dialog $v $button $refresh $text');
+	local('$dialog $v $button $refresh $text $data');
 	$v = [$model getSelectedValue: $table];
 
-	if ($v !is $null) {
+	#
+	# well then, file is binary... let's do something else with it, like save it.
+	#
+	if ($v !is $null && "*binary*" iswm [$model getSelectedValueFromColumn: $table, "content_type"]) {
+		if ($client is $mclient) {
+			[gotoURL([[new java.io.File: getFileParent($v)] toURL] . "")];
+		}
+		else {
+			local('$data $name $save $handle');
+			$data = getFileContent($v);
+			$name = [$model getSelectedValueFromColumn: $table, "name"];
+			$save = saveFile2($sel => getFileName($name));
+			if ($save !is $null) {
+				$handle = openf("> $+ $save");
+				writeb($handle, $data);
+				closef($handle);
+			}
+		}
+		return;
+	}
+	else if ($v !is $null) {
 		$dialog = [new JPanel];
 		[$dialog setLayout: [new BorderLayout]];
 
