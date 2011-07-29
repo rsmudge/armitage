@@ -26,7 +26,7 @@ sub arp_scan_function  {
 	
 	if ($host ne "" && $mask ne "") {
 		elog("ARP scan: $host $+ /" . maskToCIDR($mask) . " via $sid");
-		call($client, "module.execute", "post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
+		call_async($client, "module.execute", "post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
 	}
 	[$dialog setVisible: 0];
 }
@@ -37,12 +37,10 @@ sub add_pivot_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		$tmp_console = createConsole($client);
 		elog("added pivot: $host $mask $sid");
-		cmd($client, $tmp_console, "route add $host $mask $sid", lambda({ 
-			call($client, "console.destroy", $tmp_console);
+		cmd_safe("route add $host $mask $sid", {
 			if ($3 ne "") { showError($3); } 
-		}, \$tmp_console));
+		});
 	}
 	[$dialog setVisible: 0];
 }
