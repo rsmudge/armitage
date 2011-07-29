@@ -6,6 +6,12 @@ In Progress?
 - Loot viewer no longer displays non-text files. If you try to "view" a 
   binary loot, it will either open a file browser to the current directory
   (local use) or ask you where to save the file (teaming mode)
+- The following actions no longer execute in the GUI thread (improving
+  responsiveness and decreasing deadlock opportunities):
+	-- [host] -> Meterpreter -> Kill
+	-- Hosts -> NMap Scan -> *
+	-- Attacks -> Find Attacks -> *
+	-- Attacks -> [some client side thing] -> *
 
 07.28.11 - Armed for Metasploit 4
 --------

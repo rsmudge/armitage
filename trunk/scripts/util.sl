@@ -58,6 +58,10 @@ sub call_async {
 sub call {
 	local('$exception');
 
+	if ([SwingUtilities isEventDispatchThread]) {
+		warn("[EDT] call: " . sublist(@_, 1));
+	}
+
 	try {
 	        if (size(@_) > 2) {
         	        return convertAll([$1 execute: $2, cast(sublist(@_, 2), ^Object)]);
@@ -215,9 +219,23 @@ sub getWorkspaces
 
 # creates a new console and execs a cmd in it.
 # cmd_safe("command to execute");
-sub cmd_safe
-{
+sub cmd_safe {
+	local('$a $b');
+	($a, $b) = @_;
+
+	if ([SwingUtilities isEventDispatchThread]) {
+		thread(lambda({
+			_cmd_safe($a, $b);
+		}, \$a, \$b));
+	}
+	else {
+		_cmd_safe($a, $b);
+	}
+}
+
+sub _cmd_safe {
 	local('$tmp_console $2');
+
 	$tmp_console = createConsole($client);
 	cmd($client, $tmp_console, $1, lambda({
 		call($client, "console.destroy", $tmp_console);
@@ -227,29 +245,31 @@ sub cmd_safe
 	}, \$tmp_console, $f => $2));
 }
 
-sub createNmapFunction
-{
+sub createNmapFunction {
 	return lambda({
-		local('$tmp_console $address $display');
+		local('$address');
 		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
 		if ($address eq "") { return; }
 
-		$tmp_console = createConsole($client);
-		$display = createDisplayTab("nmap");
+		thread(lambda({
+			local('$tmp_console $display');
+			$tmp_console = createConsole($client);
+			$display = createDisplayTab("nmap");
 		
-		elog("started a scan: nmap $args $address");
+			elog("started a scan: nmap $args $address");
 
-		[$display append: "msf > db_nmap $args $address\n\n"];
+			[$display append: "msf > db_nmap $args $address\n\n"];
 
-		cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
-			lambda({ 
-				call($client, "console.destroy", $tmp_console);
-				$FIXONCE = $null;
-				refreshTargets();
-				fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
-			}, \$tmp_console),
-			$display
-		);
+			cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
+				lambda({ 
+					call($client, "console.destroy", $tmp_console);
+					$FIXONCE = $null;
+					refreshTargets();
+					fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
+				}, \$tmp_console),
+				$display
+			);
+		}, \$address, \$args));
 	}, $args => $1);
 }
 
