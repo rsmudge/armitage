@@ -433,10 +433,12 @@ sub host_attack_items {
 			$e = menu($a, $service, $null);
 			foreach $name => $exploit  ($exploits) {
 				item($e, $name, $null, lambda({
-					local('$a $b'); 
-					$a = call($client, "module.info", "exploit", $exploit);
-					$b = call($client, "module.options", "exploit", $exploit);
-					attack_dialog($a, $b, $hosts, $exploit);
+					thread(lambda({ 
+						local('$a $b'); 
+						$a = call($client, "module.info", "exploit", $exploit);
+						$b = call($client, "module.options", "exploit", $exploit);
+						attack_dialog($a, $b, $hosts, $exploit);
+					}, \$exploit, \$hosts));
 				}, \$exploit, $hosts => $2));
 			}
 	
@@ -447,10 +449,9 @@ sub host_attack_items {
 			if (size($exploits) > 0) {
 				separator($e);
 				item($e, "check exploits...", 'c', lambda({
-					local('$console');
-					$console = createConsoleTab("Check Exploits", 1);
 					thread(lambda({
-						local('$result $h');
+						local('$result $h $console');
+						$console = createConsoleTab("Check Exploits", 1);
 						$h = $hosts[0];
 						foreach $result (values($exploits)) {
 							[[$console getWindow] append: "\n\n===== Checking $result =====\n\n"];
@@ -461,7 +462,7 @@ sub host_attack_items {
 							[$console sendString: "check\n"];
 							yield 1000L;
 						}
-					}, \$hosts, \$exploits, \$console));
+					}, \$hosts, \$exploits));
 				}, $hosts => $2, \$exploits));
 			}
 		}
