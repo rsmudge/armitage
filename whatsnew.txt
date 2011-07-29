@@ -13,6 +13,8 @@ In Progress?
 	-- Attacks -> Find Attacks -> *
 	-- Attacks -> [some client side thing] -> *
 	-- View -> Loot, View -> Credentials, View -> Jobs
+	-- [host] -> Remove Host, [host] -> Operating System -> *
+	-- Hosts -> Clear Hosts
 
 07.28.11 - Armed for Metasploit 4
 --------

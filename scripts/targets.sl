@@ -257,48 +257,54 @@ sub importHosts {
 #   returns a function that when called will update the metasploit database
 sub setHostValueFunction {
 	return lambda({
-		local('$host %map $key $value');
+		thread(lambda({
+			local('$host %map $key $value');
 
-		while (size(@args) >= 2) {
-			($key, $value) = sublist(@args, 0, 2);
-			%map[$key] = $value;
-			shift(@args);
-			shift(@args);
-		}
+			while (size(@args) >= 2) {
+				($key, $value) = sublist(@args, 0, 2);
+				%map[$key] = $value;
+				shift(@args);
+				shift(@args);
+			}
 
-		foreach $host (@hosts) {
-			%map['host'] = $host;
-			call($client, "db.report_host", %map);
-		}
+			foreach $host (@hosts) {
+				%map['host'] = $host;
+				call($client, "db.report_host", %map);
+			}
 
-		refreshTargets();
+			refreshTargets();
+		}, \@hosts, \@args));
 	}, @hosts => $1, @args => sublist(@_, 1));
 }
 
 sub clearHostFunction {
 	return lambda({
-		local('$host');
-		foreach $host (@hosts) {
-			call($client, "db.del_host", %(address => $host));
-			%hosts[$host] = $null;
-		}
-		$FIXONCE = $null;
-		refreshTargets();
+		thread(lambda({
+			local('$host');
+			foreach $host (@hosts) {
+				call($client, "db.del_host", %(address => $host));
+				%hosts[$host] = $null;
+			}
+			$FIXONCE = $null;
+			refreshTargets();
+		}, \@hosts));
 	}, @hosts => $1);
 }
 
 sub clearHosts {
-	local('@hosts $r $host');
+	thread({
+		local('@hosts $r $host');
 
-	$r = call($client, "db.hosts", %());
-	@hosts = map({ return $1["address"]; }, $r["hosts"]);
-	foreach $host (@hosts) {
-		call($client, "db.del_host", %(address => $host));
-	}
-	%hosts = %();
-	$FIXONCE = $null;
-	refreshTargets();
-	elog("cleared all hosts");
+		$r = call($client, "db.hosts", %());
+		@hosts = map({ return $1["address"]; }, $r["hosts"]);
+		foreach $host (@hosts) {
+			call($client, "db.del_host", %(address => $host));
+		}
+		%hosts = %();
+		$FIXONCE = $null;
+		refreshTargets();
+		elog("cleared all hosts");
+	});
 }
 
 # called when a target is clicked on...
