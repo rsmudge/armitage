@@ -15,6 +15,7 @@ In Progress?
 	-- View -> Loot, View -> Credentials, View -> Jobs
 	-- [host] -> Remove Host, [host] -> Operating System -> *
 	-- Hosts -> Clear Hosts
+	-- [host] -> Attacks -> *, check exploits...
 
 07.28.11 - Armed for Metasploit 4
 --------
