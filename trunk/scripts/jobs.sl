@@ -96,11 +96,7 @@ sub find_job {
 	#
 	# convoluted? yes, but jobs.info kept locking up on some of my requests...
 	#
-	local('$tmp_console');
-	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, "jobs", lambda({
-		call($client, "console.destroy", $tmp_console);
-
+	cmd_safe("jobs", lambda({
 		local('$temp $jid $jname $confirm');
 
 		foreach $temp (split("\n", $3)) {
@@ -114,7 +110,7 @@ sub find_job {
 			}
 		}
 		[$function: -1];
-	}, $name => $1, $function => $2, \$tmp_console));
+	}, $name => $1, $function => $2));
 }
 
 # manage_job(job name, { start job function }, { job dialog info })
@@ -134,12 +130,9 @@ sub manage_job {
 				local('$confirm');
 				$confirm = askYesNo([$stopf : $jid, $job], "Stop Job");
 				if ($confirm eq "0") {
-					local('$tmp_console');
-					$tmp_console = createConsole($client);
-					cmd_async($client, $tmp_console, "jobs -k $jid", lambda({
-						call($client, "console.destroy", $tmp_console);
+					cmd_safe("jobs -k $jid", {
 						if ($3 ne "") { showError($3); }
-					}, \$tmp_console));
+					});
 				}
 			}, \$stopf, \$job, $jid => $1);
 
@@ -428,8 +421,10 @@ sub _launch_dialog {
 			}
 		}
 		else {
-			warn($options);
-			showError(call($client, "module.execute", $type, $command, $options)["result"]);
+			thread(lambda({
+				warn("$options");
+				showError(call($client, "module.execute", $type, $command, $options)["result"]);
+			}, \$type, \$command, \$options));
 		}
 	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table, \$combobox)];
 
