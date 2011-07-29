@@ -525,16 +525,14 @@ sub createJobsTab {
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	
 	$refresh = [new JButton: "Refresh"];
-	[$refresh addActionListener: $jobsf];
+	[$refresh addActionListener: lambda({ thread($jobsf); }, \$jobsf)];
 
 	$kill = [new JButton: "Kill"];
 	[$kill addActionListener: lambda({
-		local('$tmp_console');
-		$tmp_console = createConsole($client); 
-		cmd_async($client, $tmp_console, "jobs -k " . [$model getSelectedValue: $table], lambda({ 
+		cmd_safe("jobs -k " . [$model getSelectedValue: $table], lambda({ 
 			showError($3); 
 			[$jobsf];
-		}, \$jobsf, \$tmp_console));
+		}, \$jobsf));
 	}, \$table, \$model, \$jobsf)];
 
 	[$panel add: center($refresh, $kill), [BorderLayout SOUTH]];

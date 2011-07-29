@@ -16,6 +16,9 @@ In Progress?
 	-- [host] -> Remove Host, [host] -> Operating System -> *
 	-- Hosts -> Clear Hosts
 	-- [host] -> Attacks -> *, check exploits...
+	-- Kill and Refresh buttons in View -> Jobs
+	-- [host] -> Meterpreter -> ARP Scan 
+	-- [host] -> Meterpreter -> Pivoting -> Setup
 
 07.28.11 - Armed for Metasploit 4
 --------
