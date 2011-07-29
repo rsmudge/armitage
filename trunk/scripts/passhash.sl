@@ -178,7 +178,7 @@ sub pass_the_hash {
 		foreach $host ($hosts) {
 			%options["RHOST"] = $host;
 			warn(%options);
-			call($client, "module.execute", "exploit", "windows/smb/psexec", %options);
+			call_async($client, "module.execute", "exploit", "windows/smb/psexec", %options);
 		}
 		elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		[$dialog setVisible: 0];
@@ -230,7 +230,7 @@ sub show_login_dialog {
 		%options["BLANK_PASSWORDS"] = "0";
 		warn("$srvc $+ : $port => " . %options);
 		elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
-		call($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+		call_async($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port)];
 
