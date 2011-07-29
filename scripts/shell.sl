@@ -280,7 +280,7 @@ sub listen_for_shellz {
 		%options["LHOST"] = "0.0.0.0";
 		%options["LPORT"] = [$port getText];
 		%options["ExitOnSession"] = "false";
-		call($client, "module.execute", "exploit", "multi/handler", %options);
+		call_async($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$port, \$type)];
 
@@ -314,7 +314,7 @@ sub connect_for_shellz {
 		%options["LPORT"] = [$port getText];
 		%options["RHOST"] = [$host getText];
 		warn(%options);
-		warn(call($client, "module.execute", "exploit", "multi/handler", %options));
+		call_async($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$port, \$type, \$host)];
 

@@ -146,7 +146,16 @@ sub manage_job {
 	}, \$startf, \$stopf));
 }
 
+# pass the module launch to another thread please.
 sub launch_service {
+	thread(lambda({
+		local('$title $module $options $type');
+		($title, $module, $options, $type) = $args;
+		_launch_service($title, $module, $options, $type, \$format);
+	}, $args => @_, \$format));
+}
+
+sub _launch_service {
 	local('$c $key $value');
 
 	if ('SESSION' in $3) {
