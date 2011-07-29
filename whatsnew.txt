@@ -19,6 +19,7 @@ In Progress?
 	-- Kill and Refresh buttons in View -> Jobs
 	-- [host] -> Meterpreter -> ARP Scan 
 	-- [host] -> Meterpreter -> Pivoting -> Setup
+	-- [host -> Login -> *
 
 07.28.11 - Armed for Metasploit 4
 --------
