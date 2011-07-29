@@ -66,11 +66,11 @@ sub view_items {
 
 	separator($1);
 
-	item($1, 'Credentials', 'r', &createCredentialsTab);
-	item($1, 'Jobs', 'J', &createJobsTab);
+	item($1, 'Credentials', 'r', { thread(&createCredentialsTab); });
+	item($1, 'Jobs', 'J', { thread(&createJobsTab); });
 
 	if (!$REMOTE || $mclient !is $client) {
-		item($1, 'Loot', 'L', &createLootBrowser);
+		item($1, 'Loot', 'L', { thread(&createLootBrowser) });
 	}
 
 	item($1, 'Activity Logs', 'A', gotoURL([[new File: getFileProper(systemProperties()["user.home"], ".armitage")] toURL] . ""));

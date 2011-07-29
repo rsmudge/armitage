@@ -12,6 +12,7 @@ In Progress?
 	-- Hosts -> NMap Scan -> *
 	-- Attacks -> Find Attacks -> *
 	-- Attacks -> [some client side thing] -> *
+	-- View -> Loot, View -> Credentials, View -> Jobs
 
 07.28.11 - Armed for Metasploit 4
 --------
