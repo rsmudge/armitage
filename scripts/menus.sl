@@ -120,8 +120,16 @@ sub armitage_items {
 sub main_attack_items {
 	local('$k');
 	$k = menu($1, "Find Attacks", 'A');
-		item($k, "by port", 'P', { findAttacks("p", min_rank()); });
-		item($k, "by vulnerability", 'V', { findAttacks("x", min_rank()); });
+		item($k, "by port", 'P', { 
+			thread({
+				findAttacks("p", min_rank()); 
+			});
+		});
+		item($k, "by vulnerability", 'V', { 
+			thread({
+				findAttacks("x", min_rank());
+			});
+		});
 
 	cmd_safe("show exploits", lambda({
 		local('%menus $menu %mm $line $os $type $id $rank $name $k $date $exploit');
@@ -160,8 +168,10 @@ sub main_attack_items {
 				$menu = %mm[$type][$os];
 
 				item($menu, "$id", $null, lambda({
-					launch_dialog($id, "exploit", "$os $+ / $+ $type $+ / $+ $id", 1);
-				}, \$os, \$type, \$id));
+					thread(lambda({
+						launch_dialog($id, "exploit", $exploit, 1);
+					}, \$exploit, \$id));
+				}, $exploit => "$os $+ / $+ $type $+ / $+ $id", \$id));
 			}
 		}	
 
