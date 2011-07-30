@@ -96,10 +96,7 @@ sub resolveAttacks {
 	setMissPolicy(%results, { return @(); });
 	setMissPolicy(%results2, { return @(); });
 
-        local('$tmp_console');
-        $tmp_console = createConsole($client);
-
-	cmd($client, $tmp_console, "db_autopwn -t - $+ $1 -R $2", lambda({
+	cmd_safe("db_autopwn -t - $+ $1 -R $2", lambda({
 		local('$line $ip $exploit $port');
 
 		foreach $line (split("\n", $3)) {
@@ -111,8 +108,7 @@ sub resolveAttacks {
 		}
 
 		[$action];
-		call($client, "console.destroy", $tmp_console);
-	}, \$tmp_console, $action => $3));
+	}, $action => $3));
 }
 
 sub findAttacks {

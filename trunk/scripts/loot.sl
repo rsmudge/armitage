@@ -20,7 +20,6 @@ sub updateLootModel {
 		foreach $entry ($loots) {
 			$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
 			$entry["type"] = $entry["ltype"];
-			warn($entry);
 			[$model addEntry: $entry];
 		}
 		[$model fireListeners];
