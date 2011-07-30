@@ -52,7 +52,7 @@ sub view_items {
 	# make it so we can recreate this menu if necessary...
 	setf('&recreate_view_items', lambda({ [$parent removeAll]; view_items($parent); }, $parent => $1));
 
-	item($1, 'Console', 'C', &createConsoleTab);
+	item($1, 'Console', 'C', { thread(&createConsoleTab); });
 	
 	if ($RPC_CONSOLE !is $null) {
 		item($1, 'RPC Console', 'P', {
