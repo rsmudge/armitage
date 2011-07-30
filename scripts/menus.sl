@@ -73,7 +73,7 @@ sub view_items {
 		item($1, 'Loot', 'L', { thread(&createLootBrowser) });
 	}
 
-	item($1, 'Activity Logs', 'A', gotoURL([[new File: getFileProper(systemProperties()["user.home"], ".armitage")] toURL] . ""));
+	item($1, 'Activity Logs', 'A', gotoFile([new File: getFileProper(systemProperties()["user.home"], ".armitage")]));
 
 	separator($1);
 
