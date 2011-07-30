@@ -250,19 +250,17 @@ sub client_workspace_items {
 			refreshTargets();
 		}, $parent => $1));
 
-	if ($current ne "default") {
-		item($1, 'Delete', 'D', 
-			lambda({
-				call($client, "db.del_workspace", $current);
-				elog("deleted workspace $current");
+	item($1, 'Delete', 'D', 
+		lambda({
+			call($client, "db.del_workspace", $current);
+			elog("deleted workspace $current");
 
-				@workspaces = getWorkspaces();
+			@workspaces = getWorkspaces();
 
-				[$parent removeAll];
-				client_workspace_items($parent);
-				refreshTargets();
-			}, $parent => $1, \$current));
-	}
+			[$parent removeAll];
+			client_workspace_items($parent);
+			refreshTargets();
+		}, $parent => $1, \$current));
 
 	separator($1);
 
