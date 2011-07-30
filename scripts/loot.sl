@@ -40,16 +40,15 @@ sub showLoot {
 		else {
 			local('$name $save');
 			$name = [$model getSelectedValueFromColumn: $table, "name"];
-			$save = saveFile2($sel => getFileName($name));
-			if ($save !is $null) {
-				thread(lambda({
-					local('$handle $data');
-					$data = getFileContent($v);
-					$handle = openf("> $+ $save");
-					writeb($handle, $data);
-					closef($handle);
-				}, \$v, \$save));
-			}
+			$save = getFileName($name);
+			thread(lambda({
+				local('$handle $data');
+				$data = getFileContent($v);
+				$handle = openf("> $+ $save");
+				writeb($handle, $data);
+				closef($handle);
+				[gotoFile([new java.io.File: cwd()])];
+			}, \$v, \$save));
 		}
 		return;
 	}

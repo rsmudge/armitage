@@ -4,7 +4,7 @@ Armitage Changelog
 07.30.11 - Ok, much better...
 --------
 - Loot viewer no longer displays non-text files. If you try to "view" a 
-  binary loot, it will save it (teaming mode) or open the parent folder.
+  binary loot, it will the folder containing it.
 - Improved UI responsiveness by making sure all communication with Metasploit
   happens in some thread other than the UI thread. This will prevent latency
   from bogging the UI down and making it feel locked up. Armitage will also
