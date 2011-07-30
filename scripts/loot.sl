@@ -35,7 +35,7 @@ sub showLoot {
 	#
 	if ($v !is $null && "*binary*" iswm [$model getSelectedValueFromColumn: $table, "content_type"]) {
 		if ($client is $mclient) {
-			[gotoFile([new java.io.File: getParentFile($v)])];
+			[gotoFile([new java.io.File: getFileParent($v)])];
 		}
 		else {
 			local('$name $save');
