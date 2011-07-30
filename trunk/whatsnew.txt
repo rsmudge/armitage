@@ -10,6 +10,12 @@ In Progress?
   happens in some thread other than the UI thread. This will prevent latency
   from bogging the UI down and making it feel locked up. Armitage will also
   feel a lot faster for many actions.
+- The code that creates a console, executes a command, and calls a callback
+  now uses a much tighter sleeping schedule (10ms vs 500ms). This will 
+  increase Armitage responsiveness greatly.
+- Armitage connect progress dialog now shows progress setting up the Armitage
+  environment once a connection is successful. Chances are it'll happen fast
+  enough that you won't see it. 
 
 07.28.11 - Armed for Metasploit 4
 --------

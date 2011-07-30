@@ -128,7 +128,6 @@ sub _connectToMetasploit {
 
 		        $client = [new RpcConnectionImpl: $4, $5, $1, long($2), $3, $debug];
 			$flag = $null;
-			[$progress close];
 		}
 		catch $exception {
 			[$progress setNote: [$exception getMessage]];
@@ -138,21 +137,53 @@ sub _connectToMetasploit {
 		}
 	}	
 	$console = createConsole($client);
+	let(&postSetup, \$progress);
 
-	requireDatabase($client, $6, $7, {
+	[$progress setNote: "Connected: Checking database settings"];
+	[$progress setProgress: 30];
+
+	requireDatabase($client, $6, $7, lambda({
+		[$progress setNote: "Connected: Getting workspaces"];
+		[$progress setProgress: 40];
 		@workspaces = getWorkspaces();
+
+		[$progress setNote: "Connected: Getting local address"];
+		[$progress setProgress: 50];
+
 		getBindAddress();
+		[$progress setNote: "Connected: Checking for collaboration server"];
+		[$progress setProgress: 60];
+
 		checkForCollaborationServer($client);
-	}, &connectDialog);
+	}, \$progress), &connectDialog);
 }
 
 sub postSetup {
-	@exploits  = sorta(call($mclient, "module.exploits")["modules"]);
-	@auxiliary = sorta(call($mclient, "module.auxiliary")["modules"]);
-	@payloads  = sorta(call($mclient, "module.payloads")["modules"]);
-	@post      = sorta(call($mclient, "module.post")["modules"]);
-	main();
-	createDashboard();
+	thread(lambda({
+		[$progress setNote: "Connected: Fetching exploits"];
+		[$progress setProgress: 70];
+
+		@exploits  = sorta(call($mclient, "module.exploits")["modules"]);
+
+		[$progress setNote: "Connected: Fetching auxiliary modules"];
+		[$progress setProgress: 80];
+
+		@auxiliary = sorta(call($mclient, "module.auxiliary")["modules"]);
+
+		[$progress setNote: "Connected: Fetching payloads"];
+		[$progress setProgress: 90];
+
+		@payloads  = sorta(call($mclient, "module.payloads")["modules"]);
+
+		[$progress setNote: "Connected: Fetching post modules"];
+		[$progress setProgress: 100];
+
+		@post      = sorta(call($mclient, "module.post")["modules"]);
+
+		[$progress close];
+		main();
+		createDashboard();
+	}, \$progress));
 }
 
 sub main {
