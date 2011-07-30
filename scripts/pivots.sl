@@ -20,7 +20,7 @@ sub maskToCIDR {
 }
 
 sub arp_scan_function  {
-	local('$host $mask $tmp_console');
+	local('$host $mask');
 	$host = [$model getSelectedValueFromColumn: $table, "host"];
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
@@ -32,7 +32,7 @@ sub arp_scan_function  {
 }
 
 sub add_pivot_function  {
-	local('$host $mask $tmp_console');
+	local('$host $mask');
 	$host = [$model getSelectedValueFromColumn: $table, "host"];
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	

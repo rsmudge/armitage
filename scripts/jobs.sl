@@ -468,9 +468,7 @@ sub _launch_dialog {
 }
 
 sub updateJobsTable {
-	local('$tmp_console');
-	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, "jobs -l -v", lambda({
+	cmd_safe("jobs -l -v", lambda({
 		local('$temp $d $jid $jname $payload $lport $date $url');
 
 		[$model clear: 16];
@@ -496,8 +494,7 @@ sub updateJobsTable {
 		}
 
 		[$model fireListeners];
-		call($client, "console.destroy", $tmp_console);
-	}, \$model, \$tmp_console));
+	}, \$model));
 }
 
 sub createJobsTab {	

@@ -181,10 +181,14 @@ sub main_attack_items {
 		separator($parent);
 		$k = menu($parent, "Hail Mary", 'H');
 		item($k, "by port", 'P', { 
-			smarter_autopwn("p", min_rank()); 
+			thread({
+				smarter_autopwn("p", min_rank()); 
+			});
 		});
 		item($k, "by vulnerability", 'V', {
-			smarter_autopwn("x", min_rank()); 
+			thread({
+				smarter_autopwn("x", min_rank()); 
+			});
 		});
 	}, $parent => $1));
 }

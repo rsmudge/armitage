@@ -110,7 +110,9 @@ sub createCredentialsTab {
 
 	$crack = [new JButton: "Crack Passwords"];
 	[$crack addActionListener: {
-		launch_dialog("Crack Passwords", "auxiliary", "analyze/jtr_crack_fast", 1);		
+		thread({
+			launch_dialog("Crack Passwords", "auxiliary", "analyze/jtr_crack_fast", 1);
+		});
 	}];
 
 	$export = [new JButton: "Export"];
