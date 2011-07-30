@@ -51,13 +51,17 @@ public class CommandClient implements Runnable {
 	public void run() {
 		if (!asynchronous) {
 			synchronized (lock) {
-				for (int x = 0; x < command.length; x++)
+				for (int x = 0; x < command.length; x++) {
+					//System.err.println("Executing: " + session + ", " + command[x]);
 					exec(x);
+				}
 			}
 		}
 		else {
-			for (int x = 0; x < command.length; x++) 
+			for (int x = 0; x < command.length; x++)  {
+				//System.err.println("Executing: " + session + ", " + command[x]);
 				exec(x);
+			}
 		}
 	}
 
@@ -74,7 +78,7 @@ public class CommandClient implements Runnable {
 
 			int count = 0;
 
-			Thread.sleep(500);
+			Thread.sleep(10);
 
 			while ((read = (Map)(connection.execute(readCommand, new Object[] { session }))) != null) {
 				String text = null;
@@ -103,7 +107,7 @@ public class CommandClient implements Runnable {
 					break;
 				}
 
-				Thread.sleep(500);
+				Thread.sleep(10);
 				count++;
 			}
 
