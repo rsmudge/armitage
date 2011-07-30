@@ -505,7 +505,7 @@ sub addFileListener {
 				chooseFile(\$title, $sel => $2)
 			);
 		if ($temp !is $null) {
-			[$4: $temp];
+			[$4: strrep($temp, "\\", "\\\\")];
 		}
 	};
      
