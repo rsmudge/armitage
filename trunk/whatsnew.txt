@@ -4,8 +4,8 @@ Armitage Changelog
 In Progress?
 --------
 - Loot viewer no longer displays non-text files. If you try to "view" a 
-  binary loot, it will either open a file browser to the current directory
-  (local use) or ask you where to save the file (teaming mode)
+  binary loot, it will ask the operating system to open it with whatever
+  app you registered.
 - Improved UI responsiveness by making sure all communication with Metasploit
   happens in some thread other than the UI thread. This will prevent latency
   from bogging the UI down and making it feel locked up. Armitage will also
@@ -16,6 +16,7 @@ In Progress?
 - Armitage connect progress dialog now shows progress setting up the Armitage
   environment once a connection is successful. Chances are it'll happen fast
   enough that you won't see it. 
+- View -> Activity Log now opens activity log folder on MacOS X.
 
 07.28.11 - Armed for Metasploit 4
 --------

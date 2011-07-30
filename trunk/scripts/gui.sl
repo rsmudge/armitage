@@ -412,3 +412,14 @@ sub tableRenderer {
 	}, $table => $1, $model => $2));
 }
 
+sub gotoFile {
+	return lambda({
+		local('$exception');
+		try {
+			[[Desktop getDesktop] open: $f];
+		}
+		catch $exception {
+			showError("Could not open $f $+ \n $+ $exception");
+		}
+	}, $f => $1);
+}
