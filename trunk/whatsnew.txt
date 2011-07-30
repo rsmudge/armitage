@@ -1,18 +1,17 @@
 Armitage Changelog
 ==================
 
-In Progress?
+07.30.11 - Ok, much better...
 --------
 - Loot viewer no longer displays non-text files. If you try to "view" a 
-  binary loot, it will ask the operating system to open it with whatever
-  app you registered.
+  binary loot, it will save it (teaming mode) or open the parent folder.
 - Improved UI responsiveness by making sure all communication with Metasploit
   happens in some thread other than the UI thread. This will prevent latency
   from bogging the UI down and making it feel locked up. Armitage will also
   feel a lot faster for many actions.
 - The code that creates a console, executes a command, and calls a callback
-  now uses a much tighter sleeping schedule (10ms vs 500ms). This will 
-  increase Armitage responsiveness greatly.
+  now uses a much tighter sleeping schedule (10ms vs 500ms). This greatly
+  improves Armitage responsiveness.
 - Armitage connect progress dialog now shows progress setting up the Armitage
   environment once a connection is successful. Chances are it'll happen fast
   enough that you won't see it. 
