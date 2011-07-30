@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-07.30.11 - Ok, much better...
+07.30.11 - Paying down some engineering debt.
 --------
 - Loot viewer no longer displays non-text files. If you try to "view" a 
   binary loot, it will the folder containing it.
