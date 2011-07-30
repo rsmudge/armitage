@@ -35,17 +35,20 @@ sub showLoot {
 	#
 	if ($v !is $null && "*binary*" iswm [$model getSelectedValueFromColumn: $table, "content_type"]) {
 		if ($client is $mclient) {
-			[gotoURL([[new java.io.File: getFileParent($v)] toURL] . "")];
+			[gotoFile([new java.io.File: getParentFile($v)])];
 		}
 		else {
-			local('$data $name $save $handle');
-			$data = getFileContent($v);
+			local('$name $save');
 			$name = [$model getSelectedValueFromColumn: $table, "name"];
 			$save = saveFile2($sel => getFileName($name));
 			if ($save !is $null) {
-				$handle = openf("> $+ $save");
-				writeb($handle, $data);
-				closef($handle);
+				thread(lambda({
+					local('$handle $data');
+					$data = getFileContent($v);
+					$handle = openf("> $+ $save");
+					writeb($handle, $data);
+					closef($handle);
+				}, \$v, \$save));
 			}
 		}
 		return;
