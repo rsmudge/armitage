@@ -6,20 +6,10 @@ In Progress?
 - Loot viewer no longer displays non-text files. If you try to "view" a 
   binary loot, it will either open a file browser to the current directory
   (local use) or ask you where to save the file (teaming mode)
-- The following actions no longer execute in the GUI thread (improving
-  responsiveness and decreasing deadlock opportunities):
-	-- [host] -> Meterpreter -> Kill
-	-- Hosts -> NMap Scan -> *
-	-- Attacks -> Find Attacks -> *
-	-- Attacks -> [some client side thing] -> *
-	-- View -> Loot, View -> Credentials, View -> Jobs
-	-- [host] -> Remove Host, [host] -> Operating System -> *
-	-- Hosts -> Clear Hosts
-	-- [host] -> Attacks -> *, check exploits...
-	-- Kill and Refresh buttons in View -> Jobs
-	-- [host] -> Meterpreter -> ARP Scan 
-	-- [host] -> Meterpreter -> Pivoting -> Setup
-	-- [host -> Login -> *
+- Improved UI responsiveness by making sure all communication with Metasploit
+  happens in some thread other than the UI thread. This will prevent latency
+  from bogging the UI down and making it feel locked up. Armitage will also
+  feel a lot faster for many actions.
 
 07.28.11 - Armed for Metasploit 4
 --------
