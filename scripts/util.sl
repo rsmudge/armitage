@@ -58,10 +58,6 @@ sub call_async {
 sub call {
 	local('$exception');
 
-	if ([SwingUtilities isEventDispatchThread]) {
-		warn("[EDT] call: " . sublist(@_, 1));
-	}
-
 	try {
 	        if (size(@_) > 2) {
         	        return convertAll([$1 execute: $2, cast(sublist(@_, 2), ^Object)]);

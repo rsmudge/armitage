@@ -501,7 +501,7 @@ sub addFileListener {
 		local('$title $temp');
 		$title = "Select $1";
 		$temp = iff($2 eq "", 
-				chooseFile(\$title, $dir => "/opt/metasploit3/msf3/data"), 
+				chooseFile(\$title, $dir => "/opt/metasploit4/msf4/data"), 
 				chooseFile(\$title, $sel => $2)
 			);
 		if ($temp !is $null) {
