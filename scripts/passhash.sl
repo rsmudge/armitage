@@ -12,7 +12,7 @@ import msf.*;
 import table.*;
 
 %handlers["hashdump"] = {
-	this('$host @commands $safe');
+	this('$host @commands $safe $last');
 
 	if ($0 eq "begin" && "*Unknown command*hashdump*" iswm $2) {
 		$host = $null;
@@ -29,6 +29,8 @@ import table.*;
 	}
 	else if ($0 eq "execute") {
 		$host = sessionToHost($1);
+		elog("dumped hashes on $host");
+		showError("Hashes dumped.\nUse View -> Credentials to see them.");
 	}
 	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
 		local('$user $gid $hash');
@@ -44,9 +46,8 @@ import table.*;
 		$host = $null;
 	}
 	else if ($0 eq "end" && $host !is $null) {
-		elog("dumped hashes on $host");
-		showError("Hashes dumped.\nUse View -> Credentials to see them.");
-		$host = $null;
+		# normally I'd terminate everything here, but why not just let it keep
+		# going for now.
 	}
 };
 
