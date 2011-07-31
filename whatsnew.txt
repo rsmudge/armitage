@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress 
+07.31.11
 --------
 - Fixed bug preventing Meterpreter -> Access -> Hashdump from noting all hashes
   into the credentials table.
