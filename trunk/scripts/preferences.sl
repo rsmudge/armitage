@@ -141,7 +141,7 @@ sub updatePrefModel {
 			$type = "$type \u271A";
 		}
 
-		[$model addEntry: %(component => $component, name => $name, type => $type, value => $value)];
+		[$model addEntry: %(component => $component, name => $name, type => $type, value => $value, key => "$key")];
 	}
 	return $model;
 }
@@ -269,11 +269,11 @@ sub createPreferencesTab {
 	local('$button $reset');
 	$button = [new JButton: "Save"];
 	[$button addActionListener: lambda({
-		local('$row $component $name $type $value');
+		local('$row $key $value');
 		$preferences = [new Properties];
 		foreach $row (convertAll([$model getRows])) {
-			($component, $name, $type, $value) = values($row, @('component', 'name', 'type', 'value'));
-			[$preferences setProperty: "$component $+ . $+ $name $+ . $+ $type", $value];
+			($key, $value) = values($row, @('key', 'value'));
+			[$preferences setProperty: $key, $value];
 		}
 		savePreferences();
 		showError("Preferences saved.");
