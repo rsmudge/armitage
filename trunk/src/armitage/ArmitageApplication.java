@@ -109,11 +109,16 @@ public class ArmitageApplication extends JFrame {
 
 	public void _addTab(final String title, JComponent tab, final ActionListener removeListener) {
 		final Component component = tabs.add("", tab);
+		final JLabel label = new JLabel(title + "   ");
 
 		JPanel control = new JPanel();
 		control.setOpaque(false);
 		control.setLayout(new BorderLayout());
-		control.add(new JLabel(title + "   "), BorderLayout.CENTER);
+		control.add(label, BorderLayout.CENTER);
+
+		if (tab instanceof Activity) {
+			((Activity)tab).registerLabel(label);
+		}
 
 		JButton close = new JButton("X");
 		close.setOpaque(false);
@@ -140,6 +145,10 @@ public class ArmitageApplication extends JFrame {
 
 		component.addComponentListener(new ComponentAdapter() {
 			public void componentShown(ComponentEvent ev) {
+				if (component instanceof Activity) {
+					((Activity)component).resetNotification();
+				}
+
 				component.requestFocusInWindow();
 				System.gc();
 			}

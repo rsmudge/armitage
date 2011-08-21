@@ -12,8 +12,10 @@ import java.io.PrintStream;
 
 import java.util.*;
 
+import armitage.Activity;
+
 /** A generic multi-feature console for use in the Armitage network attack tool */
-public class Console extends JPanel implements FocusListener {
+public class Console extends JPanel implements FocusListener, Activity {
 	protected JTextArea  console;
 	protected JTextField input;
 	protected JLabel     prompt;
@@ -29,6 +31,17 @@ public class Console extends JPanel implements FocusListener {
 
 	protected LinkedList components = new LinkedList();
 	protected ListIterator history = new LinkedList().listIterator(0);
+
+	protected JLabel label;
+	protected Color  original;
+	public void registerLabel(JLabel l) {
+		label = l;
+		original = l.getForeground();
+	}
+
+	public void resetNotification() {
+		label.setForeground(original);
+	}
 
 	public void addWordClickListener(ActionListener l) {
 		clickl.addListener(l);
@@ -221,6 +234,11 @@ public class Console extends JPanel implements FocusListener {
 		if (console.getDocument().getLength() >= 1) {
 			console.setCaretPosition(console.getDocument().getLength() - 1);
 		}
+
+		if (label != null && !isShowing()) {
+			System.err.println(display.getProperty("tab.highlight.color"));
+			label.setForeground(Color.decode(display.getProperty("tab.highlight.color", "#0000ff")));
+		}
 	}
 
 	/** appends the text. This is a thread-safe function */
@@ -262,10 +280,10 @@ public class Console extends JPanel implements FocusListener {
 	public Console(Properties display) {
 		this.display = display;
 		consoleFont = Font.decode(display.getProperty("console.font.font", "Monospaced BOLD 14"));
-	
+
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(2, 2, 2, 2));
-		
+
 		/* init the console */
 
 		console = new JTextArea();

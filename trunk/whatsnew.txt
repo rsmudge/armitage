@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage now highlights a console when something new is posted and the tab for
+  it is no longer active. Control the color by editing tab.highlight.color pref.
+- Fixed a bug preventing preference values from saving properly (and having an
+  effect).
+
 07.31.11
 --------
 - Fixed bug preventing Meterpreter -> Access -> Hashdump from noting all hashes
