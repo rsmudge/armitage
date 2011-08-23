@@ -11,7 +11,7 @@ sub createEventLogTab {
 
 	if ($client is $null && $console is $null) {
 		$client = [new ConsoleClient: $null, $mclient, "armitage.poll", "armitage.push", $null, "", $null];
-        	$console = [new Console: $preferences];
+        	$console = [new ActivityConsole: $preferences];
 		logCheck($console, "all", "events");
 	        [$client setWindow: $console];
 		[$client setEcho: $null];
