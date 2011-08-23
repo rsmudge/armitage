@@ -17,6 +17,9 @@ sub createEventLogTab {
 		[$client setEcho: $null];
 		[$console updatePrompt: "> "];
 	}
+	else {
+		[$console updateProperties: $preferences];
+	}
 
         [$frame addTab: "Event Log", $console, $null];
 }

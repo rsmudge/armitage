@@ -133,6 +133,11 @@ public class Console extends JPanel implements FocusListener {
 		return input;
 	}
 
+	public void updateProperties(Properties display) {
+		this.display = display;
+		updateComponentLooks();
+	}
+
 	private void updateComponentLooks() {
 		Color foreground = Color.decode(display.getProperty("console.foreground.color", "#ffffff"));
 		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
