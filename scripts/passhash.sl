@@ -109,6 +109,7 @@ sub createCredentialsTab {
 		local('$file');
 		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
 		if ($file !is $null) {
+			$file = strrep($file, '\\', '\\\\');
 			cmd_safe("db_export -f pwdump -a $file", lambda({
 				showError("Exported credentials to:\n $+ $file");
 
