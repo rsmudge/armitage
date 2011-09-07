@@ -15,6 +15,8 @@ In Progress
 - Credential export button now escapes the file path (making the button work on
   Windows). This bug is another good example of why you should use Armitage on
   Linux. It'll just work. Windows users: expect surprises.
+- Use Ctrl+Shift on a tab X button to remove the tab and create a desktop window 
+  with its contents. I suspect you'll find this really useful at times.
 
 07.31.11
 --------

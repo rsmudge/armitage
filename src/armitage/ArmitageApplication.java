@@ -92,6 +92,32 @@ public class ArmitageApplication extends JFrame {
 		apptabs.add(t);
 	}
 
+	public void popAppTab(Component tab) {
+		Iterator i = apptabs.iterator();
+		while (i.hasNext()) {
+			final ApplicationTab t = (ApplicationTab)i.next();
+			if (t.component == tab) {
+				tabs.remove(t.component);
+				i.remove();
+
+				/* pop goes the tab! */
+				JFrame r = new JFrame(t.title);
+				r.setIconImages(getIconImages());
+				r.setLayout(new BorderLayout());
+				r.add(t.component, BorderLayout.CENTER);
+				r.pack();
+				r.setVisible(true);
+
+				r.addWindowListener(new WindowAdapter() {
+					public void windowClosing(WindowEvent ev) {
+						if (t.removeListener != null)
+							t.removeListener.actionPerformed(new ActionEvent(ev.getSource(), 0, "close"));
+					}
+				});
+			}
+		}
+	}
+
 	public void removeAppTab(Component tab, String title, ActionEvent ev) {
 		Iterator i = apptabs.iterator();
 		while (i.hasNext()) {
@@ -115,7 +141,7 @@ public class ArmitageApplication extends JFrame {
 		control.setOpaque(false);
 		control.setLayout(new BorderLayout());
 		control.add(label, BorderLayout.CENTER);
-
+		
 		if (tab instanceof Activity) {
 			((Activity)tab).registerLabel(label);
 		}
@@ -133,6 +159,9 @@ public class ArmitageApplication extends JFrame {
 
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
+				if  ((ev.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
+					popAppTab(component);
+				}
 				if  ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
 					removeAppTab(null, title, ev);
 				}
