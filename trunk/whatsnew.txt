@@ -12,6 +12,9 @@ In Progress
   the credentials table.
 - Fixed a bug preventing the first open console from scrolling all the way to 
   the bottom when open.
+- Credential export button now escapes the file path (making the button work on
+  Windows). This bug is another good example of why you should use Armitage on
+  Linux. It'll just work. Windows users: expect surprises.
 
 07.31.11
 --------
