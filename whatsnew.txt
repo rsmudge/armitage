@@ -10,6 +10,8 @@ In Progress
 - Added "Check all credentials" option to the login dialogs. This option will 
   login to the service to test each credential. Successful logins will populate
   the credentials table.
+- Fixed a bug preventing the first open console from scrolling all the way to 
+  the bottom when open.
 
 07.31.11
 --------

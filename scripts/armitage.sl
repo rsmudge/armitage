@@ -220,7 +220,9 @@ sub main {
 		}];
 	}, \$msfrpc_handle, \$frame);
 
-	createConsoleTab();
+	dispatchEvent({
+		createConsoleTab();
+	});
 
 	if (-exists "command.txt") {
 		deleteFile("command.txt");
