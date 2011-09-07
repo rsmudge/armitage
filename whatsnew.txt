@@ -7,6 +7,9 @@ In Progress
   tab is not active. Control the color by editing tab.highlight.color pref.
 - Fixed a bug preventing preference values from saving properly (and having an
   effect).
+- Added "Check all credentials" option to the login dialogs. This option will 
+  login to the service to test each credential. Successful logins will populate
+  the credentials table.
 
 07.31.11
 --------

