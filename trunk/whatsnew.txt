@@ -19,6 +19,9 @@ In Progress
   with its contents. I suspect you'll find this really useful at times.
 - Armitage now remembers your auto-layout setting. Right-click in the graph area
   to change it.
+- Setting armitage.show_all_commands.boolean to true will now run each exploit in 
+  its own tab. Setting this is a good way to get feedback on the attacks you
+  launch and to learn the Metasploit console better.
 
 07.31.11
 --------
