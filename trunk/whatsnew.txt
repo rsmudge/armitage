@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+09.08.11
+--------
 - Armitage now highlights the event log tab when something new is posted and the
   tab is not active. Control the color by editing tab.highlight.color pref.
 - Fixed a bug preventing preference values from saving properly (and having an
