@@ -199,15 +199,23 @@ sub refreshHosts {
 	return [$graph isAlive];
 }
 
+sub auto_layout_function {
+	return lambda({
+		[$graph setAutoLayout: $string];
+		[$preferences setProperty: "graph.default_layout.layout", $string];
+		savePreferences();
+	}, $string => $1, $graph => $2);
+}
+
 sub graph_items {
 	local('$a $b $c');
 
 	$a = menu($1, 'Auto-Layout', 'A');
-	item($a, 'Circle', 'C', lambda({ [$graph setAutoLayout: 'circle']; }, $graph => $2));
-	item($a, 'Hierarchy', 'C', lambda({ [$graph setAutoLayout: 'hierarchical']; }, $graph => $2));
-	item($a, 'Stack', 'C', lambda({ [$graph setAutoLayout: 'stack']; }, $graph => $2));
+	item($a, 'Circle', 'C', auto_layout_function('circle', $2));
+	item($a, 'Hierarchy', 'C', auto_layout_function('hierarchical', $2));
+	item($a, 'Stack', 'C', auto_layout_function('stack', $2));
 	separator($a);
-	item($a, 'None', 'C', lambda({ [$graph setAutoLayout: $null]; }, $graph => $2));
+	item($a, 'None', 'C', auto_layout_function('', $2));
 	
 	$b = menu($1, 'Layout', 'L');
 	item($b, 'Circle', 'C', lambda({ [$graph doCircleLayout]; }, $graph => $2));

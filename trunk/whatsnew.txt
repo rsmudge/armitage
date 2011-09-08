@@ -17,6 +17,8 @@ In Progress
   Linux. It'll just work. Windows users: expect surprises.
 - Use Ctrl+Shift on a tab X button to remove the tab and create a desktop window 
   with its contents. I suspect you'll find this really useful at times.
+- Armitage now remembers your auto-layout setting. Right-click in the graph area
+  to change it.
 
 07.31.11
 --------
