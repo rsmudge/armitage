@@ -508,7 +508,6 @@ sub module_execute {
 		$console = createConsoleTab("$1", 1, \$host, $file => $1);
 		[$console sendString: "use $1 $+ / $+ $2 $+ \n"];
 		foreach $key => $value ($3) {
-			$value = strrep($value, '\\', '\\\\');
 			[$console sendString: "set $key $value $+ \n"];
 		}
 
