@@ -162,7 +162,7 @@ public class ArmitageApplication extends JFrame {
 				if  ((ev.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
 					popAppTab(component);
 				}
-				if  ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
+				else if  ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
 					removeAppTab(null, title, ev);
 				}
 				else {
