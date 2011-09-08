@@ -26,7 +26,7 @@ sub arp_scan_function  {
 	
 	if ($host ne "" && $mask ne "") {
 		elog("ARP scan: $host $+ /" . maskToCIDR($mask) . " via $sid");
-		call_async($client, "module.execute", "post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
+		module_execute("post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
 	}
 	[$dialog setVisible: 0];
 }

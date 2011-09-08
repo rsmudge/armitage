@@ -486,3 +486,40 @@ sub elog {
 		call($mclient, "armitage.log", $1);
 	}
 }
+
+sub module_execute {
+	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "false"] eq "true") {
+		local('$console $key $value $host');
+
+		# for logging purposes, we should figure out the remote host being targeted		
+
+		if ("RHOST" in $3) {
+			$host = $3["RHOST"];
+		}
+		else if ("SESSION" in $3) {
+			$host = sessionToHost($3["SESSION"]);
+		}
+		else {
+			$host = "all";
+		}
+
+		# okie then, let's create a console and execute all of this stuff...	
+
+		$console = createConsoleTab("$1", 1, \$host, $file => $1);
+		[$console sendString: "use $1 $+ / $+ $2 $+ \n"];
+		foreach $key => $value ($3) {
+			$value = strrep($value, '\\', '\\\\');
+			[$console sendString: "set $key $value $+ \n"];
+		}
+
+		if ($1 eq "exploit") {
+			[$console sendString: "exploit -j\n"];
+		}
+		else {
+			[$console sendString: "run -j\n"];
+		}
+	}
+	else {
+		call_async($client, "module.execute", $1, $2, $3);
+	}
+}

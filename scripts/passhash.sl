@@ -186,8 +186,7 @@ sub pass_the_hash {
 
 			foreach $host ($hosts) {
 				%options["RHOST"] = $host;
-				warn(%options);
-				call_async($client, "module.execute", "exploit", "windows/smb/psexec", %options);
+				module_execute("exploit", "windows/smb/psexec", copy(%options));
 			}
 			elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		}
@@ -250,10 +249,11 @@ sub show_login_dialog {
 		else {
 			%options["USERNAME"] = [$user getText];
 			%options["PASSWORD"] = [$pass getText];
-			%options["BLANK_PASSWORDS"] = "0";
+			%options["BLANK_PASSWORDS"] = "false";
+			%options["USER_AS_PASS"] = "false";
 			warn("$srvc $+ : $port => " . %options);
 			elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
-			call_async($client, "module.execute", "auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+			module_execute("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
 		}
 		[$dialog setVisible: 0];
 	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port, \$brute, \$model)];
