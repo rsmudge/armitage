@@ -8,8 +8,10 @@ import java.awt.event.*;
 
 import java.util.*;
 
+import ui.*;
+
 public class ArmitageApplication extends JFrame {
-	protected JTabbedPane tabs = new JTabbedPane();
+	protected JTabbedPane tabs = null;
 	protected JSplitPane split = null;
 	protected JMenuBar menus = new JMenuBar();
 
@@ -189,6 +191,7 @@ public class ArmitageApplication extends JFrame {
 
 	public ArmitageApplication() {
 		super("Armitage");
+		tabs = new DraggableTabbedPane();
 		setLayout(new BorderLayout());
 
 		/* place holder */
