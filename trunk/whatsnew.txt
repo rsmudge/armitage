@@ -4,6 +4,8 @@ Armitage Changelog
 In Progress
 -----------
 - You may now drag and drop Armitage tabs to rearrange their order.
+- Armitage show all commands option (for better exploit feedback) is now on by
+  default.
 
 09.08.11
 --------
