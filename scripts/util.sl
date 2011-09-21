@@ -488,7 +488,7 @@ sub elog {
 }
 
 sub module_execute {
-	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "false"] eq "true") {
+	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true") {
 		local('$console $key $value $host');
 
 		# for logging purposes, we should figure out the remote host being targeted		
