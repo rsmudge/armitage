@@ -8,6 +8,8 @@ In Progress
   by default. 
 - You may now right-click a screenshot/webcam shot to zoom in or out on the 
   image. The zoom-level stays fixed (in case you refresh the image later)
+- Added a menu to the X button in the tabs. Through this menu you may open the
+  current tab in its own window or close all like tabs.
 
 09.08.11
 --------
