@@ -7,23 +7,32 @@ import java.awt.*;
 import java.awt.event.*;
 
 sub import_items {
-	local('$command $description %imports');
+	local('$description @imports');
 
-	%imports = ohash(import_data => "Import and auto-detect file",
-			import_amap_log => "THC-Amap scan results (-o)",
-			import_amap_mlog => "THC-Amap scan results (-o -m)",
-			import_ip_list => "List of line separated IPs",
-			import_msfe_xml => "Metasploit XML Report (XML)",
-			import_nessus_nbe => "Nessus scan results (NBE)",
-			import_nessus_xml => "Nessus scan results (XML)",
-			import_nessus_xml_v2 => "Nessus scan results (XML v2)",
-			import_nexpose_simplexml => "Nexpose scan results (Simple XML)",
-			import_nexpose_rawxml => "Nexpose scan results (Raw XML)",
-			import_nmap_xml => "Nmap scan results (-oX)",
-			import_qualys_xml => "Qualys scan results"
+	@imports = @(
+		'Import and auto-detect file',
+		'Acunetix XML',
+		'Amap Log',
+		'Amap Log -m',
+		'Appscan XML',
+		'Burp Session XML',
+		'Foundstone XML',
+		'IP360 ASPL',
+		'IP360 XML v3',
+		'Microsoft Baseline Security Analyzer',
+		'Nessus NBE',
+		'Nessus XML (v1 and v2)',
+		'NetSparker XML',
+		'NeXpose Simple XML',
+		'NeXpose XML Report',
+		'Nmap XML',
+		'OpenVAS Report',
+		'Qualys Asset XML',
+		'Qualys Scan XML',
+		'Retina XML'
 	);
 
-	foreach $command => $description (%imports) {
+	foreach $description (@imports) {
 		item($1, $description, $null, lambda(&importHosts, $command => "import_data"));
 	}
 }
