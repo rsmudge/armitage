@@ -364,6 +364,13 @@ sub setDefaultAutoLayout {
 	[$1 setAutoLayout: $type];
 }
 
+sub makeScreenshot {
+	if ($graph !is $null) {
+		[javax.imageio.ImageIO write: [$graph getScreenshot], "png", [new java.io.File: getFileProper($1)]];
+		return getFileProper($1);
+	}
+}
+
 sub createDashboard {
 	if ($targets !is $null) {
 		[$targets actionPerformed: $null];
@@ -399,7 +406,9 @@ sub createDashboard {
 		local('$location');
 		$location = saveFile2($sel => "hosts.png");
 		if ($location !is $null) {
-			[javax.imageio.ImageIO write: [$graph getScreenshot], "png", [new java.io.File: $location]];
+			makeScreenshot($location);
 		}
 	}, \$graph)];
+
+	let(&makeScreenshot, \$graph);
 }
