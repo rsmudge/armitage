@@ -189,7 +189,13 @@ sub _launch_service {
 		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
 		if ($file !is $null) {
 			$file = strrep($file, '\\', '\\\\'); 
-			[$c sendString: "generate -t $format -f \" $+ $file $+ \"\n"];
+
+			if ("*windows*meterpreter*" iswm $2) {
+				[$c sendString: "generate -e x86/shikata_ga_nai -i 3 -t $format -f \" $+ $file $+ \"\n"];
+			}
+			else {
+				[$c sendString: "generate -t $format -f \" $+ $file $+ \"\n"];
+			}
 
 			if ($client !is $mclient) {
 				thread(lambda({
