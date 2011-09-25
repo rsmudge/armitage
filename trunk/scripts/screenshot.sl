@@ -9,6 +9,8 @@ import javax.swing.event.*;
 import javax.imageio.*;
 import java.io.File;
 
+import ui.*;
+
 import armitage.*;
 
 global('%screenshots %webcams');
@@ -22,7 +24,7 @@ sub image_viewer
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 
-		$viewer = [new JLabel];
+		$viewer = [new ZoomableImage];
 		[$panel add: [new JScrollPane: $viewer], [BorderLayout CENTER]];
 
 			[$viewer addMouseListener: lambda({
