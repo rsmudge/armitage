@@ -159,6 +159,46 @@ public class ArmitageApplication extends JFrame {
 
 		addAppTab(title, tab, removeListener);
 
+		close.addMouseListener(new MouseAdapter() {
+			public void check(MouseEvent ev) {
+				if (ev.isPopupTrigger()) {
+					JPopupMenu menu = new JPopupMenu();
+
+					JMenuItem a = new JMenuItem("Open in window", 'O');
+					a.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							popAppTab(component);
+						}
+					});
+
+					JMenuItem b = new JMenuItem("Close like tabs", 'C');
+					b.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							removeAppTab(null, title, ev);
+						}
+					});
+
+					menu.add(a);
+					menu.add(b);
+
+					menu.show((Component)ev.getSource(), ev.getX(), ev.getY());
+					ev.consume();
+				}
+			}
+
+			public void mouseClicked(MouseEvent ev) {
+				check(ev);
+			}
+
+			public void mousePressed(MouseEvent ev) {
+				check(ev);
+			}
+
+			public void mouseReleased(MouseEvent ev) {
+				check(ev);
+			}
+		});
+
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				if  ((ev.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
@@ -208,5 +248,5 @@ public class ArmitageApplication extends JFrame {
 
 		/* ... */
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}	
+	}
 }
