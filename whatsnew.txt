@@ -5,7 +5,9 @@ In Progress
 -----------
 - You may now drag and drop Armitage tabs to rearrange their order.
 - Armitage "show all commands" option (for better exploit feedback) is now on 
-  by default.
+  by default. 
+- You may now right-click a screenshot/webcam shot to zoom in or out on the 
+  image. The zoom-level stays fixed (in case you refresh the image later)
 
 09.08.11
 --------
