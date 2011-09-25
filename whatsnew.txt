@@ -11,6 +11,9 @@ In Progress
 - Added a menu to the X button in the tabs. Through this menu you may open the
   current tab in its own window or close all like tabs.
 - Updated Hosts -> Import Hosts to reflect the current importable file types.
+- Added View -> Reporting -> Export Data to dump most Metasploit tables into 
+  TSV and XML files suitable for parsing (by you!) into a report format of 
+  some sort. 
 
 09.08.11
 --------
