@@ -67,7 +67,8 @@ sub call {
 	        }
 	}
 	catch $exception {
-		showError("Something went wrong:\nTried:  ". @_ . "\n\nError:\n $+ $exception");
+		#showError("Something went wrong:\nTried:  ". @_ . "\n\nError:\n $+ $exception");
+		showError("Something went wrong:\n $+ $2 $+ \n\nError:\n $+ $exception");
 	}
 }
 
