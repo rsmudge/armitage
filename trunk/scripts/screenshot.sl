@@ -27,16 +27,6 @@ sub image_viewer
 		$viewer = [new ZoomableImage];
 		[$panel add: [new JScrollPane: $viewer], [BorderLayout CENTER]];
 
-			[$viewer addMouseListener: lambda({
-				if ($0 eq "mouseClicked") {
-					local('$location');
-					$location = saveFile2($sel => "$title $+ _ $+ $sid $+ .jpg");
-					if ($location !is $null) {
-						[ImageIO write: [[$viewer getIcon] getImage], "jpg", [new File: $location]];
-					}
-				}
-			}, \$viewer, \$title, $sid => $2)];
-
 		$buttons = [new JPanel];
 		[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
 			$refresh = [new JButton: "Refresh"];

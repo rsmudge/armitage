@@ -50,7 +50,7 @@ public class ZoomableImage extends JLabel {
 				check(ev);
 			}
 
-			public void mouseRelease(MouseEvent ev) {
+			public void mouseReleased(MouseEvent ev) {
 				check(ev);
 			}
 		});
