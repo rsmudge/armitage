@@ -372,12 +372,23 @@ sub attack_dialog {
 		$options["TARGET"] = split(' \=\> ', [$combobox getSelectedItem])[0];
 
 		thread(lambda({
-			local('$host');
-			foreach $host (split(', ', $options["RHOST"])) {
+			local('$host $hosts');
+			$hosts = split(', ', $options["RHOST"]);
+
+			foreach $host ($hosts) {
 				$options["PAYLOAD"] = best_payload($host, $exploit, [$b isSelected]);
 				$options["RHOST"] = $host;
-				module_execute("exploit", $exploit, copy($options));
+				if (size($hosts) >= 4) {
+					call_async($client, "module.execute", "exploit", $exploit, $options);
+				}
+				else {
+					module_execute("exploit", $exploit, copy($options));
+				}
 				yield 100;
+			}
+
+			if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "false" || size($hosts) >= 4) {
+				showError("Launched $exploit at " . size($hosts) . " host" . iff(size($hosts) == 1, "", "s"));
 			}
 		}, $options => copy($options), \$exploit, \$b));
 
