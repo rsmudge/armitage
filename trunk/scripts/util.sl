@@ -490,7 +490,7 @@ sub elog {
 
 sub module_execute {
 	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true") {
-		local('$console $key $value $host');
+		local('$host');
 
 		# for logging purposes, we should figure out the remote host being targeted		
 
@@ -506,18 +506,25 @@ sub module_execute {
 
 		# okie then, let's create a console and execute all of this stuff...	
 
-		$console = createConsoleTab("$1", 1, \$host, $file => $1);
-		[$console sendString: "use $1 $+ / $+ $2 $+ \n"];
-		foreach $key => $value ($3) {
-			[$console sendString: "set $key $value $+ \n"];
-		}
+		thread(lambda({
+			local('$console');
+			$console = createConsoleTab("$type", 1, \$host, $file => $type);
+			fork({
+				local('$key $value');
+				[$console sendString: "use $type $+ / $+ $module $+ \n"];
 
-		if ($1 eq "exploit") {
-			[$console sendString: "exploit -j\n"];
-		}
-		else {
-			[$console sendString: "run -j\n"];
-		}
+				foreach $key => $value ($options) {
+					[$console sendString: "set $key $value $+ \n"];
+				}
+
+				if ($type eq "exploit") {
+					[$console sendString: "exploit -j\n"];
+				}
+				else {
+					[$console sendString: "run -j\n"];
+				}
+			}, \$console, \$options, \$type, \$module);
+		}, \$console, \$host, $options => $3, $type => $1, $module => $2));
 	}
 	else {
 		call_async($client, "module.execute", $1, $2, $3);

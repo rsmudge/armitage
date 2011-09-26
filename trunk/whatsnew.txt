@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+09.26.11 - take 2
+--------
+- Improved performance when launching exploits and other modules that open
+  a new tab.
+
 09.26.11 
 --------
 - You may now drag and drop Armitage tabs to rearrange their order.
