@@ -506,8 +506,8 @@ sub module_execute {
 
 		# okie then, let's create a console and execute all of this stuff...	
 
+		local('$console');
 		thread(lambda({
-			local('$console');
 			$console = createConsoleTab("$type", 1, \$host, $file => $type);
 			fork({
 				local('$key $value');
@@ -524,7 +524,7 @@ sub module_execute {
 					[$console sendString: "run -j\n"];
 				}
 			}, \$console, \$options, \$type, \$module);
-		}, \$console, \$host, $options => $3, $type => $1, $module => $2));
+		}, \$console, $options => $3, $type => $1, $module => $2, \$host));		
 	}
 	else {
 		call_async($client, "module.execute", $1, $2, $3);
