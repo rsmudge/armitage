@@ -21,6 +21,9 @@ Armitage Changelog
 - In teaming mode, Armitage will not automatically upload a file selected through
   the + option (e.g., USER_FILE +) to the Metasploit server and set the value
   in Metasploit accordingly.
+- Modified error output for a failed Metasploit method to only display the
+  method name and error message. Displaying a large input would cause Armitage
+  UI to start flashing in some weird disco mode until a hard reset. Yeaah.
 
 09.08.11
 --------

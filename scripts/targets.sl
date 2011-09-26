@@ -246,7 +246,8 @@ sub importHosts {
 			$result = call($client, "db. $+ $command", %(data => $data));
 
 			if ($result is $null || $result['result'] != "success") {
-				showError("Import $name failed:\n $+ $result");
+				# an exception is already raised and will be displayed to the user.
+				# showError("Import $name failed:\n $+ $result");
 			}
 			else {
 				$success++;
