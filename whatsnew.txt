@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+09.26.11 
+--------
 - You may now drag and drop Armitage tabs to rearrange their order.
 - Armitage "show all commands" option (for better exploit feedback) is now on 
   by default. 
@@ -18,6 +18,9 @@ In Progress
   payload generated from the module launcher dialog.
 - [host] -> Meterpreter -> Access -> Duplicate now uses multi_meter_inject to
   launch Meterpreter into memory directly (rather than upload and execute a file)
+- In teaming mode, Armitage will not automatically upload a file selected through
+  the + option (e.g., USER_FILE +) to the Metasploit server and set the value
+  in Metasploit accordingly.
 
 09.08.11
 --------
