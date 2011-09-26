@@ -89,7 +89,18 @@ sub chooseFile {
 	local('$fc $file $title $sel $dir $multi $always');
 
 	if ($REMOTE && $always is $null) {
-		return ask("Please type a file name:");
+		if ($client !is $mclient) {
+			local('$file');
+			$file = chooseFile(\$title, \$file, \$sel, \$dir, \$multi, \$fc, $always => 1);
+			if (-exists $file) {
+				warn("Uploading $file");
+				return uploadFile($file);
+			}
+			return "";
+		}
+		else {
+			return ask("Please type a file name:");
+		}
 	}
 
 
