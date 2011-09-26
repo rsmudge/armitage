@@ -13,7 +13,7 @@ import javax.swing.table.*;
 
 import java.io.*;
 
-global('$preferences $debug $motd');
+global('$preferences $debug $motd $DATA_DIRECTORY');
 
 sub iHateYaml {
 	local('$handle %result $current $text $key $value');
@@ -302,3 +302,14 @@ sub createPreferencesTab {
 #	[$frame addTab: "Preferences", $panel, $null];
 }
 
+[{
+	local('@options');
+	@options = @('C:/Program Files/Rapid7/framework/msf3/data', '/opt/framework/msf3/data', '/opt/framework3/msf3/data', '/opt/framework/msf/data', '/opt/framework4/msf4/data');
+	$DATA_DIRECTORY = cwd();
+	warn($DATA_DIRECTORY);
+	foreach $option (@options) {
+		if (-exists $option) {
+			$DATA_DIRECTORY = $option;
+		}
+	}
+}];
