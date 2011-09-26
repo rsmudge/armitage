@@ -296,13 +296,15 @@ sub createUserPassFile {
 
 # launchBruteForce("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
 sub launchBruteForce {
-	local('$console $key $value');
-	$console = createConsoleTab("$4", 1, $host => "all", $file => "brute_login");
-	[$console sendString: "use $1 $+ / $+ $2 $+ \n"];
-	foreach $key => $value ($3) {
-		$value = strrep($value, '\\', '\\\\');
-		[$console sendString: "set $key $value $+ \n"];
-	}
-	[$console sendString: "set REMOVE_USERPASS_FILE true\n"];
-	[$console sendString: "run\n"];
+	thread(lambda({ 
+		local('$console $key $value');
+		$console = createConsoleTab("$title", 1, $host => "all", $file => "brute_login");
+		[$console sendString: "use $type $+ / $+ $module $+ \n"];
+		foreach $key => $value ($options) {
+			$value = strrep($value, '\\', '\\\\');
+			[$console sendString: "set $key $value $+ \n"];
+		}
+		[$console sendString: "set REMOVE_USERPASS_FILE true\n"];
+		[$console sendString: "run\n"];
+	}, $type => $1, $module => $2, $options => $3, $title => $4));
 }
