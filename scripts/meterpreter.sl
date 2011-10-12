@@ -179,7 +179,12 @@ sub showMeterpreterMenu {
 
 		item($j, "Dump Hashes", "D", lambda({ 
 			module_execute("post", "windows/gather/smart_hashdump", %(SESSION => $sid, GETSYSTEM => "0"));
-			showError("Dumping Hashes.\nUse View -> Credentials to see them.");
+
+			showError("Hashes dumped.\nUse View -> Credentials to see them.");
+
+			local('$host');
+			$host = sessionToHost($sid);
+ 			elog("dumped hashes on $host");
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
