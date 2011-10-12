@@ -10,6 +10,8 @@ Armitage Changelog
   of the current tab. This image will render the tab contents exactly as seen
   on the screen. Useful for putting together report artifacts or presentations.
   (thanks Rob for the suggestion)
+- Added a module launcher helper for RHOSTS and RHOST. This helper will let you
+  import a list of IPs (separated by newlines) from a file into these fields.
 
 09.26.11 - take 2
 --------

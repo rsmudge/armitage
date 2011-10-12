@@ -518,6 +518,23 @@ sub addFileListener {
 			[$4: strrep($temp, "\\", "\\\\")];
 		}
 	};
+
+	# set up an action to pop up a file chooser for different file type values.
+	$actions["RHOST"] = {
+		local('$title $temp');
+		$title = "Select $1";
+		$temp = chooseFile(\$title, $dir => ".");
+		if ($temp !is $null) {
+			local('$handle');
+			$handle = openf($temp);
+			@addresses = readAll($handle);	
+			closef($handle);
+
+			[$4: join(", ", @addresses)];
+		}
+	};
+
+	$actions["RHOSTS"] = $actions["RHOST"];
      
 	[$table addMouseListener: lambda({
                 if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
