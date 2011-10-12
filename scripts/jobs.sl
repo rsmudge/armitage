@@ -207,7 +207,7 @@ sub _launch_service {
 		}
 	}
 	else {
-		[$c sendString: "run\n"];
+		[$c sendString: "run -j\n"];
 	}
 }
 
@@ -249,7 +249,7 @@ sub updatePayloads {
 }
 
 sub _launch_dialog {
-	local('$dialog $north $center $center $label $textarea $scroll $model $table $default $combo $key $sorter $value $col $button');
+	local('$dialog $north $center $center $label $textarea $scroll $model $table $default $combo $key $sorter $value $col $button $6 $5');
 
 	$dialog = dialog($1, 520, 360);
 
@@ -294,6 +294,9 @@ sub _launch_dialog {
 				}
 			}
 			$default = join(", ", @sessions);
+		}
+		else if ($key eq "SESSION" && -isnumber $6) {
+			$default = $6;
 		}
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
@@ -429,6 +432,13 @@ sub _launch_dialog {
 				foreach $session (@sessions) {
 					$options['SESSION'] = $session;
 					launch_service($title, "$type $+ / $+ $command", copy($options), $type, $format => [$combo getSelectedItem]);
+				}
+
+				if ($command eq "windows/gather/smart_hashdump" || $command eq "windows/gather/hashdump") {
+					foreach $session (@sessions) {
+						$session = sessionToHost($session);
+					}
+		                        elog("dumped hashes on " . join(", ", @sessions));
 				}
 			}
 			else {

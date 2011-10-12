@@ -265,6 +265,6 @@ sub launchBruteForce {
 			[$console sendString: "set $key $value $+ \n"];
 		}
 		[$console sendString: "set REMOVE_USERPASS_FILE true\n"];
-		[$console sendString: "run\n"];
+		[$console sendString: "run -j\n"];
 	}, $type => $1, $module => $2, $options => $3, $title => $4));
 }
