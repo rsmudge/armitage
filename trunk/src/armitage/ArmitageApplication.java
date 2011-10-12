@@ -191,6 +191,7 @@ public class ArmitageApplication extends JFrame {
 							BufferedImage image = new BufferedImage(tab.getWidth(), tab.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 							Graphics g = image.getGraphics();
 							tab.paint(g);
+							g.dispose();
 
 							if (screens != null) {
 								screens.saveScreenshot(image, title);
