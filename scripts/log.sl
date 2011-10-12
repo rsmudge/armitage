@@ -59,16 +59,19 @@ sub logFile {
 
 sub initLogSystem {
 	[$frame setScreenshotManager: {
-		local('$image $title $file');
+		local('$image $title');
 		($image, $title) = @_;
-		$title = tr($title, '0-9\W', '0-9_');
-		$file = [new java.io.File: getFileProper(formatDate("HH.mm.ss") . " $title $+ .png")];
+		thread(lambda({
+			local('$file');
+			$title = tr($title, '0-9\W', '0-9_');
+			$file = [new java.io.File: getFileProper(formatDate("HH.mm.ss") . " $title $+ .png")];
 
-		[javax.imageio.ImageIO write: $1, "png", $file];
-		logFile([$file getAbsolutePath], "screenshots", ".");
-		deleteFile([$file getAbsolutePath]);
+			[javax.imageio.ImageIO write: $image, "png", $file];
+			logFile([$file getAbsolutePath], "screenshots", ".");
+			deleteFile([$file getAbsolutePath]);
 
-		showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/screenshots");
+			showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/screenshots");
+		}, \$image, \$title));
 	}];
 }
 
