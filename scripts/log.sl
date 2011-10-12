@@ -62,13 +62,13 @@ sub initLogSystem {
 		local('$image $title $file');
 		($image, $title) = @_;
 		$title = tr($title, '0-9\W', '0-9_');
-		$file = [new java.io.File: formatDate("HH:mm:ss") . " $title $+ .png"];
+		$file = [new java.io.File: getFileProper(formatDate("HH.mm.ss") . " $title $+ .png")];
 
 		[javax.imageio.ImageIO write: $1, "png", $file];
-		logFile([$file getAbsolutePath], "all", "Screenshots");
+		logFile([$file getAbsolutePath], "screenshots", ".");
 		deleteFile([$file getAbsolutePath]);
 
-		showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/all/Screenshots");
+		showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/screenshots");
 	}];
 }
 

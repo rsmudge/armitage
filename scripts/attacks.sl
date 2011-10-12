@@ -523,7 +523,7 @@ sub addFileListener {
 	$actions["RHOST"] = {
 		local('$title $temp');
 		$title = "Select $1";
-		$temp = chooseFile(\$title, $dir => ".");
+		$temp = chooseFile(\$title, $dir => ".", $always => "1");
 		if ($temp !is $null) {
 			local('$handle');
 			$handle = openf($temp);

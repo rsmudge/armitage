@@ -366,9 +366,15 @@ sub setDefaultAutoLayout {
 }
 
 sub makeScreenshot {
+	local('$ss');
+	
 	if ($graph !is $null) {
-		[javax.imageio.ImageIO write: [$graph getScreenshot], "png", [new java.io.File: getFileProper($1)]];
-		return getFileProper($1);
+		$ss = [$graph getScreenshot];
+
+		if ($ss !is $null) {
+			[javax.imageio.ImageIO write: $ss, "png", [new java.io.File: getFileProper($1)]];
+			return getFileProper($1);
+		}
 	}
 }
 
