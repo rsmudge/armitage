@@ -178,7 +178,9 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Dump Hashes", "D", lambda({
-                        launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, $sid);
+			thread(lambda({
+				launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, $sid);
+			}, \$sid));
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
