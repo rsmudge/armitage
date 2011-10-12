@@ -178,7 +178,8 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Dump Hashes", "D", lambda({ 
-			m_cmd($sid, "hashdump");
+			module_execute("post", "windows/gather/smart_hashdump", %(SESSION => $sid, GETSYSTEM => "0"));
+			showError("Dumping Hashes.\nUse View -> Credentials to see them.");
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
