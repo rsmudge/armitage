@@ -12,6 +12,8 @@ Armitage Changelog
   (thanks Rob for the suggestion)
 - Added a module launcher helper for RHOSTS and RHOST. This helper will let you
   import a list of IPs (separated by newlines) from a file into these fields.
+- View -> Reporting -> Export Data no longer fails if there are no hosts to
+  export data about.
 
 09.26.11 - take 2
 --------
