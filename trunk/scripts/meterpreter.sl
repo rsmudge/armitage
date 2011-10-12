@@ -179,7 +179,7 @@ sub showMeterpreterMenu {
 
 		item($j, "Dump Hashes", "D", lambda({
 			thread(lambda({
-				launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, $sid);
+				launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, %(SESSION => $sid, GETSYSTEM => "1"));
 			}, \$sid));
 		}, $sid => "$sid"));
 

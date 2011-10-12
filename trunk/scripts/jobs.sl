@@ -215,11 +215,22 @@ sub _launch_service {
 # pop up a dialog to start our attack with... fun fun fun
 #
 
-# launch_dialog("title", "type", "name", "visible", "hosts...")
+# launch_dialog("title", "type", "name", "visible", "hosts...", %options)
 sub launch_dialog {
-	local('$info $options');
+	local('$info $options $6');
 	$info = call($client, "module.info", $2, $3);
 	$options = call($client, "module.options", $2, $3);
+
+	# give callers the ability to set any options before we pass things on.
+	if (-ishash $6) {
+		local('$key $value');
+		foreach $key => $value ($6) {
+			if ($key in $options) {
+				$options[$key]["default"] = $value;
+			}
+		}
+	}
+
 	dispatchEvent(lambda({
 		invoke(lambda(&_launch_dialog, \$info, \$options), $args);
 	}, \$info, \$options, $args => @_));
@@ -294,9 +305,6 @@ sub _launch_dialog {
 				}
 			}
 			$default = join(", ", @sessions);
-		}
-		else if ($key eq "SESSION" && -isnumber $6) {
-			$default = $6;
 		}
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
