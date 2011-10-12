@@ -7,6 +7,7 @@ import javax.swing.table.*;
 
 import java.awt.*; 
 import java.awt.event.*;
+import java.awt.image.*;
 
 import java.util.*;
 
@@ -20,7 +21,15 @@ public class NetworkTable extends JComponent implements ActionListener {
 
 	public boolean isAlive() {
 		return isAlive;
-	}	
+	}
+
+	public Image getScreenshot() {
+		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics g = image.getGraphics();
+		paint(g);
+		g.dispose();
+		return image;
+	}
 
 	protected boolean isAlive = true;
 

@@ -19,6 +19,8 @@ Armitage Changelog
 - hashdump and smart_hashdump post modules will now announce to the event log
   that hashes were dumped when they're run (whether through menu or module
   the module browser).
+- View -> Reporting -> Export Data now takes a screenshot of the table view
+  and includes it in the artifacts (when table view is active)
 
 09.26.11 - take 2
 --------

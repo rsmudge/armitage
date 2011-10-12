@@ -56,6 +56,9 @@ public class DraggableTabbedPane extends JTabbedPane {
 
 						dragging = true;
 						repaint();
+
+						graphics.dispose();
+						totalGraphics.dispose();
 					}
 				}
 				else {
