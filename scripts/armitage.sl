@@ -205,6 +205,7 @@ sub main {
         [$frame setSize: 800, 600];
 
 	init_menus($frame);
+	initLogSystem();
 
 	[$frame setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
         [$frame show];

@@ -57,6 +57,21 @@ sub logFile {
 	}
 }
 
+sub initLogSystem {
+	[$frame setScreenshotManager: {
+		local('$image $title $file');
+		($image, $title) = @_;
+		$title = tr($title, '0-9\W', '0-9_');
+		$file = [new java.io.File: formatDate("HH:mm:ss") . " $title $+ .png"];
+
+		[javax.imageio.ImageIO write: $1, "png", $file];
+		logFile([$file getAbsolutePath], "all", "Screenshots");
+		deleteFile([$file getAbsolutePath]);
+
+		showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/all/Screenshots");
+	}];
+}
+
 sub dumpTSVData {
 	local('$handle $entry');
 	$handle = openf("> $+ $1 $+ .tsv");

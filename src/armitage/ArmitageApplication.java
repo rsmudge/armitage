@@ -2,6 +2,7 @@ package armitage;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import java.awt.image.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,6 +15,11 @@ public class ArmitageApplication extends JFrame {
 	protected JTabbedPane tabs = null;
 	protected JSplitPane split = null;
 	protected JMenuBar menus = new JMenuBar();
+	protected ScreenshotManager screens = null;
+
+	public void setScreenshotManager(ScreenshotManager m) {
+		screens = m;
+	}
 
 	public void addMenu(JMenuItem menu) {
 		menus.add(menu);
@@ -135,7 +141,7 @@ public class ArmitageApplication extends JFrame {
 		}
 	}
 
-	public void _addTab(final String title, JComponent tab, final ActionListener removeListener) {
+	public void _addTab(final String title, final JComponent tab, final ActionListener removeListener) {
 		final Component component = tabs.add("", tab);
 		final JLabel label = new JLabel(title + "   ");
 
@@ -143,7 +149,7 @@ public class ArmitageApplication extends JFrame {
 		control.setOpaque(false);
 		control.setLayout(new BorderLayout());
 		control.add(label, BorderLayout.CENTER);
-		
+
 		if (tab instanceof Activity) {
 			((Activity)tab).registerLabel(label);
 		}
@@ -178,7 +184,23 @@ public class ArmitageApplication extends JFrame {
 						}
 					});
 
+					JMenuItem c = new JMenuItem("Save screenshot", 'S');
+					c.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							/* capture the current tab in an image */
+							BufferedImage image = new BufferedImage(tab.getWidth(), tab.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+							Graphics g = image.getGraphics();
+							tab.paint(g);
+
+							if (screens != null) {
+								screens.saveScreenshot(image, title);
+							}
+						}
+					});
+
 					menu.add(a);
+					menu.add(c);
+					menu.addSeparator();
 					menu.add(b);
 
 					menu.show((Component)ev.getSource(), ev.getX(), ev.getY());
