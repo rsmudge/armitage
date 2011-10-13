@@ -367,11 +367,13 @@ sub _launch_dialog {
 
 			if ([$check isSelected]) {
 				[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+				[$model setValueForKey: "HANDLER", "Value", "true"];
 				[$model setValueForKey: "ExitOnSession", "Value", "false"];
 				[$model setValueForKey: "LPORT", "Value", randomPort()];
 			}
 			else {
 				[$model setValueForKey: "DisablePayloadHandler", "Value", "true"];
+				[$model setValueForKey: "HANDLER", "Value", "false"];
 				[$model setValueForKey: "ExitOnSession", "Value", ""];
 				[$model setValueForKey: "LPORT", "Value", ""];
 			}
