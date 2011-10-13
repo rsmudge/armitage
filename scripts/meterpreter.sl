@@ -198,13 +198,9 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Pass Session", 'S', lambda({
-			local('$host $port');
-			($host, $port) = split('[:\s]', ask("Send session to which listening host:port?"));
-			if ($host ne "" && $port ne "") {
-				oneTimeShow("run");
-				warn("$host and $port");
-				m_cmd($sid, "run multi_meter_inject -mr $host -p $port");
-			}
+			thread(lambda({
+				launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid));
+			}, \$sid));
 		}, $sid => "$sid"));
 	}
 			
