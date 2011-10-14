@@ -76,7 +76,7 @@ public class MeterpreterSession implements Runnable {
 			emptyRead();
 			//System.err.println("Processing: " + c.text);
 			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, Base64.encode(c.text) });
-		
+
 			/* white list any commands that are not expected to return output */
 			if (c.text.startsWith("cd "))
 				return;
@@ -84,7 +84,7 @@ public class MeterpreterSession implements Runnable {
 			if (c.text.startsWith("rm "))
 				return;
 
-			if (c.text.equals("shell\n") || c.text.equals("exit\n"))
+			if (c.text.equals("shell\n") || c.text.equals("exit\n") || c.text.equals("rev2self\n"))
 				return;
 
 			if (c.text.startsWith("ls\n")) {
