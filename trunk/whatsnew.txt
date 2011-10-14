@@ -8,7 +8,7 @@ Armitage Changelog
   Meterpreter -> Access -> Pass Session
 - Updated Meterpreter -> Access -> Pass Session to have LPORT of default 
   Meterpreter listener. Click Launch to simply duplicate your current session.
-- Added Meterpreter -> Access -> Steal Token to list and steal user tokens.
+- Added Meterpreter -> Access -> Steal Token to list and steal user/group tokens
 - Updated meterpreter multiplexer to not expect output from rev2self. 
 
 10.13.11
