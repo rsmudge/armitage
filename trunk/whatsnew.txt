@@ -3,6 +3,10 @@ Armitage Changelog
 
 10.13.11
 --------
+- updated msf3/data directories to account for new install locations.
+
+10.13.11
+--------
 - added ability to set up VNC on a target when connected to a remote Metasploit
 - Armitage now tells you where to connect your VNC client to access the desktop
   of a compromised host. You'll need to have a local VNC client available.
