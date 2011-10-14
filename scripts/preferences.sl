@@ -304,7 +304,7 @@ sub createPreferencesTab {
 
 [{
 	local('@options');
-	@options = @('C:/Program Files/Rapid7/framework/msf3/data', '/opt/framework/msf3/data', '/opt/framework3/msf3/data', '/opt/framework/msf/data', '/opt/framework4/msf4/data');
+	@options = @('C:/Program Files/Rapid7/framework/msf3/data', '/opt/framework/msf3/data', '/opt/framework3/msf3/data', '/opt/framework/msf/data', '/opt/framework4/msf4/data', '/opt/metasploit-4.1.0/msf3/data', 'C:/metasploit/msf3/data');
 	$DATA_DIRECTORY = cwd();
 	warn($DATA_DIRECTORY);
 	foreach $option (@options) {
