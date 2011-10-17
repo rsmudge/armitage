@@ -206,7 +206,15 @@ sub showMeterpreterMenu {
 			m_cmd($sid, "list_tokens -g");
 		}, $sid => "$sid"));
 
-		item($j, "Dump Hashes", "D", lambda({
+		local('$h');
+		$h = menu($j, "Dump Hashes", "D");
+
+		item($h, "lsass method", "l", lambda({
+			m_cmd($sid, "hashdump");
+		}, $sid => "$sid"));
+
+
+		item($h, "registry method", "r", lambda({
 			thread(lambda({
 				launch_dialog("Dump Hashes", "post", "windows/gather/smart_hashdump", 1, $null, %(SESSION => $sid, GETSYSTEM => "1"));
 			}, \$sid));
