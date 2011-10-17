@@ -69,8 +69,11 @@ sub parseMeterpreter {
 		m_cmd($sid, "ls");
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
+		%handlers["list_tokens"] = $null;
+		%handlers["getuid"] = $null;
 		m_cmd($sid, "use stdapi");
 		m_cmd($sid, "use priv");
+		m_cmd($sid, "use incognito");
 		showError("Loading stdapi. Try command again");
 		return;
 	}
