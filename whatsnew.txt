@@ -3,6 +3,11 @@ Armitage Changelog
 
 In Progress
 -----------
+- Modified hail mary attack to get a little more success with some common Windows
+  attacks.
+
+10.17.11 
+-----------
 - Added menu item to dump hashes using the old lsass method or the smart hashdump
   registry method.
 
