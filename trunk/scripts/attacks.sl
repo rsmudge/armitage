@@ -138,6 +138,9 @@ sub smarter_autopwn {
 				($os, $port, $exploit) = split('/', $ex);
 				if ($os in @allowed && $ex !in %dupes) {
 					push(@attacks, @("$host", "$ex", best_payload($host, $ex, iff($ex in @always_reverse)), $p, %exploits[$ex]));
+					if ($p eq "139") {
+						push(@attacks, @("$host", "$ex", best_payload($host, $ex, iff($ex in @always_reverse)), 445, %exploits[$ex]));
+					}
 					%dupes[$ex] = 1;
 				}
 			}
