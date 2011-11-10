@@ -67,11 +67,9 @@ sub view_items {
 	separator($1);
 
 	item($1, 'Credentials', 'r', { thread(&createCredentialsTab); });
+	item($1, 'Downloads', 'D', { thread(&createDownloadBrowser); });
 	item($1, 'Jobs', 'J', { thread(&createJobsTab); });
-
-	if (!$REMOTE || $mclient !is $client) {
-		item($1, 'Loot', 'L', { thread(&createLootBrowser) });
-	}
+	item($1, 'Loot', 'L', { thread(&createLootBrowser) });
 
 	separator($1);
 

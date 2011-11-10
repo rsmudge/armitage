@@ -69,6 +69,42 @@ sub parseListing {
 
 %handlers["ls"] = &parseListing;
 
+# setupSizeRenderer($table, "columnname")
+sub setupSizeRenderer {
+	[[$1 getColumn: $2] setCellRenderer: safeColumnRenderer({ 
+		local('$label');
+
+		$label = [$parent getTableCellRendererComponent: $1, $null, $3, $4, $5, $6];
+
+		local('$size $units');
+		$size = long($2);
+		$units = "b";
+		
+		if ($2 eq "") {
+			[$label setText: ""];
+			return $label;
+		}
+
+		if ($size > 1024) {
+			$size = long($size / 1024);
+			$units = "kb";			
+		}
+
+		if ($size > 1024) {
+			$size = round($size / 1024.0, 2);
+			$units = "mb";
+		}
+
+		if ($size > 1024) {
+			$size = round($size / 1024.0, 2);
+			$units = "gb";
+		}
+
+		[$label setText: "$size $+ $units"];
+		return $label;
+	}, $parent => [$1 getDefaultRenderer: ^Object], $table => $1)];
+}
+
 sub safeColumnRenderer {
 	# this function creates a new sleep thread (a separate script environment for locking purposes)
 	# and sanitizes the specified function through it. This returned function is now safe for use
@@ -131,38 +167,7 @@ sub createFileBrowser {
 		return $label;
 	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
 
-	[[$table getColumn: "Size"] setCellRenderer: safeColumnRenderer({ 
-		local('$label');
-
-		$label = [$parent getTableCellRendererComponent: $1, $null, $3, $4, $5, $6];
-
-		local('$size $units');
-		$size = long($2);
-		$units = "b";
-		
-		if ($2 eq "") {
-			[$label setText: ""];
-			return $label;
-		}
-
-		if ($size > 1024) {
-			$size = long($size / 1024);
-			$units = "kb";			
-		}
-
-		if ($size > 1024) {
-			$size = round($size / 1024.0, 2);
-			$units = "mb";
-		}
-
-		if ($size > 1024) {
-			$size = round($size / 1024.0, 2);
-			$units = "gb";
-		}
-
-		[$label setText: "$size $+ $units"];
-		return $label;
-	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
+	setupSizeRenderer($table, "Size");
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
@@ -203,7 +208,7 @@ sub createFileBrowser {
 			local('$popup $model');
 			$popup = [new JPopupMenu];
 			$model = %files[$sid];
-			buildFileBrowserMenu($popup, [$model getSelectedValues: $table], convertAll([$model getRows]), \$sid, \$setcwd);
+			buildFileBrowserMenu($popup, [$model getSelectedValues: $table], convertAll([$model getRows]), \$sid, \$setcwd, \$text);
 			[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 			[$1 consume];
 		}
@@ -318,38 +323,25 @@ sub buildFileBrowserMenu {
 	map(lambda({ %types[$1["Name"]] = $1["D"]; }, \%types), $3);
 
 	item($1, "Download", 'D', lambda({ 
-		# this handler won't catch everything but it makes it easy to download small files
-		# that take < 12s to grab. I'll take this over nothing.
-		%handlers["download"] = {
-			if ($0 eq "update" && $2 ismatch '... downloaded : .*? -> (.*?)') {
-				local('$f');
-				($f) = matched();
-				if ($client !is $mclient) {
-					downloadFile($f);
-					if (-exists $f && lof($f) > 0) {
-						logFile($f, sessionToHost($1), "Downloads");
-						showError("Saved $f");
-					}
-				}
-				else {
-					logFile($f, sessionToHost($1), "Downloads");
-					showError("Saved $f");
-				}
-			}
-		};
+		local('$f $dir @temp $tdir');
+		@temp = split('\\\\', [$text getText]);
+		$dir = getFileProper(systemProperties()["user.home"], ".armitage", "downloads", sessionToHost($sid), join("/", @temp));
+		if (!-exists $dir) {
+			warn("Saving files to $dir");
+			mkdir($dir);
+		}
 
-		local('$f ');
 		foreach $f ($file) {
 			[$setcwd];
 			if (%types[$f] eq "dir") {
-				%handlers["download"] = $null;
-				m_cmd($sid, "download -r \" $+ $f $+ \""); 
+				$tdir = getFileProper(systemProperties()["user.home"], ".armitage", "downloads", sessionToHost($sid), join("/", @temp), $f);
+				m_cmd($sid, "download -r \" $+ $f $+ \" \" $+ $tdir $+ \""); 
 			}
 			else {
-				m_cmd($sid, "download \" $+ $f $+ \""); 
+				m_cmd($sid, "download \" $+ $f $+ \" \" $+ $dir $+ \""); 
 			}
 		}
-	}, $file => $2, \$sid, \%types, \$setcwd));
+	}, $file => $2, \$sid, \%types, \$setcwd, \$text));
 
 	item($1, "Execute", 'E', lambda({ 
 		local('$f $args');
