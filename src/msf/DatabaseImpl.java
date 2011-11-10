@@ -5,6 +5,8 @@ import java.sql.*;
 
 import java.io.*;
 
+import graph.Route;
+
 /* implement the old MSF RPC database calls in a way Armitage likes */
 public class DatabaseImpl implements RpcConnection  {
 	protected Connection db;
@@ -12,6 +14,8 @@ public class DatabaseImpl implements RpcConnection  {
 	protected String workspaceid = "0";
 	protected String hFilter = null;
 	protected String sFilter = null;
+	protected Route  rFilter = null;
+	protected String oFilter = null;
 
 	private static String join(List items, String delim) {
 		StringBuffer result = new StringBuffer();
@@ -85,6 +89,34 @@ public class DatabaseImpl implements RpcConnection  {
 		return results;
 	}
 
+	public List filterByRoute(List rows) {
+		if (rFilter != null || oFilter != null) {
+			Iterator i = rows.iterator();
+			while (i.hasNext()) {
+				Map entry = (Map)i.next();
+				if (rFilter != null && entry.containsKey("address")) {
+					if (!rFilter.shouldRoute(entry.get("address") + "")) {
+						i.remove();
+						continue;
+					}
+				}
+				else if (rFilter != null && entry.containsKey("host")) {
+					if (!rFilter.shouldRoute(entry.get("host") + "")) {
+						i.remove();
+						continue;
+					}
+				}
+
+				if (oFilter != null && entry.containsKey("os_name")) {
+					if ((entry.get("os_name") + "").toLowerCase().indexOf(oFilter) == -1) {
+						i.remove();
+					}
+				}
+			}
+		}
+		return rows;
+	}
+
 	public void connect(String dbstring, String user, String password) throws Exception {
 		db = DriverManager.getConnection(dbstring, user, password);
 		setWorkspace("default");
@@ -128,7 +160,13 @@ public class DatabaseImpl implements RpcConnection  {
 			if (queries.containsKey(methodName)) {
 				String query = queries.get(methodName) + "";
 				Map result = new HashMap();
-				result.put(methodName.substring(3), executeQuery(query));
+
+				if (methodName.equals("db.services") || methodName.equals("db.hosts")) {
+					result.put(methodName.substring(3), filterByRoute(executeQuery(query)));
+				}
+				else {
+					result.put(methodName.substring(3), executeQuery(query));
+				}
 				return result;
 			}
 			else if (methodName.equals("db.vulns")) {
@@ -158,6 +196,9 @@ public class DatabaseImpl implements RpcConnection  {
 				   damned query dynamically. Hence it'll have to do. */
 				Map values = (Map)params[0];
 
+				rFilter = null;
+				oFilter = null;
+
 				List hosts = new LinkedList();
 				List srvcs = new LinkedList();
 
@@ -168,12 +209,11 @@ public class DatabaseImpl implements RpcConnection  {
 
 				if (values.containsKey("hosts") && (values.get("hosts") + "").length() > 0) {
 					String h = values.get("hosts") + "";
-					if (!h.matches("[0-9a-fA-F\\.:\\%\\_]+")) {
+					if (!h.matches("[0-9a-fA-F\\.:\\%\\_/]+")) {
 						System.err.println("Host value did not validate!");
 						return new HashMap();
 					}
-					hosts.add("hosts.address LIKE '" + values.get("hosts") + "'");
-					srvcs.add("hosts.address LIKE '" + values.get("hosts") + "'");
+					rFilter = new Route(h);
 				}
 
 				if (values.containsKey("ports") && (values.get("ports") + "").length() > 0) {
@@ -190,18 +230,10 @@ public class DatabaseImpl implements RpcConnection  {
 					}
 					hosts.add("services.host_id = hosts.id");
 					hosts.add("(" + join(ports, " OR ") + ")");
-
-					if (!values.containsKey("hosts") || (values.get("hosts") + "").length() == 0)
-						srvcs.add("EXISTS (SELECT hosts.address FROM hosts AS h, services AS s WHERE h.id = hosts.id AND h.id = s.host_id AND (" + join(ports2, " OR ") + "))");
 				}
 
 				if (values.containsKey("os") && (values.get("os") + "").length() > 0) {
-					String os = values.get("os") + "";
-					if (!os.matches("[a-zA-Z0-9 \\%\\_]+")) {
-						return new HashMap();
-					}
-					hosts.add("hosts.os_name ILIKE '" + os + "'");
-					srvcs.add("hosts.os_name ILIKE '" + os + "'");
+					oFilter = (values.get("os") + "").toLowerCase();
 				}
 
 				if (hosts.size() == 0) {

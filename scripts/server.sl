@@ -213,35 +213,9 @@ sub client {
 			writeObject($handle, $response);
 		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
-			# never underestimate the power of caching to alleviate load.
-			local('$response $time');
-			($response, $time) = $null;
-
-			acquire($cach_lock);
-			if ($method in %cache) {
-				($response, $time) = %cache[$method];
-			}
-
-			if ($response is $null || (ticks() - $time) > 3500) {
-				try {
-					if ($args) {
-						$response = [$client execute: $method, $args];
-					}
-					else {
-						$response = [$client execute: $method];
-					}
-				}
-				catch $ex {
-					warn($ex);
-				}	
-				$time = ticks();
-
-				%cache[$method] = @($response, $time);
-			}
-			release($cach_lock);
-
+			$response = [$client_cache execute: $method, $args];
 			writeObject($handle, $response);
-		}
+		}	
 		else if ("module.*" iswm $method) {
 			# never underestimate the power of caching to alleviate load.
 			local('$response $time');
@@ -288,7 +262,7 @@ sub client {
 
 sub main {
 	global('$client');
-	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth %cache $cach_lock');
+	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth %cache $cach_lock $client_cache');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
 
@@ -321,6 +295,11 @@ sub main {
 
 	# setg ARMITAGE_SERVER host:port/token
 	cmd_safe("setg ARMITAGE_SERVER $host $+ : $+ $port $+ / $+ $auth");
+
+	#
+	# setup the client cache
+	#
+	$client_cache = [new RpcCacheImpl: $client];
 
 	#
 	# This lock protects the %sessions variable
@@ -415,7 +394,7 @@ sub main {
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache);
 
 		$id++;
 	}
