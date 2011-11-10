@@ -103,6 +103,7 @@ sub createModuleList {
 	[$panel add: wrapComponent($search, 5), [BorderLayout SOUTH]];
 
 	[$panel setPreferredSize: [new Dimension: 180, 600] ];
+	[$panel setMinimumSize: [new Dimension: 180, 0]];
 
 	let(&showPostModules, \$tree, \$search)
 	return $panel;
