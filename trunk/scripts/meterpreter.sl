@@ -313,8 +313,6 @@ sub showMeterpreterMenu {
 sub launch_msf_scans {
 	local('@modules $1 $hosts');
 
-	$console = createConsoleTab("Scan", 1, $host => "all", $file => "scan");
-
 	@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
 	push(@modules, "scanner/discovery/udp_sweep");
 	push(@modules, "scanner/netbios/nbname");
@@ -324,14 +322,17 @@ sub launch_msf_scans {
 	$hosts = iff($1 is $null, ask("Enter range (e.g., 192.168.1.0/24):"), $1);
 
 	thread(lambda({
-		local('%options $scanner $count $pivot');
+		local('%options $scanner $count $pivot $index $progress');
 
 		if ($hosts !is $null) {
+		        $progress = [new javax.swing.ProgressMonitor: $null, "Launch Scans", "", 0, size(@modules)];
+
 			# we don't need to set CHOST as the discovery modules will honor any pivots already in place
 			%options = %(THREADS => iff(isWindows(), 1, 8), RHOSTS => $hosts);
 
-			foreach $scanner (@modules) {
-			        [[$console getWindow] append: "$scanner $+ \n"];
+			foreach $index => $scanner (@modules) {
+				[$progress setProgress: $index];
+				[$progress setNote: $scanner];
 
 				if ($scanner eq "scanner/http/http_version") {
 					local('%o2');
@@ -345,8 +346,8 @@ sub launch_msf_scans {
 				yield 250;
 			}
 
-		        [[$console getWindow] append: "\nLaunched $count discovery modules!\n"];
 			elog("launched $count discovery modules at: $hosts");
+			[$progress close];
 		}
 	}, \$hosts, \@modules));
 }
