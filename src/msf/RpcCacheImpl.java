@@ -25,10 +25,13 @@ public class RpcCacheImpl {
 			return (System.currentTimeMillis() - last) > wait;
 		}
 
-		public void touch(String methodName, long executeTime) {
-			if (executeTime > 1000L) {
-				wait = executeTime * 5;
-				System.err.println("Throttling wait time for: " + methodName + " (execute time: " + executeTime + ")");
+		public void touch(long executeTime) {
+			/* throttle the next call if this takes too long to execute */
+			if (executeTime > 1000) {
+				wait = executeTime * 10;
+			}
+			else {
+				wait = 2000L;
 			}
 
 			last = System.currentTimeMillis();
@@ -66,7 +69,7 @@ public class RpcCacheImpl {
 				entry.response = connection.execute(methodName, params);
 			}
 			time = System.currentTimeMillis() - time;
-			entry.touch(methodName, time);
+			entry.touch(time);
 
 			return entry.response;
 		}
