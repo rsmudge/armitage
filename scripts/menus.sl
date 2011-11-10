@@ -264,8 +264,11 @@ sub client_workspace_items {
 				savePreferences();
 
 				# switch to it!
-				call($mclient, "db.filter", %(os => $o, ports => $p, hosts => $h, session => $s));
-				refreshTargets();
+				thread(lambda({
+					call($mclient, "db.filter", %(os => $o, ports => $p, hosts => $h, session => $s));
+					refreshTargets();
+				}, \$o, \$p, \$h, \$s));
+
 				[$frame setTitle: "Armitage - $n"];
 
 				elog("switched to workspace: $n");
@@ -283,8 +286,10 @@ sub client_workspace_items {
 			[$preferences setProperty: "armitage.workspaces.menus", ""];
 			savePreferences();
 			[$frame setTitle: "Armitage"];
-			call($mclient, "db.filter", %());
-			refreshTargets();
+			thread({ 
+				call($mclient, "db.filter", %()); 
+				refreshTargets();
+			});
 			[$parent removeAll];
 			client_workspace_items($parent);
 		}, $parent => $1));
@@ -293,8 +298,10 @@ sub client_workspace_items {
 
 	item($1, "Show All", "S", {
 		[$frame setTitle: "Armitage"];
-		call($mclient, "db.filter", %());
-		refreshTargets();
+		thread({
+			call($mclient, "db.filter", %());
+			refreshTargets();
+		});
 		elog("removed workspace filter");
 	});
 
@@ -304,8 +311,10 @@ sub client_workspace_items {
 	foreach $x => $menu (filter({ return iff($1, $1); }, $menus)) {
 		($name, $host, $ports, $os, $session) = split('@@', $menu);
 		item($1, "$x $+ . $name", $x, lambda({
-			call($mclient, "db.filter", %(os => $os, ports => $ports, hosts => $host, session => $session));
-			refreshTargets();
+			thread(lambda({
+				call($mclient, "db.filter", %(os => $os, ports => $ports, hosts => $host, session => $session));
+				refreshTargets();
+			}, \$os, \$ports, \$host, \$session));
 			elog("switched to workspace: $name");
 			[$frame setTitle: "Armitage - $name"];
 		}, \$host, \$ports, \$os, \$name, \$session));
