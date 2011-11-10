@@ -221,21 +221,24 @@ sub client {
 			if ($method in %cache) {
 				($response, $time) = %cache[$method];
 			}
-			release($cach_lock);
 
-			if ($response is $null || (ticks() - $time) > 2000) {
-				if ($args) {
-					$response = [$client execute: $method, $args];
+			if ($response is $null || (ticks() - $time) > 3500) {
+				try {
+					if ($args) {
+						$response = [$client execute: $method, $args];
+					}
+					else {
+						$response = [$client execute: $method];
+					}
 				}
-				else {
-					$response = [$client execute: $method];
-				}
+				catch $ex {
+					warn($ex);
+				}	
 				$time = ticks();
 
-				acquire($cach_lock);
 				%cache[$method] = @($response, $time);
-				release($cach_lock);
 			}
+			release($cach_lock);
 
 			writeObject($handle, $response);
 		}
