@@ -264,7 +264,7 @@ sub client_workspace_items {
 				savePreferences();
 
 				# switch to it!
-				call($client, "db.filter", %(os => $o, ports => $p, hosts => $h, session => $s));
+				call($mclient, "db.filter", %(os => $o, ports => $p, hosts => $h, session => $s));
 				refreshTargets();
 				[$frame setTitle: "Armitage - $n"];
 
