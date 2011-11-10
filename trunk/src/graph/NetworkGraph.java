@@ -1,21 +1,21 @@
 package graph;
 
-import javax.swing.*; 
-import javax.swing.event.*; 
+import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.border.*;
 
-import java.awt.*; 
+import java.awt.*;
 import java.awt.event.*;
 
 import java.util.*;
 
-import com.mxgraph.swing.*; 
-import com.mxgraph.view.*; 
-import com.mxgraph.model.*; 
-import com.mxgraph.layout.*; 
-import com.mxgraph.swing.util.*; 
-import com.mxgraph.swing.handler.*; 
-import com.mxgraph.swing.view.*; 
+import com.mxgraph.swing.*;
+import com.mxgraph.view.*;
+import com.mxgraph.model.*;
+import com.mxgraph.layout.*;
+import com.mxgraph.swing.util.*;
+import com.mxgraph.swing.handler.*;
+import com.mxgraph.swing.view.*;
 import com.mxgraph.util.*;
 
 import java.awt.image.*;
@@ -36,7 +36,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 	/** returns true if this graph is still in a tab, false otherwise */
 	public boolean isAlive() {
 		return isAlive;
-	}	
+	}
 
 	/* keeps track of the nodes and their images */
 	protected Map nodeImages = new HashMap();
@@ -77,7 +77,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 	public GraphPopup getGraphPopup() {
 		return popup;
 	}
-	
+
 	public void setGraphPopup(GraphPopup popup) {
 		this.popup = popup;
 	}
@@ -115,7 +115,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 	}
 
 	public void selectAll() {
-		graph.selectAll();	
+		graph.selectAll();
 	}
 
 	public NetworkGraph(Properties display) {
@@ -142,7 +142,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		graph.setKeepEdgesInForeground(false);
 		graph.setKeepEdgesInBackground(true);
 
-		parent = graph.getDefaultParent(); 
+		parent = graph.getDefaultParent();
 
 		/* create the component... */
 		component = new NetworkGraphComponent(graph);
@@ -166,11 +166,11 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		setLayout(new BorderLayout());
 		add(component, BorderLayout.CENTER);
 
-		/* setup the keyboard shortcuts */ 
+		/* setup the keyboard shortcuts */
 		setupShortcuts();
 	}
 
-	
+
         public void addActionForKeyStroke(KeyStroke key, Action action) {
                 component.getActionMap().put(key.toString(), action);
                 component.getInputMap().put(key, key.toString());
@@ -199,7 +199,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		if (this.layout != null)
 			this.layout = "hierarchical";
 
-		mxGraphLayout layout = new com.mxgraph.layout.hierarchical.mxHierarchicalLayout(graph); 
+		mxGraphLayout layout = new com.mxgraph.layout.hierarchical.mxHierarchicalLayout(graph);
 		layout.execute(parent);
 	}
 
@@ -274,7 +274,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 
 		for (int y = 0; y < cells.length; y++) {
 			cell = (mxCell)cells[y];
-			if (nodes.containsKey(cell.getId())) 
+			if (nodes.containsKey(cell.getId()))
 				sel.add(cell.getId());
 		}
 
@@ -321,7 +321,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		zoom += factor;
 		component.zoomTo(zoom, true);
 	}
-	
+
 	public void start() {
 		graph.getModel().beginUpdate();
 		nodes.startUpdates();
@@ -376,10 +376,10 @@ public class NetworkGraph extends JComponent implements ActionListener {
 	public void deleteNodes() {
 		java.util.List untouched = nodes.clearUntouched();
 		Object[] cells = new Object[untouched.size()];
-		
+
 		Iterator i = untouched.iterator();
 		for (int x = 0; i.hasNext(); x++) {
-			Map.Entry entry = (Map.Entry)i.next();	
+			Map.Entry entry = (Map.Entry)i.next();
 			cells[x] = entry.getValue();
 		}
 		graph.removeCells(cells, true);
@@ -403,7 +403,6 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		Iterator ij = edges.iterator();
 		while (ij.hasNext()) {
 			((mxCell)(ij.next())).removeFromTerminal(true);
-			
 		}
 
 		edges = new LinkedList();
@@ -425,7 +424,7 @@ public class NetworkGraph extends JComponent implements ActionListener {
 					}
 				}
 			}
-		}	
+		}
 	}
 
 	protected Map tooltips = new HashMap();
