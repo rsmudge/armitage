@@ -13,7 +13,7 @@ import javax.swing.table.*;
 
 sub updateServiceModel {
 	local('$port $row $host');
-	[$model clear: 16];
+	[$model clear: 256];
 	foreach $host ($hosts) {
 		if ($host in %hosts && 'services' in %hosts[$host]) {
 			foreach $port => $row (%hosts[$host]['services']) {	
@@ -64,8 +64,10 @@ sub createServiceBrowser {
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
-		refreshTargets();
-		updateServiceModel(\$hosts, \$model);	
+		thread(lambda({
+			_refreshServices(call($mclient, "db.services"));
+			updateServiceModel(\$hosts, \$model);
+		}, \$hosts, \$model));
 	}, \$model, $hosts => $1)];
 
 	updateServiceModel($hosts => $1, \$model); 		

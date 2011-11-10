@@ -46,13 +46,13 @@ sub showHost {
 			push(@overlay, 'resources/windows7.png');
 		}
 	}
-	else if ($os eq "Mac OS X") {
+	else if ($os eq "Mac OS X" || "*apple*" iswm lc($os)) {
 		push(@overlay, 'resources/macosx.png');
 	}
-	else if ($os eq "Linux") {
+	else if ("*linux*" iswm lc($os)) {
 		push(@overlay, 'resources/linux.png');
 	}
-	else if ($os eq "IOS") {
+	else if ($os eq "IOS" || "*cisco*" iswm lc($os)) {
 		push(@overlay, 'resources/cisco.png');
 	}
 	else if ("*BSD*" iswm $os) {
@@ -77,38 +77,34 @@ sub showHost {
 
 sub connectToMetasploit {
 	local('$thread');
-	$thread = [new Thread: lambda(&_connectToMetasploit, \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8)];
+	$thread = [new Thread: lambda(&_connectToMetasploit, \$1, \$2, \$3, \$4)];
 	[$thread start];
 }
 
 sub _connectToMetasploit {
-	global('$client $mclient $console @exploits @auxiliary @payloads @post @workspaces $flag $exception');
+	global('$database $client $mclient $console @exploits @auxiliary @payloads @post');
 
-	local('%props $property $value');
+	# update preferences
 
-	# \$host, \$port, \$ssl, \$user, \$pass, \$driver, \$connect, $save?
-	if ($8) {
-		%props['connect.host.string'] = $1;
-		%props['connect.port.string'] = $2;
-		%props['connect.ssl.boolean'] = iff($3, "true", "");
-		%props['connect.user.string'] = $4;
-		%props['connect.pass.string'] = $5;
-		%props['connect.db_driver.string'] = $6;
-		%props['connect.db_connect.string'] = $7;
+	local('%props $property $value $flag $exception');
+	%props['connect.host.string'] = $1;
+	%props['connect.port.string'] = $2;
+	%props['connect.user.string'] = $3;
+	%props['connect.pass.string'] = $4;
 
-		foreach $property => $value (%props) {
-			[$preferences setProperty: $property, $value];
-		}
-		savePreferences();
+	foreach $property => $value (%props) {
+		[$preferences setProperty: $property, $value];
 	}
+	savePreferences();
 
+	# setup progress monitor
 	local('$progress');
 	$progress = [new ProgressMonitor: $null, "Connecting to $1 $+ : $+ $2", "first try... wish me luck.", 0, 100];
 
 	# keep track of whether we're connected to a local or remote Metasploit instance. This will affect what we expose.
 	$REMOTE = iff($1 eq "127.0.0.1", $null, 1);
 
-	$flag = 1;
+	$flag = 10;
 	while ($flag) {
 		try {
 			if ([$progress isCanceled]) {
@@ -126,7 +122,7 @@ sub _connectToMetasploit {
 				return;
 			}
 
-		        $client = [new RpcConnectionImpl: $4, $5, $1, long($2), $3, $debug];
+		        $client = [new MsgRpcImpl: $3, $4, $1, long($2), 1, $debug];
 			$flag = $null;
 		}
 		catch $exception {
@@ -139,23 +135,35 @@ sub _connectToMetasploit {
 	$console = createConsole($client);
 	let(&postSetup, \$progress);
 
-	[$progress setNote: "Connected: Checking database settings"];
+	[$progress setNote: "Connected: Getting base directory"];
 	[$progress setProgress: 30];
 
-	requireDatabase($client, $6, $7, lambda({
-		[$progress setNote: "Connected: Getting workspaces"];
+	setupBaseDirectory();
+
+	if (!$REMOTE) {
+		[$progress setNote: "Connected: Connecting to database"];
 		[$progress setProgress: 40];
-		@workspaces = getWorkspaces();
 
-		[$progress setNote: "Connected: Getting local address"];
-		[$progress setProgress: 50];
+		try {
+			# connect to the database plz...
+			$database = connectToDatabase();
+			[$client setDatabase: $database];
+		}
+		catch $exception {
+			[JOptionPane showMessageDialog: $null, "Could not connect to database.\nClick Help button for troubleshooting help.\n\n" . [$exception getMessage]];
+			if ($msfrpc_handle) { closef($msfrpc_handle); }
+			[System exit: 0];
+		}
+	}
 
-		getBindAddress();
-		[$progress setNote: "Connected: Checking for collaboration server"];
-		[$progress setProgress: 60];
+	[$progress setNote: "Connected: Getting local address"];
+	[$progress setProgress: 50];
 
-		checkForCollaborationServer($client);
-	}, \$progress), &connectDialog);
+	getBindAddress();
+	[$progress setNote: "Connected: Checking for collaboration server"];
+	[$progress setProgress: 60];
+
+	checkForCollaborationServer($client);
 }
 
 sub postSetup {
@@ -196,9 +204,6 @@ sub main {
 		}
 		chdir($dir);
 		showError("Can't write to current directory... files will save to:\n" . cwd());
-	}
-	else {
-		warn("Writing to: " . cwd());
 	}
 
 	$frame = [new ArmitageApplication];

@@ -31,11 +31,6 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	public void fireEvent(Command command, Map response, boolean timeout) {
-		//try {
-		//	System.err.println("Read: " + new String(Base64.decode(response.get("data") + ""), "UTF-8"));
-		//}
-		//catch (Exception ex) { }
-
 		Iterator i = listeners.iterator();
 		while (i.hasNext()) {
 			if (timeout) {
@@ -58,7 +53,6 @@ public class MeterpreterSession implements Runnable {
 			Map read = readResponse();
 			while (!"".equals(read.get("data"))) {
 				fireEvent(null, read, false);
-				//System.err.println("Orphaned event:\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				read = readResponse();
 			}
 		}
@@ -75,7 +69,7 @@ public class MeterpreterSession implements Runnable {
 		try {
 			emptyRead();
 			//System.err.println("Processing: " + c.text);
-			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, Base64.encode(c.text) });
+			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, c.text });
 
 			/* white list any commands that are not expected to return output */
 			if (c.text.startsWith("cd "))
@@ -131,7 +125,6 @@ public class MeterpreterSession implements Runnable {
 			Thread.sleep(10);
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
-				//System.err.println("Additional event: "+c.text+"\n" + new String(Base64.decode(read.get("data") + ""), "UTF-8"));
 				fireEvent(c, read, false);
 				read = readResponse();
 			}

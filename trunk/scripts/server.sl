@@ -33,7 +33,7 @@ sub result {
 
 sub event {
 	local('$result');
-	$result = [Base64 encode: formatDate("HH:mm:ss") . " $1"];
+	$result = formatDate("HH:mm:ss") . " $1";
 	acquire($poll_lock);
 	push(@events, $result);
 	release($poll_lock);
@@ -99,8 +99,8 @@ sub client {
 			release($sess_lock);
 			#warn("V $sess_lock");
 
-			#warn("Write $id -> $sid = " . [Base64 decode: $data]);
-			[$session addCommand: $id, [Base64 decode: $data]];
+			#warn("Write $id -> $sid = " . $data);
+			[$session addCommand: $id, $data];
 
 			writeObject($handle, [new HashMap]);
 		}
@@ -137,17 +137,17 @@ sub client {
 		}
 		else if ($method eq "armitage.push") {
 			($null, $data) = $args;
-			event("< $+ $[10]eid $+ > " . [Base64 decode: $data]);
+			event("< $+ $[10]eid $+ > " . $data);
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.poll") {
 			acquire($poll_lock);
 			if (size(@events) > $index) {
-				$rv = result(%(data => @events[$index], encoding => "base64", prompt => [Base64 encode: "$eid $+ > "]));
+				$rv = result(%(data => @events[$index], encoding => "base64", prompt => "$eid $+ > "));
 				$index++;
 			}
 			else {
-				$rv = result(%(data => "", prompt => [Base64 encode: "$eid $+ > "], encoding => "base64"));
+				$rv = result(%(data => "", prompt => "$eid $+ > ", encoding => "base64"));
 			}
 			release($poll_lock);
 
@@ -223,7 +223,7 @@ sub client {
 			}
 			release($cach_lock);
 
-			if ($response is $null || (ticks() - $time) > 5000) {
+			if ($response is $null || (ticks() - $time) > 2000) {
 				if ($args) {
 					$response = [$client execute: $method, $args];
 				}
@@ -261,8 +261,13 @@ sub client {
 			writeObject($handle, $response);
 		} 
 		else {
-			warn("$method -> $args");
-			writeObject($handle, result(%()));
+			if ($args) {
+				$response = [$client execute: $method, $args];
+			}
+			else {
+				$response = [$client execute: $method];
+			}
+			writeObject($handle, $response);
 		}
 	}
 
@@ -288,13 +293,12 @@ sub main {
 	# chastise the user if they're wrong...
 	#
 	if (size(@ARGV) < 5) {
-		println("Armitage remote enhanced mode requires the following arguments:
-	./armitage --server host port user pass [ssl]
+		println("Armitage deconfliction server requires the following arguments:
+	armitage --server host port user pass 
 		host - the address of this host (where msfrpcd is running as well)
 		port - the port msfrpcd is listening on
 		user - the username for msfrpcd
-		pass - the password for msfprcd
-		ssl  - 1=connect using SSL");
+		pass - the password for msfprcd");
 		[System exit: 0];
 	}
 	
@@ -305,10 +309,10 @@ sub main {
 	# Connect to Metasploit's RPC Daemon
 	#
 
-	$client = [new RpcConnectionImpl: $user, $pass, "127.0.0.1", long($port), iff($ssl, 1, 0), $null];
+	$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), 1, $null];
 	while ($client is $null) {
 		sleep(1000);
-		$client = [new RpcConnectionImpl: $user, $pass, "127.0.0.1", long($port), iff($ssl, 1, 0), $null];
+		$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), 1, $null];
 	}
 	$port += 1;
 
@@ -334,13 +338,12 @@ sub main {
 			$r = call($client, "console.read", $console);
 			if ($r["data"] ne "") {
 				acquire($poll_lock);
-				push(@events, [Base64 encode: formatDate("HH:mm:ss") . " " . [Base64 decode: $r["data"]]]);
+				push(@events, formatDate("HH:mm:ss") . " " . $r["data"]);
 				release($poll_lock);
 			}
 			sleep(2000);
 		}
 	}, \$client, \$poll_lock, \@events);
-
 
 	#
 	# Create a shared hash that contains a thread for each session...
@@ -364,7 +367,7 @@ sub main {
 				}
 
 				#warn("Pushing into $2 -> $1 's read queue");
-				#println([Base64 decode: [$3 get: "data"]]);
+				#println([$3 get: "data"]);
 				push(%readq[$2][$1], $3); 
 				release($read_lock);
 			})];
@@ -372,23 +375,36 @@ sub main {
 		});
 	}, \%sessions, \$client, \%readq, \$read_lock));
 
-	local('$str');
-	$str = [$preferences getProperty: "connect.db_connect.string", ""];
-	println("Use the following connection details to connect your clients:");
-	println("\tHost:              $host");
-	println("\tPort:              " . ($port - 1));
-	println("\tUse SSL?:          " . iff($ssl, "checked", "not checked"));
-	println("\tUser:              $user");
-	println("\tPass:              $pass");
-	if ($str ne "") {
-		println("\tDB Driver:         " . [$preferences getProperty: "connect.db_driver.string", "unknown... you'll need to set this up"]);
-		println("\tDB Connect String: $str");
+	#
+	# get base directory
+	#
+	setupBaseDirectory();
+
+	#
+	# setup the database
+	# 
+	try {
+		local('$database');
+		$database = connectToDatabase();
+		[$client setDatabase: $database]; 
 	}
+	catch $exception {
+		println("Could not connect to database: " . [$exception getMessage]);
+		[System exit: 0];
+	}
+
+	#
+	# spit out the details
+	#
+	println("Use the following connection details to connect your clients:");
+	println("\tHost: $host");
+	println("\tPort: " . ($port - 1));
+	println("\tUser: $user");
+	println("\tPass: $pass");
 	println("\n" . rand(@("I'm ready to accept you or other clients for who they are",
 		"multi-player metasploit... ready to go",
 		"hacking is such a lonely thing, until now",
 		"feel free to connect now, Armitage is ready for collaboration")));
-
 
 	$id = 0;
 	while (1) {

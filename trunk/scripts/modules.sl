@@ -115,7 +115,7 @@ sub showPostModules {
 	@allowed = getOS(sessionToOS($1));
 	fork({
 		local('$modules %list $model');
-		$modules = call($client, "session.compatible_modules", $sid)["response"];
+		$modules = call($client, "session.compatible_modules", $sid)["modules"];
 		$modules = map({ return substr($1, 5); }, $modules);
 
 		# filter out operating systems.

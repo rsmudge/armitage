@@ -18,13 +18,15 @@
 			optimize="yes"
 			includeantruntime="fuckno"
 		>
-		       <classpath path="./lib/jgraphx.jar;./lib/sleep.jar" />
+		       <classpath path="./lib/jgraphx.jar;./lib/sleep.jar;./lib/msgpack-0.5.1-devel.jar;./lib/postgresql-9.1-901.jdbc4.jar" />
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile">
 		<unzip src="lib/sleep.jar" dest="bin" />
 		<unzip src="lib/jgraphx.jar" dest="bin" />
+		<unzip src="lib/msgpack-0.5.1-devel.jar" dest="bin" />
+		<unzip src="lib/postgresql-9.1-901.jdbc4.jar" dest="bin" />
 		
 		<jar destfile="armitage.jar" basedir="bin" includes="**/*">
 			<manifest>

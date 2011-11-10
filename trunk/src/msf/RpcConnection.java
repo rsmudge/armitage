@@ -16,7 +16,6 @@ import org.w3c.dom.*;
  * the Metasploit Framework Java GUI. 
  */
 public interface RpcConnection {
-	public void setDebug(boolean d);
 	public Object execute(String methodName) throws IOException;
 	public Object execute(String methodName, Object[] params) throws IOException;
 }

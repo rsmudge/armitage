@@ -147,41 +147,10 @@ sub createConsoleTab {
 		logCheck($console, $host, $file);
 	}
 
-	[$frame addTab: iff($1 is $null, "Console", $1), $console, $thread];
+	dispatchEvent(lambda({
+		[$frame addTab: iff($title is $null, "Console", $title), $console, $thread];
+	}, $title => $1, \$console, \$thread));
 	return $thread;
-}
-
-# check for a database, init if there isn't one
-sub requireDatabase {
-	local('$r');
-	$r = call($1, "db.status");
-	if ($r['driver'] eq "None" || $r['db'] is $null) {
-		thread(lambda({
-			yield 8192;
-			local('$r');
-			$r = call($client, "db.status");
-			if ($r['driver'] eq "None" || $r['db'] is $null) {
-				call($client, "console.destroy", $console);
-				showError("Unable to connect to database.\nMake sure it's running");
-				[$retry];
-			}
-		}, $retry => $5, \$console));
-
-		cmd_all($client, $console, @("db_driver $2", "db_connect $3"), 
-			lambda({ 
-				if ($3 ne "") { 
-					showError($3); 
-				} 
-
-				if ("db_connect*" iswm $1 && "*Failed to*" !iswm $3) { 
-					[$continue]; 
-				} 
-			}, $continue => $4)
-		);
-	}
-	else {
-		[$4];
-	}
 }
 
 sub setupHandlers {
@@ -211,7 +180,7 @@ sub createConsole {
 
 sub getWorkspaces 
 {
-	return sorta(filter({ return $1["name"]; }, call($client, "db.workspaces")["workspaces"]));
+	return sorta(filter({ return $1["name"]; }, call($mclient, "db.workspaces")["workspaces"]));
 }
 
 # creates a new console and execs a cmd in it.
@@ -323,15 +292,74 @@ sub scanner {
 	}, $sid => $2, $host => $3, $type => $1);
 }
 
-sub connectDialog {
+sub startMetasploit {
+	local('$exception $user $pass');
+	($user, $pass) = @_;
+	try {
+		println("Starting msfrpcd for you.");
 
+		if (isWindows()) {
+			local('$handle $data $msfdir');
+			$msfdir = [$preferences getProperty: "armitage.metasploit_install.string", ""];
+			while (!-exists $msfdir || $msfdir eq "" || !-exists getFileProper($msfdir, "msf3")) {
+				$msfdir = chooseFile($title => "Where is Metasploit installed?", $dirsonly => 1);
+
+				if ($msfdir eq "") {
+					[System exit: 0];
+				}
+
+				if (charAt($msfdir, -1) ne "\\") {
+					$msfdir = "$msfdir $+ \\";
+				}
+
+				[$preferences setProperty: "armitage.metasploit_install.string", $msfdir];
+				savePreferences();
+			}
+
+			$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd.bat"), $null];
+			$data = join("\r\n", readAll($handle, -1));
+			closef($handle);
+
+			$handle = openf(">msfrpcd.bat");
+			writeb($handle, strrep($data, '$$USER$$', $1, '$$PASS$$', $2, '$$BASE$$', $msfdir));
+			closef($handle);
+			deleteOnExit("msfrpcd.bat");
+
+			$msfrpc_handle = exec("cmd.exe /C msfrpcd.bat", convertAll([System getenv]));
+		}
+		else {
+			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -t Msg", convertAll([System getenv]));
+		}
+
+		# consume bytes so msfrpcd doesn't block when the output buffer is filled
+		fork({
+			[[Thread currentThread] setPriority: [Thread MIN_PRIORITY]];
+
+			while (1) {
+				if (available($msfrpc_handle) > 0) {
+					[[System out] print: readb($msfrpc_handle, available($msfrpc_handle))];
+				}
+
+				if (available($msfrpc_error) > 0) {
+					[[System err] print: readb($msfrpc_error, available($msfrpc_error))];
+				}
+				sleep(1024);
+			}
+		}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null]);
+	}
+	catch $exception {
+		showError("Couldn't launch MSF\n" . [$exception getMessage]);
+	}
+}
+
+sub connectDialog {
 	# in case we ended up back here... let's kill this handle
 	if ($msfrpc_handle) {
 		closef($msfrpc_handle);
 		$msfrpc_handle = $null;
 	}
 
-	local('$dialog $host $port $ssl $user $pass $driver $connect $button $cancel $start $center $help $helper');
+	local('$dialog $host $port $ssl $user $pass $button $cancel $start $center $help $helper');
 	$dialog = window("Connect...", 0, 0);
 	
 	# setup our nifty form fields..
@@ -339,71 +367,12 @@ sub connectDialog {
 	$host = [new JTextField: [$preferences getProperty: "connect.host.string", "127.0.0.1"], 20];
 	$port = [new JTextField: [$preferences getProperty: "connect.port.string", "55553"], 10];
 	
-	$ssl = [new JCheckBox: "Use SSL"];
-	if ([$preferences getProperty: "connect.ssl.boolean", "false"] eq "true") {
-		[$ssl setSelected: 1];
-	}
-
 	$user = [new JTextField: [$preferences getProperty: "connect.user.string", "msf"], 20];
 	$pass = [new JTextField: [$preferences getProperty: "connect.pass.string", "test"], 20];
 
-	$driver = select(@("postgresql", "mysql"), [$preferences getProperty: "connect.db_driver.string", "sqlite3"]);
-	$connect = [new JTextField: [$preferences getProperty: "connect.db_connect.string", 'armitage.db.' . ticks()], 16];
-
-	$helper = [new JButton: "?"];
-	[$helper addActionListener: lambda({
-		local('$dialog $user $pass $host $db $action $cancel $u $p $h $d $reset');
-		$dialog = dialog("DB Connect String Helper", 300, 200);
-		[$dialog setLayout: [new GridLayout: 5, 1]];
-
-		if ([$connect getText] ismatch '(.*?):"(.*?)"@(.*?)/(.*?)') {
-			($u, $p, $h, $d) = matched();
-		}
-		else {
-			($u, $p, $h, $d) = @("user", "password", "127.0.0.1", "armitagedb");
-		}
-
-		$user = [new JTextField: $u, 20];
-		$pass = [new JTextField: $p, 20];
-		$host = [new JTextField: $h, 20];
-		$db   = [new JTextField: $d, 20];
-
-		$action = [new JButton: "Set"];
-		$reset = [new JButton: "Default"];
-		$cancel = [new JButton: "Cancel"];
-
-		[$reset addActionListener: lambda({ 
-			loadDatabasePreferences($preferences);
-			[$driver setSelectedItem: [$preferences getProperty: "connect.db_driver.string", "sqlite3"]];
-			[$connect setText: [$preferences getProperty: "connect.db_connect.string", 'armitage.db.' . ticks()]];
-			[$dialog setVisible: 0];
-		}, \$dialog, \$connect, \$driver)];
-
-		[$action addActionListener: lambda({
-			[$connect setText: [$user getText] . ':"' . 
-					[$pass getText] . '"@' . 
-					[$host getText] . '/' . 
-					[$db getText]
-			];
-			[$dialog setVisible: 0];
-		}, \$user, \$pass, \$host, \$db, \$dialog, \$connect)];
-
-		[$cancel addActionListener: lambda({ [$dialog setVisible: 0]; }, \$dialog)];
-
-		[$dialog add: label_for("DB User", 75, $user)];
-		[$dialog add: label_for("DB Pass", 75, $pass)];
-		[$dialog add: label_for("DB Host", 75, $host)];
-		[$dialog add: label_for("DB Name", 75, $db)];
-		[$dialog add: center($action, $reset)];
-		[$dialog pack];
-
-		[$dialog setVisible: 1];
-	}, \$connect, \$driver)];
-
 	$button = [new JButton: "Connect"];
-	[$button setToolTipText: "<html>Use this button to connect to a running Metasploit<br />RPC server. Metasploit must already be running.</html>"];
-	$start  = [new JButton: "Start MSF"];
-	[$start setToolTipText: "<html>Use this button to start a new Metasploit instance<br />and have Armitage automatically connect to it.</html>"];
+	[$button setToolTipText: "<html>Connects to Metasploit.</html>"];
+
 	$help   = [new JButton: "Help"];
 	[$help setToolTipText: "<html>Use this button to view the Getting Started Guide on the Armitage homepage</html>"];
 
@@ -412,66 +381,33 @@ sub connectDialog {
 	# lay them out
 
 	$center = [new JPanel];
-	[$center setLayout: [new GridLayout: 7, 1]];
+	[$center setLayout: [new GridLayout: 4, 1]];
 
-	[$center add: label_for("Host", 130, $host)];
-	[$center add: label_for("Port", 130, $port)];
-	[$center add: $ssl];
-	[$center add: label_for("User", 130, $user)];
-	[$center add: label_for("Pass", 130, $pass)];
-	[$center add: label_for("DB Driver", 130, $driver)];
-	[$center add: label_for("DB Connect String", 130, $connect, $helper)];
+	[$center add: label_for("Host", 70, $host)];
+	[$center add: label_for("Port", 70, $port)];
+	[$center add: label_for("User", 70, $user)];
+	[$center add: label_for("Pass", 70, $pass)];
 
 	[$dialog add: $center, [BorderLayout CENTER]];
-	[$dialog add: center($button, $start, $help), [BorderLayout SOUTH]];
+	[$dialog add: center($button, $help), [BorderLayout SOUTH]];
 
 	[$button addActionListener: lambda({
 		[$dialog setVisible: 0];
-		connectToMetasploit([$host getText], [$port getText], [$ssl isSelected], [$user getText], [$pass getText], [$driver getSelectedItem], [$connect getText], 1);
-	}, \$dialog, \$host, \$port, \$ssl, \$user, \$pass, \$driver, \$connect)];
+		connectToMetasploit([$host getText], [$port getText], [$user getText], [$pass getText]);
+
+		if ([$host getText] eq "127.0.0.1") {
+			try {
+				closef(connect("127.0.0.1", [$port getText], 1000));
+			}
+			catch $ex {
+				if (!askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?")) {
+					startMetasploit([$user getText], [$pass getText]);
+				}
+			}
+		}
+	}, \$dialog, \$host, \$port, \$user, \$pass)];
 
 	[$help addActionListener: gotoURL("http://www.fastandeasyhacking.com/start")];
-
-	[$start addActionListener: lambda({
-		local('$pass $exception');
-		$pass = unpack("H*", digest(ticks() . rand(), "MD5"))[0];
-		try {
-			# check for MSF on Windows
-			if (isWindows()) {
-				$msfrpc_handle = exec("ruby msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
-			}
-			else {
-				$msfrpc_handle = exec("msfrpcd -f -U msf -P $pass -t Basic -S", convertAll([System getenv]));
-			}
-
-			$RPC_CONSOLE = [new Console: $preferences];
-			[$RPC_CONSOLE noInput];
-
-			# consume bytes so msfrpcd doesn't block when the output buffer is filled
-			fork({
-				[$RPC_CONSOLE append: "$ msfrpcd -f -U msf -P ... -t Basic -S\n"];
-				[[Thread currentThread] setPriority: [Thread MIN_PRIORITY]];
-
-				while (1) {
-					if (available($msfrpc_handle) > 0) {
-						[$RPC_CONSOLE append: readb($msfrpc_handle, available($msfrpc_handle))];
-					}
-
-					if (available($msfrpc_error) > 0) {
-						[$RPC_CONSOLE append: readb($msfrpc_error, available($msfrpc_error))];
-					}
-					sleep(1024);
-				}
-			}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null], \$RPC_CONSOLE);
-
-			[$dialog setVisible: 0];
-
-			connectToMetasploit('127.0.0.1', "55553", 0, "msf", $pass, [$driver getSelectedItem], [$connect getText], 1);
-		}
-		catch $exception {
-			showError("Couldn't launch MSF\n" . [$exception getMessage]);
-		}
-	}, \$connect, \$driver, \$dialog)];
 
 	[$cancel addActionListener: {
 		[System exit: 0];
@@ -529,4 +465,12 @@ sub module_execute {
 	else {
 		call_async($client, "module.execute", $1, $2, $3);
 	}
+}
+
+sub rtime {
+	return formatDate($1 * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
+}
+
+sub deleteOnExit {
+	[[new java.io.File: getFileProper($1)] deleteOnExit];
 }

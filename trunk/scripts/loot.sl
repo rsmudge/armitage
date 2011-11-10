@@ -16,9 +16,10 @@ sub updateLootModel {
 		[Thread yield];
 		local('$loots $entry');
 		[$model clear: 16];
-		$loots = call($client, "db.loots")["loots"];
+		$loots = call($mclient, "db.loots")["loots"];
 		foreach $entry ($loots) {
-			$entry["date"] = formatDate($entry["updated_at"] * 1000L, 'yyyy-MM-dd HH:mm:ss Z');
+			warn($entry);
+			$entry["date"] = rtime($entry["updated_at"] / 1000L);
 			$entry["type"] = $entry["ltype"];
 			[$model addEntry: $entry];
 		}

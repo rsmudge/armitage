@@ -1,6 +1,3 @@
-#
-# Code to create the various attack menus based on db_autopwn
-#
 import java.awt.*;
 import java.awt.event.*;
 

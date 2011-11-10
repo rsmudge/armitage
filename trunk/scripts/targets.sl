@@ -130,21 +130,21 @@ sub refreshGraph {
 	[$graph end];
 }
 
-sub refreshServices {
-	if ($0 ne "result") { return; }
-
-	local('$data $service $host $port');
-	$data = convertAll($3);
-#	warn("&refreshServices - $data");
+sub _refreshServices {
+	local('$service $host $port');
 
 	# clear all sessions from the hosts
 	map({ $1['services'] = %(); }, values(%hosts));
 
-	foreach $service ($data['services']) {
+	foreach $service ($1['services']) {
 		($host, $port) = values($service, @('host', 'port'));
 		%hosts[$host]['services'][$port] = $service;
 	}
+}
 
+sub refreshServices {
+	if ($0 ne "result") { return; }
+	_refreshServices(convertAll($3));
 	return [$graph isAlive];
 }
 
@@ -233,33 +233,25 @@ sub graph_items {
 sub importHosts {
 	local('$files');
 	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1, $always => 1));
+	if ($files is $null || size($files) == 0) {
+		return;
+	}
 
 	thread(lambda({
-		local('$file $handle $data $result $name $success');
-		foreach $file ($files) {
-			$handle = openf($file);
-			$data   = [Base64 encode: readb($handle, -1)];
-			closef($handle);
-
-			$name = getFileName($file);
-	
-			$result = call($client, "db. $+ $command", %(data => $data));
-
-			if ($result is $null || $result['result'] != "success") {
-				# an exception is already raised and will be displayed to the user.
-				# showError("Import $name failed:\n $+ $result");
-			}
-			else {
-				$success++;
+		# upload the files please...
+		if ($client !is $mclient) {
+			foreach $file ($files) {
+				$file = uploadFile($file);
+				yield 100;
 			}
 		}
 
-		if ($success > 0) {
-			elog("imported hosts from $success file" . iff($success != 1, "s"));
-			fork({ showError("Imported $success file" . iff($success != 1, "s")); }, \$frame, \$success);
-			refreshTargets();
-		}
-	}, \$files, \$command));
+		local('$console $success');
+		$console = createConsoleTab("Import", 1);
+		$success = size($files);
+		elog("imported hosts from $success file" . iff($success != 1, "s"));
+		[$console sendString: "db_import " . join(" ", $files) . "\n"];
+	}, \$files));
 }
 
 # setHostValueFunction(@hosts, varname, value)
@@ -278,7 +270,8 @@ sub setHostValueFunction {
 
 			foreach $host (@hosts) {
 				%map['host'] = $host;
-				call($client, "db.report_host", %map);
+				warn(%map);
+				call($mclient, "db.report_host", %map);
 			}
 
 			refreshTargets();
@@ -289,30 +282,32 @@ sub setHostValueFunction {
 sub clearHostFunction {
 	return lambda({
 		thread(lambda({
-			local('$host');
+			local('$host @commands');
 			foreach $host (@hosts) {
-				call($client, "db.del_host", %(address => $host));
 				%hosts[$host] = $null;
 			}
-			$FIXONCE = $null;
-			refreshTargets();
+
+			@commands = map({ return "hosts -d $1"; }, @hosts);
+			push(@commands, "hosts -h");
+
+			cmd_all_async($client, $console, @commands, lambda({
+				if ($1 eq "hosts -h") {
+					elog("removed " . join(" ", @hosts));
+					$FIXONCE = $null;
+					refreshTargets();
+				}
+			}, \@hosts));
 		}, \@hosts));
 	}, @hosts => $1);
 }
 
-sub clearHosts {
+sub clearDatabase {
 	thread({
-		local('@hosts $r $host');
-
-		$r = call($client, "db.hosts", %());
-		@hosts = map({ return $1["address"]; }, $r["hosts"]);
-		foreach $host (@hosts) {
-			call($client, "db.del_host", %(address => $host));
-		}
+		call($mclient, "db.clear");
 		%hosts = %();
 		$FIXONCE = $null;
 		refreshTargets();
-		elog("cleared all hosts");
+		elog("cleared the database");
 	});
 }
 
@@ -352,9 +347,9 @@ sub createTargetTab {
 
 	[$frame addTab: "Targets", $graph, $graph];
 
-	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 10 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 15 * 1000L, lambda(&refreshServices, \$graph)];
-	[new ArmitageTimer: $mclient, "session.list", $null, 5 * 1000L, lambda(&refreshSessions, \$graph)];
+	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
+	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 60 * 1000L, lambda(&refreshServices, \$graph)];
+	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
 
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 }
@@ -399,9 +394,9 @@ sub createDashboard {
 
 	$targets = $graph;
 
-	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 10 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 15 * 1000L, lambda(&refreshServices, \$graph)];
-	[new ArmitageTimer: $mclient, "session.list", $null, 5 * 1000L, lambda(&refreshSessions, \$graph)];
+	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
+	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 60 * 1000L, lambda(&refreshServices, \$graph)];
+	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
 
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.refresh_targets.shortcut", "ctrl pressed R", {

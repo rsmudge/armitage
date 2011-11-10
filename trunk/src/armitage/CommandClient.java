@@ -74,7 +74,7 @@ public class CommandClient implements Runnable {
 		StringBuffer output = new StringBuffer();
 
 		try {
-			connection.execute(writeCommand, new Object[] { session, Base64.encode(command[x]) });
+			connection.execute(writeCommand, new Object[] { session, command[x] });
 
 			int count = 0;
 
@@ -83,7 +83,7 @@ public class CommandClient implements Runnable {
 			while ((read = (Map)(connection.execute(readCommand, new Object[] { session }))) != null) {
 				String text = null;
 				if (! isEmptyData( read.get("data") + "" )  ) {
-					text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
+					text = read.get("data") + "";
 					output.append(text);
 
 					if (display != null) {
@@ -100,7 +100,7 @@ public class CommandClient implements Runnable {
 						break;
 					}
 					else {
-						connection.execute(writeCommand, new Object[] { session, Base64.encode(command[x]) });
+						connection.execute(writeCommand, new Object[] { session, command[x] });
 					}
 				}
 				else if ("failure".equals( read.get("result") + "" )) {

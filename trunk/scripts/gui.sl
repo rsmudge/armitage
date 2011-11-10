@@ -86,12 +86,12 @@ sub askYesNo {
 }
 
 sub chooseFile {
-	local('$fc $file $title $sel $dir $multi $always');
+	local('$fc $file $title $sel $dir $multi $always $dirsonly');
 
 	if ($REMOTE && $always is $null) {
 		if ($client !is $mclient) {
 			local('$file');
-			$file = chooseFile(\$title, \$file, \$sel, \$dir, \$multi, \$fc, $always => 1);
+			$file = chooseFile(\$title, \$file, \$sel, \$dir, \$dirsonly, \$multi, \$fc, $always => 1);
 			if (-exists $file) {
 				warn("Uploading $file");
 				return uploadFile($file);
@@ -120,6 +120,10 @@ sub chooseFile {
 
 	if ($multi !is $null) {
 		[$fc setMultiSelectionEnabled: 1];
+	}
+
+	if ($dirsonly !is $null) {
+		[$fc setFileSelectionMode: [JFileChooser DIRECTORIES_ONLY]];
 	}
 
 	[$fc showOpenDialog: $frame];
