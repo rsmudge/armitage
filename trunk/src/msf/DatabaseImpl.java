@@ -98,7 +98,9 @@ public class DatabaseImpl implements RpcConnection  {
 		Map temp = new HashMap();
 
 		temp.put("db.creds", "SELECT DISTINCT creds.*, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
-		temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
+
+		/* db.creds2 exists to prevent duplicate entries for the stuff I care about */
+		temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto, creds.ptype FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
 
 		if (hFilter != null) {
 			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts, services, sessions WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT 512");
