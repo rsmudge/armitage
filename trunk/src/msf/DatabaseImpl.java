@@ -89,7 +89,7 @@ public class DatabaseImpl implements RpcConnection  {
 		return results;
 	}
 
-	public List filterByRoute(List rows) {
+	public List filterByRoute(List rows, int max) {
 		if (rFilter != null || oFilter != null) {
 			Iterator i = rows.iterator();
 			while (i.hasNext()) {
@@ -114,6 +114,10 @@ public class DatabaseImpl implements RpcConnection  {
 				}
 			}
 		}
+
+		if (rows.size() > max) {
+			rows.subList(max, rows.size()).clear();
+		}
 		return rows;
 	}
 
@@ -135,17 +139,17 @@ public class DatabaseImpl implements RpcConnection  {
 		temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto, creds.ptype FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
 
 		if (hFilter != null) {
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts, services, sessions WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT 512");
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts, services, sessions WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT 30000");
 		}
 		else {
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " LIMIT 512");
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " LIMIT 30000");
 		}
 
 		if (sFilter != null) {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts, sessions WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " AND " + sFilter + " LIMIT 12228");
+			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts, sessions WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " AND " + sFilter + " LIMIT 100000");
 		}
 		else {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " LIMIT 12228");
+			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " LIMIT 100000");
 		}
 
 		temp.put("db.loots", "SELECT DISTINCT loots.*, hosts.address as host FROM loots, hosts WHERE hosts.id = loots.host_id AND hosts.workspace_id = " + workspaceid);
@@ -161,8 +165,11 @@ public class DatabaseImpl implements RpcConnection  {
 				String query = queries.get(methodName) + "";
 				Map result = new HashMap();
 
-				if (methodName.equals("db.services") || methodName.equals("db.hosts")) {
-					result.put(methodName.substring(3), filterByRoute(executeQuery(query)));
+				if (methodName.equals("db.services")) {
+					result.put(methodName.substring(3), filterByRoute(executeQuery(query), 12288));
+				}
+				else if (methodName.equals("db.hosts")) {
+					result.put(methodName.substring(3), filterByRoute(executeQuery(query), 512));
 				}
 				else {
 					result.put(methodName.substring(3), executeQuery(query));
