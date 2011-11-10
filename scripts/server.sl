@@ -160,6 +160,8 @@ sub client {
 			writeb($h, $data);
 			closef($h);
 
+			deleteOnExit(getFileName($file));
+
 			writeObject($handle, result(%(file => getFileProper($file))));
 		}
 		else if ($method eq "armitage.download") {
@@ -196,6 +198,7 @@ sub client {
 			$h = openf(">command $+ $sid $+ . $+ $channel $+ .txt");
 			writeb($h, $data);
 			closef($h);
+			deleteOnExit("command $+ $sid $+ . $+ $channel $+ .txt");
 
 			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
 		}
