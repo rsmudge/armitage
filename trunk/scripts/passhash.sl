@@ -46,12 +46,17 @@ import table.*;
 		showError("Hash dump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.");
 		$host = $null;
 	}
-	else if ($0 eq "end" && $host !is $null) {
-		local('@c');
+	else if ($0 eq "end" && $host !is $null && size(@commands) > 0) {
+		local('@c $tmp_console');
 		@c = copy(@commands);
 		@commands = @();
 
-		cmd_all_async($client, $console, copy(@c), {}); 
+		$tmp_console = createConsole($client);
+		cmd_all_async($client, $tmp_console, copy(@c), lambda({
+			if ($1 eq $last) {
+				call($client, "console.destroy", $tmp_console);
+			}
+		}, \$tmp_console, $last => @c[-1])); 
 	}
 };
 
