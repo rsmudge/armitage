@@ -56,7 +56,18 @@ public class NetworkTable extends JComponent implements ActionListener {
 
 		Comparator hostCompare = new Comparator() {
 			public int compare(Object a, Object b) {
-				return (int)(Route.ipToLong(a + "") - Route.ipToLong(b + ""));
+				long aa = Route.ipToLong(a + "");
+				long bb = Route.ipToLong(b + "");
+
+				if (aa > bb) {
+					return 1;
+				}
+				else if (aa < bb) {
+					return -1;
+				}
+				else {
+					return 0;
+				}
 			}
 
 			public boolean equals(Object a, Object b) {
