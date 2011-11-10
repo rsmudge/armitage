@@ -176,6 +176,8 @@ public class ConsoleClient implements Runnable, ActionListener {
 		return (Map)(connection.execute(readCommand, new Object[] { session }));
 	}
 
+	private long lastRead = 0L;
+
 	private void processRead(Map read) throws Exception {
 		if (! "".equals( read.get("data") )) {
 			String text = read.get("data") + "";
@@ -184,7 +186,8 @@ public class ConsoleClient implements Runnable, ActionListener {
 				if (window != null)
 					window.append(text);
 			}
-			fireSessionReadEvent(text);	
+			fireSessionReadEvent(text);
+			lastRead = System.currentTimeMillis();
 		}
 
 		synchronized (this) {
@@ -207,7 +210,13 @@ public class ConsoleClient implements Runnable, ActionListener {
 				}
 
 				processRead(read);
-				Thread.sleep(200);
+
+				if ((System.currentTimeMillis() - lastRead) <= 500) {
+					Thread.sleep(10);
+				}
+				else {
+					Thread.sleep(500);
+				}
 
 				synchronized (listeners) {
 					shouldRead = go_read;

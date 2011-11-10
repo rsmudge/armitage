@@ -34,6 +34,8 @@ In Progress
 - Simplified the Connect dialog. One button. :)
 - Right-click Scan option now scans for HTTPS.
 - Check all credentials option no longer tries blank passwords/username as pass
+- Added a read optimization to the console code. This will reduce load in a team 
+  engagement + make consoles feel faster when there is output.
 
 10.20.11
 --------
