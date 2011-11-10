@@ -6,37 +6,6 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-sub import_items {
-	local('$description @imports');
-
-	@imports = @(
-		'Import and auto-detect file',
-		'Acunetix XML',
-		'Amap Log',
-		'Amap Log -m',
-		'Appscan XML',
-		'Burp Session XML',
-		'Foundstone XML',
-		'IP360 ASPL',
-		'IP360 XML v3',
-		'Microsoft Baseline Security Analyzer',
-		'Nessus NBE',
-		'Nessus XML (v1 and v2)',
-		'NetSparker XML',
-		'NeXpose Simple XML',
-		'NeXpose XML Report',
-		'Nmap XML',
-		'OpenVAS Report',
-		'Qualys Asset XML',
-		'Qualys Scan XML',
-		'Retina XML'
-	);
-
-	foreach $description (@imports) {
-		item($1, $description, $null, lambda(&importHosts, $command => "import_data"));
-	}
-}
-
 sub addHostDialog {
 	local('$dialog $label $text $finish $button');
 	$dialog = [new JDialog: $frame, "Add Hosts", 0];
@@ -54,18 +23,12 @@ sub addHostDialog {
 	[$finish add: $button];
 
 	[$button addActionListener: lambda({
-		local('$handle');
-		$handle = openf(">upload.hosts");
-		writeb($handle, [$text getText] . "\n");
-		closef($handle);
-
-		importHosts("upload.hosts", $command => "import_ip_list");
-
-		thread({		
-			yield 8192;
-			deleteFile("upload.hosts");
-		});
-
+		local('@hosts');
+		@hosts = split("[\n\s]", [$text getText]);
+		cmd_safe("hosts -a " . join(" ", @hosts), lambda({
+			showError("Added $x host" . iff($x != 1, "s"));
+			elog("added $x host" . iff($x != 1, "s"));
+		}, $x => size(@hosts)));
 		[$dialog setVisible: 0];
 	}, \$text, \$dialog)];
 
@@ -78,12 +41,7 @@ sub addHostDialog {
 
 sub host_items {
 	local('$i $j $k');
-	$i = menu($1, "Import Hosts", 'I');
-	import_items($i);
-
-	item($1, "Add Hosts...", 'A', &addHostDialog);
-
-	separator($1);
+	item($1, "Import Hosts", 'I', &importHosts);
 
 	$j = menu($1, "Nmap Scan", 'S');
 		item($j, "Intense Scan", $null, createNmapFunction("-T5 -A -v"));
@@ -95,11 +53,11 @@ sub host_items {
 		item($j, "Quick Scan (OS detect)", $null, createNmapFunction("-sV -T5 -O -F --version-light"));
 		item($j, "Comprehensive", $null, createNmapFunction("-sS -sU -T5 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
 
-	enumerateMenu($1, $null);
+	item($1, "Add Hosts...", 'A', &addHostDialog);
 
 	separator($1);
 
-	item($1, "Clear Hosts", 'C', &clearHosts);
+	item($1, "Clear Database", 'C', &clearDatabase);
 }
 
 # oh yay, Metasploit now normalizes OS info (so I don't have to). Except the new constants

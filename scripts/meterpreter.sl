@@ -62,18 +62,22 @@ sub parseMeterpreter {
 	}
 
 	$response = convertAll($3);
-	$data = [Base64 decode: $response['data']];
+	$data = $response['data'];
 
 	if ("*uploaded*:*->*" iswm $data) {
 		# this is a hack to force the file browser to refresh when a file is uploaded
 		m_cmd($sid, "ls");
+	}
+	else if ("[-]*Unknown command: *list_tokens*" iswm $data) {
+		warn("Uhm... still an unknown command?!?");
+		m_cmd($sid, "use incognito");
+		return; 
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		%handlers["list_tokens"] = $null;
 		%handlers["getuid"] = $null;
 		m_cmd($sid, "use stdapi");
 		m_cmd($sid, "use priv");
-		m_cmd($sid, "use incognito");
 		showError("Loading stdapi. Try command again");
 		return;
 	}
@@ -204,9 +208,14 @@ sub showMeterpreterMenu {
 				}
 			}, \$sid, %tokens => ohash(), $show => $null, $watch => %(value => 1), $type => "");
 
+			%handlers["use"] = lambda({
+				if ($0 eq "end" && "*incognito*" iswm $2) {
+					m_cmd($sid, "list_tokens -u");
+					m_cmd($sid, "list_tokens -g");
+				}
+			}, \$sid);
+
 			m_cmd($sid, "use incognito");
-			m_cmd($sid, "list_tokens -u");
-			m_cmd($sid, "list_tokens -g");
 		}, $sid => "$sid"));
 
 		local('$h');
@@ -225,14 +234,8 @@ sub showMeterpreterMenu {
 
 		item($j, "Persist", 'P', lambda({
 			cmd_safe("setg LPORT", lambda({
-				local('$p');
-				$p = [$3 trim];
-				if ($p ismatch 'LPORT => (\d+)') {
-					oneTimeShow("run");
-					local('$port');
-					$port = matched()[0];
-					elog("ran persistence on " . sessionToHost($sid) . " ( $+ $port $+ )");
-					m_cmd($sid, "run persistence -U -S -i 5 -p $port");
+				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
+					launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => matched()[0], HANDLER => "0"));
 				}
 			}, \$sid));
 		}, $sid => "$sid"));
@@ -255,10 +258,9 @@ sub showMeterpreterMenu {
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));
 
 			if ("*win*" iswm $platform) {
-				item($j, "Run VNC", 'V', lambda({ 
+				item($j, "Desktop (VNC)", 'D', lambda({ 
 					local('$display');
 					$display = rand(9) . rand(9);
-       
 					%handlers["run"] = lambda({
 						if ($0 eq "begin") {
 							local('$a');
@@ -281,7 +283,9 @@ sub showMeterpreterMenu {
 			item($j, "Browse Files", 'B', lambda({ createFileBrowser($sid, $platform); }, $sid => "$sid", \$platform));
 			item($j, "Show Processes", 'P', lambda({ createProcessBrowser($sid); }, $sid => "$sid"));
 			if ("*win*" iswm $platform) {
-				item($j, "Key Scan", 'K', lambda({ createKeyscanViewer($sid); }, $sid => "$sid"));
+				item($j, "Log Keystrokes", 'K', lambda({ 
+					launch_dialog("Log Keystrokes", "post", "windows/capture/keylog_recorder", 1, $null, %(SESSION => $sid, MIGRATE => 1, ShowKeystrokes => 1));
+				}, $sid => "$sid"));
 			}
 
 			if (!$REMOTE || $mclient !is $client) {
@@ -309,6 +313,8 @@ sub showMeterpreterMenu {
 sub launch_msf_scans {
 	local('@modules $1 $hosts');
 
+	$console = createConsoleTab("Scan", 1, $host => "all", $file => "scan");
+
 	@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
 	push(@modules, "scanner/discovery/udp_sweep");
 	push(@modules, "scanner/netbios/nbname");
@@ -322,28 +328,25 @@ sub launch_msf_scans {
 
 		if ($hosts !is $null) {
 			# we don't need to set CHOST as the discovery modules will honor any pivots already in place
-			%options = %(THREADS => iff(isWindows(), 2, 8), RHOSTS => $hosts);
+			%options = %(THREADS => iff(isWindows(), 1, 8), RHOSTS => $hosts);
 
 			foreach $scanner (@modules) {
+			        [[$console getWindow] append: "$scanner $+ \n"];
+
+				if ($scanner eq "scanner/http/http_version") {
+					local('%o2');
+					%o2 = copy(%options);
+					%o2["RPORT"] = "443";
+					%o2["SSL"] = "1";
+					call($client, "module.execute", "auxiliary", $scanner, %o2);
+				}
 				call($client, "module.execute", "auxiliary", $scanner, %options);
 				$count++;
 				yield 250;
 			}
 
+		        [[$console getWindow] append: "\nLaunched $count discovery modules!\n"];
 			elog("launched $count discovery modules at: $hosts");
-			showError("Launched $count discovery modules");
 		}
 	}, \$hosts, \@modules));
-}
-
-sub enumerateMenu {
-	item($1, "MSF Scans", 'S', &launch_msf_scans);
-}
-
-sub setHostInfo {
-	%hosts[$1]['os_name'] = $2;
-	%hosts[$1]['os_flavor'] = $3;
-	%hosts[$1]['os_match'] = $4;
-	call($client, "db.report_host", %(host => $1, os_name => $2, os_flavor => $3));
-	$FIXONCE = 1;
 }

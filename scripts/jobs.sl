@@ -14,23 +14,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 
-sub manage_file_autopwn {
-	manage_job("Auxiliary: server/file_autopwn", 
-		# start server function
-		{
-			launch_dialog("File AutoPWN", "auxiliary", "server/file_autopwn", 1);
-		},
-		# description of job (for job kill function)
-		{
-			local('$host $port $uripath');
-			($host, $port) = values($2["info"]["datastore"], @("SRVHOST", "SRVPORT"));
-			$uripath = $2["info"]["uripath"];
-			return "File Autopwn is at http:// $+ $host $+ : $+ $port $+ $uripath $+ \nWould you like to stop it?";
-		}
-	);
-
-}
-
 sub manage_browser_autopwn {
 	manage_job("Auxiliary: server/browser_autopwn", 
 		# start server function
@@ -227,6 +210,7 @@ sub launch_dialog {
 		foreach $key => $value ($6) {
 			if ($key in $options) {
 				$options[$key]["default"] = $value;
+				$options[$key]["advanced"] = "0";
 			}
 		}
 	}
@@ -450,6 +434,18 @@ sub _launch_dialog {
 					}
 		                        elog("dumped hashes on " . join(", ", @sessions));
 				}
+				else if ($command eq "windows/capture/keylog_recorder") {
+					foreach $session (@sessions) {
+						$session = sessionToHost($session);
+					}
+		                        elog("is logging keystrokes on " . join(", ", @sessions));
+				}
+				else if ($command eq "windows/manage/persistence") {
+					foreach $session (@sessions) {
+						$session = sessionToHost($session);
+					}
+		                        elog("ran persistence on " . join(", ", @sessions));
+				}
 			}
 			else {
 				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
@@ -494,33 +490,19 @@ sub _launch_dialog {
 }
 
 sub updateJobsTable {
-	cmd_safe("jobs -l -v", lambda({
-		local('$temp $d $jid $jname $payload $lport $date $url');
+	[$model clear: 8];
 
-		[$model clear: 16];
+	local('$jobs $jid $desc $info $data');
+	$jobs = call($client, "job.list");
+	foreach $jid => $desc ($jobs) {
+		$info = call($client, "job.info", $jid);
+		$data = $info["datastore"];
+		if (!-ishash $data) { $data = %(); }
 
-		foreach $temp (split("\n", $3)) {
-			$d = sublist(split('\s{2,}', $temp), 1);
-			if (size($d) == 5) {
-				($jid, $jname, $payload, $lport, $date, $url) = $d;
-			}
-			else if (size($d) == 4) {
-				($jid, $jname, $lport, $date, $payload, $url) = $d;
-			}	
-			else if (size($d) == 3) {
-				($jid, $jname, $date, $lport, $payload, $url) = $d;
-			}
-			else {
-				($jid, $jname, $payload, $lport, $url, $date) = $d;
-			}
-			
-			if (-isnumber $jid) {
-				[$model addEntry: %(Id => $jid, Name => $jname, Payload => $payload, Port => $lport, Start => $date, URL => $url)];
-			}
-		}
+		[$model addEntry: %(Id => $jid, Name => $info['name'], Payload => $data['PAYLOAD'], Port => $data['LPORT'], Start => rtime($info['start_time']), URL => $info['uripath'])];
+	}
 
-		[$model fireListeners];
-	}, \$model));
+	[$model fireListeners];
 }
 
 sub createJobsTab {	

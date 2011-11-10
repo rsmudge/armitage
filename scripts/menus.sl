@@ -107,6 +107,20 @@ sub armitage_items {
 
 	item($1, 'Preferences', 'P', &createPreferencesTab);
 
+	local('$f');
+	$f = {
+		[$preferences setProperty: "armitage.required_exploit_rank.string", $rank];
+		savePreferences();
+		showError("Updated minimum exploit rank.");
+	};
+
+	$m = menu($1, 'Set Exploit Rank', 'R');
+	item($m, "Excellent", 'E', lambda($f, $rank => "excellent"));
+	item($m, "Great", 'G', lambda($f, $rank => "great"));
+	item($m, "Good", 'o', lambda($f, $rank => "good"));
+	item($m, "Normal", 'N', lambda($f, $rank => "normal"));
+	item($m, "Poor", 'E', lambda($f, $rank => "poor"));
+
 	separator($1);
 
 	item($1, 'SOCKS Proxy...', 'r', &manage_proxy_server);
@@ -129,28 +143,25 @@ sub armitage_items {
 
 sub main_attack_items {
 	local('$k');
-	$k = menu($1, "Find Attacks", 'A');
-		item($k, "by port", 'P', { 
-			thread({
-				findAttacks("p", min_rank()); 
-			});
+	item($1, "Find Attacks", 'A', {
+		thread({
+			findAttacks("p", min_rank());
 		});
-		item($k, "by vulnerability", 'V', { 
-			thread({
-				findAttacks("x", min_rank());
-			});
+	});
+
+	item($1, "Hail Mary", 'H', {
+		thread({
+			smarter_autopwn("p", min_rank()); 
 		});
+	});
 
-	cmd_safe("show exploits", lambda({
-		local('%menus $menu %mm $line $os $type $id $rank $name $k $date $exploit');
+	separator($1);
 
-		separator($parent);
-		%menus["browser"] = menu($parent, "Browser Attacks", "B");
-		%menus["email"] = menu($parent, "Email Attacks", "E");
-		%menus["fileformat"] = menu($parent, "Evil Files", "F");
-		separator($parent);
-		%mm = %(browser => %(), email => %(), fileformat => %());
-		
+	item($1, "Browser Autopwn...", 'B', &manage_browser_autopwn);
+
+	cmd_safe("show exploits", {
+		local('$line $os $type $id $rank $name $k $date $exploit');
+
 		foreach $line (split("\n", $3)) {
 			local('@ranks');
 			@ranks = @('normal', 'good', 'great', 'excellent');
@@ -165,42 +176,12 @@ sub main_attack_items {
 					os => $os,
 					date => parseDate('yyyy-MM-dd', $date),
 					rank => $rank,
-					rankScore => %(normal => 1, good => 2, great => 3, excellent => 4)[$rank]
+					rankScore => rankScore($rank)
 				);
 			}
-
-			if ($line ismatch '\s+(.*?)\/(browser|email|fileformat)\/(.*?)\s+.*?\s+(' . join('|', @ranks) . ')\s+(.*?)') {
-				($os, $type, $id, $rank, $name) = matched();
-
-				if ($os !in %mm[$type]) {
-					%mm[$type][$os] = menu(%menus[$type], $os, $null);	
-				}
-				$menu = %mm[$type][$os];
-
-				item($menu, "$id", $null, lambda({
-					thread(lambda({
-						launch_dialog($id, "exploit", $exploit, 1);
-					}, \$exploit, \$id));
-				}, $exploit => "$os $+ / $+ $type $+ / $+ $id", \$id));
-			}
-		}	
-
-		item($parent, "Browser Autopwn...", 'B', &manage_browser_autopwn);
-		item($parent, "File Autopwn...", 'F', &manage_file_autopwn);
-
-		separator($parent);
-		$k = menu($parent, "Hail Mary", 'H');
-		item($k, "by port", 'P', { 
-			thread({
-				smarter_autopwn("p", min_rank()); 
-			});
-		});
-		item($k, "by vulnerability", 'V', {
-			thread({
-				smarter_autopwn("x", min_rank()); 
-			});
-		});
-	}, $parent => $1));
+		}
+		warn("Remote Exploits Synced");
+	});
 }
 
 sub gotoURL {
@@ -236,54 +217,97 @@ sub help_items {
 	});
 }
 
+
+# create_workspace_menus($parent_menu, $active)
+# dynamic workspaces... y0.
 sub client_workspace_items {
-	local('$s $current $index $workspace');
-	$current = call($client, "db.current_workspace")["workspace"];
+	local('$index $workspace');
 
 	item($1, 'Create', 'C', 
 		lambda({
-			local('$name');
+			local('$dialog $name $host $ports $os $button $session');
+			$dialog = dialog("New Dynamic Workspace", 640, 480);
+			[$dialog setLayout: [new GridLayout: 6, 1]];
 
-			$name = ask("Workspace name:");
-			if ($name is $null) {
-				return;
-			}
+			$name  = [new JTextField: 16];
+			$host  = [new JTextField: 16];
+			$ports = [new JTextField: 16];
+			$os    = [new JTextField: 16];
+			$session = [new JCheckBox: "Hosts with sessions only"];
+			$button = [new JButton: "Add"];
 
-			call($client, "db.add_workspace", $name);
-			call($client, "db.set_workspace", $name);
-			elog("set workspace to $name");
+			[$dialog add: label_for("Name:", 60, $name)]; 
+			[$dialog add: label_for("Hosts:", 60, $host)]; 
+			[$dialog add: label_for("Ports:", 60, $ports)]; 
+			[$dialog add: label_for("OS:", 60, $os)]; 
+			[$dialog add: $session];
 
-			@workspaces = getWorkspaces();
+			[$dialog add: center($button)];
+			[$dialog pack];
+			[$dialog show];
 
-			[$parent removeAll];
-			client_workspace_items($parent);
-			refreshTargets();
+			[$button addActionListener: lambda({
+				# yay, we have a dialog...
+				local('$n $h $p $o $s');
+				$n = [$name getText];
+				$h = strrep([$host getText], '*', '%', '?', '_');
+				$p = [$ports getText];
+				$o = strrep([$os getText], '*', '%', '?', '_');
+				$s = [$session isSelected];
+
+				# save the new menu
+				local('$menus');
+				$menus = [$preferences getProperty: "armitage.workspaces.menus", ""];
+				$menus = split('\|', $menus);
+				push($menus, join("@@", @($n, $h, $p, $o, $s)));
+				[$preferences setProperty: "armitage.workspaces.menus", join("!!", $menus)];
+				savePreferences();
+
+				# switch to it!
+				call($client, "db.filter", %(os => $o, ports => $p, hosts => $h, session => $s));
+				refreshTargets();
+				[$frame setTitle: "Armitage - $n"];
+
+				# add the new menu back...
+				[$parent removeAll];
+				client_workspace_items($parent);
+
+				[$dialog setVisible: 0];
+			}, \$parent, \$dialog, \$host, \$ports, \$os, \$name, \$session)];
 		}, $parent => $1));
 
-	item($1, 'Delete', 'D', 
+	item($1, 'Reset', 'R', 
 		lambda({
-			call($client, "db.del_workspace", $current);
-			elog("deleted workspace $current");
-
-			@workspaces = getWorkspaces();
-
+			[$preferences setProperty: "armitage.workspaces.menus", ""];
+			savePreferences();
+			[$frame setTitle: "Armitage"];
+			call($mclient, "db.filter", %());
+			refreshTargets();
 			[$parent removeAll];
 			client_workspace_items($parent);
-			refreshTargets();
-		}, $parent => $1, \$current));
+		}, $parent => $1));
 
 	separator($1);
 
-	foreach $index => $workspace (@workspaces) {
-		item($1, iff($workspace eq $current, "$index $+ . $workspace *", "$index $+ . $workspace"), $index, lambda({
-			call($client, "db.set_workspace", $ws);
-			[$parent removeAll];
-			elog("set workspace to $ws");
-			client_workspace_items($parent);
-			refreshTargets();
-		}, $ws => $workspace, $parent => $1));
-	}
+	item($1, "Show All", "S", {
+		[$frame setTitle: "Armitage"];
+		call($mclient, "db.filter", %());
+		refreshTargets();
+		elog("removed workspace filter");
+	});
 
+	local('$menus $menu $name $host $ports $os $x $session');
+	$menus = [$preferences getProperty: "armitage.workspaces.menus", ""];
+	$menus = split('!!', $menus);
+	foreach $x => $menu (filter({ return iff($1, $1); }, $menus)) {
+		($name, $host, $ports, $os, $session) = split('@@', $menu);
+		item($1, "$x $+ . $name", $x, lambda({
+			call($mclient, "db.filter", %(os => $os, ports => $ports, hosts => $host, session => $session));
+			refreshTargets();
+			elog("switched to workspace: $name");
+			[$frame setTitle: "Armitage - $name"];
+		}, \$host, \$ports, \$os, \$name, \$session));
+	}
 }
 
 sub init_menus {

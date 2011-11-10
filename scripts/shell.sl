@@ -182,7 +182,7 @@ sub showShellMenu {
 				local('$progress');
 				$progress = [new ProgressMonitor: $null, "Uploading $name", "Uploading $name", 0, lof($file)];
 
-				call($client, "session.shell_write", $sid, [Base64 encode: "rm -f $name $+ \n"]);
+				call($client, "session.shell_write", $sid, "rm -f $name $+ \n");
 
 				thread(lambda({
 					local('$handle $bytes $string $t $start $n $cancel');
@@ -193,7 +193,7 @@ sub showShellMenu {
 						yield 1;
 
 						if ([$progress isCanceled]) {
-							call($client, "session.shell_write", $sid, [Base64 encode: "rm -f $name $+ \n"]);
+							call($client, "session.shell_write", $sid, "rm -f $name $+ \n");
 							closef($handle);
 							return;
 						}
@@ -203,7 +203,7 @@ sub showShellMenu {
 							return "\\" . formatNumber($1, 10, 8); 
 						}, unpack("B*", $bytes)));
 
-						call($client, "session.shell_write", $sid, [Base64 encode: "`which printf` \" $+ $string $+ \" >> $+ $name $+ \n"]);
+						call($client, "session.shell_write", $sid, "`which printf` \" $+ $string $+ \" >> $+ $name $+ \n");
 
 						$t += strlen($bytes);
 						[$progress setProgress: $t]; 

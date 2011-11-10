@@ -124,32 +124,37 @@ sub generateArtifacts {
 	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "vulnerabilities", 0, 100]; 
 
 	# 1. extract the known vulnerability information
-	@data = call($client, "db.vulns", [new HashMap])["vulns"];
-	dumpData("vulnerabilities", @("host", "port", "proto", "time", "name", "refs"), @data);
+	@data = call($mclient, "db.vulns", [new HashMap])["vulns"];
+	dumpData("vulnerabilities", @("host", "port", "proto", "updated_at", "name", "refs"), @data);
 
 	[$progress setProgress: 15];
 	[$progress setNote: "credentials"];
 
 	# 2. credentials
-	@data = call($client, "db.creds", [new HashMap])["creds"];
-	dumpData("credentials", @("host", "port", "proto", "sname", "time", "active", "type", "user", "pass"), @data);
+	@data = call($mclient, "db.creds", [new HashMap])["creds"];
+	dumpData("credentials", @("host", "port", "proto", "sname", "created_at", "active", "ptype", "user", "pass"), @data);
 		
 	[$progress setProgress: 30];
 	[$progress setNote: "loot"];
 
 	# 3. loot
-	@data = call($client, "db.loots")["loots"];
+	@data = call($mclient, "db.loots")["loots"];
 	dumpData("loots", @("host", "ltype", "created_at", "updated_at", "info", "content_type", "name", "path"), @data);
 
 	[$progress setProgress: 45];
 	[$progress setNote: "clients"];
 
 	# 4. clients
-	@data = call($client, "db.clients", [new HashMap])["clients"];
+	@data = call($mclient, "db.clients", [new HashMap])["clients"];
 	dumpData("clients", @("host", "created_at", "updated_at", "ua_name", "ua_ver", "ua_string"), @data);
 
 	# 5. notes
-		# db.notes is currently broken, need to patch it first before I can export it here.
+		# the data field is a base64 encoded version of a serialized ruby object... I don't
+		# feel like messing with it.
+
+		#@data = call($mclient, "db.notes", [new HashMap])["notes"];
+		#map({ $1["data"] = [msf.Base64 decode: $1["data"]]; }, @data);
+		#dumpData("notes", @("host", "updated_at", "ntype", "data"), @data);
 
 	# 6. hosts and services
 	local('@services @hosts $host $value $key $service');

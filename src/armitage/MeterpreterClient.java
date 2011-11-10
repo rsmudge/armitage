@@ -32,12 +32,12 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 	private void processRead(Map read) {
 		try {
 			if (! "".equals( read.get("data") )) {
-				String text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
+				String text = read.get("data") + "";
 				window.append(text);
 			}
 
 			if (! "".equals( read.get("prompt") )) {
-				window.updatePrompt(ConsoleClient.cleanText(new String(Base64.decode( read.get("prompt") + "" ), "UTF-8")));
+				window.updatePrompt(ConsoleClient.cleanText(read.get("prompt") + ""));
 			}
 		}
 		catch (Exception ex) {

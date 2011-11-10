@@ -12,8 +12,9 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 import java.io.*;
+import msf.DatabaseImpl;
 
-global('$preferences $debug $motd $DATA_DIRECTORY');
+global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY');
 
 sub iHateYaml {
 	local('$handle %result $current $text $key $value');
@@ -83,10 +84,6 @@ sub loadPreferences {
 			$yaml_entry = @ARGV[1];
 			@ARGV = sublist(@ARGV, 2);
 		}
-		else if (@ARGV[0] eq "-d" || @ARGV[0] eq "--debug") {
-			$debug = 1;
-			@ARGV = sublist(@ARGV, 1);
-		}
 		else if (@ARGV[0] eq "--motd" || @ARGV[0] eq "-m") {
 			$motd = @ARGV[1];
 			@ARGV = sublist(@ARGV, 2);
@@ -103,15 +100,15 @@ sub loadPreferences {
 		}
 	}
 
-	loadDatabasePreferences($prefs);
-
 	return $prefs;
 }
 
 sub loadDatabasePreferences {
-	if ($yaml_file ne "") {
-		parseYaml($1, @($yaml_file, $yaml_entry));
+	if ($yaml_file eq "" || !-exists $yaml_file) {
+		$yaml_file = getFileProper($BASE_DIRECTORY, "config", "database.yml");
 	}
+	parseYaml($1, @($yaml_file, $yaml_entry));
+	return [$1 getProperty: "connect.db_connect.string"];
 }
 
 sub savePreferences {
@@ -298,18 +295,38 @@ sub createPreferencesTab {
 	[$button addActionListener: lambda({ [$dialog setVisible: 0]; }, \$dialog)];
 	[$dialog setVisible: 1];
 	[$dialog show];
-
-#	[$frame addTab: "Preferences", $panel, $null];
 }
 
-[{
-	local('@options');
-	@options = @('C:/Program Files/Rapid7/framework/msf3/data', '/opt/framework/msf3/data', '/opt/framework3/msf3/data', '/opt/framework/msf/data', '/opt/framework4/msf4/data', '/opt/metasploit-4.1.0/msf3/data', 'C:/metasploit/msf3/data');
-	$DATA_DIRECTORY = cwd();
-	warn($DATA_DIRECTORY);
-	foreach $option (@options) {
-		if (-exists $option) {
-			$DATA_DIRECTORY = $option;
-		}
+# sets up the Metasploit base file and the data directory file...
+sub setupBaseDirectory {
+	local('%o');
+	%o = call($client, "module.options", "post", "multi/gather/dns_bruteforce");
+	if ("NAMELIST" in %o && "default" in %o["NAMELIST"]) {
+		$BASE_DIRECTORY = getFileParent(getFileParent(getFileParent(getFileParent(%o["NAMELIST"]["default"]))));
+		$DATA_DIRECTORY = getFileParent(getFileParent(%o["NAMELIST"]["default"]));
 	}
-}];
+}
+
+sub connectToDatabase {
+	local('$dbuser $dbpass $dburl $database $dbstring');
+	$dbstring = loadDatabasePreferences($preferences);
+
+	if ($dbstring eq "") {
+		throw [new RuntimeException: "could not find database settings"];
+	}
+
+	($dbuser, $dbpass, $dburl) = matches($dbstring, '(.*?):.(.*?).@(.*)');
+	$database = [new DatabaseImpl];
+	[$database connect: "jdbc:postgresql:// $+ $dburl", $dbuser, $dbpass];
+
+	# connect to the database from metasploit if need be.
+	cmd_safe("db_status", lambda({
+		if ("* connected to *" !iswm $3) {
+			cmd_safe("db_connect $dbstring", {
+				warn(@_);
+			});
+		}
+	}, \$dbstring));
+
+	return $database;
+}

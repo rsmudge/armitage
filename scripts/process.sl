@@ -59,7 +59,7 @@ sub createProcessBrowser {
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
-	local('$a $b $c $buttons');
+	local('$a $b $bb $c');
 	$a = [new JButton: "Kill"];
 	[$a addActionListener: lambda({ 
 		local('$procs $v');
@@ -80,6 +80,15 @@ sub createProcessBrowser {
 		}	
 	}, $m => $1, \$table, \$model)];
 
+	$bb = [new JButton: "Log Keystrokes"];
+	[$bb addActionListener: lambda({
+		local('$v');
+		$v = [$model getSelectedValue: $table];
+		if ($v !is $null) {
+			launch_dialog("Log Keystrokes", "post", "windows/capture/keylog_recorder", 1, $null, %(SESSION => $m, MIGRATE => 1, ShowKeystrokes => 1, PID => $v, CAPTURE_TYPE => "pid"));
+		}	
+	}, $m => $1, \$table, \$model)];
+
 	$c = [new JButton: "Refresh"];
 	[$c addActionListener: 
 		lambda({ 
@@ -87,13 +96,7 @@ sub createProcessBrowser {
 		}, $m => $1)
 	];
 
-	$buttons = [new JPanel];
-	[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
-	[$buttons add: $a];
-	[$buttons add: $b];
-	[$buttons add: $c];
-
-	[$panel add: $buttons, [BorderLayout SOUTH]];
+	[$panel add: center($a, $b, $bb, $c), [BorderLayout SOUTH]];
 
 	[$frame addTab: "Processes $1", $panel, $null];
 	m_cmd($1, "ps");

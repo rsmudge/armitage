@@ -30,7 +30,7 @@ public class TabCompletion {
 		this.connection = connection;
 		this.session = session;
 		this.tabsCommand = tabsCommand;
-		
+
 		window.addActionForKey("pressed TAB", new AbstractAction() {
 			public void actionPerformed(ActionEvent ev) {
 				tabComplete(ev);
@@ -40,7 +40,6 @@ public class TabCompletion {
 
 	public void tabComplete(ActionEvent ev) {
 		String text = window.getInput().getText();
-	
 		if (text.length() == 0)
 			return;
 
@@ -60,12 +59,13 @@ public class TabCompletion {
 				/* cycle through all of our options, we want to split items up to the
 				   first slash. We also want them to be unique and ordered (hence the
 				   linked hash set */
-				Object[] options = (Object[])response.get("tabs");
-				for (int x = 0; x < options.length; x++) {
-					String option = options[x] + "";
+				Collection options = (Collection)response.get("tabs");
+				Iterator i = options.iterator();
+				while (i.hasNext()) {
+					String option = i.next() + "";
 
-					String begin; 
-					String end; 
+					String begin;
+					String end;
 
 					if (text.length() > option.length()) {
 						begin = option;
@@ -73,8 +73,8 @@ public class TabCompletion {
 					}
 					else {
 						begin = option.substring(0, text.length());
-						end = option.substring(text.length());							
-					}					
+						end = option.substring(text.length());
+					}
 
 					int nextSlash;
 					if ((nextSlash = end.indexOf('/')) > -1 && (nextSlash + 1) < end.length()) {
@@ -90,10 +90,10 @@ public class TabCompletion {
 				last = (String)tabs.next();
 
 				window.getInput().setText(last);
-			}	
+			}
 			catch (Exception ex) {
 				ex.printStackTrace();
-			}		
+			}
 		}
 	}
 }

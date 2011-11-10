@@ -48,7 +48,6 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			"scripts/attacks.sl",
 			"scripts/meterpreter.sl",
 			"scripts/process.sl",
-			"scripts/keyscan.sl",
 			"scripts/browser.sl",
 			"scripts/pivots.sl",
 			"scripts/services.sl",

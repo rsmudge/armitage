@@ -91,24 +91,67 @@ sub getOS {
 # findAttacks("p", "good|great|excellent", &callback) - port analysis 
 # findAttacks("x", "good|great|excellent", &callback) - vulnerability analysis
 sub resolveAttacks {
+	thread(lambda(&_resolveAttacks, $args => @_));
+}
+
+sub _resolveAttacks {
 	%results = ohash();
 	%results2 = ohash();
 	setMissPolicy(%results, { return @(); });
 	setMissPolicy(%results2, { return @(); });
 
-	cmd_safe("db_autopwn -t - $+ $1 -R $2", lambda({
-		local('$line $ip $exploit $port');
+	local('%r $r $p $module $s');
+	%r = ohash();
+	setMissPolicy(%r, { return @(); });
 
-		foreach $line (split("\n", $3)) {
-			if ($line ismatch '\[\*\]\s+(.*?):(\d+).*?exploit/(.*?/.*?/.*?)\s.*') {
-				($ip, $port, $exploit) = matched();
-				push(%results[$ip], $exploit);
-				push(%results2[$ip], @($exploit, $port));
+	#
+	# find all exploits and their associated ports
+	#
+	
+	$s = rankScore($args[1]);
+	foreach $module (@exploits) {
+		if (%exploits[$module]["rankScore"] >= $s) { 
+			$r = call($client, "module.options", "exploit", $module);
+			yield 2;
+			if ("RPORT" in $r && "default" in $r["RPORT"]) {
+				$p = $r["RPORT"]["default"];
+				push(%r[$p], $module);
+
+				if ($p eq "445") {
+					push(%r["139"], $module);
+				}
+				else if ($p eq "139") {
+					push(%r["139"], $module);
+				}
+				else if ($p eq "80") {
+					push(%r["443"], $module);
+				}
+				else if ($p eq "443") {
+					push(%r["80"], $module);
+				}
 			}
 		}
+	}
 
-		[$action];
-	}, $action => $3));
+	#
+	# for each host, see if there is an exploit associated with its port and if so, report it...
+	#
+
+	local('$port $modules $host $data $services $exploit');
+
+	foreach $port => $modules (%r) {
+		foreach $host => $data (%hosts) {
+			$services = $data["services"];
+			if ($port in $services) {
+				foreach $exploit ($modules) {
+					push(%results[$host], $exploit);
+					push(%results2[$host], @($exploit, $port));
+				}
+			}
+		}
+	}
+
+	[$args[2]];
 }
 
 sub findAttacks {
@@ -122,7 +165,7 @@ sub smarter_autopwn {
 	elog("has given up and launched the hail mary!");
 
 	$console = createConsoleTab("Hail Mary", 1, $host => "all", $file => "hailmary");
-	[[$console getWindow] append: "\n\n1) Finding exploits (via db_autopwn)\n\n"];
+	[[$console getWindow] append: "\n\n1) Finding exploits (via local magic)\n\n"];
 
 	resolveAttacks($1, $2, lambda({
 		# now crawl through %results and start hacking each host in turn
@@ -289,6 +332,7 @@ sub addAdvanced {
 #
 sub attack_dialog {
 	local('$dialog $north $center $south $center @targets $combobox $label $textarea $scroll $model $key $table $sorter $col $d $b $c $button $x $value');
+
 	$dialog = dialog("Attack " . join(', ', $3), 590, 360);
 
 	$north = [new JPanel];
@@ -416,13 +460,6 @@ sub attack_dialog {
 	[$dialog setVisible: 1];
 }
 
-# db_autopwn("p", "good|great|excellent") - port analysis 
-sub db_autopwn {
-	local('$console');
-	$console = createConsoleTab("db_autopwn", 1);
-	[$console sendString: "db_autopwn -r -e - $+ $1 -R $2 -T 20\n"];
-}
-
 sub min_rank {
 	return [$preferences getProperty: "armitage.required_exploit_rank.string", "great"];
 }
@@ -521,6 +558,8 @@ sub addFileListener {
 			[$4: strrep($temp, "\\", "\\\\")];
 		}
 	};
+	$actions["NAMELIST"] = $actions["*FILE*"];
+	$actions["DICTIONARY"] = $actions["*FILE*"];
 
 	# set up an action to pop up a file chooser for different file type values.
 	$actions["RHOST"] = {
@@ -557,4 +596,8 @@ sub addFileListener {
 			}
 		}
 	}, \$model, \$table, \$actions)];
+}
+
+sub rankScore {
+	return %(normal => 1, good => 2, great => 3, excellent => 4)[$1];
 }

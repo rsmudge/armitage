@@ -117,13 +117,13 @@ public class ConsoleClient implements Runnable, ActionListener {
 		Map read = null;
 
 		try {
-			Map response = (Map)connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
+			Map response = (Map)connection.execute(writeCommand, new Object[] { session, text });
 
 			synchronized (this) {
 				if (window != null && echo) {
 					window.append(window.getPromptText() + text);
 					if (! "".equals( response.get("prompt") )) {
-						window.updatePrompt(cleanText(new String(Base64.decode( response.get("prompt") + "" ), "UTF-8")));
+						window.updatePrompt(cleanText(response.get("prompt") + ""));
 					}
 				}
 			}
@@ -131,7 +131,6 @@ public class ConsoleClient implements Runnable, ActionListener {
 			read = readResponse();
 			if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
 				//System.err.println("Should command be resent? " + text + " -- " + read);
-				//connection.execute(writeCommand, new Object[] { session, Base64.encode(text) });
 			}
 			else {
 				processRead(read);
@@ -179,7 +178,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 	private void processRead(Map read) throws Exception {
 		if (! "".equals( read.get("data") )) {
-			String text = new String(Base64.decode( read.get("data") + "" ), "UTF-8");
+			String text = read.get("data") + "";
 
 			synchronized (this) {
 				if (window != null)
@@ -190,7 +189,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 		synchronized (this) {
 			if (! "".equals( read.get("prompt") ) && window != null) {
-				window.updatePrompt(cleanText(new String(Base64.decode( read.get("prompt") + "" ), "UTF-8")));
+				window.updatePrompt(cleanText(read.get("prompt") + ""));
 			}
 		}
 	}

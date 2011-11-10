@@ -171,9 +171,9 @@ public class Console extends JPanel implements FocusListener {
 
 	private void setPrompt(String text) {
 		String bad = "\ufffd\ufffd";
-		if (text.equals(bad)) {
+		if (text.equals(bad) || text.equals("null")) {
 			prompt.setText(defaultPrompt);
-		}	
+		}
 		else {
 			defaultPrompt = text;
 			prompt.setText(text);
