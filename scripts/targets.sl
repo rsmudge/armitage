@@ -339,21 +339,6 @@ sub refreshTargets {
 	[new ArmitageTimer: $mclient, "session.list", $null, 0L, lambda(&refreshSessions, $graph => $targets)];
 }
 
-sub createTargetTab {
-	local('$graph %hosts');
-
-        $graph = [new NetworkGraph: $preferences];
-	setDefaultAutoLayout($graph);
-
-	[$frame addTab: "Targets", $graph, $graph];
-
-	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 60 * 1000L, lambda(&refreshServices, \$graph)];
-	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
-
-	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
-}
-
 sub setDefaultAutoLayout {
 	local('$type');
 	$type = [$preferences getProperty: "graph.default_layout.layout", "circle"];
