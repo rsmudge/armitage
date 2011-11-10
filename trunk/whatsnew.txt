@@ -38,6 +38,7 @@ In Progress
   engagement + make consoles feel faster when there is output.
 - Armitage now opens the event log tab instead of a metasploit console tab in team
   mode.
+- Fixed a host sorting issue in table view.
 
 10.20.11
 --------
