@@ -33,6 +33,7 @@ In Progress
   Workspaces menu and you may switch back and forth betweem them too.
 - Simplified the Connect dialog. One button. :)
 - Right-click Scan option now scans for HTTPS.
+- Check all credentials option no longer tries blank passwords/username as pass
 
 10.20.11
 --------
