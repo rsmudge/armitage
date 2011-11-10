@@ -176,6 +176,8 @@ sub pass_the_hash {
 		
 		if ([$brute isSelected]) {
 			%options["RHOSTS"] = join(", ", $hosts);
+			%options["BLANK_PASSWORDS"] = "false";
+			%options["USER_AS_PASS"] = "false";
 			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]), "smb_hash");
 			elog("brute force smb @ " . %options["RHOSTS"]);
 			launchBruteForce("auxiliary", "scanner/smb/smb_login", %options, "brute smb");
@@ -251,6 +253,8 @@ sub show_login_dialog {
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
 		if ([$brute isSelected]) {
+			%options["BLANK_PASSWORDS"] = "false";
+			%options["USER_AS_PASS"] = "false";
 			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]));
 			elog("brute force $srvc @ " . %options["RHOSTS"]);
 			launchBruteForce("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options, "brute $srvc");
