@@ -268,6 +268,8 @@ sub client_workspace_items {
 				refreshTargets();
 				[$frame setTitle: "Armitage - $n"];
 
+				elog("switched to workspace: $n");
+
 				# add the new menu back...
 				[$parent removeAll];
 				client_workspace_items($parent);
