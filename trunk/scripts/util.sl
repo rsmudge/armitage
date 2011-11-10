@@ -157,13 +157,12 @@ sub setupHandlers {
 	find_job("Exploit: multi/handler", {
 		if ($1 == -1) {
 			# setup a handler for meterpreter
-			cmd_safe("setg LPORT " . randomPort(), {
-				call($client, "module.execute", "exploit", "multi/handler", %(
-					PAYLOAD => "windows/meterpreter/reverse_tcp",
-					LHOST => "0.0.0.0",
-					ExitOnSession => "false"
-				));
-			});
+			call($client, "core.setg", "LPORT", randomPort());
+			call($client, "module.execute", "exploit", "multi/handler", %(
+				PAYLOAD => "windows/meterpreter/reverse_tcp",
+				LHOST => "0.0.0.0",
+				ExitOnSession => "false"
+			));
 		}
 	});
 }
@@ -252,13 +251,17 @@ sub getBindAddress {
 				local('$address');
 				$address = ask("Could not determine attack computer IP\nWhat is it?");
 				if ($address ne "") {
-					cmd_all($client, $console, @("back", "setg LHOST $address"), { if ($3 ne "") { setupHandlers(); } });
 					$MY_ADDRESS = $address;
+					thread({
+						call($client, "core.setg", "LHOST", $MY_ADDRESS);
+						setupHandlers();
+					});
 				}
 			}];
 		}
 		else {
-			cmd_all($client, $console, @("back", "setg LHOST $address"), { if ($3 ne "") { setupHandlers(); } });
+			call($client, "core.setg", "LHOST", $address);
+			setupHandlers();
 		}
 
 		$MY_ADDRESS = $address;

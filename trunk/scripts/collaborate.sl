@@ -64,8 +64,7 @@ To do this:
 
 2. Type:
 
-   cd /path/to/metasploit/
-   ./armitage --server [host] [port] [user] [pass] [1=SSL, 0=No SSL]
+   armitage --server [host] [port] [user] [pass]
 
    The [values] must be what you would use to connect Armitage to 
    Metasploit's RPC daemon. Do not use 127.0.0.1 for [host].
@@ -74,7 +73,7 @@ To do this:
 			}
 		}
 		else {
-			cmd($client, $console, "setg ARMITAGE_USER " . userFingerprint(), {});
+			call($client, "core.setg", "ARMITAGE_USER", userFingerprint());
 		}
 	});
 }

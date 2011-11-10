@@ -297,7 +297,7 @@ sub main {
 	$port += 1;
 
 	# setg ARMITAGE_SERVER host:port/token
-	cmd_safe("setg ARMITAGE_SERVER $host $+ : $+ $port $+ / $+ $auth");
+	call($client, "core.setg", "ARMITAGE_SERVER", "$host $+ : $+ $port $+ / $+ $auth");
 
 	#
 	# setup the client cache
