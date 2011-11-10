@@ -73,8 +73,10 @@ sub view_items {
 		item($1, 'Loot', 'L', { thread(&createLootBrowser) });
 	}
 
+	separator($1);
+
 	local('$t');
-	$t = menu($1, 'Reporting', 'R');
+	$t = menu($1, 'Report Data', 'R');
 
 	item($t, 'Activity Logs', 'A', gotoFile([new File: getFileProper(systemProperties()["user.home"], ".armitage")]));
 	item($t, 'Export Data', 'E', { 
@@ -84,11 +86,17 @@ sub view_items {
 			[gotoFile($file)];
 		}); 
 	});
+}
+
+sub armitage_items {
+	local('$m');
+
+	item($1, 'Preferences', 'P', &createPreferencesTab);
 
 	separator($1);
 
 	local('$t');
-	$t = menu($1, 'Targets', 'T');
+	$t = menu($1, 'Set Target View', 'S');
 	item($t, 'Graph View', 'G', {
 		[$preferences setProperty: "armitage.string.target_view", "graph"];
 		createDashboard();
@@ -100,12 +108,6 @@ sub view_items {
 		createDashboard();
 		savePreferences();
 	});
-}
-
-sub armitage_items {
-	local('$m');
-
-	item($1, 'Preferences', 'P', &createPreferencesTab);
 
 	local('$f');
 	$f = {
@@ -114,7 +116,7 @@ sub armitage_items {
 		showError("Updated minimum exploit rank.");
 	};
 
-	$m = menu($1, 'Set Exploit Rank', 'R');
+	$m = menu($1, 'Set Exploit Rank', 'E');
 	item($m, "Excellent", 'E', lambda($f, $rank => "excellent"));
 	item($m, "Great", 'G', lambda($f, $rank => "great"));
 	item($m, "Good", 'o', lambda($f, $rank => "good"));
