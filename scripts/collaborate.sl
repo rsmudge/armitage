@@ -91,6 +91,12 @@ sub checkForCollaborationServer {
 			}, \$host, \$port, \$token));
 		}
 		else {
+			if ($REMOTE) {
+				dispatchEvent({
+					showError("You must start Armitage's deconfliction server\non the Metasploit host to connect remotely.\n\nUse:\n\narmitage --server [ip] [port] [user] [pass]");
+					[System exit: 0];
+				});
+			}
 			warn("No collaboration server is present!");
 			$mclient = $client;
 			checkForUserConflict();
