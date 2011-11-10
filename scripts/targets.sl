@@ -282,7 +282,7 @@ sub setHostValueFunction {
 sub clearHostFunction {
 	return lambda({
 		thread(lambda({
-			local('$host @commands');
+			local('$host @commands $tmp_console');
 			foreach $host (@hosts) {
 				%hosts[$host] = $null;
 			}
@@ -290,13 +290,15 @@ sub clearHostFunction {
 			@commands = map({ return "hosts -d $1"; }, @hosts);
 			push(@commands, "hosts -h");
 
-			cmd_all_async($client, $console, @commands, lambda({
+			$tmp_console = createConsole($client);
+			cmd_all_async($client, $tmp_console, @commands, lambda({
 				if ($1 eq "hosts -h") {
 					elog("removed " . join(" ", @hosts));
 					$FIXONCE = $null;
 					refreshTargets();
+					call($client, "console.destroy", $tmp_console);
 				}
-			}, \@hosts));
+			}, \@hosts, \$tmp_console));
 		}, \@hosts));
 	}, @hosts => $1);
 }
