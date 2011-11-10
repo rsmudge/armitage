@@ -277,7 +277,7 @@ sub createUserPassFile {
 	local('$handle $user $pass $type $row $2');
 	$handle = openf(">userpass.txt");
 	foreach $row ($1) {
-		($user, $pass, $type) = values($row, @("user", "pass", "type"));
+		($user, $pass, $type) = values($row, @("user", "pass", "ptype"));
 		if ($type eq "password" || $type eq $2) {
 			println($handle, "$user $pass");
 		}
