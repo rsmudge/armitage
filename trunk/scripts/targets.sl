@@ -382,6 +382,9 @@ sub createDashboard {
 	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
 	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 60 * 1000L, lambda(&refreshServices, \$graph)];
 	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
+	thread({
+		_refreshServices(call($mclient, "db.services"));
+	});
 
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.refresh_targets.shortcut", "ctrl pressed R", {
