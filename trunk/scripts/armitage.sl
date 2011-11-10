@@ -227,7 +227,12 @@ sub main {
 	}, \$msfrpc_handle, \$frame);
 
 	dispatchEvent({
-		createConsoleTab();
+		if ($client !is $mclient) {
+			createEventLogTab();
+		}
+		else {
+			createConsoleTab();
+		}
 	});
 
 	if (-exists "command.txt") {

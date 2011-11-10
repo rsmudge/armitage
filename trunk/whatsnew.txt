@@ -36,6 +36,8 @@ In Progress
 - Check all credentials option no longer tries blank passwords/username as pass
 - Added a read optimization to the console code. This will reduce load in a team 
   engagement + make consoles feel faster when there is output.
+- Armitage now opens the event log tab instead of a metasploit console tab in team
+  mode.
 
 10.20.11
 --------
