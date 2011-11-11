@@ -326,19 +326,19 @@ sub buildFileBrowserMenu {
 		local('$f $dir @temp $tdir');
 		@temp = split('\\\\', [$text getText]);
 		$dir = downloadDirectory(sessionToHost($sid), join("/", @temp));
-		warn("Saving files to: $dir");
 
 		foreach $f ($file) {
 			[$setcwd];
 			if (%types[$f] eq "dir") {
 				$tdir = downloadDirectory(sessionToHost($sid), join("/", @temp), $f);
-				warn("Dumping directory to: $tdir");
 				m_cmd($sid, "download -r \" $+ $f $+ \" \" $+ $tdir $+ \""); 
 			}
 			else {
 				m_cmd($sid, "download \" $+ $f $+ \" \" $+ $dir $+ \""); 
 			}
 		}
+		showError("Downloading:\n\n" . join("\n", $file) . "\n\nUse View -> Downloads to see files");
+		elog("downloaded " . join(", ", $file) . " from " . [$text getText] . " on " . sessionToHost($sid));
 	}, $file => $2, \$sid, \%types, \$setcwd, \$text));
 
 	item($1, "Execute", 'E', lambda({ 
