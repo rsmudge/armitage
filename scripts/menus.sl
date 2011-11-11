@@ -74,7 +74,7 @@ sub view_items {
 	separator($1);
 
 	local('$t');
-	$t = menu($1, 'Report Data', 'R');
+	$t = menu($1, 'Reporting', 'R');
 
 	item($t, 'Activity Logs', 'A', gotoFile([new File: getFileProper(systemProperties()["user.home"], ".armitage")]));
 	item($t, 'Export Data', 'E', { 
