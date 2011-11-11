@@ -14,7 +14,7 @@ import java.io.*;
 /**
  *  This class launches Armitage and loads the scripts that are part of it.
  */
-public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {   
+public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 	public void processScriptWarning(ScriptWarning warning) {
 		System.out.println(warning);
 	}
@@ -52,6 +52,7 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			"scripts/pivots.sl",
 			"scripts/services.sl",
 			"scripts/loot.sl",
+			"scripts/downloads.sl",
 			"scripts/shell.sl",
 			"scripts/screenshot.sl",
 			"scripts/hosts.sl",
