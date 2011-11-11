@@ -33,6 +33,18 @@ In Progress
   Workspaces menu and you may switch back and forth betweem them too.
 - Simplified the Connect dialog. One button. :)
 - Right-click Scan option now scans for HTTPS.
+- Check all credentials option no longer tries blank passwords/username as pass
+- Added a read optimization to the console code. This will reduce load in a team 
+  engagement + make consoles feel faster when there is output.
+- Armitage now opens the event log tab instead of a metasploit console tab in team
+  mode.
+- Fixed a host sorting issue in table view.
+- Moved View -> Targets to Armitage -> Set Target View
+- Overhauled how Armitage handles downloaded files. Downloads are saved to a set
+  place on the attack server. Downloads are available to the whole team through
+  View -> Downloads. This works like the loot viewer. Team members may view text 
+  files or download binary files. This method is friendlier when downloading whole
+  directories of stuff.
 
 10.20.11
 --------
