@@ -325,16 +325,14 @@ sub buildFileBrowserMenu {
 	item($1, "Download", 'D', lambda({ 
 		local('$f $dir @temp $tdir');
 		@temp = split('\\\\', [$text getText]);
-		$dir = getFileProper(systemProperties()["user.home"], ".armitage", "downloads", sessionToHost($sid), join("/", @temp));
-		if (!-exists $dir) {
-			warn("Saving files to $dir");
-			mkdir($dir);
-		}
+		$dir = downloadDirectory(sessionToHost($sid), join("/", @temp));
+		warn("Saving files to: $dir");
 
 		foreach $f ($file) {
 			[$setcwd];
 			if (%types[$f] eq "dir") {
-				$tdir = getFileProper(systemProperties()["user.home"], ".armitage", "downloads", sessionToHost($sid), join("/", @temp), $f);
+				$tdir = downloadDirectory(sessionToHost($sid), join("/", @temp), $f);
+				warn("Dumping directory to: $tdir");
 				m_cmd($sid, "download -r \" $+ $f $+ \" \" $+ $tdir $+ \""); 
 			}
 			else {

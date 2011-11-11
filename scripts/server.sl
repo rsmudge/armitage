@@ -187,6 +187,10 @@ sub client {
 				writeObject($handle, result(%(error => "file does not exist")));
 			}
 		}
+		else if ($method eq "armitage.downloads") {
+			$response = listDownloads("downloads");
+			writeObject($handle, $response);
+		}
 		else if ($method eq "armitage.write") {
 			($sid, $data, $channel) = $args;
 

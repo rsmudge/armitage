@@ -15,35 +15,15 @@ sub updateDownloadModel {
 	thread(lambda({
 		local('$root $files $entry $findf $hosts $host');
 
+		if ($client !is $mclient) {
+			$files = call($mclient, "armitage.downloads");
+		}
+		else {
+			$files = listDownloads(downloadDirectory());
+		}
+
 		[$model clear: 256];
 
-		$files = @();
-		$root = getFileProper(systemProperties()["user.home"], ".armitage", "downloads");
-		$findf = {
-			if (-isDir $1) {
-				return map($this, ls($1));
-			}
-			else {
-				return %(
-					host => $host,
-					file => getFileName($1), 
-					size => lof($1), 
-					updated_at => lastModified($1),
-					location => $1,
-					path => substr(strrep(getFileParent($1), $root, ''), 1)
-				);
-			}
-		};
-
-		$hosts = map({ return getFileName($1); }, ls($root));
-		foreach $host ($hosts) {
-			addAll($files, flatten(
-				map(
-					lambda($findf, $root => getFileProper($root, $host), \$host), 
-					ls(getFileProper($root, $host))
-			)));
-		}
-		
 		foreach $entry ($files) {
 			$entry["date"] = rtime($entry["updated_at"] / 1000.0);
 			[$model addEntry: $entry];
@@ -52,35 +32,10 @@ sub updateDownloadModel {
 	}, \$model));
 }
 
-sub showDownload {
-	local('$v');
-	$v = [$model getSelectedValue: $table];
-
-	if ($v !is $null) {
-		if ($client is $mclient) {
-			[gotoFile([new java.io.File: getFileParent($v)])];
-		}
-		else {
-			local('$name $save');
-			$name = [$model getSelectedValueFromColumn: $table, "name"];
-			$save = getFileName($name);
-			thread(lambda({
-				local('$handle $data');
-				$data = getFileContent($v);
-				$handle = openf("> $+ $save");
-				writeb($handle, $data);
-				closef($handle);
-				[gotoFile([new java.io.File: cwd()])];
-			}, \$v, \$save));
-		}
-		return;
-	}
-}
-
 sub createDownloadBrowser {
-	local('$table $model $panel $refresh $sorter $host');
+	local('$table $model $panel $refresh $sorter $host $view');
 
-	$model = [new GenericTableModel: @("host", "file", "path", "size", "date"), "location", 16];
+	$model = [new GenericTableModel: @("host", "name", "path", "size", "date"), "location", 16];
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -99,8 +54,14 @@ sub createDownloadBrowser {
 
 	[$table addMouseListener: lambda({
 		if ($0 eq "mousePressed" && [$1 getClickCount] >= 2) {
-			showDownload(\$model, \$table);
+			showLoot(\$model, \$table);
 		}
+	}, \$model, \$table)];
+
+	$view = [new JButton: "View"];
+
+	[$view addActionListener: lambda({
+		showLoot(\$model, \$table);
 	}, \$model, \$table)];
 
 	$refresh = [new JButton: "Refresh"];
@@ -110,7 +71,7 @@ sub createDownloadBrowser {
 
 	updateDownloadModel(\$model); 		
 
-	[$panel add: center($refresh), [BorderLayout SOUTH]];
+	[$panel add: center($view, $refresh), [BorderLayout SOUTH]];
 
 	[$frame addTab: "Downloads", $panel, $null];
 }

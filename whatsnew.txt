@@ -40,6 +40,11 @@ In Progress
   mode.
 - Fixed a host sorting issue in table view.
 - Moved View -> Targets to Armitage -> Set Target View
+- Overhauled how Armitage handles downloaded files. Downloads are saved to a set
+  place on the attack server. Downloads are available to the whole team through
+  View -> Downloads. This works like the loot viewer. Team members may view text 
+  files or download binary files. This method is friendlier when downloading whole
+  directories of stuff.
 
 10.20.11
 --------
