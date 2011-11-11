@@ -477,3 +477,56 @@ sub rtime {
 sub deleteOnExit {
 	[[new java.io.File: getFileProper($1)] deleteOnExit];
 }
+
+sub listDownloads {
+	this('%types');
+	local('$files $root $findf $hosts $host');
+	$files = @();
+	$root = $1;
+	$findf = {
+		if (-isDir $1) {
+			return map($this, ls($1));
+		}
+		else {
+			# determine the file content type
+			local('$type $handle $data');
+			if ($1 in %types) {
+				$type = %types[$1];				
+			}
+			else {
+				$handle = openf($1);
+				$data = readb($handle, 1024);
+				closef($handle);
+				if ($data ismatch '\p{ASCII}*') {
+					$type = "text/plain";
+				}
+				else {
+					$type = "binary";
+				}
+				%types[$1] = $type;
+			}
+
+			# return a description of the file.
+			return %(
+				host => $host,
+				name => getFileName($1),
+				size => lof($1),
+				updated_at => lastModified($1),
+				location => $1,
+				path => substr(strrep(getFileParent($1), $root, ''), 1),
+				content_type => $type
+			);
+		}
+	};
+
+	$hosts = map({ return getFileName($1); }, ls($root));
+	foreach $host ($hosts) {
+		addAll($files, flatten(
+			map(
+				lambda($findf, $root => getFileProper($root, $host), \$host, \%types),
+				ls(getFileProper($root, $host))
+			)));
+	}
+
+	return $files;
+}

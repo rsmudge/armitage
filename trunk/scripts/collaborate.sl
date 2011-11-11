@@ -170,3 +170,22 @@ sub getFileContent {
 		return $file;
 	}
 }
+
+# returns the folder where files should be downloaded to!
+sub downloadDirectory {
+	if ($client is $mclient) {
+		local('@dirs $start $dir');
+		$start = systemProperties()["user.home"];
+		push(@dirs, ".armitage");
+		push(@dirs, "downloads");
+		addAll(@dirs, @_);
+	
+		foreach $dir (@dirs) {
+			$start = getFileProper($start, $dir);
+		}
+		return $start;
+	}
+	else {
+		return "downloads/" . join("/", @_);
+	}
+}
