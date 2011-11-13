@@ -233,18 +233,17 @@ sub main {
 
 sub checkDir {
 	# set the directory where everything exciting and fun will happen.
-	if (cwd() eq "/Applications" || !-canwrite cwd()) {
+	if (cwd() eq "/Applications" || !-canwrite cwd() || isWindows()) {
 		local('$dir');
 		$dir = getFileProper(systemProperties()["user.home"], "armitage-tmp");
 		if (!-exists $dir) {
 			mkdir($dir);
 		}
 		chdir($dir);
-		showError("Armitage files will save to:\n" . cwd());
+		warn("Saving files to $dir");
 	}
 }
 
 setLookAndFeel();
 checkDir();
 connectDialog();
-

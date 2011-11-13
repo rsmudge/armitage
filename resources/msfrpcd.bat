@@ -7,4 +7,4 @@ set JAVA_HOME="%BASE%java"
 :NO_JAVA
 set MSF_DATABASE_CONFIG="%BASE%\config\database.yml"
 cd "%BASE%msf3"
-start rubyw msfrpcd -a 127.0.0.1 -U $$USER$$ -P $$PASS$$ -t Msg -f
+rubyw msfrpcd -a 127.0.0.1 -U $$USER$$ -P $$PASS$$ -t Msg -f
