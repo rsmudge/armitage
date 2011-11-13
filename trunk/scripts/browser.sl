@@ -325,12 +325,13 @@ sub buildFileBrowserMenu {
 	item($1, "Download", 'D', lambda({ 
 		local('$f $dir @temp $tdir');
 		@temp = split('\\\\', [$text getText]);
-		$dir = downloadDirectory(sessionToHost($sid), join("/", @temp));
 
+		$dir = strrep(downloadDirectory(sessionToHost($sid), join("/", @temp)), "\\", "/");
+		
 		foreach $f ($file) {
 			[$setcwd];
 			if (%types[$f] eq "dir") {
-				$tdir = downloadDirectory(sessionToHost($sid), join("/", @temp), $f);
+				$tdir = strrep(downloadDirectory(sessionToHost($sid), join("/", @temp), $f), "\\", "/");
 				m_cmd($sid, "download -r \" $+ $f $+ \" \" $+ $tdir $+ \""); 
 			}
 			else {
