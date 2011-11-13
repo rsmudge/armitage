@@ -14,8 +14,8 @@ public class DatabaseImpl implements RpcConnection  {
 	protected String workspaceid = "0";
 	protected String hFilter = null;
 	protected String sFilter = null;
-	protected Route  rFilter = null;
-	protected String oFilter = null;
+	protected Route[]  rFilter = null;
+	protected String[] oFilter = null;
 
 	private static String join(List items, String delim) {
 		StringBuffer result = new StringBuffer();
@@ -89,28 +89,45 @@ public class DatabaseImpl implements RpcConnection  {
 		return results;
 	}
 
+	private boolean checkRoute(String address) {
+		for (int x = 0; x < rFilter.length; x++) {
+			if (rFilter[x].shouldRoute(address))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean checkOS(String os) {
+		String os_l = os.toLowerCase();
+
+		for (int x = 0; x < oFilter.length; x++) {
+			if (os_l.indexOf(oFilter[x]) != -1)
+				return true;
+		}
+		return false;
+	}
+
 	public List filterByRoute(List rows, int max) {
 		if (rFilter != null || oFilter != null) {
 			Iterator i = rows.iterator();
 			while (i.hasNext()) {
 				Map entry = (Map)i.next();
 				if (rFilter != null && entry.containsKey("address")) {
-					if (!rFilter.shouldRoute(entry.get("address") + "")) {
+					if (!checkRoute(entry.get("address") + "")) {
 						i.remove();
 						continue;
 					}
 				}
 				else if (rFilter != null && entry.containsKey("host")) {
-					if (!rFilter.shouldRoute(entry.get("host") + "")) {
+					if (!checkRoute(entry.get("host") + "")) {
 						i.remove();
 						continue;
 					}
 				}
 
 				if (oFilter != null && entry.containsKey("os_name")) {
-					if ((entry.get("os_name") + "").toLowerCase().indexOf(oFilter) == -1) {
+					if (!checkOS(entry.get("os_name") + ""))
 						i.remove();
-					}
 				}
 			}
 
@@ -223,11 +240,16 @@ public class DatabaseImpl implements RpcConnection  {
 
 				if (values.containsKey("hosts") && (values.get("hosts") + "").length() > 0) {
 					String h = values.get("hosts") + "";
-					if (!h.matches("[0-9a-fA-F\\.:\\%\\_/]+")) {
+					if (!h.matches("[0-9a-fA-F\\.:\\%\\_/, ]+")) {
 						System.err.println("Host value did not validate!");
 						return new HashMap();
 					}
-					rFilter = new Route(h);
+					String[] routes = h.split(",\\s+");
+					rFilter = new Route[routes.length];
+
+					for (int x = 0; x < routes.length; x++) {
+						rFilter[x] = new Route(routes[x]);
+					}
 				}
 
 				if (values.containsKey("ports") && (values.get("ports") + "").length() > 0) {
@@ -247,7 +269,7 @@ public class DatabaseImpl implements RpcConnection  {
 				}
 
 				if (values.containsKey("os") && (values.get("os") + "").length() > 0) {
-					oFilter = (values.get("os") + "").toLowerCase();
+					oFilter = (values.get("os") + "").toLowerCase().split(",\\s+");
 				}
 
 				if (hosts.size() == 0) {
