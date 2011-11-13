@@ -197,15 +197,6 @@ sub postSetup {
 sub main {
         local('$console $panel $dir');
 
-	if (cwd() eq "/Applications" || !-canwrite cwd()) {
-		$dir = getFileProper(systemProperties()["user.home"], "armitage-tmp");
-		if (!-exists $dir) {
-			mkdir($dir);
-		}
-		chdir($dir);
-		showError("Can't write to current directory... files will save to:\n" . cwd());
-	}
-
 	$frame = [new ArmitageApplication];
         [$frame setSize: 800, 600];
 
@@ -240,6 +231,20 @@ sub main {
 	}
 }
 
+sub checkDir {
+	# set the directory where everything exciting and fun will happen.
+	if (cwd() eq "/Applications" || !-canwrite cwd()) {
+		local('$dir');
+		$dir = getFileProper(systemProperties()["user.home"], "armitage-tmp");
+		if (!-exists $dir) {
+			mkdir($dir);
+		}
+		chdir($dir);
+		showError("Armitage files will save to:\n" . cwd());
+	}
+}
+
 setLookAndFeel();
+checkDir();
 connectDialog();
 
