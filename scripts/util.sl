@@ -328,7 +328,7 @@ sub startMetasploit {
 			closef($handle);
 			deleteOnExit("msfrpcd.bat");
 
-			$msfrpc_handle = exec("cmd.exe /C msfrpcd.bat", convertAll([System getenv]));
+			$msfrpc_handle = exec(@("cmd.exe", "/C", getFileProper("msfrpcd.bat")), convertAll([System getenv]));
 		}
 		else {
 			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -t Msg", convertAll([System getenv]));
