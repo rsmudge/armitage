@@ -181,6 +181,9 @@ sub downloadDirectory {
 		addAll(@dirs, @_);
 	
 		foreach $dir (@dirs) {
+			if (isWindows()) {
+				$dir = strrep($dir, "/", "\\", ":", "");
+			}
 			$start = getFileProper($start, $dir);
 		}
 		return $start;
