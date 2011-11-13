@@ -23,8 +23,8 @@ sub manage_browser_autopwn {
 		# description of job (for job kill function)
 		{
 			local('$host $port $uripath');
-			($host, $port) = values($2["info"]["datastore"], @("SRVHOST", "SRVPORT"));
-			$uripath = $2["info"]["uripath"];
+			($host, $port) = values($2["datastore"], @("SRVHOST", "SRVPORT"));
+			$uripath = $2["uripath"];
 			return "Browser Autopwn is at http:// $+ $host $+ : $+ $port $+ $uripath $+ \nWould you like to stop it?";
 		}
 	);
@@ -40,7 +40,7 @@ sub manage_proxy_server {
 		# description of job (for job kill function)
 		{
 			local('$host $port');
-			($host, $port) = values($2["info"]["datastore"], @("SRVHOST", "SRVPORT"));
+			($host, $port) = values($2["datastore"], @("SRVHOST", "SRVPORT"));
 			return "SOCKS proxy is running on $host $+ : $+ $port $+ .\nWould you like to stop it?";
 		}
 	);
@@ -419,7 +419,6 @@ sub _launch_dialog {
 		[$dialog setVisible: 0];
 
 		if ($visible) {
-			warn($options);
 			if ('SESSION' in $options) {
 				local('@sessions $session $console');
 				@sessions = split(',\s+', $options['SESSION']);
@@ -453,8 +452,17 @@ sub _launch_dialog {
 		}
 		else {
 			thread(lambda({
-				warn("$options");
-				showError(call($client, "module.execute", $type, $command, $options)["result"]);
+				local('$r');
+				$r = call($client, "module.execute", $type, $command, $options);
+				if ("result" in $r) {
+					showError($r["result"]);
+				}
+				else if ("job_id" in $r) {
+					showError("Started service");
+				}
+				else {
+					showError($r);
+				}
 			}, \$type, \$command, \$options));
 		}
 	}, \$dialog, \$model, $title => $1, $type => $2, $command => $3, $visible => $4, \$combo, \$table, \$combobox)];
