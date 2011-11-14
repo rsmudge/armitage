@@ -42,6 +42,9 @@ sub addHostDialog {
 sub host_items {
 	local('$i $j $k');
 	item($1, "Import Hosts", 'I', &importHosts);
+	item($1, "Add Hosts...", 'A', &addHostDialog);
+
+	separator($1);
 
 	$j = menu($1, "Nmap Scan", 'S');
 		item($j, "Intense Scan", $null, createNmapFunction("-T5 -A -v"));
@@ -53,7 +56,12 @@ sub host_items {
 		item($j, "Quick Scan (OS detect)", $null, createNmapFunction("-sV -T5 -O -F --version-light"));
 		item($j, "Comprehensive", $null, createNmapFunction("-sS -sU -T5 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
 
-	item($1, "Add Hosts...", 'A', &addHostDialog);
+	item($1, "MSF Scans...", "M", {
+		local('$address');
+		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
+		if ($address eq "") { return; }
+		launch_msf_scans($address);
+	});
 
 	separator($1);
 
