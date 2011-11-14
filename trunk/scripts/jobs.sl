@@ -14,23 +14,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 
-sub manage_browser_autopwn {
-	manage_job("Auxiliary: server/browser_autopwn", 
-		# start server function
-		{
-			launch_dialog("Browser AutoPWN", "auxiliary", "server/browser_autopwn", 1);
-		},
-		# description of job (for job kill function)
-		{
-			local('$host $port $uripath');
-			($host, $port) = values($2["datastore"], @("SRVHOST", "SRVPORT"));
-			$uripath = $2["uripath"];
-			return "Browser Autopwn is at http:// $+ $host $+ : $+ $port $+ $uripath $+ \nWould you like to stop it?";
-		}
-	);
-
-}
-
 sub manage_proxy_server {
 	manage_job("Auxiliary: server/socks4a", 
 		# start server function
