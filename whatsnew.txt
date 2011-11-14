@@ -7,6 +7,7 @@ In Progress
   This fixes a bug where services data for some hosts was not being returned 
   when there are >3,500 hosts in the armitage database.
 - MSF Scans menu is now available under Hosts menu again.
+- Removed Browser Autopwn menu as its future in Metasploit is undecided.
 
 11.13.11 - A major rewrite of a lot of stuff.
 --------
