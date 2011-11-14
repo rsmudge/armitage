@@ -170,10 +170,10 @@ public class DatabaseImpl implements RpcConnection  {
 		}
 
 		if (sFilter != null) {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts, sessions WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " AND " + sFilter + " LIMIT " + limit2);
+			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts")  +") as hosts, sessions WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " AND " + sFilter + " LIMIT " + limit2);
 		}
 		else {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, hosts WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " LIMIT " + limit2);
+			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts") + ") as hosts WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " LIMIT " + limit2);
 		}
 
 		temp.put("db.loots", "SELECT DISTINCT loots.*, hosts.address as host FROM loots, hosts WHERE hosts.id = loots.host_id AND hosts.workspace_id = " + workspaceid);
