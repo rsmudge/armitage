@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+11.13.11 - A major rewrite of a lot of stuff.
 --------
 - Moved from XML/RPC interface to MSGPACK. This should be much faster.
 - Removed Armitage dependence on Metapsloit db.* API--since it may go away soon.
