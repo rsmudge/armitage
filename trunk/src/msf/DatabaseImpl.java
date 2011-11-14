@@ -169,13 +169,7 @@ public class DatabaseImpl implements RpcConnection  {
 			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " LIMIT " + limit1);
 		}
 
-		if (sFilter != null) {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts")  +") as hosts, sessions WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " AND " + sFilter + " LIMIT " + limit2);
-		}
-		else {
-			temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts") + ") as hosts WHERE hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid + " LIMIT " + limit2);
-		}
-
+		temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts") + ") as hosts WHERE hosts.id = services.host_id LIMIT " + limit2);
 		temp.put("db.loots", "SELECT DISTINCT loots.*, hosts.address as host FROM loots, hosts WHERE hosts.id = loots.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.workspaces", "SELECT DISTINCT * FROM workspaces");
 		temp.put("db.notes", "SELECT DISTINCT notes.*, hosts.address as host FROM notes, hosts WHERE hosts.id = notes.host_id AND hosts.workspace_id = " + workspaceid);
@@ -235,7 +229,7 @@ public class DatabaseImpl implements RpcConnection  {
 
 				if ((values.get("session") + "").equals("1")) {
 					hosts.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL");
-					srvcs.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL");
+					//srvcs.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL");
 				}
 
 				if (values.containsKey("hosts") && (values.get("hosts") + "").length() > 0) {
@@ -262,7 +256,7 @@ public class DatabaseImpl implements RpcConnection  {
 						}
 
 						ports.add("services.port = " + p[x]);
-						ports2.add("s.port = " + p[x]);
+						//ports2.add("s.port = " + p[x]);
 					}
 					hosts.add("services.host_id = hosts.id");
 					hosts.add("(" + join(ports, " OR ") + ")");
@@ -277,13 +271,6 @@ public class DatabaseImpl implements RpcConnection  {
 				}
 				else {
 					hFilter = join(hosts, " AND ");
-				}
-
-				if (srvcs.size() == 0) {
-					sFilter = null;
-				}
-				else {
-					sFilter = join(srvcs, " AND ");
 				}
 
 				queries = build();
