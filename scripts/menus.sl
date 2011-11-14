@@ -155,10 +155,6 @@ sub main_attack_items {
 		});
 	});
 
-	separator($1);
-
-	item($1, "Browser Autopwn...", 'B', &manage_browser_autopwn);
-
 	cmd_safe("show exploits", {
 		local('$line $os $type $id $rank $name $k $date $exploit');
 
