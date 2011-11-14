@@ -6,6 +6,7 @@ In Progress
 - db.services now limits its results to hosts that are returned by db.hosts. 
   This fixes a bug where services data for some hosts was not being returned 
   when there are >3,500 hosts in the armitage database.
+- MSF Scans menu is now available under Hosts menu again.
 
 11.13.11 - A major rewrite of a lot of stuff.
 --------
