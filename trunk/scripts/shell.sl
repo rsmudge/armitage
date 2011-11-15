@@ -60,6 +60,7 @@ global('%shells $ashell $achannel %maxq %wait');
 				}
 				else {
 					$handle = openf(">command $+ $sid $+ .txt");
+					deleteOnExit("command $+ $sid $+ .txt");
 					writeb($handle, "$text $+ \r\n");
 					closef($handle);
 					$file = getFileProper("command $+ $sid $+ .txt");
