@@ -95,6 +95,9 @@ sub resolveAttacks {
 }
 
 sub _resolveAttacks {
+	# force a service data refresh before hail mary or find attacks.
+	_refreshServices(call($mclient, "db.services"));
+
 	%results = ohash();
 	%results2 = ohash();
 	setMissPolicy(%results, { return @(); });
