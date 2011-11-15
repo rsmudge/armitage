@@ -11,6 +11,7 @@ In Progress
 - Find Attacks/Hail Mary now pull latest service info from DB before resolving
   the attacks. This prevents a situation where Find Attacks after a scan yielded
   nothing because Armitage had not synced with the database yet.
+- Armitage now does a better job cleaning up temporary files.
 
 11.13.11 - A major rewrite of a lot of stuff.
 --------
