@@ -3,6 +3,7 @@ package armitage;
 import console.Console;
 import msf.*;
 import java.util.*;
+import java.util.regex.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -19,6 +20,11 @@ public class ConsoleClient implements Runnable, ActionListener {
 	protected LinkedList	listeners = new LinkedList();
 	protected boolean       echo = true;
 	protected boolean	go_read = true;
+	protected ActionListener sessionListener = null; /* one off listener to catch "sessions -i ##" */
+
+	public void setSessionListener(ActionListener l) {
+		sessionListener = l;
+	}
 
 	public void kill() {
 		synchronized (listeners) {
@@ -113,7 +119,18 @@ public class ConsoleClient implements Runnable, ActionListener {
 		actionPerformed(null);
 	}
 
+	private static final Pattern interact = Pattern.compile("sessions -i (\\d+)\n");
+
 	public void sendString(String text) {
+		/* intercept sessions -i and deliver it to a listener within armitage */
+		if (sessionListener != null) {
+			Matcher m = interact.matcher(text);
+			if (m.matches()) {
+				sessionListener.actionPerformed(new ActionEvent(this, 0, m.group(1)));
+				return;
+			}
+		}
+
 		Map read = null;
 
 		try {
