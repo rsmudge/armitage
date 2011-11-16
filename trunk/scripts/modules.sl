@@ -10,6 +10,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import ui.*;
 
 sub createModuleBrowser {
 	local('$tree $split $scroll1 $t $2');
@@ -65,7 +66,7 @@ sub createModuleList {
 	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_NEVER]];
 
 	local('$search $button');
-	$search = [new JTextField: 10];
+	$search = [new ATextField: 10];
 	[$search setToolTipText: "Enter a query to filter the MSF modules"];
 	[$search addActionListener: lambda({
 		local('$model');

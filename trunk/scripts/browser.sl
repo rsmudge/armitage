@@ -15,6 +15,7 @@ import javax.swing.filechooser.*;
 import javax.swing.text.*;
 
 import java.io.*;
+import ui.*;
 
 global('%files %icons %paths %attribs');
 %files = ohash();
@@ -171,7 +172,7 @@ sub createFileBrowser {
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
-	$text = [new JTextField: %paths[$1], "", 80];
+	$text = [new ATextField: %paths[$1], "", 80];
 	[$text addActionListener: lambda({
 		local('$dir');
 		$dir = [[$1 getSource] getText];
