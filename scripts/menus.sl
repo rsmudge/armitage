@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import javax.imageio.*;
+import ui.*;
 
 sub host_selected_items {
 	local('$sid $session $i $s $h $o');
@@ -225,10 +226,10 @@ sub client_workspace_items {
 			$dialog = dialog("New Dynamic Workspace", 640, 480);
 			[$dialog setLayout: [new GridLayout: 6, 1]];
 
-			$name  = [new JTextField: 16];
-			$host  = [new JTextField: 16];
-			$ports = [new JTextField: 16];
-			$os    = [new JTextField: 16];
+			$name  = [new ATextField: 16];
+			$host  = [new ATextField: 16];
+			$ports = [new ATextField: 16];
+			$os    = [new ATextField: 16];
 			$session = [new JCheckBox: "Hosts with sessions only"];
 			$button = [new JButton: "Add"];
 

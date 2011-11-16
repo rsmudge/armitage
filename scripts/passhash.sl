@@ -10,6 +10,7 @@ import javax.swing.table.*;
 
 import msf.*;
 import table.*;
+import ui.*;
 
 %handlers["hashdump"] = {
 	this('$host @commands $safe $last');
@@ -143,9 +144,9 @@ sub pass_the_hash {
 	#[$bottom setLayout: [new GridLayout: 4, 1]];
 	[$bottom setLayout: [new BoxLayout: $bottom, [BoxLayout Y_AXIS]]];
 
-	$user = [new JTextField: 32];
-	$pass = [new JTextField: 32];
-	$domain = [new JTextField: 32];
+	$user = [new ATextField: 32];
+	$pass = [new ATextField: 32];
+	$domain = [new ATextField: 32];
 	[$domain setText: "WORKGROUP"];
 	$brute = [new JCheckBox: "Check all credentials"];
 
@@ -228,8 +229,8 @@ sub show_login_dialog {
 	$bottom = [new JPanel];
 	[$bottom setLayout: [new GridLayout: 3, 1]];
 
-	$user = [new JTextField: 32];
-	$pass = [new JTextField: 32];
+	$user = [new ATextField: 32];
+	$pass = [new ATextField: 32];
 	$brute = [new JCheckBox: "Check all credentials"];
 	@controls = @($user, $pass);
 

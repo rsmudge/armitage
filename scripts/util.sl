@@ -11,6 +11,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import ui.*;
 
 global('$MY_ADDRESS $RPC_CONSOLE');
 
@@ -367,11 +368,11 @@ sub connectDialog {
 	
 	# setup our nifty form fields..
 
-	$host = [new JTextField: [$preferences getProperty: "connect.host.string", "127.0.0.1"], 20];
-	$port = [new JTextField: [$preferences getProperty: "connect.port.string", "55553"], 10];
+	$host = [new ATextField: [$preferences getProperty: "connect.host.string", "127.0.0.1"], 20];
+	$port = [new ATextField: [$preferences getProperty: "connect.port.string", "55553"], 10];
 	
-	$user = [new JTextField: [$preferences getProperty: "connect.user.string", "msf"], 20];
-	$pass = [new JTextField: [$preferences getProperty: "connect.pass.string", "test"], 20];
+	$user = [new ATextField: [$preferences getProperty: "connect.user.string", "msf"], 20];
+	$pass = [new ATextField: [$preferences getProperty: "connect.pass.string", "test"], 20];
 
 	$button = [new JButton: "Connect"];
 	[$button setToolTipText: "<html>Connects to Metasploit.</html>"];

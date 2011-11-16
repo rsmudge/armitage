@@ -13,6 +13,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 import msf.*;
+import ui.*;
 
 global('%shells $ashell $achannel %maxq %wait');
 
@@ -265,7 +266,7 @@ sub listen_for_shellz {
         local('$dialog $port $type $panel $button');
         $dialog = dialog("Create Listener", 640, 480);
 
-        $port = [new JTextField: randomPort() + "", 6];
+        $port = [new ATextField: randomPort() + "", 6];
         $type = [new JComboBox: @("shell", "meterpreter")];
 
         $panel = [new JPanel];
@@ -297,8 +298,8 @@ sub connect_for_shellz {
         local('$dialog $host $port $type $panel $button');
         $dialog = dialog("Connect", 640, 480);
 
-	$host = [new JTextField: "127.0.0.1", 20];
-        $port = [new JTextField: randomPort() + "", 6];
+	$host = [new ATextField: "127.0.0.1", 20];
+        $port = [new ATextField: randomPort() + "", 6];
         $type = [new JComboBox: @("shell", "meterpreter")];
 
         $panel = [new JPanel];
