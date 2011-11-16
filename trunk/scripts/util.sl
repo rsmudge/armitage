@@ -301,8 +301,8 @@ sub scanner {
 }
 
 sub startMetasploit {
-	local('$exception $user $pass');
-	($user, $pass) = @_;
+	local('$exception $user $pass $port');
+	($user, $pass, $port) = @_;
 	try {
 		println("Starting msfrpcd for you.");
 
@@ -329,14 +329,14 @@ sub startMetasploit {
 			closef($handle);
 
 			$handle = openf(">msfrpcd.bat");
-			writeb($handle, strrep($data, '$$USER$$', $1, '$$PASS$$', $2, '$$BASE$$', $msfdir));
+			writeb($handle, strrep($data, '$$USER$$', $1, '$$PASS$$', $2, '$$BASE$$', $msfdir, '$$PORT$$', $port));
 			closef($handle);
 			deleteOnExit("msfrpcd.bat");
 
 			$msfrpc_handle = exec(@("cmd.exe", "/C", getFileProper("msfrpcd.bat")), convertAll([System getenv]));
 		}
 		else {
-			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -t Msg", convertAll([System getenv]));
+			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -t Msg -p $port", convertAll([System getenv]));
 		}
 
 		# consume bytes so msfrpcd doesn't block when the output buffer is filled
@@ -409,7 +409,7 @@ sub connectDialog {
 			}
 			catch $ex {
 				if (!askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?")) {
-					startMetasploit([$user getText], [$pass getText]);
+					startMetasploit([$user getText], [$pass getText], [$port getText]);
 				}
 			}
 		}
