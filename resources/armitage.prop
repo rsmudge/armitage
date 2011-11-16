@@ -39,3 +39,4 @@ armitage.log_everything.boolean=true
 armitage.no_msf_banner.boolean=false
 tab.highlight.color=#0000ff
 armitage.show_all_commands.boolean=true
+armitage.application_title.string=Armitage

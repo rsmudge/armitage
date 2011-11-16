@@ -265,7 +265,7 @@ sub client_workspace_items {
 					refreshTargets();
 				}, \$o, \$p, \$h, \$s));
 
-				[$frame setTitle: "Armitage - $n"];
+				[$frame setTitle: "$TITLE - $n"];
 
 				elog("switched to workspace: $n");
 
@@ -281,7 +281,7 @@ sub client_workspace_items {
 		lambda({
 			[$preferences setProperty: "armitage.workspaces.menus", ""];
 			savePreferences();
-			[$frame setTitle: "Armitage"];
+			[$frame setTitle: $TITLE];
 			thread({ 
 				call($mclient, "db.filter", %()); 
 				refreshTargets();
@@ -293,7 +293,7 @@ sub client_workspace_items {
 	separator($1);
 
 	item($1, "Show All", "S", {
-		[$frame setTitle: "Armitage"];
+		[$frame setTitle: $TITLE];
 		thread({
 			call($mclient, "db.filter", %());
 			refreshTargets();
@@ -312,7 +312,7 @@ sub client_workspace_items {
 				refreshTargets();
 			}, \$os, \$ports, \$host, \$session));
 			elog("switched to workspace: $name");
-			[$frame setTitle: "Armitage - $name"];
+			[$frame setTitle: "$TITLE - $name"];
 		}, \$host, \$ports, \$os, \$name, \$session));
 	}
 }
@@ -321,7 +321,7 @@ sub init_menus {
 	local('$top $a $b $c $d $e $f');
 	$top = [$1 getJMenuBar];
 
-	$a = menu($top, "Armitage", 'A');
+	$a = menu($top, "$TITLE", 'A');
 	armitage_items($a);
 
 	$a = menu($top, "View", 'V');
