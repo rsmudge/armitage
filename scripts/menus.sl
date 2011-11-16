@@ -321,7 +321,7 @@ sub init_menus {
 	local('$top $a $b $c $d $e $f');
 	$top = [$1 getJMenuBar];
 
-	$a = menu($top, "$TITLE", 'A');
+	$a = menu($top, "$TITLE", charAt($TITLE, 0));
 	armitage_items($a);
 
 	$a = menu($top, "View", 'V');
