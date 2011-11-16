@@ -286,8 +286,16 @@ sub main {
 		[System exit: 0];
 	}
 	
-	local('$host $port $user $pass $ssl');
-	($host, $port, $user, $pass, $ssl) = sublist(@_, 1);
+	local('$host $port $user $pass');
+	($host, $port, $user, $pass) = sublist(@_, 1);
+
+	#
+	# some sanity checking
+	#
+	if ($host eq "127.0.0.1") {
+		println("Do not specify 127.0.0.1 as your msfrpcd host. This IP address\nis given to clients and they use it to connect to this server.");
+		[System exit: 0];
+	}
 
 	#
 	# Connect to Metasploit's RPC Daemon
