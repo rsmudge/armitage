@@ -60,6 +60,7 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			"scripts/jobs.sl",
 			"scripts/preferences.sl",
 			"scripts/modules.sl",
+			"scripts/workspaces.sl",
 			"scripts/menus.sl",
 			"scripts/collaborate.sl",
 			"scripts/armitage.sl"
