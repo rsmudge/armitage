@@ -14,6 +14,7 @@ In Progress
 - Deconfliction server now complains when you try to use 127.0.0.1 as your host
 - Added cut/copy/paste/clear menu to most textfields.
 - Added Workspaces -> Manage to edit, add, and remove dynamic workspaces.
+- Added code to intercept "sessions -i ##" and open a meterpreter tab instead.
 
 11.13.11 - A major rewrite of a lot of stuff.
 --------

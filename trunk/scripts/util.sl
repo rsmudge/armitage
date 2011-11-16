@@ -117,6 +117,10 @@ sub createConsolePanel {
 	$thread = [new ConsoleClient: $console, $client, "console.read", "console.write", "console.destroy", $result['id'], $1];
 	[$thread setMetasploitConsole];
 
+	[$thread setSessionListener: {
+		createMeterpreterTab([$1 getActionCommand]);
+	}];
+
 	[$console addWordClickListener: lambda({
 		local('$word');
 		$word = [$1 getActionCommand];
