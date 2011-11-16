@@ -253,7 +253,7 @@ public class ArmitageApplication extends JFrame {
 	}
 
 	public ArmitageApplication() {
-		super("Armitage");
+		super();
 		tabs = new DraggableTabbedPane();
 		setLayout(new BorderLayout());
 

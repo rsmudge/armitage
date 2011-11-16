@@ -198,6 +198,7 @@ sub main {
         local('$console $panel $dir');
 
 	$frame = [new ArmitageApplication];
+	[$frame setTitle: $TITLE];
         [$frame setSize: 800, 600];
 
 	init_menus($frame);

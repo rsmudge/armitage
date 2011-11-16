@@ -14,7 +14,7 @@ import javax.swing.table.*;
 import java.io.*;
 import msf.DatabaseImpl;
 
-global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY');
+global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE');
 
 sub iHateYaml {
 	local('$handle %result $current $text $key $value');
@@ -100,6 +100,7 @@ sub loadPreferences {
 		}
 	}
 
+	$TITLE = [$prefs getProperty: "armitage.application_title.string", "Armitage"];
 	return $prefs;
 }
 
