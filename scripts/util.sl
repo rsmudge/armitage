@@ -343,17 +343,36 @@ sub startMetasploit {
 		fork({
 			[[Thread currentThread] setPriority: [Thread MIN_PRIORITY]];
 
-			while (1) {
+			while (!-eof $msfrpc_handle) {
+				#
+				# check if process is dead...
+				#
+				try {
+					[[$msfrpc_handle getSource] exitValue];
+					local('$msg');
+					$msg = [SleepUtils getIOHandle: resource("resources/error.txt"), $null];
+					showError(readb($msg, -1));
+					closef($msg);
+					return;
+				}
+				catch $ex {
+					# ignore this...
+				}
+
+				#
+				# check for data to read...
+				#
 				if (available($msfrpc_handle) > 0) {
 					[[System out] print: readb($msfrpc_handle, available($msfrpc_handle))];
 				}
-
 				if (available($msfrpc_error) > 0) {
 					[[System err] print: readb($msfrpc_error, available($msfrpc_error))];
 				}
+
 				sleep(1024);
 			}
-		}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null]);
+			println("msfrpcd is shut down!");
+		}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null], \$frame);
 	}
 	catch $exception {
 		showError("Couldn't launch MSF\n" . [$exception getMessage]);
