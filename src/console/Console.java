@@ -169,7 +169,8 @@ public class Console extends JPanel implements FocusListener {
 
 	protected boolean promptLock = false;
 
-	private void setPrompt(String text) {
+	/* this function is not thread safe */
+	public void setPrompt(String text) {
 		String bad = "\ufffd\ufffd";
 		if (text.equals(bad) || text.equals("null")) {
 			prompt.setText(defaultPrompt);

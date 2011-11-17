@@ -138,6 +138,7 @@ sub _launch_service {
 	else {
 		$c = createConsoleTab("$1", 1);
 	}
+	[[$c getWindow] setPrompt: "msf > "];
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
 		[$c sendString: "use exploit/multi/handler\n"];	
