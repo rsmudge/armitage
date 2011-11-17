@@ -1,6 +1,8 @@
 Armitage Changelog
 ==================
 
+11.17.11 - All the things I wanted to do, but didn't have time
+--------
 Release Note 1: if you use Armitage teaming, things changed. You have to start 
 msfrpcd with a different set of flags and your team must use the latest version 
 of Armitage. If you have a script that starts msfrpcd, you must update it. 
@@ -13,8 +15,6 @@ will not work. The Metasploit pre-4.0 installers did not install dependencies
 that Armitage requires today. Missing are certain Java cryptography extensions
 and the msgpack Ruby gem. BackTrack 5 is Metasploit 3.7. BackTrack 5r1 is 4.0.
 
-11.17.11 - All the things I wanted to do, but didn't have time
---------
 - db.services now limits its results to hosts that are returned by db.hosts. 
   This fixes a bug where services data for some hosts was not returned when
   when >3,500 hosts are in the armitage database.
