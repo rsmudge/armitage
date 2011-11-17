@@ -114,11 +114,16 @@ sub manage_job {
 
 # pass the module launch to another thread please.
 sub launch_service {
+	local('$file');
+	if ($4 eq "payload") {
+		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
+	}
+
 	thread(lambda({
 		local('$title $module $options $type');
 		($title, $module, $options, $type) = $args;
-		_launch_service($title, $module, $options, $type, \$format);
-	}, $args => @_, \$format));
+		_launch_service($title, $module, $options, $type, \$format, \$file);
+	}, $args => @_, \$format, \$file));
 }
 
 sub _launch_service {
@@ -151,8 +156,6 @@ sub _launch_service {
 		[$c sendString: "exploit -j\n"];
 	}
 	else if ($4 eq "payload") {
-		local('$file');
-		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
 		if ($file !is $null) {
 			$file = strrep($file, '\\', '\\\\'); 
 
