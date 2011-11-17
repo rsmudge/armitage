@@ -28,6 +28,8 @@ and the msgpack Ruby gem. BackTrack 5 is Metasploit 3.7. BackTrack 5r1 is 4.0.
 - Added Workspaces -> Manage to edit, add, and remove dynamic workspaces.
 - Added code to intercept "sessions -i ##" and open a meterpreter tab instead.
 - Armitage now honors port setting when starting msfrpcd for you.
+- Armitage now detects msfrpcd shutdown and offers user advice to fix it. The
+  most common cause is probably a lack of msgpack.
 
 11.13.11 - A major rewrite of a lot of stuff.
 --------
