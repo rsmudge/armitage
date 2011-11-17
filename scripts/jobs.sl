@@ -115,7 +115,7 @@ sub manage_job {
 # pass the module launch to another thread please.
 sub launch_service {
 	local('$file');
-	if ($4 eq "payload") {
+	if ($4 eq "payload" && $format ne "multi/handler") {
 		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
 	}
 
