@@ -363,6 +363,26 @@ sub isWindows {
 	return iff("*Windows*" iswm systemProperties()["os.name"], 1);
 }
 
+sub selected {
+	return [$2 getSelectedValueFromColumn: $1, $3];
+}
+
+# ($table, $model) = setupTable("lead", @rows)
+sub setupTable {
+	local('$table $model $sorter $row');
+	$model = [new GenericTableModel: $2, $1, 8];
+	foreach $row ($3) {
+		[$model _addEntry: $row];
+        }
+
+	$table = [new JTable: $model];
+	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
+	$sorter = [new TableRowSorter: $model];
+	[$table setRowSorter: $sorter];
+
+	return @($table, $model);
+}
+
 # creates a list dialog,
 # $1 = title, $2 = button text, $3 = columns, $4 = rows, $5 = callback
 sub quickListDialog {
@@ -371,16 +391,7 @@ sub quickListDialog {
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 	
-	$model = [new GenericTableModel: sublist($3, 1), $3[0], 8];
-	foreach $row ($4) {
-		[$model _addEntry: $row];
-	}
-
-	$table = [new JTable: $model];
-	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
-	$sorter = [new TableRowSorter: $model];
-	[$table setRowSorter: $sorter];
-
+	($table, $model) = setupTable($3[0], sublist($3, 1), $4);
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	
 	$button = [new JButton: $2];
