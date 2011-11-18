@@ -484,17 +484,24 @@ sub _launch_dialog {
 	[$dialog setVisible: 1];
 }
 
-sub updateJobsTable {
-	[$model clear: 8];
-
-	local('$jobs $jid $desc $info $data');
+sub jobs {
+	local('$jobs $jid $desc $info $data @r');
 	$jobs = call($client, "job.list");
 	foreach $jid => $desc ($jobs) {
 		$info = call($client, "job.info", $jid);
 		$data = $info["datastore"];
 		if (!-ishash $data) { $data = %(); }
+		push(@r, %(Id => $jid, Name => $info['name'], Payload => $data['PAYLOAD'], Port => $data['LPORT'], Start => rtime($info['start_time']), URL => $info['uripath']));
+	}
+	return @r;
+}
 
-		[$model addEntry: %(Id => $jid, Name => $info['name'], Payload => $data['PAYLOAD'], Port => $data['LPORT'], Start => rtime($info['start_time']), URL => $info['uripath'])];
+sub updateJobsTable {
+	local('$job');
+	[$model clear: 8];
+
+	foreach $job (jobs()) {
+		[$model addEntry: $job];
 	}
 
 	[$model fireListeners];
