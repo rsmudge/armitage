@@ -58,11 +58,7 @@ sub listWorkspaces {
 		}
 		saveWorkspaces(@workspaces);
 		updateWorkspaceList($table, $model);
-
-		# add the new menu back...
-		[$parent removeAll];
-		client_workspace_items($parent);
-	}, \$table, \$model, \$parent)];
+	}, \$table, \$model)];
 
 	[$edit addActionListener: lambda({
 		local('$sel $temp');
@@ -135,20 +131,11 @@ sub workspaceDialog {
 		}
 		saveWorkspaces(@workspaces);
 		updateWorkspaceList($table, $model);
-		[$dialog setVisible: 0];
-
-		# add the new menu back...
-		[$parent removeAll];
-		client_workspace_items($parent);
-	}, \$parent, \$dialog, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
+	}, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
 }
 
-# create_workspace_menus($parent_menu, $active)
-# dynamic workspaces... y0.
 sub client_workspace_items {
 	local('$index $workspace');
-	let(&workspaceDialog, $parent => $1);
-	let(&listWorkspaces, $parent => $1);
 
 	item($1, 'Manage', 'M', {
 		listWorkspaces();

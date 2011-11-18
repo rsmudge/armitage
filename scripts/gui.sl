@@ -18,6 +18,7 @@ import java.awt.event.*;
 import graph.*;
 import armitage.*;
 import table.*;
+import ui.*;
 
 # Create a new menu, returns the menu, you have to attach it to something
 # menu([$parent], "Name", 'Accelerator')
@@ -34,6 +35,15 @@ sub menu {
 		$menu = invoke(&menu, sublist(@_, 1));
 		[$1 add: $menu];
 	}
+	return $menu;
+}
+
+sub dynmenu {
+	local('$menu');
+	$menu = [new DynamicMenu: $2];
+	[$menu setMnemonic: casti(charAt($3, 0), 'c')];
+	[$menu setHandler: $4];
+	[$1 add: $menu];
 	return $menu;
 }
 
