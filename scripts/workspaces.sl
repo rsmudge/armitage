@@ -11,39 +11,45 @@ import javax.imageio.*;
 import ui.*;
 
 sub newWorkspace {
-	workspaceDialog(%(), $1, $title => "New Dynamic Workspace", $button => "Add", $enable => 1);
+	workspaceDialog(%(), @($1, $2), $title => "New Workspace", $button => "Add", $enable => 1);
 }
 
 sub editWorkspace {
-	workspaceDialog($1, $2, $title => "Edit Dynamic Workspace", $button => "Save", $enable => $null);
+	workspaceDialog($1, @($2, $3), $title => "Edit Workspace", $button => "Save", $enable => $null);
 }
 
 sub updateWorkspaceList {
-	[$1 setListData: cast(map({ return $1["name"]; }, workspaces()), ^Object)];
+	local('$table $model $workspace');
+	($table, $model) = @_;
+	[$model clear: 16];
+	foreach $workspace (workspaces()) {
+		[$model addEntry: $workspace];
+	}
+	[$model fireListeners];
 }
 
 sub listWorkspaces {
-	local('$dialog $list $add $edit $delete');
-	$dialog = dialog("Workspaces", 640, 480);
+	local('$dialog $table $model $add $edit $delete');
+	$dialog = [new JPanel];
 	[$dialog setLayout: [new BorderLayout]];
 
-	$list = [new JList];
-	updateWorkspaceList($list);
-	[$list setSelectionMode: [ListSelectionModel MULTIPLE_INTERVAL_SELECTION]];
+	($table, $model) = setupTable("name", @("name", "hosts", "ports", "os", "session"), @());
+	updateWorkspaceList($table, $model);
+	[$table setSelectionMode: [ListSelectionModel SINGLE_INTERVAL_SELECTION]];
 	
-	[$dialog add: [new JScrollPane: $list], [BorderLayout CENTER]];
+	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
 	$add = [new JButton: "Add"];
 	$edit = [new JButton: "Edit"];
 	$delete = [new JButton: "Remove"];
 
 	[$add addActionListener: lambda({
-		newWorkspace($list);
-	}, \$dialog, \$list)];
+		newWorkspace($table, $model);
+	}, \$table, \$model)];
 
 	[$delete addActionListener: lambda({
 		local('%names $workspace @workspaces');
-		putAll(%names, [$list getSelectedValues], { return 1; });
+		putAll(%names, [$model getSelectedValues: $table], { return 1; });
 		@workspaces = workspaces();
 		foreach $workspace (@workspaces) {
 			if ($workspace['name'] in %names) {
@@ -51,32 +57,34 @@ sub listWorkspaces {
 			}
 		}
 		saveWorkspaces(@workspaces);
-		updateWorkspaceList($list);
+		updateWorkspaceList($table, $model);
 
 		# add the new menu back...
 		[$parent removeAll];
 		client_workspace_items($parent);
-	}, \$dialog, \$list, \$parent)];
+	}, \$table, \$model, \$parent)];
 
 	[$edit addActionListener: lambda({
 		local('$sel $temp');
-		$sel = [$list getSelectedValue];
+		$sel = selected($table, $model, "name");
 
 		$temp = search(workspaces(), lambda({ 
 			return iff($1["name"] eq $name, $1); 
 		}, $name => $sel));
 
 		if ($temp !is $null) {
-			editWorkspace($temp, $list);
+			editWorkspace($temp, $table, $model);
 		}
-	}, \$dialog, \$list)];
+	}, \$table, \$model)];
 
 	[$dialog add: center($add, $edit, $delete), [BorderLayout SOUTH]];
-	[$dialog pack];
-	[$dialog show];
+	[$frame addTab: "Workspaces", $dialog, $null];
 }
 
 sub workspaceDialog {
+	local('$table $model');
+	($table, $model) = $2;
+
 	local('$dialog $name $host $ports $os $button $session');
 	$dialog = dialog($title, 640, 480);
 	[$dialog setLayout: [new GridLayout: 6, 1]];
@@ -87,7 +95,7 @@ sub workspaceDialog {
 	$ports = [new ATextField: $1['ports'], 16];
 	$os    = [new ATextField: $1['os'], 16];
 	$session = [new JCheckBox: "Hosts with sessions only"];
-	if ($1['sessions'] eq 1) {
+	if ($1['session'] eq 1) {
 		[$session setSelected: 1];
 	}
 
@@ -126,13 +134,13 @@ sub workspaceDialog {
 			push(@workspaces, $ws);
 		}
 		saveWorkspaces(@workspaces);
-		updateWorkspaceList($list);
+		updateWorkspaceList($table, $model);
 		[$dialog setVisible: 0];
 
 		# add the new menu back...
 		[$parent removeAll];
 		client_workspace_items($parent);
-	}, \$parent, \$dialog, \$host, \$ports, \$os, \$name, \$session, $list => $2)];
+	}, \$parent, \$dialog, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
 }
 
 # create_workspace_menus($parent_menu, $active)
