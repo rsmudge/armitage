@@ -230,8 +230,7 @@ sub init_menus {
 	$d = menu($top, 'Attacks', 'C');
 	main_attack_items($d);
 
-	$e = menu($top, 'Workspaces', 'W');
-	client_workspace_items($e);
+	dynmenu($top, 'Workspaces', 'W', &client_workspace_items);
 
 	$f = menu($top, 'Help', 'H');
 	help_items($f);
