@@ -382,7 +382,7 @@ sub createDashboard {
 	$targets = $graph;
 
 	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 60 * 1000L, lambda(&refreshServices, \$graph)];
+	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 30 * 1000L, lambda(&refreshServices, \$graph)];
 	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
 
 	# this call exists to make sure clients are communicating with the metasploit rpc server
