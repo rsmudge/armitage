@@ -131,7 +131,9 @@ sub workspaceDialog {
 		}
 		saveWorkspaces(@workspaces);
 		updateWorkspaceList($table, $model);
-	}, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
+
+		[$dialog setVisible: 0];
+	}, \$dialog, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
 }
 
 sub client_workspace_items {
