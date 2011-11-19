@@ -113,7 +113,7 @@ sub createModuleList {
 # shows the post modules compatible with a session... for this to work, the
 # code that creates the module browser must call: let(&showPostModules, $tree => ..., $search => ...)
 sub showPostModules {
-	local('@allowed');
+	local('@allowed $2');
 	@allowed = getOS(sessionToOS($1));
 	fork({
 		local('$modules %list $model');
@@ -127,6 +127,11 @@ sub showPostModules {
 			return iff($o in @allowed, $1);		
 		}, \@allowed), $modules);
 
+		# filter out other stuff if a filter exists...
+		if ($filter !is $null) {
+			$modules = filter(lambda({ return iff($filter iswm $1, $1); }, \$filter), $modules);
+		}
+
 		%list = ohash(post => buildTree($modules));
 		$model = treeNodes($null, %list);
 
@@ -139,7 +144,7 @@ sub showPostModules {
 			}
 			[$search setText: ""];
 		}, \$search, \$tree, \$model));
-	}, \$tree, \$search, $sid => $1, \$client, \@allowed);
+	}, \$tree, \$search, $sid => $1, \$client, \@allowed, $filter => $2);
 }
 
 sub createModuleBrowserTab {

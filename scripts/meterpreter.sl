@@ -149,30 +149,7 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Escalate Privileges", 'E', lambda({
-			%handlers["getsystem"] = {
-				this('$safe');
-
-				if ($0 eq "begin" && "*Unknown command*getsystem*" iswm $2) {
-					if ($safe is $null) {
-						$safe = 1;
-						m_cmd($1, "use priv");
-						m_cmd($1, "getsystem -t 0");
-					}
-					else {
-						$safe = $null;
-						showError("getsystem is not available here");
-					}
-				}
-				else if ($0 eq "begin") {
-					showError($2);
-				}
-				else if ($0 eq "end") {
-					%handlers["getsystem"] = $null;
-					$handler = $null;
-				}
-			};
-
-			m_cmd($sid, "getsystem -t 0");
+			showPostModules($sid, "*escalate*");
 		}, $sid => "$sid"));
 
 		item($j, "Steal Token", "S", lambda({

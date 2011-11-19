@@ -6,6 +6,9 @@ In Progress
 - Services refresh is now set to 30s (vs. 60s before)
 - Workspaces -> Manage now opens as a tab and shows all data about workspaces
 - Fixed a bug with Edit Workspace not auto-checking session box when set.
+- Meterpreter -> Access -> Escalate Privileges now highlights the priv esc
+  options in the post module true. This is viable now that getsystem is a   
+  module.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
