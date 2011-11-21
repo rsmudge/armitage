@@ -12,6 +12,9 @@ In Progress
 - Payload module launcher now lets you set Template, Iterations, Encoder, and
   KeepTemplateWorking for any Windows payload. Also, payload is generated and
   saved locally without opening a tab. 
+- sessions -i ## trap is now smarter and opens a shell tab for shell sessions,
+  a meterpreter tab for meterpreter sessions, and offers an error when you
+  try to interact with a session that doesn't exist.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
