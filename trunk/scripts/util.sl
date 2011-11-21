@@ -118,7 +118,18 @@ sub createConsolePanel {
 	[$thread setMetasploitConsole];
 
 	[$thread setSessionListener: {
-		createMeterpreterTab([$1 getActionCommand]);
+		local('$session $sid');
+		$sid = [$1 getActionCommand];
+		$session = sessionData($sid);
+		if ($session is $null) {
+			showError("Session $sid does not exist");
+		}
+		else if ($session['desc'] eq "Meterpreter") {
+			createMeterpreterTab($sid);
+		}
+		else {
+			createShellSessionTab(\$session, \$sid);
+		}
 	}];
 
 	[$console addWordClickListener: lambda({
