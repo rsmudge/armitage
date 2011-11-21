@@ -114,16 +114,33 @@ sub manage_job {
 
 # pass the module launch to another thread please.
 sub launch_service {
-	local('$file');
 	if ($4 eq "payload" && $format ne "multi/handler") {
-		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
-	}
+		local('$file');
+		$file = saveFile2();
+		if ($file is $null) {
+			return;
+		}
 
-	thread(lambda({
-		local('$title $module $options $type');
-		($title, $module, $options, $type) = $args;
-		_launch_service($title, $module, $options, $type, \$format, \$file);
-	}, $args => @_, \$format, \$file));
+		thread(lambda({
+			local('$title $module $options $type $data $handle');
+			($title, $module, $options, $type) = $args;
+			$options["Format"] = $format;
+			$data = call($client, "module.execute", "payload", $module, $options);
+
+			$handle = openf("> $+ $file");
+			writeb($handle, $data["payload"]);
+			closef($handle);
+
+			showError("Saved $file");
+		}, $args => @_, \$format, \$file));
+	}
+	else {
+		thread(lambda({
+			local('$title $module $options $type');
+			($title, $module, $options, $type) = $args;
+			_launch_service($title, $module, $options, $type, \$format);
+		}, $args => @_, \$format));
+	}
 }
 
 sub _launch_service {
@@ -155,26 +172,6 @@ sub _launch_service {
 	
 	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
 		[$c sendString: "exploit -j\n"];
-	}
-	else if ($4 eq "payload") {
-		if ($file !is $null) {
-			$file = strrep($file, '\\', '\\\\'); 
-
-			if ("*windows*meterpreter*" iswm $2) {
-				[$c sendString: "generate -e x86/shikata_ga_nai -i 3 -t $format -f \" $+ $file $+ \"\n"];
-			}
-			else {
-				[$c sendString: "generate -t $format -f \" $+ $file $+ \"\n"];
-			}
-
-			if ($client !is $mclient) {
-				thread(lambda({
-					yield 8192;
-					downloadFile($file);
-					[[$c getWindow] append: "[*] Downloaded \" $+ $file $+ \" to local host\n"];
-				}, \$file, \$c));
-			}
-		}
 	}
 	else {
 		[$c sendString: "run -j\n"];
@@ -299,6 +296,12 @@ sub _launch_dialog {
 		[$model _addEntry: %(Option => "ExitOnSession", Value => "", Tooltip => "Close this handler after a session")];
 		[$model _addEntry: %(Option => "LHOST", Value => "$MY_ADDRESS", Tooltip => "The listen address", Hide => "0")]; 
 		[$model _addEntry: %(Option => "LPORT", Value => "", Tooltip => "The listen port", Hide => "0")]; 
+	}
+	else if ($2 eq "payload" && "*windows*" iswm $3) {
+		[$model _addEntry: %(Option => "Template", Value => "", Tooltip => "The executable template to use", Hide => "0")];
+		[$model _addEntry: %(Option => "KeepTemplateWorking", Value => "", Tooltip => "Keep the executable template functional", Hide => "0")];
+		[$model _addEntry: %(Option => "Iterations", Value => "3", Tooltip => "The number of encoding iterations", Hide => "0")];
+		[$model _addEntry: %(Option => "Encoder", Value => "x86/shikata_ga_nai", Tooltip => "The name of the encoder module to use", Hide => "0")];
 	}
 
 	$table = [new JTable: $model];
