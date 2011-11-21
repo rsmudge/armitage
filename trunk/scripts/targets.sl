@@ -116,7 +116,9 @@ sub refreshGraph {
 				$tooltip = "I know nothing about $id";
 			}
 
-			[$graph addNode: $id, describeHost($host), showHost($host), $tooltip];
+			if ($host['show'] eq "1") {
+				[$graph addNode: $id, describeHost($host), showHost($host), $tooltip];
+			}
 		}
 
 		# update the routes
@@ -193,6 +195,9 @@ sub refreshHosts {
 				%newh[$address]['os_match'] = join(" ", values($host, @('os_name', 'os_flavor', 'os_sp')));
 			}
 		}
+
+		# we saw this in our hosts, it's ok to show it in the viz.
+		%newh[$address]['show'] = 1;
 	}
 
 	%hosts = %newh;
