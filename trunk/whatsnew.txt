@@ -9,6 +9,9 @@ In Progress
 - Meterpreter -> Access -> Escalate Privileges now highlights the priv esc
   options in the post module true. This is viable now that getsystem is a   
   module.
+- Payload module launcher now lets you set Template, Iterations, Encoder, and
+  KeepTemplateWorking for any Windows payload. Also, payload is generated and
+  saved locally without opening a tab. 
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
