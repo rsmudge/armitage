@@ -19,19 +19,75 @@ sub createModuleBrowser {
 	return $split;
 }
 
+sub showModulePopup {
+	local('$menu');
+	if (($2 eq "exploit" && "*/browser/*" !iswm $3 && "*/fileformat/*" !iswm $3) || ($2 eq "auxiliary" && "*_login" iswm $3)) {
+		$menu = [new JPopupMenu];
+		item($menu, "Relevant Targets", 'R', lambda({
+			thread(lambda({
+				local('$options %filter $os');
+				$options = call($client, "module.options", $type, $module);
+				
+				if ("RPORT" in $options) {
+					%filter["ports"] = $options['RPORT']['default'];
+
+					if (%filter["ports"] eq '445') {
+						%filter["ports"] .= ", 139";
+					}
+					else if (%filter["ports"] eq '80') {
+						%filter["ports"] .= ", 443";
+					}
+				}
+
+				$os = split('/', $module)[0];
+				if ($os eq "windows") {
+					%filter["os"] = "windows";
+				}	
+				else if ($os eq "linux") {
+					%filter["os"] = "linux";
+				}
+				else if ($os eq "osx") {
+					%filter["os"] = "ios, mac";
+				}
+
+				if (size(%filter) > 0) {
+					call($client, "db.filter", %filter);
+					elog("switched to workspace: $module");
+					showError("Created a dynamic workspace for this module.\nUse Workspaces -> Show All to see all hosts.");
+				}
+				else {
+					showError("I'm sorry, this option doesn't work for\nthis module.");
+				}
+			}, \$module, \$type));
+		}, $module => $3, $type => $2));
+
+		[$menu show: [$1 getSource], [$1 getX], [$1 getY]];
+	}
+}
+
 sub createModuleList {
 	local('$tree $split $scroll1 $t');
 	$tree = [new JTree: treeNodes($null, $1)];
 	[$tree setRootVisible: 0];
 
 	[$tree addMouseListener: lambda({
-		if ($0 ne "mousePressed" || [$1 getClickCount] < 2) {
+		local('$t');
+		$t = [$1 isPopupTrigger];
+		if ($t == 0 && ($0 ne "mousePressed" || [$1 getClickCount] < 2)) { 
 			return;
 		}
 
 		local('$p');
 		$p = [[$1 getSource] getPathForLocation: [$1 getX], [$1 getY]];
 		if ($p is $null) {
+			return;
+		}
+		else if ([$1 isPopupTrigger]) {
+			local('$selected $type $path');
+			$selected = map({ return "$1"; }, [$p getPath]);
+			$type = $selected[1];
+			$path = join('/', sublist($selected, 2));
+			showModulePopup($1, $type, $path);
 			return;
 		}
 
