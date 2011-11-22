@@ -53,6 +53,7 @@ sub showModulePopup {
 				if (size(%filter) > 0) {
 					call($client, "db.filter", %filter);
 					elog("switched to workspace: $module");
+					[$frame setTitle: "$TITLE - $module"]
 					showError("Created a dynamic workspace for this module.\nUse Workspaces -> Show All to see all hosts.");
 				}
 				else {
