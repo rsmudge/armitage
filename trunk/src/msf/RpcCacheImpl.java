@@ -15,6 +15,7 @@ import org.w3c.dom.*;
 public class RpcCacheImpl {
 	protected RpcConnection connection = null;
 	protected Map cache = new HashMap();
+	protected Map filters = new HashMap();
 
 	private static class CacheEntry {
 		public long last = 0L;
@@ -43,12 +44,44 @@ public class RpcCacheImpl {
 		this.connection = connection;
 	}
 
-	public Object execute(String methodName) throws IOException {
+	public void setFilter(String user, Object[] filter) {
+		synchronized (this) {
+			Map temp = (Map)filter[0];
+			if (temp.size() == 0) {
+				System.err.println("Removed: " + user);
+				filters.remove(user);
+			}
+			else {
+				filters.put(user, filter);
+			}
+		}
+	}
+
+	public Object execute(String user, String methodName) throws IOException {
 		return execute(methodName, null);
 	}
 
-	public Object execute(String methodName, Object[] params) throws IOException {
+	public Object execute(String user, String methodName, Object[] params) throws IOException {
 		synchronized (this) {
+			/* user has a dynamic workspace... let's work with that. */
+			if (!methodName.equals("session.list") && filters.containsKey(user)) {
+				long start = System.currentTimeMillis();
+				Object[] filter = (Object[])filters.get(user);
+				connection.execute("db.filter", filter);
+
+				Object response;
+				if (params == null) {
+					response = connection.execute(methodName);
+				}
+				else {
+					response = connection.execute(methodName, params);
+				}
+				connection.execute("db.filter", new Object[] { new HashMap() });
+				long stop = System.currentTimeMillis() - start;
+				System.err.println("Called user specific filter: " + user + ", " + methodName + ", " + stop + "ms");
+				return response;
+			}
+
 			CacheEntry entry = null;
 
 			if (cache.containsKey(methodName)) {

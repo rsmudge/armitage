@@ -20,6 +20,8 @@ In Progress
   workspace that shows only targets that meet the host/port criteria for that
   module. Use Ctrl+A to select all of those hosts and rock'n'roll. :)
 - Hosts -> Import Hosts now works when the folder/file has spaces in it.
+- Dynamic workspaces are now local to the current Armitage client. They no
+  longer have a global effect in teaming mode.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
