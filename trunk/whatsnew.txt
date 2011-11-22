@@ -16,6 +16,9 @@ In Progress
   a meterpreter tab for meterpreter sessions, and offers an error when you
   try to interact with a session that doesn't exist.
 - Armitage no longer shows a host until it receives a db.hosts reply.
+- Right-click a module and select Relevant Targets to create a dynamic 
+  workspace that shows only targets that meet the host/port criteria for that
+  module. Use Ctrl+A to select all of those hosts and rock'n'roll. :)
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
