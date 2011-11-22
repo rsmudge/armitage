@@ -255,7 +255,7 @@ sub importHosts {
 		$console = createConsoleTab("Import", 1);
 		$success = size($files);
 		elog("imported hosts from $success file" . iff($success != 1, "s"));
-		[$console sendString: "db_import " . join(" ", $files) . "\n"];
+		[$console sendString: "db_import \"" . join(" ", $files) . "\"\n"];
 	}, \$files));
 }
 
