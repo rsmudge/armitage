@@ -220,9 +220,13 @@ sub client {
 			writeObject($handle, $response);
 		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
-			$response = [$client_cache execute: $method, $args];
+			$response = [$client_cache execute: $eid, $method, $args];
 			writeObject($handle, $response);
-		}	
+		}
+		else if ("db.filter" eq $method) {
+			[$client_cache setFilter: $eid, $args];
+			writeObject($handle, %());			
+		}
 		else if ("module.*" iswm $method) {
 			# never underestimate the power of caching to alleviate load.
 			local('$response $time');
@@ -256,6 +260,9 @@ sub client {
 	}
 
 	event("*** $eid left.\n");
+
+	# reset the user's filter...
+	[$client_cache setFilter: $eid, $null];
 
 	# cleanup any locked sessions.
 	acquire($lock_lock);

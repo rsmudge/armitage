@@ -151,7 +151,6 @@ sub client_workspace_items {
 			call($mclient, "db.filter", %());
 			refreshTargets();
 		});
-		elog("removed workspace filter");
 	});
 
 	local('$x $workspace $name');
@@ -162,7 +161,6 @@ sub client_workspace_items {
 				call($mclient, "db.filter", $workspace);
 				refreshTargets();
 			}, \$workspace));
-			elog("switched to workspace: $name");
 			[$frame setTitle: "$TITLE - $name"];
 		}, $workspace => copy($workspace), \$name));
 	}
