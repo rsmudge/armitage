@@ -23,6 +23,8 @@ In Progress
 - Dynamic workspaces are now local to the current Armitage client. They no
   longer have a global effect in teaming mode.
 - Added an Activate button to workspace management dialog.
+- Fixed a bug with sessions only dyn workspace sometimes showing hosts that
+  do not have sessions.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------

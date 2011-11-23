@@ -228,7 +228,7 @@ public class DatabaseImpl implements RpcConnection  {
 				List srvcs = new LinkedList();
 
 				if ((values.get("session") + "").equals("1")) {
-					hosts.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL");
+					hosts.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL AND sessions.close_reason IS NULL");
 					//srvcs.add("sessions.host_id = hosts.id AND sessions.closed_at IS NULL");
 				}
 
