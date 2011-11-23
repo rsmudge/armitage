@@ -46,9 +46,13 @@ public class RpcCacheImpl {
 
 	public void setFilter(String user, Object[] filter) {
 		synchronized (this) {
+			if (filter == null || filter.length == 0) {
+				filters.remove(user);
+				return;
+			}
+
 			Map temp = (Map)filter[0];
 			if (temp.size() == 0) {
-				System.err.println("Removed: " + user);
 				filters.remove(user);
 			}
 			else {
@@ -61,38 +65,19 @@ public class RpcCacheImpl {
 		return execute(methodName, null);
 	}
 
-	public Object execute(String user, String methodName, Object[] params) throws IOException {
+	public Object execute_cache(String cacheKey, String methodName, Object[] params) throws IOException {
 		synchronized (this) {
-			/* user has a dynamic workspace... let's work with that. */
-			if (!methodName.equals("session.list") && filters.containsKey(user)) {
-				long start = System.currentTimeMillis();
-				Object[] filter = (Object[])filters.get(user);
-				connection.execute("db.filter", filter);
-
-				Object response;
-				if (params == null) {
-					response = connection.execute(methodName);
-				}
-				else {
-					response = connection.execute(methodName, params);
-				}
-				connection.execute("db.filter", new Object[] { new HashMap() });
-				long stop = System.currentTimeMillis() - start;
-				System.err.println("Called user specific filter: " + user + ", " + methodName + ", " + stop + "ms");
-				return response;
-			}
-
 			CacheEntry entry = null;
 
-			if (cache.containsKey(methodName)) {
-				entry = (CacheEntry)cache.get(methodName);
+			if (cache.containsKey(cacheKey)) {
+				entry = (CacheEntry)cache.get(cacheKey);
 				if (!entry.isExpired()) {
 					return entry.response;
 				}
 			}
 			else {
 				entry = new CacheEntry();
-				cache.put(methodName, entry);
+				cache.put(cacheKey, entry);
 			}
 
 			long time = System.currentTimeMillis();
@@ -106,6 +91,47 @@ public class RpcCacheImpl {
 			entry.touch(methodName, time);
 
 			return entry.response;
+		}
+	}
+
+	private static String cacheKey(String method, Object[] args) {
+		Map temp = (Map)args[0];
+		StringBuffer key = new StringBuffer();
+		key.append(method + ":");
+		key.append(temp.get("hosts"));
+		key.append(";");
+		key.append(temp.get("os"));
+		key.append(";");
+		key.append(temp.get("ports"));
+		key.append(";");
+		key.append(temp.get("session"));
+		return key.toString();
+	}
+
+	private static final Object[] emptyFilter = new Object[] { new HashMap() };
+
+	public Object execute(String user, String methodName, Object[] params) throws IOException {
+		synchronized (this) {
+			/* user has a dynamic workspace... let's work with that. */
+			if (!methodName.equals("session.list") && filters.containsKey(user)) {
+				/* setup the filter */
+				Object[] filter = (Object[])filters.get(user);
+				connection.execute("db.filter", filter);
+
+				/* calculate the cache key for the filter */
+				String key = cacheKey(methodName, filter);
+
+				/* execute the function (caching the results too) */
+				Object response = execute_cache(key, methodName, params);
+
+				/* reset the filter */
+				connection.execute("db.filter", emptyFilter);
+
+				return response;
+			}
+			else {
+				return execute_cache(methodName, methodName, params);
+			}
 		}
 	}
 }
