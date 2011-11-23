@@ -519,7 +519,7 @@ sub createJobsTab {
 	$model = [new GenericTableModel: @("Id", "Name", "Payload", "Port", "URL", "Start"), "Id", 8];
 
 	$table = [new JTable: $model];
-	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
+	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_INTERVAL_SELECTION]];
 	[[$table getColumn: "Id"] setPreferredWidth: 125];
 	[[$table getColumn: "Port"] setPreferredWidth: 200];
 	[[$table getColumn: "Name"] setPreferredWidth: 1024];
@@ -543,10 +543,17 @@ sub createJobsTab {
 
 	$kill = [new JButton: "Kill"];
 	[$kill addActionListener: lambda({
-		cmd_safe("jobs -k " . [$model getSelectedValue: $table], lambda({ 
-			showError($3); 
+		local('@jobs');
+		@jobs = [$model getSelectedValues: $table];
+
+		thread(lambda({
+			showError("Stopping " . size(@jobs) . " job" . iff(size(@jobs) == 1, "", "s"));
+			local('$jid');
+			foreach $jid (@jobs) {
+				call($client, "job.stop", $jid);
+			}
 			[$jobsf];
-		}, \$jobsf));
+		}, \@jobs, \$jobsf));
 	}, \$table, \$model, \$jobsf)];
 
 	[$panel add: center($refresh, $kill), [BorderLayout SOUTH]];
