@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+22 Nov 11 - A big improvement...
+---------
 - Services refresh is now set to 30s (vs. 60s before)
 - Workspaces -> Manage now opens as a tab and shows all data about workspaces
 - Fixed a bug with Edit Workspace not auto-checking session box when set.
