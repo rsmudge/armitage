@@ -25,6 +25,8 @@ In Progress
 - Added an Activate button to workspace management dialog.
 - Fixed a bug with sessions only dyn workspace sometimes showing hosts that
   do not have sessions.
+- You may now highlight multiple jobs in View -> Jobs and select Kill to get
+  rid of all them at once.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------
