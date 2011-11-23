@@ -22,6 +22,7 @@ In Progress
 - Hosts -> Import Hosts now works when the folder/file has spaces in it.
 - Dynamic workspaces are now local to the current Armitage client. They no
   longer have a global effect in teaming mode.
+- Added an Activate button to workspace management dialog.
 
 11.17.11 - All the things I wanted to do, but didn't have time
 --------

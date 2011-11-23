@@ -29,7 +29,7 @@ sub updateWorkspaceList {
 }
 
 sub listWorkspaces {
-	local('$dialog $table $model $add $edit $delete');
+	local('$dialog $table $model $add $edit $delete $activate');
 	$dialog = [new JPanel];
 	[$dialog setLayout: [new BorderLayout]];
 
@@ -39,12 +39,19 @@ sub listWorkspaces {
 	
 	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
+	$activate = [new JButton: "Activate"];
 	$add = [new JButton: "Add"];
 	$edit = [new JButton: "Edit"];
 	$delete = [new JButton: "Remove"];
 
 	[$add addActionListener: lambda({
 		newWorkspace($table, $model);
+	}, \$table, \$model)];
+
+	[$activate addActionListener: lambda({
+		local('$sel $temp');
+		$sel = selected($table, $model, "name");
+		set_workspace($sel);
 	}, \$table, \$model)];
 
 	[$delete addActionListener: lambda({
@@ -73,7 +80,7 @@ sub listWorkspaces {
 		}
 	}, \$table, \$model)];
 
-	[$dialog add: center($add, $edit, $delete), [BorderLayout SOUTH]];
+	[$dialog add: center($activate, $add, $edit, $delete), [BorderLayout SOUTH]];
 	[$frame addTab: "Workspaces", $dialog, $null];
 }
 
@@ -157,12 +164,22 @@ sub client_workspace_items {
 	foreach $x => $workspace (workspaces()) {
 		$name = $workspace['name'];
 		item($1, "$x $+ . $+ $name", $x, lambda({
+			set_workspace($name);
+		}, \$name));
+	}
+}
+
+sub set_workspace {
+	local('$x $workspace');
+	foreach $x => $workspace (workspaces()) {
+		if ($workspace['name'] eq $1) {
 			thread(lambda({
 				call($mclient, "db.filter", $workspace);
 				refreshTargets();
 			}, \$workspace));
-			[$frame setTitle: "$TITLE - $name"];
-		}, $workspace => copy($workspace), \$name));
+			[$frame setTitle: "$TITLE - $1"];
+			return;
+		}
 	}
 }
 
