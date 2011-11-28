@@ -94,33 +94,49 @@ sub armitage_items {
 
 	separator($1);
 
-	local('$t');
-	$t = menu($1, 'Set Target View', 'S');
-	item($t, 'Graph View', 'G', {
-		[$preferences setProperty: "armitage.string.target_view", "graph"];
-		createDashboard();
-		savePreferences();
+	dynmenu($1, 'Set Target View', 'S', {
+		local('$t1 $t2');
+		if ([$preferences getProperty: "armitage.string.target_view", "graph"] eq "graph") {
+			$t1 = 'Graph View *';
+			$t2 = 'Table View';
+		}
+		else {
+			$t1 = 'Graph View';
+			$t2 = 'Table View *';
+		}
+	
+		item($1, $t1, 'G', {
+			[$preferences setProperty: "armitage.string.target_view", "graph"];
+			createDashboard();
+			savePreferences();
+		});
+
+		item($1, $t2, 'T', {
+			[$preferences setProperty: "armitage.string.target_view", "table"];
+			createDashboard();
+			savePreferences();
+		});
 	});
 
-	item($t, 'Table View', 'T', {
-		[$preferences setProperty: "armitage.string.target_view", "table"];
-		createDashboard();
-		savePreferences();
+	dynmenu($1, 'Set Exploit Rank', 'E', {
+		local('$f @ranks $rank');
+		$f = {
+			[$preferences setProperty: "armitage.required_exploit_rank.string", $rank];
+			savePreferences();
+			showError("Updated minimum exploit rank.");
+		};
+
+		@ranks = @("Excellent", "Great", "Good", "Normal", "Poor");
+
+		foreach $rank (@ranks) {
+			if ([$preferences getProperty: "armitage.required_exploit_rank.string", "great"] eq lc($rank)) {
+				item($1, "$rank *", charAt($rank, 0), lambda($f, $rank => lc($rank)));
+			}
+			else {
+				item($1, $rank, charAt($rank, 0), lambda($f, $rank => lc($rank)));
+			}
+		}
 	});
-
-	local('$f');
-	$f = {
-		[$preferences setProperty: "armitage.required_exploit_rank.string", $rank];
-		savePreferences();
-		showError("Updated minimum exploit rank.");
-	};
-
-	$m = menu($1, 'Set Exploit Rank', 'E');
-	item($m, "Excellent", 'E', lambda($f, $rank => "excellent"));
-	item($m, "Great", 'G', lambda($f, $rank => "great"));
-	item($m, "Good", 'o', lambda($f, $rank => "good"));
-	item($m, "Normal", 'N', lambda($f, $rank => "normal"));
-	item($m, "Poor", 'E', lambda($f, $rank => "poor"));
 
 	separator($1);
 

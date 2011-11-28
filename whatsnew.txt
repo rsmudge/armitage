@@ -5,6 +5,8 @@ In Progress
 -----------
 - Armitage teaming mode now downloads the resulting file for any fileformat
   exploit.
+- Armitage -> Set Exploit Rank and Set Target View now show a * next to an 
+  item to indicate the current setting.
 
 22 Nov 11 - A big improvement...
 ---------
