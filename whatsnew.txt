@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage teaming mode now downloads the resulting file for any fileformat
+  exploit.
+
 22 Nov 11 - A big improvement...
 ---------
 - Services refresh is now set to 30s (vs. 60s before)

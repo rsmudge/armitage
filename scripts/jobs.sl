@@ -139,11 +139,12 @@ sub launch_service {
 		generatePayload($2, $3, $format);
 	}
 	else {
+		local('$listener');
 		thread(lambda({
 			local('$title $module $options $type');
 			($title, $module, $options, $type) = $args;
-			_launch_service($title, $module, $options, $type, \$format);
-		}, $args => @_, \$format));
+			_launch_service($title, $module, $options, $type, \$format, \$listener);
+		}, $args => @_, \$format, \$listener));
 	}
 }
 
@@ -159,6 +160,11 @@ sub _launch_service {
 	else {
 		$c = createConsoleTab("$1", 1);
 	}
+
+	if ($listener) {
+		[$c addSessionListener: $listener];
+	}
+
 	[[$c getWindow] setPrompt: "msf > "];
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
@@ -439,6 +445,24 @@ sub _launch_dialog {
 					}
 		                        elog("ran persistence on " . join(", ", @sessions));
 				}
+			}
+			else if ("*/fileformat/*" iswm $command && 'FILENAME' in $options) {
+				local('$listener');
+				$listener = {
+					local('$temp $file $path');
+					foreach $temp (split("\n", $2)) {
+						if ($temp ismatch '... (.*?) stored at (.*)') {
+							($file, $path) = matched();
+							downloadFile($path, saveFile2());
+						}
+					}					
+				};
+
+				if ($client is $mclient) {
+					$listener = $null;
+				}
+		
+				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem], \$listener);
 			}
 			else {
 				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
