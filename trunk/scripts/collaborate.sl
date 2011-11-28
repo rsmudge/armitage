@@ -148,9 +148,9 @@ sub uploadFile {
 }
 
 sub downloadFile {
-	local('$file $handle %r');
+	local('$file $handle %r $2');
 	%r = call($mclient, "armitage.download", $1);
-	$file = getFileName($1);	
+	$file = iff($2, $2, getFileName($1));	
 	$handle = openf("> $+ $file");
 	writeb($handle, %r['data']);
 	closef($handle);
