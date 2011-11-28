@@ -112,27 +112,31 @@ sub manage_job {
 	}, \$startf, \$stopf));
 }
 
+sub generatePayload {
+	local('$file');
+	$file = saveFile2();
+	if ($file is $null) {
+		return;
+	}
+
+	thread(lambda({
+		local('$module $options $format $handle $data');
+		($module, $options, $format) = $args;
+		$options["Format"] = $format;
+		$data = call($client, "module.execute", "payload", $module, $options);
+
+		$handle = openf("> $+ $file");
+		writeb($handle, $data["payload"]);
+		closef($handle);
+
+		showError("Saved $file");
+	}, $args => @_, \$file));
+}
+
 # pass the module launch to another thread please.
 sub launch_service {
 	if ($4 eq "payload" && $format ne "multi/handler") {
-		local('$file');
-		$file = saveFile2();
-		if ($file is $null) {
-			return;
-		}
-
-		thread(lambda({
-			local('$title $module $options $type $data $handle');
-			($title, $module, $options, $type) = $args;
-			$options["Format"] = $format;
-			$data = call($client, "module.execute", "payload", $module, $options);
-
-			$handle = openf("> $+ $file");
-			writeb($handle, $data["payload"]);
-			closef($handle);
-
-			showError("Saved $file");
-		}, $args => @_, \$format, \$file));
+		generatePayload($2, $3, $format);
 	}
 	else {
 		thread(lambda({
