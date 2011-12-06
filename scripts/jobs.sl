@@ -416,7 +416,9 @@ sub _launch_dialog {
 			}
 		}
 
-		[$dialog setVisible: 0];
+		if (!isShift($1)) {
+			[$dialog setVisible: 0];
+		}
 
 		if ($visible) {
 			if ('SESSION' in $options) {

@@ -442,7 +442,9 @@ sub attack_dialog {
 			}
 		}, $options => copy($options), \$exploit, \$b));
 
-		[$dialog setVisible: 0];
+		if (!isShift($1)) {
+			[$dialog setVisible: 0];
+		}
 
 		elog("exploit $exploit @ " . $options["RHOST"]);
 	}, $exploit => $4, \$model, \$combobox, \$dialog, \$b, \$table)];
