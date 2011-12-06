@@ -70,14 +70,14 @@ sub parseMeterpreter {
 	}
 	else if ("[-]*Unknown command: *list_tokens*" iswm $data) {
 		warn("Uhm... still an unknown command?!?");
-		m_cmd($sid, "use incognito");
+		m_cmd($sid, "load incognito");
 		return; 
 	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		%handlers["list_tokens"] = $null;
 		%handlers["getuid"] = $null;
-		m_cmd($sid, "use stdapi");
-		m_cmd($sid, "use priv");
+		m_cmd($sid, "load stdapi");
+		m_cmd($sid, "load priv");
 		showError("Loading stdapi. Try command again");
 		return;
 	}
@@ -185,14 +185,14 @@ sub showMeterpreterMenu {
 				}
 			}, \$sid, %tokens => ohash(), $show => $null, $watch => %(value => 1), $type => "");
 
-			%handlers["use"] = lambda({
+			%handlers["load"] = lambda({
 				if ($0 eq "end" && "*incognito*" iswm $2) {
 					m_cmd($sid, "list_tokens -u");
 					m_cmd($sid, "list_tokens -g");
 				}
 			}, \$sid);
 
-			m_cmd($sid, "use incognito");
+			m_cmd($sid, "load incognito");
 		}, $sid => "$sid"));
 
 		local('$h');

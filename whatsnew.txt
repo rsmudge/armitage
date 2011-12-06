@@ -19,6 +19,7 @@ In Progress
   problem and giving the solution isn't enough for some folks. Since you're
   reading this--you're probably not one of those people. Those people don't
   read anything from the developer. :)
+- Armitage now uses "load" to load a meterpreter module instead of "use"
 
 22 Nov 11 - A big improvement...
 ---------
