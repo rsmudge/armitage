@@ -14,6 +14,11 @@ In Progress
 - Dynamic Workspace editor now trims whitespace from your entries. Errant
   whitespace causes Armitage to reject the entry and your workspace never
   acivates.
+- Updated the "msfrpcd died" troubleshooting dialog. The new one takes folks
+  to a website with extremely detailed information. Apparently detecting the
+  problem and giving the solution isn't enough for some folks. Since you're
+  reading this--you're probably not one of those people. Those people don't
+  read anything from the developer. :)
 
 22 Nov 11 - A big improvement...
 ---------

@@ -1,19 +1,12 @@
-Metasploit's RPC daemon shut down. There are a
-few possibilities for this.
+Metasploit's RPC daemon shut down. This is the
+service Armitage uses to talk to Metasploit. 
 
-1. You do not have enough RAM. Without enough
-   RAM, Metasploit's RPC daemon will start and
-   silently close. 
+When this happens, it means something is wrong.
+The developer of Armitage feels your pain from
+afar. Would you like help troubleshooting this?
 
-   Solution: Increase your RAM
+P.S. yes you would--the answer is known and it's
+easy to deal with. Click Yes to visit the 
+troubleshooting guide at:
 
-2. You do not have the msgpack Ruby gem required
-   by Armitage. This is a new requirement. 
-   Armitage now requires a Metasploit 4.0 or 
-   greater base install. msfupdate does not help.
-
-   BackTrack 5 users--this affects you! 
-   BackTrack 5r1 is OK though.
-
-   Solution: Install Metasploit 4.1+ using the 
-   full setup installer.
+http://www.fastandeasyhacking.com/nomsfrpcd

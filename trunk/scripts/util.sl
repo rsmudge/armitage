@@ -343,10 +343,14 @@ sub startMetasploit {
 				#
 				try {
 					[[$msfrpc_handle getSource] exitValue];
-					local('$msg');
+					local('$msg $text');
 					$msg = [SleepUtils getIOHandle: resource("resources/error.txt"), $null];
-					showError(readb($msg, -1));
+					$text = readb($msg, -1);
 					closef($msg);
+
+					if (!askYesNo($text, "Uh oh!")) {
+						[gotoURL("http://www.fastandeasyhacking.com/nomsfrpcd")];
+					}
 					return;
 				}
 				catch $ex {
