@@ -11,6 +11,9 @@ In Progress
   launch dialog. One use case for this: set up a payload multi/handler, 
   shift+click Launch to do it, then change output type to exe, click Launch
   and you're all set.
+- Dynamic Workspace editor now trims whitespace from your entries. Errant
+  whitespace causes Armitage to reject the entry and your workspace never
+  acivates.
 
 22 Nov 11 - A big improvement...
 ---------
