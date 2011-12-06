@@ -117,10 +117,10 @@ sub workspaceDialog {
 	[$button addActionListener: lambda({
 		# yay, we have a dialog...
 		local('$n $h $p $o $s @workspaces $ws $temp');
-		$n = [$name getText];
-		$h = strrep([$host getText], '*', '%', '?', '_');
-		$p = [$ports getText];
-		$o = strrep([$os getText], '*', '%', '?', '_');
+		$n = [[$name getText] trim];
+		$h = [strrep([$host getText], '*', '%', '?', '_') trim];
+		$p = [[$ports getText] trim];
+		$o = [strrep([$os getText], '*', '%', '?', '_') trim];
 		$s = [$session isSelected];
 
 		# save the new menu
