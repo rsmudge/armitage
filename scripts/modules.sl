@@ -163,7 +163,30 @@ sub createModuleList {
 	[$panel setMinimumSize: [new Dimension: 180, 0]];
 
 	let(&showPostModules, \$tree, \$search)
+	let(&showExploitModules, \$tree, \$search)
 	return $panel;
+}
+
+# shows the post modules compatible with a session... for this to work, the
+# code that creates the module browser must call: let(&showExploitModules, $tree => ..., $search => ...)
+sub showExploitModules {
+	local('%list $model');
+	if (size($1) == 0) {
+		return;
+	}
+
+	%list = ohash(exploit => buildTree($1));
+	$model = treeNodes($null, %list);
+
+	dispatchEvent(lambda({
+		local('$x');
+		[[$tree getModel] setRoot: $model];
+
+		for ($x = 0; $x < [$tree getRowCount]; $x++) {
+			[$tree expandRow: $x];
+		}
+		[$search setText: ""];
+	}, \$search, \$tree, \$model));
 }
 
 # shows the post modules compatible with a session... for this to work, the

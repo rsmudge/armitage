@@ -359,7 +359,15 @@ sub thread {
 }
 
 sub compareHosts {
-	return [Route ipToLong: $1] <=> [Route ipToLong: $2];
+	if ($1 eq "unknown") {
+		return compareHosts("0.0.0.0", $2);
+	}
+	else if ($2 eq "unknown") {
+		return compareHosts($1, "0.0.0.0");
+	}
+	else {
+		return [Route ipToLong: $1] <=> [Route ipToLong: $2];
+	}
 }
 
 # tells table to save any edited cells before going forward...

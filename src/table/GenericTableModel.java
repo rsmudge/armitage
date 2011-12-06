@@ -72,6 +72,22 @@ public class GenericTableModel extends AbstractTableModel {
 		}
 	}
 
+	public Object[][] getSelectedValuesFromColumns(JTable t, String cols[]) {
+		synchronized (this) {
+			int row[] = t.getSelectedRows();
+			Object[][] rv = new Object[row.length][cols.length];
+
+			for (int x = 0; x < row.length; x++) {
+				int r = t.convertRowIndexToModel(row[x]);
+				for (int y = 0; y < cols.length; y++) {
+					rv[x][y] = ( (Map)rows.get(r) ).get(cols[y]);
+				}
+			}
+
+			return rv;
+		}
+	}
+
 	public Object getSelectedValue(JTable t) {
 		synchronized (this) {
 			Object[] values = getSelectedValues(t);
