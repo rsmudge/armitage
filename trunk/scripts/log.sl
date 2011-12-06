@@ -70,7 +70,7 @@ sub initLogSystem {
 			logFile([$file getAbsolutePath], "screenshots", ".");
 			deleteFile([$file getAbsolutePath]);
 
-			showError("Saved $file $+ \nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/screenshots");
+			showError("Saved " . getFileName($file) . "\nGo to View -> Reporting -> Activity Logs\n\nThe file is in:\n[today's date]/screenshots");
 		}, \$image, \$title));
 	}];
 }

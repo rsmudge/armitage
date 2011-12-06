@@ -23,6 +23,8 @@ In Progress
 - Key logger event log announcement now notes the session ID. This is so 
   your teammates will know not to migrate that session since it's recording
   key strokes.
+- Right-click X in tab -> Save Screenshot now displays filename without the
+  path.
 
 22 Nov 11 - A big improvement...
 ---------
