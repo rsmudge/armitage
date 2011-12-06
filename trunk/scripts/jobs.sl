@@ -437,7 +437,7 @@ sub _launch_dialog {
 				}
 				else if ($command eq "windows/capture/keylog_recorder") {
 					foreach $session (@sessions) {
-						$session = sessionToHost($session);
+						$session = sessionToHost($session) . "/ $+ $session";
 					}
 		                        elog("is logging keystrokes on " . join(", ", @sessions));
 				}

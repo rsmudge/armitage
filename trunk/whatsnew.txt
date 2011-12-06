@@ -20,6 +20,9 @@ In Progress
   reading this--you're probably not one of those people. Those people don't
   read anything from the developer. :)
 - Armitage now uses "load" to load a meterpreter module instead of "use"
+- Key logger event log announcement now notes the session ID. This is so 
+  your teammates will know not to migrate that session since it's recording
+  key strokes.
 
 22 Nov 11 - A big improvement...
 ---------
