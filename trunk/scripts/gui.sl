@@ -467,3 +467,7 @@ sub gotoFile {
 		}
 	}, $f => $1);
 }
+
+sub isShift {
+	return iff(([$1 getModifiers] & [ActionEvent SHIFT_MASK]) == [ActionEvent SHIFT_MASK], 1);
+}
