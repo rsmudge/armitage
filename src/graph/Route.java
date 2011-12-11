@@ -9,7 +9,7 @@ public class Route {
 		long result = 0;
 
 		/* this is a fallback in case one of the IP addresses is malformed */
-		if (quads.length != 4) 
+		if (quads.length != 4)
 			return 0L;
 
 		result += Integer.parseInt(quads[3]);
@@ -24,6 +24,8 @@ public class Route {
 	protected long begin;
 	protected long end;
 	protected String gateway;
+	protected String network;
+	protected String mask;
 
 	public Route(String address) {
 		String[] description = address.split("/");
@@ -54,6 +56,10 @@ public class Route {
 			network = description[1];
 		}
 
+		this.network = host;
+		this.mask    = network;
+		this.gateway = "undefined";
+
 		begin = ipToLong(host);
 		try {
 			end = begin + (RANGE_MAX >> Integer.parseInt(network));
@@ -69,6 +75,21 @@ public class Route {
 		end   = begin + (RANGE_MAX - ipToLong(networkMask));
 
 		this.gateway = gateway;
+
+		this.network = address;
+		this.mask = networkMask;
+	}
+
+	public boolean equals(Object o) {
+		if (o instanceof Route) {
+			Route p = (Route)o;
+			return p.begin == begin && p.end == end && p.gateway.equals(gateway);
+		}
+		return false;
+	}
+
+	public int hashCode() {
+		return (int)(begin + end + gateway.hashCode());
 	}
 
 	/** return the gateway */
@@ -80,5 +101,9 @@ public class Route {
 	public boolean shouldRoute(String address) {
 		long check = ipToLong(address);
 		return check >= begin && check <= end;
+	}
+
+	public String toString() {
+		return network + "/" + mask + " via " + gateway;
 	}
 }
