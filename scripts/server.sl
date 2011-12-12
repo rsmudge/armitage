@@ -387,13 +387,31 @@ sub main {
 	#
 	# setup the database
 	# 
-	try {
-		local('$database');
-		$database = connectToDatabase();
-		[$client setDatabase: $database]; 
-	}
-	catch $exception {
-		println("Could not connect to database: " . [$exception getMessage]);
+	checkError($null); # clear the error status...
+	local('$database $error');
+	$database = connectToDatabase();
+	[$client setDatabase: $database]; 
+
+	if (checkError($error)) {
+
+		println("
+** Error ** ** Error ** ** Error ** ** Error ** ** Error **
+
+Could not connect to the Metasploit database. It's possible
+that it's not running. Follow the database troubleshooting
+steps at:
+
+http://www.fastandeasyhacking.com/start
+
+Also note: the latest Metasploit installer (4.1.4+) does not 
+create a postgres start script for you. This would explain
+why Metasploit's database isn't running. To create one, put:
+
+exec $BASE_DIRECTORY $+ /postgresql/scripts/ctl.sh \"\$@\"
+
+in /etc/init.d/framework-postgres. Then start the database:
+
+service framework-postgres start");
 		[System exit: 0];
 	}
 
