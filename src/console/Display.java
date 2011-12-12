@@ -65,10 +65,10 @@ public class Display extends JPanel {
 	public Display(Properties display) {
 		this.display = display;
 		consoleFont = Font.decode(display.getProperty("console.font.font", "Monospaced BOLD 14"));
-	
+
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(2, 2, 2, 2));
-		
+
 		/* init the console */
 
 		console = new JTextArea();
@@ -87,6 +87,9 @@ public class Display extends JPanel {
 		components.add(this);
 
 		updateComponentLooks();
+
+			/* right-click, Copy menu, for the console */
+		new ui.CopyPopup(console);
 
 		/* add keyboard shortcuts */
 

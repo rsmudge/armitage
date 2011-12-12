@@ -15,10 +15,7 @@ In Progress
   whitespace causes Armitage to reject the entry and your workspace never
   acivates.
 - Updated the "msfrpcd died" troubleshooting dialog. The new one takes folks
-  to a website with extremely detailed information. Apparently detecting the
-  problem and giving the solution isn't enough for some folks. Since you're
-  reading this--you're probably not one of those people. Those people don't
-  read anything from the developer. :)
+  to a website with detailed information. 
 - Armitage now uses "load" to load a meterpreter module instead of "use"
 - Key logger event log announcement now notes the session ID. This is so 
   your teammates will know not to migrate that session since it's recording
@@ -27,6 +24,7 @@ In Progress
   path.
 - Deconfliction server now detects when database is not available and offers
   troubleshooting steps. 
+- Loot/Downloads viewer now has a right-click menu to Copy selected text.
 
 22 Nov 11 - A big improvement...
 ---------
