@@ -25,6 +25,8 @@ In Progress
   key strokes.
 - Right-click X in tab -> Save Screenshot now displays filename without the
   path.
+- Deconfliction server now detects when database is not available and offers
+  troubleshooting steps. 
 
 22 Nov 11 - A big improvement...
 ---------
