@@ -1,6 +1,14 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Hosts -> Clear Database now clears the sessions and clients tables 
+- Fixed a bug preventing dynamic workspace port/session filter from 
+  working on a fresh database. This was a fun one. This only affected 
+  folks with a completely fresh database and because Hosts -> Clear 
+  Database didn't clear everything, this went unnoticed until now.
+
 12 Dec 11
 ---------
 - Armitage teaming mode now downloads the resulting file for any fileformat

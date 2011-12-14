@@ -163,7 +163,15 @@ public class DatabaseImpl implements RpcConnection  {
 		temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto, creds.ptype FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
 
 		if (hFilter != null) {
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts, services, sessions WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT " + limit1);
+			List tables = new LinkedList();
+			tables.add("hosts");
+			if (hFilter.indexOf("services.") >= 0)
+				tables.add("services");
+
+			if (hFilter.indexOf("sessions.") >= 0)
+				tables.add("sessions");
+
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM " + join(tables, ", ") + " WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT " + limit1);
 		}
 		else {
 			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " LIMIT " + limit1);
@@ -214,6 +222,8 @@ public class DatabaseImpl implements RpcConnection  {
 				executeUpdate("DELETE FROM creds");
 				executeUpdate("DELETE FROM loots");
 				executeUpdate("DELETE FROM vulns");
+				executeUpdate("DELETE FROM sessions");
+				executeUpdate("DELETE FROM clients");
 				return new HashMap();
 			}
 			else if (methodName.equals("db.filter")) {
