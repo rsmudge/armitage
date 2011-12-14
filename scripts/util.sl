@@ -187,9 +187,12 @@ sub setupHandlers {
 sub createConsole {
 	local('$r');
 	$r = call($1, "console.create");
-	if ($r['id'] !is $null) {
+	if ($r !is $null && $r['id'] !is $null) {
 		call($1, "console.read", $r['id'] . "");
 		return $r['id'] . "";
+	}
+	else {
+		warn("Create console failed");
 	}
 }
 
