@@ -214,6 +214,38 @@ public class DatabaseImpl implements RpcConnection  {
 				result.put("vulns", a);
 				return result;
 			}
+			else if (methodName.equals("db.key_add")) {
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("INSERT INTO notes (ntype, data) VALUES (?, ?)");
+				stmt.setString(1, params[0] + "");
+				stmt.setString(2, params[1] + "");
+				stmt.executeUpdate();
+				return new HashMap();
+			}
+			else if (methodName.equals("db.key_delete")) {
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("DELETE FROM notes WHERE id = ?");
+				stmt.setString(1, params[0] + "");
+				stmt.executeUpdate();
+				return new HashMap();
+			}
+			else if (methodName.equals("db.key_clear")) {
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("DELETE FROM notes WHERE ntype = ?");
+				stmt.setString(1, params[0] + "");
+				stmt.executeUpdate();
+				return new HashMap();
+			}
+			else if (methodName.equals("db.key_values")) {
+				Map results = new HashMap();
+				String key = params[0] + "";
+				if (!key.matches("[0-9a-zA-Z\\._]+")) {
+					System.err.println("Key '" + key + "' did not validate!");
+					return new HashMap();
+				}
+				results.put("values", executeQuery("SELECT * FROM notes WHERE ntype = '" + key + "'"));
+				return results;
+			}
 			else if (methodName.equals("db.clear")) {
 				executeUpdate("DELETE FROM hosts");
 				executeUpdate("DELETE FROM services");
