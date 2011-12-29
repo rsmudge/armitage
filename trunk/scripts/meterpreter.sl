@@ -291,10 +291,6 @@ sub launch_msf_scans {
 	local('@modules $1 $hosts');
 
 	@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
-	#push(@modules, "scanner/discovery/udp_sweep");
-	#push(@modules, "scanner/netbios/nbname");
-	push(@modules, "scanner/dcerpc/tcp_dcerpc_auditor");
-	#push(@modules, "scanner/mssql/mssql_ping");
 
 	$hosts = iff($1 is $null, ask("Enter range (e.g., 192.168.1.0/24):"), $1);
 
@@ -332,7 +328,7 @@ sub launch_msf_scans {
 										push(@c, "set SSL true\n");
 									}
 									push(@c, "set RHOSTS " . join(", ", $hosts));
-									push(@c, "set THREADS 8");
+									push(@c, "set THREADS 24");
 									push(@c, "run -j");
 
 									push(@launch, @c);
@@ -365,16 +361,18 @@ sub launch_msf_scans {
 
 			# build up a list of scan ports
 			foreach $index => $scanner (@modules) {
-				%o = call($client, "module.options", "auxiliary", $scanner);
-				if ('RPORT' in %o) {
-					$port = %o['RPORT']['default'];
-					push(%ports[$port], $scanner);
-					if ($port == 80) {
-						push(%ports['443'], $scanner);
+				if ($scanner ismatch 'scanner/(.*?)/\1_version') {
+					%o = call($client, "module.options", "auxiliary", $scanner);
+					if ('RPORT' in %o) {
+						$port = %o['RPORT']['default'];
+						push(%ports[$port], $scanner);
+						if ($port == 80) {
+							push(%ports['443'], $scanner);
+						}
 					}
-				}
 
-				safetyCheck();
+					safetyCheck();
+				}
 			}
 
 			# add these ports to our list of ports to scan.. these come from querying all of Metasploit's modules
@@ -390,7 +388,7 @@ sub launch_msf_scans {
 			[$console sendString: "use auxiliary/scanner/portscan/tcp\n"];
 			[$console sendString: "set PORTS " . join(", ", keys(%ports)) . "\n"];
 			[$console sendString: "set RHOSTS $hosts $+ \n"];
-			[$console sendString: "set THREADS 8\n"];
+			[$console sendString: "set THREADS 24\n"];
 			[$console sendString: "run -j\n"];
 		}
 	}, \$hosts, \@modules));
