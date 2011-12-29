@@ -12,6 +12,8 @@ In Progress
 - Added file chooser helper for SigningCert and SigningKey options.
 - Added hack to return correct route info when setting up pivoting through
   Java meterpreter.
+- Armitage now posts a note to the event log when a user starts a browser 
+  exploit or a server module.
 
 12 Dec 11
 ---------

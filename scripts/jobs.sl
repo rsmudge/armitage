@@ -410,6 +410,23 @@ sub _launch_dialog {
 		
 				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem], \$listener);
 			}
+			else if ($type eq "exploit" && "*/browser/*" iswm $command) {
+				local('$listener');
+				$listener = lambda({
+					local('$temp $file $path');
+					foreach $temp (split("\n", $2)) {
+						if ($temp ismatch '...\s+Local IP:\s+(http.*)') {
+							elog("launched $command @ " . matched()[0]);
+						}
+					}					
+				}, \$command);
+
+				if ($client is $mclient) {
+					$listener = $null;
+				}
+		
+				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem], \$listener);
+			}
 			else {
 				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem]);
 			}
@@ -419,9 +436,11 @@ sub _launch_dialog {
 				local('$r');
 				$r = call($client, "module.execute", $type, $command, $options);
 				if ("result" in $r) {
+					elog("started $command");
 					showError($r["result"]);
 				}
 				else if ("job_id" in $r) {
+					elog("started $command");
 					showError("Started service");
 				}
 				else {
