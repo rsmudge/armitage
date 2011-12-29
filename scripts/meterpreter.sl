@@ -291,40 +291,118 @@ sub launch_msf_scans {
 	local('@modules $1 $hosts');
 
 	@modules = filter({ return iff("*_version" iswm $1, $1); }, @auxiliary);
-	push(@modules, "scanner/discovery/udp_sweep");
-	push(@modules, "scanner/netbios/nbname");
+	#push(@modules, "scanner/discovery/udp_sweep");
+	#push(@modules, "scanner/netbios/nbname");
 	push(@modules, "scanner/dcerpc/tcp_dcerpc_auditor");
-	push(@modules, "scanner/mssql/mssql_ping");
+	#push(@modules, "scanner/mssql/mssql_ping");
 
 	$hosts = iff($1 is $null, ask("Enter range (e.g., 192.168.1.0/24):"), $1);
 
 	thread(lambda({
-		local('%options $scanner $count $pivot $index $progress');
+		local('$scanner $index $console %ports %discover $port %o $temp');
+		%ports = ohash();
+		%discover = ohash();
+		setMissPolicy(%ports, { return @(); });
+		setMissPolicy(%discover, { return @(); });
 
 		if ($hosts !is $null) {
-		        $progress = [new javax.swing.ProgressMonitor: $null, "Launch Scans", "", 0, size(@modules)];
+			elog("launched msf scans at: $hosts");
 
-			# we don't need to set CHOST as the discovery modules will honor any pivots already in place
-			%options = %(THREADS => iff(isWindows(), 1, 8), RHOSTS => $hosts);
+			$console = createConsoleTab("Scan", 1, $host => "all", $file => "scan");
+			[$console addSessionListener: lambda({
+				local('$text $host $port $hosts $modules $module @c');
 
+				foreach $text (split("\n", $2)) {
+					if ($text ismatch '... (.*?):(\d+) - TCP OPEN') {
+						($host, $port) = matched();
+						push(%discover[$port], $host);
+					}
+					else if ($text ismatch '... Scanned \d+ of \d+ hosts .100. complete.' && $start == 1) {
+						$start = $null;
+						[[$console getWindow] append: "[*] Starting host discovery scans\n"];
+
+						foreach $port => $hosts (%discover) {
+							if ($port in %ports) {
+								$modules = %ports[$port];
+								foreach $module ($modules) {
+									@c = @("use $module");
+
+									if ($port eq '443') {
+										push(@c, "set RPORT $port");
+										push(@c, "set SSL true\n");
+									}
+									push(@c, "set RHOSTS " . join(", ", $hosts));
+									push(@c, "set THREADS 8");
+									push(@c, "run -j");
+
+									push(@launch, @c);
+								}
+							}
+						}
+					}
+
+					if ($text ismatch '... Scanned \d+ of \d+ hosts .100. complete.') {
+						if (size(@launch) == 0) {
+							$time = (ticks() - $time) / 1000.0;
+
+							[[$console getWindow] append: "\n[*] Scan complete in $time $+ s\n"];
+						}
+						else {
+							[[$console getWindow] append: "\n[*] " . size(@launch) . " scan" . iff(size(@launch) != 1, "s") . " to go...\n"];
+							thread(lambda({
+								local('$command');
+								foreach $command ($commands) {
+									[$console sendString: "$command $+ \n"];
+									yield 250;
+								}
+							}, \$console, $commands => shift(@launch)));
+						}
+					}
+				}			
+			}, \$console, \%ports, \%discover, $start => 1, @launch => @(), $time => ticks())];
+
+			[[$console getWindow] append: "[*] Building list of scan ports and modules\n"];
+
+			# build up a list of scan ports
 			foreach $index => $scanner (@modules) {
-				[$progress setProgress: $index];
-				[$progress setNote: $scanner];
-
-				if ($scanner eq "scanner/http/http_version") {
-					local('%o2');
-					%o2 = copy(%options);
-					%o2["RPORT"] = "443";
-					%o2["SSL"] = "1";
-					call($client, "module.execute", "auxiliary", $scanner, %o2);
+				%o = call($client, "module.options", "auxiliary", $scanner);
+				if ('RPORT' in %o) {
+					$port = %o['RPORT']['default'];
+					push(%ports[$port], $scanner);
+					if ($port == 80) {
+						push(%ports['443'], $scanner);
+					}
 				}
-				call($client, "module.execute", "auxiliary", $scanner, %options);
-				$count++;
-				yield 250;
+
+				safetyCheck();
 			}
 
-			elog("launched $count discovery modules at: $hosts");
-			[$progress close];
+			# add these ports to our list of ports to scan.. these come from querying all of Metasploit's modules
+			# for the default ports
+			foreach $port (@(50000, 21, 1720, 80, 443, 143, 3306, 1521, 110, 5432, 50013, 25, 161, 22, 23, 17185, 135, 8080, 4848, 1433, 5560, 512, 513, 514, 445, 5900, 5038, 111, 139, 49, 515, 7787, 2947, 7144, 9080, 8812, 2525, 2207, 3050, 5405, 1723, 1099, 5555, 921, 10001, 123, 3690, 548, 617, 6112, 6667, 3632, 783, 10050, 38292, 12174, 2967, 5168, 3628, 7777, 6101, 10000, 6504, 41523, 41524, 2000, 1900, 10202, 6503, 6070, 6502, 6050, 2103, 41025, 44334, 2100, 5554, 12203, 26000, 4000, 1000, 8014, 5250, 34443, 8028, 8008, 7510, 9495, 1581, 8000, 18881, 57772, 9090, 9999, 81, 3000, 8300, 8800, 8090, 389, 10203, 5093, 1533, 13500, 705, 623, 4659, 20031, 16102, 6080, 6660, 11000, 19810, 3057, 6905, 1100, 10616, 10628, 5051, 1582, 65535, 105, 22222, 30000, 113, 1755, 407, 1434, 2049, 689, 3128, 20222, 20034, 7580, 7579, 38080, 12401, 910, 912, 11234, 46823, 5061, 5060, 2380, 69, 5800, 62514, 42)) {
+				$temp = %ports[$port];
+			}
+
+			# add a few left out modules
+			push(%ports['445'], "scanner/smb/smb_version");
+
+			[[$console getWindow] append: "[*] Launching TCP scan\n"];
+			[$console sendString: "use auxiliary/scanner/portscan/tcp\n"];
+			[$console sendString: "set PORTS " . join(", ", keys(%ports)) . "\n"];
+			[$console sendString: "set RHOSTS $hosts $+ \n"];
+			[$console sendString: "set THREADS 8\n"];
+			[$console sendString: "run -j\n"];
 		}
 	}, \$hosts, \@modules));
+}
+
+inline safetyCheck {
+	local('$__time');
+	if ($__time == 0) {
+		$__time = ticks();
+	}
+	if ((ticks() - $__time) > 250) {
+		yield 50;
+		$__time = ticks();
+	}
 }

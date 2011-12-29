@@ -17,6 +17,11 @@ In Progress
 - Armitage now supports dragging and dropping a module onto a host in graph
   and table view. This action opens the module launcher configured to work
   with that host.
+- Drastically rewrote MSF Scans. MSF Scans now intelligently builds a list
+  of ports to scan based on what Metasploit can do. After an initial port
+  scan, MSF Scans runs discovery modules against relevant hosts. As a bonus
+  you will see all of the output of these scans. 
+- Enhanced the Windows heuristic used to guess which OS image to display
 
 12 Dec 11
 ---------
