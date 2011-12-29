@@ -8,6 +8,7 @@ In Progress
   working on a fresh database. This was a fun one. This only affected 
   folks with a completely fresh database and because Hosts -> Clear 
   Database didn't clear everything, this went unnoticed until now.
+- Added various reverse shell payloads to payload helper dialog.
 
 12 Dec 11
 ---------
