@@ -24,6 +24,8 @@ In Progress
 - Enhanced the Windows heuristic used to guess which OS image to display
 - The deconfliction server throttle is now less draconian about how long it
   throttles a call.
+- Armitage no longer posts to the event log from the UI thread (this will
+  prevent the UI from blocking in some cases)
 
 12 Dec 11
 ---------
