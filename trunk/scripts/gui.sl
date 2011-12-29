@@ -447,7 +447,7 @@ sub tableRenderer {
 			local('$render $v $content');
 			$render = [$table getDefaultRenderer: ^String];
 
-			$content = iff ($2 eq "PAYLOAD" || "*FILE*" iswm $2 || $2 eq "RHOST" || $2 eq "RHOSTS" || $2 eq "Template" || $2 eq "DICTIONARY" || $2 eq "NAMELIST", "$2 \u271A", $2);
+			$content = iff ($2 eq "PAYLOAD" || "*FILE*" iswm $2 || $2 eq "RHOST" || $2 eq "RHOSTS" || $2 eq "Template" || $2 eq "DICTIONARY" || $2 eq "NAMELIST" || $2 eq "SigningKey" || $2 eq "SigningCert", "$2 \u271A", $2);
 			$v = [$render getTableCellRendererComponent: $1, $content, $3, $4, $5, $6];
 			[$v setToolTipText: [$model getValueAtColumn: $table, $5, "Tooltip"]];
 
