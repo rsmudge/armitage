@@ -48,9 +48,16 @@ sub add_pivot_function  {
 
 # pivot_dialog($sid, $network output?))
 sub pivot_dialog {
-	this('@routes');
+	this('@routes $platform');
 
-	if ($0 eq "update") {
+	if ($0 eq "begin") {
+		local('$data');
+		$data = sessionData($1);
+		if ($data && 'platform' in $data) {
+			$platform = $data['platform'];
+		}
+	}
+	else if ($0 eq "update") {
 		local('$ip_pattern $host $mask $gateway');
 		$ip_pattern = "(\\d+\\.\\d+.\\d+.\\d+)";
 
@@ -58,11 +65,29 @@ sub pivot_dialog {
 			($host, $mask, $gateway) = matched();
 
 			if ($host ne "127.0.0.0" && $host ne "224.0.0.0" && $host ne "0.0.0.0" && $mask ne "255.255.255.255") {
+				# work around a Metasploit bug that returns the host IP/mask rather than the actual route info
+				# for Java meterpreter... 
+				if ($platform eq "java/java") {
+					local('$a $b $c $d');
+					($a, $b, $c, $d) = split('\\.', $host);
+
+					if ($mask eq "255.255.255.0") {
+						$host = "$a $+ . $+ $b $+ . $+ $c $+ .0";
+					}
+					else if ($mask eq "255.255.0.0") {
+						$host = "$a $+ . $+ $b $+ .0.0";
+					}
+					else if ($mask eq "255.0.0.0") {
+						$host = "$a $+ .0.0.0";
+					}
+				}
+
 				push(@routes, %(host => $host, mask => $mask, gateway => $gateway));
 			}
 		}
 	}
 	else if ($0 eq "end") {
+		$platform = $null;
 		$handler = $null;
 		%handlers["route"] = $null;
 
