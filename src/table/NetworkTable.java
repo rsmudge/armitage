@@ -15,6 +15,8 @@ import graph.Route;
 import graph.GraphPopup;
 
 public class NetworkTable extends JComponent implements ActionListener {
+	protected JScrollPane scroller = null;
+
 	public void actionPerformed(ActionEvent ev) {
 		isAlive = false;
 	}
@@ -141,16 +143,21 @@ public class NetworkTable extends JComponent implements ActionListener {
 		});
 
 		setLayout(new BorderLayout());
-		add(new JScrollPane(table), BorderLayout.CENTER);
+		scroller = new JScrollPane(table);
+		add(scroller, BorderLayout.CENTER);
         }
-	
+
 	protected LinkedList rows = new LinkedList();
+
+	public void setTransferHandler(TransferHandler t) {
+		table.setTransferHandler(t);
+	}
 
 	public void start() {
 	}
 
 	public void fixSelection(int rows[]) {
-		if (rows.length > 0) 
+		if (rows.length > 0)
 			table.setRowSelectionInterval(rows[0], rows[rows.length - 1] < table.getRowCount() ? rows[rows.length - 1] : table.getRowCount() - 1);
 	}
 
@@ -206,6 +213,14 @@ public class NetworkTable extends JComponent implements ActionListener {
 					temp.put("Pivot", r.getGateway());
 			}
 		}
+	}
+
+	public String getCellAt(Point p) {
+		String[] x = getSelectedHosts();
+		if (x.length > 0) {
+			return x[0];
+		}
+		return null;
 	}
 
         public String[] getSelectedHosts() {

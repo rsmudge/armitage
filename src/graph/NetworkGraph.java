@@ -110,6 +110,10 @@ public class NetworkGraph extends JComponent implements ActionListener {
 			new NetworkGraphCanvas());
 	}
 
+	public void setTransferHandler(TransferHandler h) {
+		component.setTransferHandler(h);
+	}
+
 	public void clearSelection() {
 		graph.clearSelection();
 	}
@@ -150,6 +154,8 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		component.setConnectable(false);
 		component.setCenterPage(true);
 		component.setToolTips(true);
+
+		graph.setDropEnabled(true);
 
 		/* enable the rubber band selection non-sense */
 		new mxRubberband(component);
@@ -264,6 +270,16 @@ public class NetworkGraph extends JComponent implements ActionListener {
 				doHierarchicalLayout();
 			}
 		});
+	}
+
+	public String getCellAt(Point p) {
+		Point q = component.getViewport().getViewPosition();
+		Point z = new Point((int)(p.getX() + q.getX()), (int)(p.getY() + q.getY()));
+
+		mxCell cell = (mxCell)component.getCellAt((int)z.getX(), (int)z.getY());
+		if (cell != null)
+			return cell.getId();
+		return null;
 	}
 
 	public String[] getSelectedHosts() {

@@ -370,21 +370,37 @@ sub createDashboard {
 		[$targets actionPerformed: $null];
 	}
 
-	local('$graph %hosts $console $split');
+	local('$graph %hosts $console $split $transfer');
 
 	if ([$preferences getProperty: "armitage.string.target_view", "graph"] eq "graph") {
-                setf('&overlay_images', lambda(&overlay_images, $scale => 1.0));
-	        $graph = [new NetworkGraph: $preferences];
+		setf('&overlay_images', lambda(&overlay_images, $scale => 1.0));
+		$graph = [new NetworkGraph: $preferences];
 	}
 	else {
                 setf('&overlay_images', lambda(&overlay_images, $scale => 11.0));
 	        $graph = [new NetworkTable: $preferences];
 	}
+
+	# setup the drop portion of our drag and drop...
+	$transfer = [new ui.ModuleTransferHandler];
+	[$transfer setHandler: lambda({
+		local('@temp $type $path $host');
+		@temp = split('/', $1);
+		$type = @temp[0];
+		$path = join('/', sublist(@temp, 1));
+		$host = [$graph getCellAt: $2];
+		if ($host !is $null) {
+			moduleAction($type, $path, @($host));
+		}
+	}, \$graph)];
+
+
 	setDefaultAutoLayout($graph);
 
-	[$frame setTop: createModuleBrowser($graph)];
+	[$frame setTop: createModuleBrowser($graph, $transfer)];
 
 	$targets = $graph;
+	[$targets setTransferHandler: $transfer];
 
 	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
 	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 30 * 1000L, lambda(&refreshServices, \$graph)];
