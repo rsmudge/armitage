@@ -3,6 +3,10 @@ Armitage Changelog
 
 In Progress
 -----------
+You *really* want this update. It started out with a few casual changes.
+This update overhauls msf scans and greatly improves the teaming mode
+performance. I'm really happy with this release. You should be too :)
+
 - Hosts -> Clear Database now clears the sessions and clients tables 
 - Fixed a bug preventing dynamic workspace port/session filter from 
   working on a fresh database. This was a fun one. This only affected 
@@ -26,6 +30,8 @@ In Progress
   throttles a call.
 - Armitage no longer posts to the event log from the UI thread (this will
   prevent the UI from blocking in some cases)
+- Command shell now handles interaction with d-server in a separate thread
+  from the UI thread. This will prevent UI blocking in some cases.
 
 12 Dec 11
 ---------

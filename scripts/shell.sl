@@ -57,7 +57,12 @@ global('%shells $ashell $achannel %maxq %wait');
 				}
 
 				if ($client !is $mclient) {
-					$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+					thread(lambda({
+						local('$file');
+						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
+						%wait[$channel] = 1;
+						m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+					}, \$sid, \%wait, \$channel, \$text));
 				}
 				else {
 					$handle = openf(">command $+ $sid $+ .txt");
@@ -65,10 +70,10 @@ global('%shells $ashell $achannel %maxq %wait');
 					writeb($handle, "$text $+ \r\n");
 					closef($handle);
 					$file = getFileProper("command $+ $sid $+ .txt");
+
+					%wait[$channel] = 1;
+					m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
 				}
-				
-				%wait[$channel] = 1;
-				m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
 			}, \$sid, \$console, \$channel)];
 
 			[$frame addTab: "$command $pid $+ @ $+ $sid", $console, lambda({
