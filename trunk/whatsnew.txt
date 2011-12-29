@@ -14,6 +14,9 @@ In Progress
   Java meterpreter.
 - Armitage now posts a note to the event log when a user starts a browser 
   exploit or a server module.
+- Armitage now supports dragging and dropping a module onto a host in graph
+  and table view. This action opens the module launcher configured to work
+  with that host.
 
 12 Dec 11
 ---------

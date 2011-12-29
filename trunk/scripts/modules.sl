@@ -13,8 +13,8 @@ import javax.swing.table.*;
 import ui.*;
 
 sub createModuleBrowser {
-	local('$tree $split $scroll1 $t $2');
-	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), post => buildTree(@post), payload => buildTree(@payloads))), iff($1, $1, [new JPanel])];
+	local('$tree $split $scroll1 $t');
+	$split = [new JSplitPane: [JSplitPane HORIZONTAL_SPLIT], createModuleList(ohash(auxiliary => buildTree(@auxiliary), exploit => buildTree(@exploits), post => buildTree(@post), payload => buildTree(@payloads)), $2), iff($1, $1, [new JPanel])];
 	[$split setOneTouchExpandable: 1];
 	return $split;
 }
@@ -65,10 +65,38 @@ sub showModulePopup {
 	}
 }
 
+sub moduleAction {
+	local('$type $path $hosts');
+	($type, $path, $hosts) = @_;
+
+	thread(lambda({
+		if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
+			if ($type eq "exploit") {
+				if ('*/browser/*' iswm $path || '*/fileformat/*' iswm $path) {
+					launch_dialog($path, $type, $path, 1, $hosts);
+				}
+				else {
+					local('$a $b');
+					$a = call($client, "module.info", "exploit", $path);
+					$b = call($client, "module.options", "exploit", $path);
+					dispatchEvent(lambda({
+						attack_dialog($a, $b, $hosts, $path);
+					}, \$a, \$b, \$hosts, \$path));
+				}
+			}
+			else {
+				launch_dialog($path, $type, $path, 1, $hosts);
+			}
+		}
+	}, \$type, \$path, \$hosts));
+}
+
 sub createModuleList {
 	local('$tree $split $scroll1 $t');
 	$tree = [new JTree: treeNodes($null, $1)];
 	[$tree setRootVisible: 0];
+	[$tree setDragEnabled: 1];
+	[$tree setTransferHandler: $2];
 
 	[$tree addMouseListener: lambda({
 		local('$t');
@@ -91,32 +119,14 @@ sub createModuleList {
 			return;
 		}
 
-		thread(lambda({
-			local('$selected $type $path');
-			$selected = map({ return "$1"; }, [$p getPath]);
-			if (size($selected) > 2) {
-				$type = $selected[1];
-				$path = join('/', sublist($selected, 2));
-				if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
-					if ($type eq "exploit") {
-						if ('browser' in $selected || 'fileformat' in $selected) {
-							launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
-						}
-						else {
-							local('$a $b');
-							$a = call($client, "module.info", "exploit", $path);
-							$b = call($client, "module.options", "exploit", $path);
-							dispatchEvent(lambda({
-								attack_dialog($a, $b, [$targets getSelectedHosts], $path);
-							}, \$a, \$b, \$targets, \$path));
-						}
-					}
-					else {
-						launch_dialog($path, $type, $path, 1, [$targets getSelectedHosts]);
-					}
-				}
-			}
-		}, \$p));
+		local('$selected $type $path $hosts');
+		$selected = map({ return "$1"; }, [$p getPath]);
+		if (size($selected) > 2) {
+			$type = $selected[1];
+			$path = join('/', sublist($selected, 2));
+			$hosts = [$targets getSelectedHosts];
+			moduleAction($type, $path, $hosts);
+		}
 	})];
 
 	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_NEVER]];
