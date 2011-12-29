@@ -10,6 +10,8 @@ In Progress
   Database didn't clear everything, this went unnoticed until now.
 - Added various reverse shell payloads to payload helper dialog.
 - Added file chooser helper for SigningCert and SigningKey options.
+- Added hack to return correct route info when setting up pivoting through
+  Java meterpreter.
 
 12 Dec 11
 ---------
