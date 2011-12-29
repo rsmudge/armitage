@@ -22,6 +22,8 @@ In Progress
   scan, MSF Scans runs discovery modules against relevant hosts. As a bonus
   you will see all of the output of these scans. 
 - Enhanced the Windows heuristic used to guess which OS image to display
+- The deconfliction server throttle is now less draconian about how long it
+  throttles a call.
 
 12 Dec 11
 ---------

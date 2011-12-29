@@ -29,7 +29,7 @@ public class RpcCacheImpl {
 		public void touch(String method, long executeTime) {
 			/* throttle the next call if this takes too long to execute */
 			if (executeTime > 500) {
-				wait = executeTime * 10;
+				wait = 5000L;
 				System.err.println("* " + method + " took " + executeTime + "ms - throttling next call");
 			}
 			else {
