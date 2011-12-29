@@ -566,6 +566,8 @@ sub addFileListener {
 	$actions["NAMELIST"] = $actions["*FILE*"];
 	$actions["DICTIONARY"] = $actions["*FILE*"];
 	$actions["Template"] = $actions["*FILE*"];
+	$actions["SigningCert"] = $actions["*FILE*"];
+	$actions["SigningKey"] = $actions["*FILE*"];
 
 	# set up an action to pop up a file chooser for different file type values.
 	$actions["RHOST"] = {

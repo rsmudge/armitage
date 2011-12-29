@@ -9,6 +9,7 @@ In Progress
   folks with a completely fresh database and because Hosts -> Clear 
   Database didn't clear everything, this went unnoticed until now.
 - Added various reverse shell payloads to payload helper dialog.
+- Added file chooser helper for SigningCert and SigningKey options.
 
 12 Dec 11
 ---------
