@@ -448,7 +448,14 @@ sub connectDialog {
 
 sub elog {
 	if ($client !is $mclient) {
-		call($mclient, "armitage.log", $1);
+		if ([SwingUtilities isEventDispatchThread]) {
+			thread(lambda({
+				call($mclient, "armitage.log", $message);
+			}, $message => $1));
+		}
+		else {
+			call($mclient, "armitage.log", $1);
+		}
 	}
 }
 
