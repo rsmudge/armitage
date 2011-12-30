@@ -65,7 +65,9 @@ sub createServiceBrowser {
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
 		thread(lambda({
-			_refreshServices(call($mclient, "db.services"));
+			local('$services');
+			$services = call($mclient, "db.services");
+			_refreshServices($services);
 			updateServiceModel(\$hosts, \$model);
 		}, \$hosts, \$model));
 	}, \$model, $hosts => $1)];
