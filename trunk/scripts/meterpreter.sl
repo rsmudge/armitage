@@ -325,11 +325,6 @@ sub launch_msf_scans {
 								$modules = %ports[$port];
 								foreach $module ($modules) {
 									@c = @("use $module");
-
-									if ($port eq '443') {
-										push(@c, "set RPORT $port");
-										push(@c, "set SSL true\n");
-									}
 									push(@c, "set RHOSTS " . join(", ", $hosts));
 									push(@c, "set THREADS 24");
 									push(@c, "run -j");
@@ -340,7 +335,7 @@ sub launch_msf_scans {
 						}
 					}
 
-					if ($text ismatch '... Scanned \d+ of \d+ hosts .100. complete.') {
+					if ($text ismatch '... Scanned \d+ of \d+ hosts .100. complete.' || $text ismatch '... Auxiliary failed: .*') {
 						if (size(@launch) == 0) {
 							$time = (ticks() - $time) / 1000.0;
 
@@ -369,9 +364,6 @@ sub launch_msf_scans {
 					if ('RPORT' in %o) {
 						$port = %o['RPORT']['default'];
 						push(%ports[$port], $scanner);
-						if ($port == 80) {
-							push(%ports['443'], $scanner);
-						}
 					}
 
 					safetyCheck();
@@ -395,15 +387,4 @@ sub launch_msf_scans {
 			[$console sendString: "run -j\n"];
 		}
 	}, \$hosts, \@modules));
-}
-
-inline safetyCheck {
-	local('$__time');
-	if ($__time == 0) {
-		$__time = ticks();
-	}
-	if ((ticks() - $__time) > 250) {
-		yield 50;
-		$__time = ticks();
-	}
 }
