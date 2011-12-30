@@ -33,6 +33,8 @@ In Progress
 - Change Host OS option now matches new Metasploit database schema.
 - Deconfliction server now sets LHOST to the IP address you provided. Also,
   Armitage clients do not overwrite LHOST once it is set.
+- Interacting with a shell in team mode no longer blocks UI to communicate
+  with d-server.
 
 12 Dec 11
 ---------
