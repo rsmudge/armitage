@@ -12,7 +12,7 @@ import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
 
 /* A self-expiring cache for RPC calls */
-public class RpcCacheImpl {
+public class RpcCacheImpl implements Runnable {
 	protected RpcConnection connection = null;
 	protected Map cache = new HashMap();
 	protected Map filters = new HashMap();
@@ -42,6 +42,7 @@ public class RpcCacheImpl {
 
 	public RpcCacheImpl(RpcConnection connection) {
 		this.connection = connection;
+		new Thread(this).start();
 	}
 
 	public void setFilter(String user, Object[] filter) {
@@ -129,8 +130,41 @@ public class RpcCacheImpl {
 
 				return response;
 			}
+			else if (methodName.equals("session.list")) {
+				/* do something special */
+				synchronized (this) {
+					if (sessions != null)
+						return sessions;
+					else
+						return execute_cache(methodName, methodName, params);
+				}
+			}
 			else {
 				return execute_cache(methodName, methodName, params);
+			}
+		}
+	}
+
+	protected Object sessions = null;
+
+	public void run() {
+		while (true) {
+			try {
+				Object temp = connection.execute("session.list");
+				synchronized (this) {
+					sessions = temp;
+				}
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+				return;
+			}
+
+			try {
+				Thread.sleep(2000);
+			}
+			catch (InterruptedException iex) {
+				iex.printStackTrace();
 			}
 		}
 	}
