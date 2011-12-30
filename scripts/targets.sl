@@ -234,29 +234,40 @@ sub graph_items {
 	item($c, 'Reset', 'I', lambda({ [$graph resetZoom]; }, $graph => $2));
 }
 
+sub _importHosts {
+	local('$console $success');
+	$console = createConsoleTab("Import", 1);
+	$success = size($files);
+	yield 2048;
+	elog("imported hosts from $success file" . iff($success != 1, "s"));
+	[$console sendString: "db_import \"" . join(" ", $files) . "\"\n"];
+}
+
 # need to pass this function a $command local...
 sub importHosts {
-	local('$files');
+	local('$files $thread $closure');
 	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1, $always => 1));
 	if ($files is $null || size($files) == 0) {
 		return;
 	}
 
-	thread(lambda({
-		# upload the files please...
-		if ($client !is $mclient) {
+	# upload the files please...
+	if ($client !is $mclient) {
+		$closure = lambda(&_importHosts);
+		$thread = [new ArmitageThread: $closure];
+
+		fork({
+			local('$file');
 			foreach $file ($files) {
 				$file = uploadFile($file);
-				yield 100;
 			}
-		}
-
-		local('$console $success');
-		$console = createConsoleTab("Import", 1);
-		$success = size($files);
-		elog("imported hosts from $success file" . iff($success != 1, "s"));
-		[$console sendString: "db_import \"" . join(" ", $files) . "\"\n"];
-	}, \$files));
+			$closure['$files'] = $files;
+			[$thread start];
+		}, \$mclient, \$files, \$thread, \$closure);
+	}
+	else {
+		thread(lambda(&_importHosts, \$files));
+	}
 }
 
 # setHostValueFunction(@hosts, varname, value)
