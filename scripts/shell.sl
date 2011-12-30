@@ -243,28 +243,31 @@ sub showShellMenu {
 }
 
 sub createShellSessionTab {
-	local('$console $thread');
+	local('$console');
 	$console = [new Console: $preferences];
 	logCheck($console, sessionToHost($sid), "shell_ $+ $sid");
 	[$console setDefaultPrompt: '$ '];
         [$console setPopupMenu: lambda(&shellPopup, \$session, \$sid)];
 
-	if ($client !is $mclient) {
-		local('%r');
-		%r = call($mclient, "armitage.lock", $sid);
-		if (%r["error"]) {
-			showError(%r["error"]);
-			return;
-		}
-	}
+	thread(lambda({
+		local('%r $thread');
 
-	$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", $null, $sid, 0];
-        [$frame addTab: "Shell $sid", $console, lambda({ 
 		if ($client !is $mclient) {
-			call_async($mclient, "armitage.unlock", $sid);
+			%r = call($mclient, "armitage.lock", $sid);
+			if (%r["error"]) {
+				showError(%r["error"]);
+				return;
+			}
 		}
-		[$thread kill];
-	}, \$sid, \$thread)];
+
+		$thread = [new ConsoleClient: $console, $client, "session.shell_read", "session.shell_write", $null, $sid, 0];
+		[$frame addTab: "Shell $sid", $console, lambda({ 
+			if ($client !is $mclient) {
+				call_async($mclient, "armitage.unlock", $sid);
+			}
+			[$thread kill];
+		}, \$sid, \$thread)];
+	}, \$sid, \$console));
 }
 
 sub listen_for_shellz {
