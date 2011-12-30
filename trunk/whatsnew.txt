@@ -31,6 +31,8 @@ In Progress
 - Added Ping Sweep... option for non-Windows meterpreter sessions. Now Java
   meterpreter users have a quick host discovery option.
 - Change Host OS option now matches new Metasploit database schema.
+- Deconfliction server now sets LHOST to the IP address you provided. Also,
+  Armitage clients do not overwrite LHOST once it is set.
 
 12 Dec 11
 ---------

@@ -258,32 +258,42 @@ sub createNmapFunction {
 }
 
 sub getBindAddress {
-	cmd($client, $console, "use windows/meterpreter/reverse_tcp", {
-		local('$address');
-		$address = call($client, "console.tabs", $console, "setg LHOST ")["tabs"];
-		#warn("Options are: $address");
-
-		$address = split('\\s+', $address[0])[2];
-		
-		if ($address eq "127.0.0.1") {
-			[SwingUtilities invokeLater: {
-				local('$address');
-				$address = ask("Could not determine attack computer IP\nWhat is it?");
-				if ($address ne "") {
-					$MY_ADDRESS = $address;
-					thread({
-						call($client, "core.setg", "LHOST", $MY_ADDRESS);
-						setupHandlers();
-					});
-				}
-			}];
+	cmd_safe("setg LHOST", {
+		local('$text');
+		$text = [$3 trim];
+		if ($text ismatch 'LHOST => (.*?)') {
+			$MY_ADDRESS = matched()[0];
+			setupHandlers();
+			warn("Used the incumbent: $MY_ADDRESS");
 		}
 		else {
-			call($client, "core.setg", "LHOST", $address);
-			setupHandlers();
-		}
+			cmd($client, $console, "use windows/meterpreter/reverse_tcp", {
+				local('$address');
+				$address = call($client, "console.tabs", $console, "setg LHOST ")["tabs"];
 
-		$MY_ADDRESS = $address;
+				$address = split('\\s+', $address[0])[2];
+		
+				if ($address eq "127.0.0.1") {
+					[SwingUtilities invokeLater: {
+						local('$address');
+						$address = ask("Could not determine attack computer IP\nWhat is it?");
+						if ($address ne "") {
+							$MY_ADDRESS = $address;
+							thread({
+								call($client, "core.setg", "LHOST", $MY_ADDRESS);
+								setupHandlers();
+							});
+						}
+					}];
+				}
+				else {
+					warn("Used the tab method: $address");
+					call($client, "core.setg", "LHOST", $address);
+					setupHandlers();
+					$MY_ADDRESS = $address;
+				}
+			});
+		}
 	});
 }
 

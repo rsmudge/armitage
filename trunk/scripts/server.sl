@@ -317,6 +317,7 @@ sub main {
 
 	# setg ARMITAGE_SERVER host:port/token
 	call($client, "core.setg", "ARMITAGE_SERVER", "$host $+ : $+ $port $+ / $+ $auth");
+	call($client, "core.setg", "LHOST", $host);
 
 	#
 	# setup the client cache
