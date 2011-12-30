@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+30 Dec 11 - last release of the year?
+---------
 - Hosts -> Clear Database now clears the sessions and clients tables 
 - Fixed a bug preventing dynamic workspace port/session filter from 
   working on a fresh database. This was a fun one. This only affected 
