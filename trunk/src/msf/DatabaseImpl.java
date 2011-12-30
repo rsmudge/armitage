@@ -335,13 +335,13 @@ public class DatabaseImpl implements RpcConnection  {
 				PreparedStatement stmt = null;
 
 				if (values.containsKey("os_name") && values.containsKey("os_flavor")) {
-					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = ?, os_sp = '' WHERE hosts.address = ? AND hosts.workspace_id = " + workspaceid);
+					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = ?, os_sp = '' WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("os_name") + "");
 					stmt.setString(2, values.get("os_flavor") + "");
 					stmt.setString(3, host);
 				}
 				else if (values.containsKey("os_name")) {
-					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = '', os_sp = '' WHERE hosts.address = ? AND hosts.workspace_id = " + workspaceid);
+					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = '', os_sp = '' WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("os_name") + "");
 					stmt.setString(2, host);
 				}
