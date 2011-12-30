@@ -379,6 +379,12 @@ sub _launch_dialog {
 					}
 		                        elog("dumped hashes on " . join(", ", @sessions));
 				}
+				else if ($command eq "windows/gather/arp_scanner") {
+					elog("ARP scan: " . $options['RHOSTS']  . " via " . join(", ", @sessions));
+				}
+				else if ($command eq "multi/gather/ping_sweep") {
+					elog("ping sweep: " . $options['RHOSTS']  . " via " . join(", ", @sessions));
+				}
 				else if ($command eq "windows/capture/keylog_recorder") {
 					foreach $session (@sessions) {
 						$session = sessionToHost($session) . "/ $+ $session";

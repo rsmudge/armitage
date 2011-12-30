@@ -281,6 +281,9 @@ sub showMeterpreterMenu {
 	if ("*win*" iswm $platform) {
 		item($1, "ARP Scan...", 'A', setupArpScanDialog("$sid"));
 	}
+	else {
+		item($1, "Ping Sweep...", 'P', setupPingSweepDialog("$sid"));
+	}
 
 	separator($1);
 

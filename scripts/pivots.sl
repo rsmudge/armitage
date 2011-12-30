@@ -28,6 +28,18 @@ sub arp_scan_function  {
 	[$dialog setVisible: 0];
 }
 
+sub ping_sweep_function  {
+	local('$host $mask');
+	$host = [$model getSelectedValueFromColumn: $table, "host"];
+	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
+	
+	if ($host ne "" && $mask ne "") {
+		elog("ping sweep: $host $+ /" . maskToCIDR($mask) . " via $sid");
+		module_execute("post", "multi/gather/ping_sweep", %(SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
+	}
+	[$dialog setVisible: 0];
+}
+
 sub add_pivot_function  {
 	local('$host $mask');
 	$host = [$model getSelectedValueFromColumn: $table, "host"];
@@ -141,6 +153,13 @@ sub setupPivotDialog {
 sub setupArpScanDialog {
 	return lambda({
 		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "ARP Scan", $label => "ARP Scan", $function => &arp_scan_function);
+		m_cmd($sid, "route");
+	}, $sid => "$1");
+}
+
+sub setupPingSweepDialog {
+	return lambda({
+		%handlers["route"] = lambda(&pivot_dialog, \$sid, $title => "Ping Sweep", $label => "Ping Sweep", $function => &ping_sweep_function);
 		m_cmd($sid, "route");
 	}, $sid => "$1");
 }

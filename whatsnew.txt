@@ -32,6 +32,8 @@ performance. I'm really happy with this release. You should be too :)
   prevent the UI from blocking in some cases)
 - Command shell now handles interaction with d-server in a separate thread
   from the UI thread. This will prevent UI blocking in some cases.
+- Added Ping Sweep... option for non-Windows meterpreter sessions. Now Java
+  meterpreter users have a quick host discovery option.
 
 12 Dec 11
 ---------
