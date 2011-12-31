@@ -32,7 +32,6 @@ application.skin.skin=Nimbus
 graph.clear_selection.shortcut=pressed ESCAPE
 graph.select_all.shortcut=ctrl pressed A
 armitage.required_exploit_rank.string=great
-graph.refresh_targets.shortcut=ctrl pressed R
 armitage.string.target_view=graph
 console.select_all.shortcut=ctrl pressed A
 armitage.log_everything.boolean=true
