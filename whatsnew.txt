@@ -14,6 +14,7 @@ In Progress
 - Hosts -> NMap Scans and Hosts -> MSF Scans dialogs are now populated with 
   the selected values from the target area by default.
 - You may now interact with a Windows command shell through Java meterpreter.
+- Armitage no longer shows Webcam Shot option through Java meterpreter.
 
 30 Dec 11 - last release of the year?
 ---------
