@@ -232,7 +232,7 @@ sub _cmd_safe {
 sub createNmapFunction {
 	return lambda({
 		local('$address');
-		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
+		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(" ", [$targets getSelectedHosts]));
 		if ($address eq "") { return; }
 
 		thread(lambda({

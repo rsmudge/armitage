@@ -58,7 +58,7 @@ sub host_items {
 
 	item($1, "MSF Scans...", "M", {
 		local('$address');
-		$address = ask("Enter scan range (e.g., 192.168.1.0/24):");
+		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(", ", [$targets getSelectedHosts]));
 		if ($address eq "") { return; }
 		launch_msf_scans($address);
 	});

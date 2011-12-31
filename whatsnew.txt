@@ -12,6 +12,8 @@ In Progress
   longer necessary)
 - Armitage now exits if it was unable to connect to the collaboration
   server.
+- Hosts -> NMap Scans and Hosts -> MSF Scans dialogs are now populated
+  with the selected values from the target area by default.
 
 30 Dec 11 - last release of the year?
 ---------
