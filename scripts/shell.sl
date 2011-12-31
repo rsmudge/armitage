@@ -55,6 +55,11 @@ global('%shells $ashell $achannel %maxq %wait');
 					[$console append: "[*] Dropped. Waiting for previous command to finish.\n" . [[$console getPromptText] trim]];
 					return;
 				}
+	
+				# work around for a whacky behavior with Java meterpreter...
+				if ([$text trim] eq "" && "*java*" iswm sessionPlatform($sid)) {
+					return;
+				}
 
 				if ($client !is $mclient) {
 					thread(lambda({
