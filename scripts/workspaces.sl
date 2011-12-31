@@ -156,7 +156,6 @@ sub client_workspace_items {
 		[$frame setTitle: $TITLE];
 		thread({
 			call($mclient, "db.filter", %());
-			refreshTargets();
 		});
 	});
 
@@ -175,7 +174,6 @@ sub set_workspace {
 		if ($workspace['name'] eq $1) {
 			thread(lambda({
 				call($mclient, "db.filter", $workspace);
-				refreshTargets();
 			}, \$workspace));
 			[$frame setTitle: "$TITLE - $1"];
 			return;

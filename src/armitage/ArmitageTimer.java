@@ -8,26 +8,68 @@ import java.util.*;
 public class ArmitageTimer implements Runnable {
 	protected RpcConnection       connection;
 	protected String              command;
-	protected Object[]            arguments;
 	protected long                sleepPeriod;
 	protected ArmitageTimerClient client;
+	protected boolean             cacheProtocol;
 
-	public ArmitageTimer(RpcConnection connection, String command, Object[] arguments, long sleepPeriod, ArmitageTimerClient client) {
+	/* keep track of the last response we got *and* its hashcode... */
+	protected Map                 lastRead = new HashMap();
+	protected long                lastCode = 0L;
+
+	public ArmitageTimer(RpcConnection connection, String command, long sleepPeriod, ArmitageTimerClient client, boolean doCache) {
 		this.connection  = connection;
 		this.command     = command;
-		this.arguments   = arguments;
 		this.sleepPeriod = sleepPeriod;
 		this.client      = client;
+		cacheProtocol    = doCache;
 		new Thread(this).start();
 	}
 
-	private Map readFromClient() throws java.io.IOException {
-		if (arguments == null) {
-			return (Map)(connection.execute(command));
+	public static long dataIdentity(Object v) {
+		long r = 0L;
+
+		if (v == null) {
+			return r;
+		}
+		else if (v instanceof Collection) {
+			Iterator j = ((Collection)v).iterator();
+			while (j.hasNext()) {
+				r ^= dataIdentity(j.next());
+			}
+		}
+		else if (v instanceof Map) {
+			Iterator i = ((Map)v).values().iterator();
+			while (i.hasNext()) {
+				r ^= dataIdentity(i.next());
+			}
+		}
+		else if (v instanceof Number) {
+			r ^= v.hashCode();
 		}
 		else {
-			return (Map)(connection.execute(command, arguments));
+			r ^= v.toString().hashCode();
 		}
+		return r;
+	}
+
+	private Map readFromClient() throws java.io.IOException {
+		Object arguments[];
+		if (cacheProtocol) {
+			arguments = new Object[1];
+			arguments[0] = new Long(lastCode);
+		}
+		else {
+			arguments = new Object[0];
+		}
+
+		Map result = (Map)connection.execute(command, arguments);
+
+		if (!result.containsKey("nochange")) {
+			lastRead = result;
+			lastCode = dataIdentity(result);
+		}
+
+		return lastRead;
 	}
 
 	public void run() {
@@ -35,7 +77,7 @@ public class ArmitageTimer implements Runnable {
 
 		try {
 			while ((read = readFromClient()) != null) {
-				if (client.result(command, arguments, read) == false) {
+				if (client.result(command, null, read) == false) {
 					return;
 				}
 
@@ -47,7 +89,7 @@ public class ArmitageTimer implements Runnable {
 				}
 			}
 		}
-		catch (Exception javaSucksBecauseItMakesMeCatchEverythingFuckingThing) {	
+		catch (Exception javaSucksBecauseItMakesMeCatchEverythingFuckingThing) {
 			System.err.println("Thread id: " + command + " -> " + read);
 			javaSucksBecauseItMakesMeCatchEverythingFuckingThing.printStackTrace();
 		}

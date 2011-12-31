@@ -153,6 +153,15 @@ sub client {
 
 			writeObject($handle, $rv);
 		}
+		else if ($method eq "armitage.append") {
+			($file, $data) = $args;
+
+			$h = openf(">>" . getFileName($file));
+			writeb($h, $data);
+			closef($h);
+
+			writeObject($handle, result(%()));
+		}
 		else if ($method eq "armitage.upload") {
 			($file, $data) = $args;
 
@@ -206,22 +215,19 @@ sub client {
 
 			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
 		}
-		else if ($method eq "armitage.refresh") {
-			acquire($cach_lock);
-			local('$key $value');
-			foreach $key => $value (%cache) {
-				$value = $null;
-			}
-			release($cach_lock);
-			writeObject($handle, result(%()));
-		}
 		else if ($method eq "session.shell_write" || $method eq "session.shell_read") {
 			$response = [$client execute: $method, $args];
 			writeObject($handle, $response);
 		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
-			$response = [$client_cache execute: $eid, $method, $args];
-			writeObject($handle, $response);
+			$response = [$client_cache execute: $eid, $method, $null];
+	
+			if ($args !is $null && -isarray $args && size($args) == 1 && $args[0] == [armitage.ArmitageTimer dataIdentity: $response]) {
+				writeObject($handle, %(nochange => 1));
+			}
+			else {
+				writeObject($handle, $response);
+			}
 		}
 		else if ("db.filter" eq $method) {
 			[$client_cache setFilter: $eid, $args];

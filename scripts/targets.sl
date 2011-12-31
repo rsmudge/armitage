@@ -15,7 +15,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-global('%hosts $targets $FIXONCE');
+global('%hosts $targets');
 
 sub getHostOS {
 	return iff($1 in %hosts, %hosts[$1]['os_name'], $null);
@@ -238,7 +238,7 @@ sub _importHosts {
 	local('$console $success');
 	$console = createConsoleTab("Import", 1);
 	$success = size($files);
-	yield 2048;
+	yield 1024;
 	elog("imported hosts from $success file" . iff($success != 1, "s"));
 	[$console sendString: "db_import \"" . join(" ", $files) . "\"\n"];
 }
@@ -259,7 +259,7 @@ sub importHosts {
 		fork({
 			local('$file');
 			foreach $file ($files) {
-				$file = uploadFile($file);
+				$file = uploadBigFile($file);
 			}
 			$closure['$files'] = $files;
 			[$thread start];
@@ -289,8 +289,6 @@ sub setHostValueFunction {
 				warn(%map);
 				call($mclient, "db.report_host", %map);
 			}
-
-			refreshTargets();
 		}, \@hosts, \@args));
 	}, @hosts => $1, @args => sublist(@_, 1));
 }
@@ -310,8 +308,6 @@ sub clearHostFunction {
 			cmd_all_async($client, $tmp_console, @commands, lambda({
 				if ($1 eq "hosts -h") {
 					elog("removed " . join(" ", @hosts));
-					$FIXONCE = $null;
-					refreshTargets();
 					call($client, "console.destroy", $tmp_console);
 				}
 			}, \@hosts, \$tmp_console));
@@ -322,9 +318,6 @@ sub clearHostFunction {
 sub clearDatabase {
 	thread({
 		call($mclient, "db.clear");
-		%hosts = %();
-		$FIXONCE = $null;
-		refreshTargets();
 		elog("cleared the database");
 	});
 }
@@ -343,18 +336,6 @@ sub targetPopup {
 		host_selected_items($popup, $1);
 		[$popup show: [$2 getSource], [$2 getX], [$2 getY]];
         }
-}
-
-sub refreshTargets {
-	warn("refreshTargets was called");
-
-	if ($client !is $mclient && $mclient !is $null) {
-		call($mclient, "armitage.refresh");
-	}
-
-	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 0L, lambda(&refreshHosts, $graph => $targets)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 0L, lambda(&refreshServices, $graph => $targets)];
-	[new ArmitageTimer: $mclient, "session.list", $null, 0L, lambda(&refreshSessions, $graph => $targets)];
 }
 
 sub setDefaultAutoLayout {
@@ -413,24 +394,22 @@ sub createDashboard {
 	$targets = $graph;
 	[$targets setTransferHandler: $transfer];
 
-	[new ArmitageTimer: $mclient, "db.hosts", @([new HashMap]), 2.5 * 1000L, lambda(&refreshHosts, \$graph)];
-	[new ArmitageTimer: $mclient, "db.services", @([new HashMap]), 30 * 1000L, lambda(&refreshServices, \$graph)];
-	[new ArmitageTimer: $mclient, "session.list", $null, 2 * 1000L, lambda(&refreshSessions, \$graph)];
+	if ($client !is $mclient) {
+		[new ArmitageTimer: $mclient, "db.hosts", 2.5 * 1000L, lambda(&refreshHosts, \$graph), 1];
+		[new ArmitageTimer: $mclient, "db.services", 10 * 1000L, lambda(&refreshServices, \$graph), 1];
+		[new ArmitageTimer: $mclient, "session.list", 2 * 1000L, lambda(&refreshSessions, \$graph), 1];
+	}
+	else {
+		[new ArmitageTimer: $mclient, "db.hosts", 2.5 * 1000L, lambda(&refreshHosts, \$graph), $null];
+		[new ArmitageTimer: $mclient, "db.services", 10 * 1000L, lambda(&refreshServices, \$graph), $null];
+		[new ArmitageTimer: $mclient, "session.list", 2 * 1000L, lambda(&refreshSessions, \$graph), $null];
+	}
 
 	# this call exists to make sure clients are communicating with the metasploit rpc server
 	# before their token expires (they expire after 5 minutes of no activity)
-	[new ArmitageTimer: $client, "session.list", $null, 4 * 60 * 1000L, lambda(&refreshSessions, \$graph)];
-
-	thread({
-		_refreshServices(call($mclient, "db.services"));
-	});
+	[new ArmitageTimer: $client, "session.list", 4 * 60 * 1000L, lambda(&refreshSessions, \$graph), $null];
 
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
-	[$graph addActionForKeySetting: "graph.refresh_targets.shortcut", "ctrl pressed R", {
-		$FIXONCE = $null;
-		%hosts = %();
-		refreshTargets();
-	}];
 	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed P", lambda({
 		local('$location');
 		$location = saveFile2($sel => "hosts.png");

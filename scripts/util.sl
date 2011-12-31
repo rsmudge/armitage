@@ -247,8 +247,6 @@ sub createNmapFunction {
 			cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
 				lambda({ 
 					call($client, "console.destroy", $tmp_console);
-					$FIXONCE = $null;
-					refreshTargets();
 					fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
 				}, \$tmp_console),
 				$display
