@@ -52,6 +52,8 @@ public class ArmitageTimer implements Runnable {
 		return r;
 	}
 
+	protected boolean changed = false;
+
 	private Map readFromClient() throws java.io.IOException {
 		Object arguments[];
 		if (cacheProtocol) {
@@ -67,6 +69,10 @@ public class ArmitageTimer implements Runnable {
 		if (!result.containsKey("nochange")) {
 			lastRead = result;
 			lastCode = dataIdentity(result);
+			changed  = true;
+		}
+		else {
+			changed = false;
 		}
 
 		return lastRead;
@@ -77,8 +83,10 @@ public class ArmitageTimer implements Runnable {
 
 		try {
 			while ((read = readFromClient()) != null) {
-				if (client.result(command, null, read) == false) {
-					return;
+				if (changed || command.equals("session.list")) {
+					if (client.result(command, null, read) == false) {
+						return;
+					}
 				}
 
 				if (sleepPeriod <= 0) {
