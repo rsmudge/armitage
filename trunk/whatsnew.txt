@@ -1,6 +1,16 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage d-server now transmits hosts, service, and session state 
+  only when something has changed. This makes teaming much snappier.
+- Uploading an imported hosts file now shows a progress dialog.
+- File browser upload function no longer blocks the user interface. 
+  A progress dialog is shown for uploading larger files. 
+- Removed Ctrl+R refresh hosts shortcut from graph view (it's no 
+  longer necessary)
+
 30 Dec 11 - last release of the year?
 ---------
 - Hosts -> Clear Database now clears the sessions and clients tables 
