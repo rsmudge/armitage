@@ -228,8 +228,11 @@ sub showMeterpreterMenu {
 			
 	$j = menu($1, "Interact", 'I');
 
-			if ("*win*" iswm $platform && (!$REMOTE || $mclient !is $client)) {
+			if ("*win*" iswm $platform || sessionToOS($sid) eq "Microsoft Windows") {
 				item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
+			}
+			else {
+				#item($j, "Command Shell", 'C', lambda({ createCommandTab($sid, "/bin/bash"); }, $sid => "$sid"));
 			}
 
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));

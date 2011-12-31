@@ -39,6 +39,15 @@ sub sessionData {
 	return $null;
 }
 
+sub sessionPlatform {
+	local('$data');
+	$data = sessionData($1);
+	if ('platform' in $data) {
+		return $data['platform'];
+	}
+	return $null;
+}
+
 sub sessionToHost {
 	local('$host $data');
 	foreach $host => $data (%hosts) {
