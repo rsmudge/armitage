@@ -268,8 +268,9 @@ sub showMeterpreterMenu {
 				}, $sid => "$sid"));
 			}
 
-			if (!$REMOTE || $mclient !is $client) {
-				item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
+			item($j, "Screenshot", 'S', createScreenshotViewer("$sid"));
+
+			if ("*win*" iswm $platform) {
 				item($j, "Webcam Shot", 'W', createWebcamViewer("$sid"));
 			}
 
