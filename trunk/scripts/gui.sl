@@ -87,7 +87,8 @@ sub showError {
 }
 
 sub ask {
-	return [JOptionPane showInputDialog: $1];
+	local('$2');
+	return [JOptionPane showInputDialog: "$1", "$2"];
 }
 
 # askYesNo("title", "text")
