@@ -10,6 +10,8 @@ In Progress
   A progress dialog is shown for uploading larger files. 
 - Removed Ctrl+R refresh hosts shortcut from graph view (it's no 
   longer necessary)
+- Armitage now exits if it was unable to connect to the collaboration
+  server.
 
 30 Dec 11 - last release of the year?
 ---------

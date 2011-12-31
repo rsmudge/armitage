@@ -128,11 +128,13 @@ sub setup_collaboration {
 		else {
 			showError("Collaboration Connection Failed");
 			$mclient = $client;
+			[System exit: 0];
 		}
 	}
 	catch $ex {
 		showError("Collaboration Connection Failed. :(\n" . [$ex getMessage]);
 		$mclient = $client;
+		[System exit: 0];
 	}
 }
 
