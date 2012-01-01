@@ -19,6 +19,11 @@ public abstract class RpcConnectionImpl implements RpcConnection {
 	protected String rpcToken;
 	private Map callCache = new HashMap();
 	protected RpcConnection database = null;
+	protected Map hooks = new HashMap();
+
+	public void addHook(String name, RpcConnection hook) {
+		hooks.put(name, hook);
+	}
 
 	public void setDatabase(RpcConnection connection) {
 		database = connection;
@@ -70,6 +75,10 @@ public abstract class RpcConnectionImpl implements RpcConnection {
 	public Object execute(String methodName, Object[] params) throws IOException {
 		if (database != null && "db.".equals(methodName.substring(0, 3))) {
 			return database.execute(methodName, params);
+		}
+		else if (hooks.containsKey(methodName)) {
+			RpcConnection con = (RpcConnection)hooks.get(methodName);
+			return con.execute(methodName, params);
 		}
 		else {
 			Object[] paramsNew = new Object[params.length+1];
