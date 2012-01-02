@@ -18,6 +18,7 @@ In Progress
 - Armitage now detects when it does not have read permissions for the database
   YAML file and prompts with something helpful. Before it would just freeze
   with a blank dialog. Not helpful. :)
+- Armitage now only shows services that are open. 
 
 30 Dec 11 - last release of the year?
 ---------

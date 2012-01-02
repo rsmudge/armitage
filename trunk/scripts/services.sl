@@ -27,7 +27,7 @@ sub updateServiceModel {
 sub createServiceBrowser {
 	local('$table $model $panel $refresh $buttons $sorter $host');
 
-	$model = [new GenericTableModel: @("host", "name", "port", "proto", "state", "info"), "host", 16];
+	$model = [new GenericTableModel: @("host", "name", "port", "proto", "info"), "host", 16];
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
