@@ -15,6 +15,9 @@ In Progress
   the selected values from the target area by default.
 - You may now interact with a Windows command shell through Java meterpreter.
 - Armitage no longer shows Webcam Shot option through Java meterpreter.
+- Armitage now detects when it does not have read permissions for the database
+  YAML file and prompts with something helpful. Before it would just freeze
+  with a blank dialog. Not helpful. :)
 
 30 Dec 11 - last release of the year?
 ---------
