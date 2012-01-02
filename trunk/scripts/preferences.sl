@@ -108,7 +108,16 @@ sub loadDatabasePreferences {
 	if ($yaml_file eq "" || !-exists $yaml_file) {
 		$yaml_file = getFileProper($BASE_DIRECTORY, "config", "database.yml");
 	}
-	parseYaml($1, @($yaml_file, $yaml_entry));
+
+	if (!-exists $yaml_file) {
+		throw [new RuntimeException: "I can not find a database.yml file. I *really* need it.\nTry setting MSF_DATABASE_CONFIG to a file that exists."];
+	}
+	else if (!-canread $yaml_file) {
+		throw [new RuntimeException: "I do not have permission to read: $yaml_file $+ .\nRun me as root please."];
+	}
+	else {
+		parseYaml($1, @($yaml_file, $yaml_entry));
+	}
 	return [$1 getProperty: "connect.db_connect.string"];
 }
 
