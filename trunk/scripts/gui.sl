@@ -288,6 +288,15 @@ sub iconToImage {
 	}
 }
 
+sub imageToImage {
+	local('$buffered $g');
+        $buffered = [new BufferedImage: [$1 getWidth: $null], [$1 getHeight: $null], [BufferedImage TYPE_INT_ARGB]];
+	$g = [$buffered createGraphics];
+	[$g drawImage: $1, 0, 0, [$1 getWidth: $null], [$1 getHeight: $null], $null];
+	[$g dispose];
+	return $buffered;
+}
+
 sub select {
 	local('$combo');
 	$combo = [new JComboBox: cast($1, ^String)];
