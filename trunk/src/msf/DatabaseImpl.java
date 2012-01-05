@@ -193,7 +193,7 @@ public class DatabaseImpl implements RpcConnection  {
 			if (hFilter.indexOf("sessions.") >= 0)
 				tables.add("sessions");
 
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM " + join(tables, ", ") + " WHERE hosts.workspace_id = " + workspaceid + " ORDER BY hosts.id ASC AND " + hFilter + " LIMIT " + limit1 + " OFFSET " + (limit1 * hindex));
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM " + join(tables, ", ") + " WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " ORDER BY hosts.id ASC LIMIT " + limit1 + " OFFSET " + (limit1 * hindex));
 		}
 		else {
 			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " ORDER BY hosts.id ASC LIMIT " + limit1 + " OFFSET " + (hindex * limit1));
