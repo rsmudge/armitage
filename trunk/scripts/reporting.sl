@@ -6,6 +6,11 @@ import java.io.*;
 
 sub dumpTSVData {
 	local('$handle $entry');
+	if ($3 is $null) {
+		warn("No data for $1");
+		return;
+	}
+
 	$handle = openf("> $+ $1 $+ .tsv");
 	println($handle, join("\t", $2));
 	foreach $entry ($3) {
@@ -16,6 +21,10 @@ sub dumpTSVData {
 
 sub dumpXMLData {
 	local('$handle $entry $key $value');
+	if ($3 is $null) {
+		warn("No data for $1");
+		return;
+	}
 	$handle = openf("> $+ $1 $+ .xml");
 	println($handle, "< $+ $1 $+ >");
 	foreach $entry ($3) {
@@ -45,74 +54,109 @@ sub dumpData {
 }
 
 #
-# extract and export Metasploit data to easily parsable files (TSV and XML)
-#
-sub generateArtifacts {
-	local('@data $d $progress');
-
-	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "vulnerabilities", 0, 100]; 
+# query all of the data that we want...
+# queryData(%workspace)
+# 
+sub queryData {
+	local('%r $progress');	
 
 	# 1. extract the known vulnerability information
-	@data = call($mclient, "db.vulns", [new HashMap])["vulns"];
-	dumpData("vulnerabilities", @("host", "port", "proto", "updated_at", "name", "refs"), @data);
+	%r['vulns'] = call($mclient, "db.vulns")["vulns"];
 
-	[$progress setProgress: 15];
-	[$progress setNote: "credentials"];
-	sleep(50);
+	if ($progress) {
+		[$progress setProgress: 10];
+	}
 
 	# 2. credentials
-	@data = call($mclient, "db.creds", [new HashMap])["creds"];
-	dumpData("credentials", @("host", "port", "proto", "sname", "created_at", "active", "ptype", "user", "pass"), @data);
-		
-	[$progress setProgress: 30];
-	[$progress setNote: "loot"];
-	sleep(50);
+	%r['creds'] = call($mclient, "db.creds")["creds"];
+
+	if ($progress) {
+		[$progress setProgress: 20];
+	}
 
 	# 3. loot
-	@data = call($mclient, "db.loots")["loots"];
-	dumpData("loots", @("host", "ltype", "created_at", "updated_at", "info", "content_type", "name", "path"), @data);
+	%r['loots'] = call($mclient, "db.loots")["loots"];
 
-	[$progress setProgress: 45];
-	[$progress setNote: "clients"];
-	sleep(50);
+	if ($progress) {
+		[$progress setProgress: 30];
+	}
 
 	# 4. clients
-	@data = call($mclient, "db.clients", [new HashMap])["clients"];
-	dumpData("clients", @("host", "created_at", "updated_at", "ua_name", "ua_ver", "ua_string"), @data);
+	%r['clients'] = call($mclient, "db.clients", [new HashMap])["clients"];
+
+	if ($progress) {
+		[$progress setProgress: 35];
+	}
 
 	# 5. hosts and services
 	local('@hosts @services $temp $h $s $x');
-	call($mclient, "armitage.prep_export", [new HashMap]);
-	$x = 46;
+	call($mclient, "armitage.prep_export", $1);
 
 	$temp = call($mclient, "armitage.export_data");
 	while (size($temp['hosts']) > 0) {
 		($h, $s) = values($temp, @('hosts', 'services'));
 		addAll(@hosts, $h);
 		addAll(@services, $s);
-
-		[$progress setProgress: $x];
-		[$progress setNote: "big database queries!"];
+	
+		if ($progress) {
+			[$progress setProgress: 35 + $x];
+		}
 		$x += 2;
-
 		sleep(50);
 		$temp = call($mclient, "armitage.export_data");
 	}
 
+	%r['hosts'] = @hosts;
+	%r['services'] = @services;
+
+	return %r;
+}
+
+#
+# extract and export Metasploit data to easily parsable files (TSV and XML)
+#
+sub generateArtifacts {
+	local('%data $progress');
+
+	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "Querying Database...", 0, 100]; 
+	%data = queryData([new HashMap], \$progress);
+
+	[$progress setProgress: 50];
+	[$progress setNote: "Exporting Data"];
+
+	# 1. extract the known vulnerability information
+	dumpData("vulnerabilities", @("host", "port", "proto", "updated_at", "name", "refs"), %data['vulns']);
+
+	[$progress setProgress: 55];
+
+	# 2. credentials
+	dumpData("credentials", @("host", "port", "proto", "sname", "created_at", "active", "ptype", "user", "pass"), %data['creds']);
+		
 	[$progress setProgress: 60];
-	[$progress setNote: "hosts"];
 
-	dumpData("hosts", @("address", "mac", "state", "address", "address6", "name", "purpose", "info", "os_name", "os_flavor", "os_sp", "os_lang", "os_match", "created_at", "updated_at"), @hosts);
+	# 3. loot
+	dumpData("loots", @("host", "ltype", "created_at", "updated_at", "info", "content_type", "name", "path"), %data['loots']);
 
-	[$progress setProgress: 75];
-	[$progress setNote: "services"];
+	[$progress setProgress: 65];
 
-	dumpData("services", @("host", "port", "state", "proto", "name", "created_at", "updated_at", "info"), @services);
+	# 4. clients
+	dumpData("clients", @("host", "created_at", "updated_at", "ua_name", "ua_ver", "ua_string"), %data['clients']);
+
+	[$progress setProgress: 70];
+
+	# 5. hosts
+	dumpData("hosts", @("address", "mac", "state", "address", "address6", "name", "purpose", "info", "os_name", "os_flavor", "os_sp", "os_lang", "os_match", "created_at", "updated_at"), %data['hosts']);
+
+	[$progress setProgress: 80];
+
+	# 6. services
+	dumpData("services", @("host", "port", "state", "proto", "name", "created_at", "updated_at", "info"), %data['services']);
 
 	[$progress setProgress: 90];
-	[$progress setNote: "host picture :)"];
 
 	# 7. take a pretty screenshot of the graph view...
+	[$progress setNote: "host picture :)"];
+
 	makeScreenshot("hosts.png");
 	if (-exists "hosts.png") {
 		logFile("hosts.png", "artifacts", ".");
