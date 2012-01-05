@@ -486,8 +486,8 @@ sub host_attack_items {
 				item($e, $name, $null, lambda({
 					thread(lambda({ 
 						local('$a $b'); 
-						$a = call($client, "module.info", "exploit", $exploit);
-						$b = call($client, "module.options", "exploit", $exploit);
+						$a = call($mclient, "module.info", "exploit", $exploit);
+						$b = call($mclient, "module.options", "exploit", $exploit);
 						attack_dialog($a, $b, $hosts, $exploit);
 					}, \$exploit, \$hosts));
 				}, \$exploit, $hosts => $2));

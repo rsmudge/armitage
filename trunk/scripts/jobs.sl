@@ -195,8 +195,8 @@ sub _launch_service {
 # launch_dialog("title", "type", "name", "visible", "hosts...", %options)
 sub launch_dialog {
 	local('$info $options $6');
-	$info = call($client, "module.info", $2, $3);
-	$options = call($client, "module.options", $2, $3);
+	$info = call($mclient, "module.info", $2, $3);
+	$options = call($mclient, "module.options", $2, $3);
 
 	# give callers the ability to set any options before we pass things on.
 	if (-ishash $6) {
