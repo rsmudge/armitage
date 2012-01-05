@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+5 Jan 12
+--------
 - Armitage d-server now transmits hosts, service, and session state only 
   when something has changed. This makes teaming much snappier.
 - Uploading an imported hosts file now shows a progress dialog.
