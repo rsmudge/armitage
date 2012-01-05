@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 sub dumpTSVData {
-	local('$handle $entry');
+	local('$handle $entry $key $value');
 	if ($3 is $null) {
 		warn("No data for $1");
 		return;
@@ -19,6 +19,10 @@ sub dumpTSVData {
 	$handle = openf("> $+ $1 $+ .tsv");
 	println($handle, join("\t", $2));
 	foreach $entry ($3) {
+		foreach $key => $value ($entry) {
+			$value = strrep(["$value" trim], "\t", "   ", "\n", "\\n");
+		}
+
 		println($handle, join("\t", values($entry, $2))); 
 	}
 	closef($handle);
@@ -58,6 +62,44 @@ sub dumpData {
 	deleteFile("$1 $+ .xml");
 }
 
+sub fixVulns {
+	local('$id $vuln %vulns %refs $info');
+	%refs  = ohash();
+	setMissPolicy(%refs, { return @(); });
+
+	# let's group everything by a unique vulnerability id... we're going to collapse the 
+	# the vulns into one row with comma separated refs.
+	foreach $vuln ($1) {
+		$id = $vuln['vid'];
+		%vulns[$id] = $vuln;
+		push(%refs[$id], $vuln['refs']);
+	}
+
+	# fix the references...
+	foreach $id => $vuln (%vulns) {
+		$vuln['refs'] = join(", ", %refs[$id]); 
+		
+		if ("exploit/*" iswm $vuln['name'] && substr($vuln['name'], 8) in @exploits) {
+			$info = call($mclient, "module.info", "exploit", substr($vuln['name'], 8));
+
+			# fix some options
+			$vuln['module'] = $vuln['name'];
+			$vuln['name'] = $info['name'];
+			$vuln['info'] = replace($info['description'], "\n\\s+", "\n");
+		}
+		else if ("auxiliary/*" iswm $vuln['name'] && substr($vuln['name'], 10) in @auxiliary) {
+			$info = call($mclient, "module.info", "auxiliary", substr($vuln['name'], 10));
+
+			# fix some options
+			$vuln['module'] = $vuln['name'];
+			$vuln['name'] = $info['name'];
+			$vuln['info'] = replace($info['description'], "\n\\s+", "\n");
+		}
+	}
+
+	return values(%vulns);
+}
+
 #
 # query all of the data that we want...
 # queryData(%workspace)
@@ -71,6 +113,8 @@ sub queryData {
 	if ($progress) {
 		[$progress setProgress: 10];
 	}
+
+	%r['vulns'] = fixVulns(%r['vulns']);
 
 	# 2. credentials
 	%r['creds'] = call($mclient, "db.creds")["creds"];
@@ -167,7 +211,7 @@ sub _generateArtifacts {
 	[$progress setNote: "Exporting Data"];
 
 	# 1. extract the known vulnerability information
-	dumpData("vulnerabilities", @("host", "port", "proto", "updated_at", "name", "refs"), %data['vulns']);
+	dumpData("vulnerabilities", @("host", "port", "proto", "updated_at", "name", "refs", "info", "module"), %data['vulns']);
 
 	[$progress setProgress: 55];
 
