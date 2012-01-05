@@ -54,12 +54,12 @@ sub dumpXMLData {
 }
 
 sub dumpData {
-	dumpTSVData($1, $2, $3);
 	dumpXMLData($1, $2, $3);
-	logFile("$1 $+ .tsv", "artifacts", "tsv");
+	dumpTSVData($1, $2, $3);
 	logFile("$1 $+ .xml", "artifacts", "xml");
-	deleteFile("$1 $+ .tsv");
+	logFile("$1 $+ .tsv", "artifacts", "tsv");
 	deleteFile("$1 $+ .xml");
+	deleteFile("$1 $+ .tsv");
 }
 
 sub fixVulns {
