@@ -98,6 +98,7 @@ sub checkForCollaborationServer {
 			}
 			warn("No collaboration server is present!");
 			$mclient = $client;
+			initReporting();
 			checkForUserConflict();
 			dispatchEvent(&postSetup);
 		}

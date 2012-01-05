@@ -422,6 +422,9 @@ service framework-postgres start");
 		[System exit: 0];
 	}
 
+	# setup the reporting API (must happen after base directory/database is setup)
+	initReporting();
+
 	#
 	# spit out the details
 	#
