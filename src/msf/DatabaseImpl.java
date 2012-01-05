@@ -16,6 +16,28 @@ public class DatabaseImpl implements RpcConnection  {
 	protected String sFilter = null;
 	protected Route[]  rFilter = null;
 	protected String[] oFilter = null;
+	protected int hindex = 0;
+	protected int sindex = 0;
+
+	public void resetHostsIndex() {
+		hindex = 0;
+		queries = build();
+	}
+
+	public void resetServicesIndex() {
+		sindex = 0;
+		queries = build();
+	}
+
+	public void nextHostsIndex() {
+		hindex += 1;
+		queries = build();
+	}
+
+	public void nextServicesIndex() {
+		sindex += 1;
+		queries = build();
+	}
 
 	private static String join(List items, String delim) {
 		StringBuffer result = new StringBuffer();
@@ -154,8 +176,8 @@ public class DatabaseImpl implements RpcConnection  {
 		/* this is an optimization. If we have a network or OS filter, we need to pull back all host/service records and
 		   filter them here. If we do not have these types of filters, then we can let the database do the heavy lifting
 		   and limit the size of the final result there. */
-		String limit1 = rFilter == null && oFilter == null ? "512" : "30000";
-		String limit2 = rFilter == null && oFilter == null ? "12288" : "100000";
+		int limit1 = rFilter == null && oFilter == null ? 512 : 30000;
+		int limit2 = rFilter == null && oFilter == null ? 12288 : 100000;
 
 		temp.put("db.creds", "SELECT DISTINCT creds.*, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
 
@@ -171,13 +193,13 @@ public class DatabaseImpl implements RpcConnection  {
 			if (hFilter.indexOf("sessions.") >= 0)
 				tables.add("sessions");
 
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM " + join(tables, ", ") + " WHERE hosts.workspace_id = " + workspaceid + " AND " + hFilter + " LIMIT " + limit1);
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM " + join(tables, ", ") + " WHERE hosts.workspace_id = " + workspaceid + " ORDER BY hosts.id ASC AND " + hFilter + " LIMIT " + limit1 + " OFFSET " + (limit1 * hindex));
 		}
 		else {
-			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " LIMIT " + limit1);
+			temp.put("db.hosts", "SELECT DISTINCT hosts.* FROM hosts WHERE hosts.workspace_id = " + workspaceid + " ORDER BY hosts.id ASC LIMIT " + limit1 + " OFFSET " + (hindex * limit1));
 		}
 
-		temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts") + ") as hosts WHERE hosts.id = services.host_id AND services.state = 'open' LIMIT " + limit2);
+		temp.put("db.services", "SELECT DISTINCT services.*, hosts.address as host FROM services, (" + temp.get("db.hosts") + ") as hosts WHERE hosts.id = services.host_id AND services.state = 'open' ORDER BY services.id ASC LIMIT " + limit2 + " OFFSET " + (limit2 * sindex));
 		temp.put("db.loots", "SELECT DISTINCT loots.*, hosts.address as host FROM loots, hosts WHERE hosts.id = loots.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.workspaces", "SELECT DISTINCT * FROM workspaces");
 		temp.put("db.notes", "SELECT DISTINCT notes.*, hosts.address as host FROM notes, hosts WHERE hosts.id = notes.host_id AND hosts.workspace_id = " + workspaceid);

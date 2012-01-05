@@ -19,6 +19,8 @@ In Progress
   YAML file and prompts with something helpful. Before it would just freeze
   with a blank dialog. Not helpful. :)
 - Armitage now only shows services that are open. 
+- View -> Reporting -> Export Data now has the capability of dumping the whole
+  database (not just the current workspace).
 
 30 Dec 11 - last release of the year?
 ---------
