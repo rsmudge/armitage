@@ -78,12 +78,8 @@ sub view_items {
 	$t = menu($1, 'Reporting', 'R');
 
 	item($t, 'Activity Logs', 'A', gotoFile([new File: getFileProper(systemProperties()["user.home"], ".armitage")]));
-	item($t, 'Export Data', 'E', { 
-		thread({ 
-			local('$file');
-			$file = [new File: generateArtifacts()];
-			[gotoFile($file)];
-		}); 
+	item($t, 'Export Data', 'E', {
+		thread(&generateArtifacts);
 	});
 }
 

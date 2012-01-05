@@ -3,6 +3,11 @@
 #
 
 import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.event.*;
 
 sub dumpTSVData {
 	local('$handle $entry');
@@ -116,10 +121,47 @@ sub queryData {
 # extract and export Metasploit data to easily parsable files (TSV and XML)
 #
 sub generateArtifacts {
+	local('$dialog $select @workspaces $export');
+
+	$dialog = dialog("Export Data", 320, 200);
+
+	@workspaces = map({ return $1['name']; }, workspaces());
+	add(@workspaces, "All Hosts");
+
+	$select = select(@workspaces, "Show All");
+	$export = [new JButton: "Export"];
+	[$export addActionListener: lambda({
+		thread(lambda({
+			local('$filter $files');
+			if ($item eq "All Hosts") {
+				$filter = %();
+			}
+			else {
+				$filter = search(workspaces(), 
+						lambda({ 
+							return iff($1['name'] eq $item, $1); 
+						}, \$item));
+			}
+
+			$files = _generateArtifacts($filter);
+			[gotoFile([new java.io.File: $files])];
+		}, $item => [$select getSelectedItem]));
+		[$dialog setVisible: 0];
+	}, \$select, \$dialog)];
+
+	[$dialog setLayout: [new BorderLayout]];
+	[$dialog add: label_for("Workspace:", 100, $select), [BorderLayout CENTER]];
+	[$dialog add: center($export), [BorderLayout SOUTH]];
+	[$dialog pack];
+	[$dialog setVisible: 1];
+	[$dialog show];
+}
+
+sub _generateArtifacts {
 	local('%data $progress');
 
 	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "Querying Database...", 0, 100]; 
-	%data = queryData([new HashMap], \$progress);
+	%data = queryData($1, \$progress);
 
 	[$progress setProgress: 50];
 	[$progress setNote: "Exporting Data"];
