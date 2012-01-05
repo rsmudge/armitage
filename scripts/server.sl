@@ -233,7 +233,7 @@ sub client {
 			[$client_cache setFilter: $eid, $args];
 			writeObject($handle, %());			
 		}
-		else if ("module.*" iswm $method) {
+		else if ("module.*" iswm $method && size($args) == 0) {
 			# never underestimate the power of caching to alleviate load.
 			local('$response $time');
 			$response = $null;

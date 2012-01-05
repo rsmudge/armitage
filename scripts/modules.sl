@@ -26,7 +26,7 @@ sub showModulePopup {
 		item($menu, "Relevant Targets", 'R', lambda({
 			thread(lambda({
 				local('$options %filter $os');
-				$options = call($client, "module.options", $type, $module);
+				$options = call($mclient, "module.options", $type, $module);
 				
 				if ("RPORT" in $options) {
 					%filter["ports"] = $options['RPORT']['default'];
@@ -77,8 +77,8 @@ sub moduleAction {
 				}
 				else {
 					local('$a $b');
-					$a = call($client, "module.info", "exploit", $path);
-					$b = call($client, "module.options", "exploit", $path);
+					$a = call($mclient, "module.info", "exploit", $path);
+					$b = call($mclient, "module.options", "exploit", $path);
 					dispatchEvent(lambda({
 						attack_dialog($a, $b, $hosts, $path);
 					}, \$a, \$b, \$hosts, \$path));
