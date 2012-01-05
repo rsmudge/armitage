@@ -227,8 +227,8 @@ public class DatabaseImpl implements RpcConnection  {
 			else if (methodName.equals("db.vulns")) {
 				//List a = executeQuery("SELECT DISTINCT vulns.*, hosts.address as host, services.port as port, services.proto as proto FROM vulns, hosts, services WHERE hosts.id = vulns.host_id AND services.id = vulns.service_id");
 				//List b = executeQuery("SELECT DISTINCT vulns.*, hosts.address as host FROM vulns, hosts WHERE hosts.id = vulns.host_id AND vulns.service_id IS NULL");
-				List a = executeQuery("SELECT DISTINCT vulns.*, hosts.address as host, services.port as port, services.proto as proto, refs.name as refs FROM vulns, hosts, services, vulns_refs, refs WHERE hosts.id = vulns.host_id AND services.id = vulns.service_id AND vulns_refs.vuln_id = vulns.id AND vulns_refs.ref_id = refs.id AND hosts.workspace_id = " + workspaceid);
-				List b = executeQuery("SELECT DISTINCT vulns.*, hosts.address as host, refs.name as refs FROM vulns, hosts, refs, vulns_refs WHERE hosts.id = vulns.host_id AND vulns.service_id IS NULL AND vulns_refs.vuln_id = vulns.id AND vulns_refs.ref_id = refs.id AND hosts.workspace_id = " + workspaceid);
+				List a = executeQuery("SELECT DISTINCT vulns.*, vulns.id as vid, hosts.address as host, services.port as port, services.proto as proto, refs.name as refs FROM vulns, hosts, services, vulns_refs, refs WHERE hosts.id = vulns.host_id AND services.id = vulns.service_id AND vulns_refs.vuln_id = vulns.id AND vulns_refs.ref_id = refs.id AND hosts.workspace_id = " + workspaceid);
+				List b = executeQuery("SELECT DISTINCT vulns.*, vulns.id as vid, hosts.address as host, refs.name as refs FROM vulns, hosts, refs, vulns_refs WHERE hosts.id = vulns.host_id AND vulns.service_id IS NULL AND vulns_refs.vuln_id = vulns.id AND vulns_refs.ref_id = refs.id AND hosts.workspace_id = " + workspaceid);
 
 				a.addAll(b);
 

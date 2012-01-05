@@ -24,6 +24,15 @@ In Progress
 - Added a dialog to View -> Reporting Export Data. Now you have the ability to
   dump all hosts or choose to dump one of the dynamic workspaces. This gives
   you a lot of flexibility with which hosts are included.
+- Cleaned up exported output of vulnerabilities in the Metasploit database:
+  -- duplicate entries are collapsed to one (this was the fault of my query)
+  -- refs column contains references separated by a comma and a space
+  -- added info and module columns. The module column indicates the appropriate
+     Metasploit module
+  -- Metasploit modules now populate name, info, and module in an appropriate
+     way.
+- Values exported to TSV are cleaned up such that newlines are replaced with a
+  literal \n and tabs are converted to three spaces.
 
 30 Dec 11 - last release of the year?
 ---------
