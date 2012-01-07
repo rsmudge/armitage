@@ -131,13 +131,20 @@ sub queryData {
 	}
 
 	# 4. clients
-	%r['clients'] = call($mclient, "db.clients", [new HashMap])["clients"];
+	%r['clients'] = call($mclient, "db.clients")["clients"];
 
 	if ($progress) {
 		[$progress setProgress: 35];
 	}
 
-	# 5. hosts and services
+	# 5. sessions...
+	%r['sessions'] = call($mclient, "db.sessions")["sessions"];
+
+	if ($progress) {
+		[$progress setProgress: 38];
+	}
+
+	# 6. hosts and services
 	local('@hosts @services $temp $h $s $x');
 	call($mclient, "armitage.prep_export", $1);
 
@@ -240,7 +247,12 @@ sub _generateArtifacts {
 
 	[$progress setProgress: 90];
 
-	# 7. take a pretty screenshot of the graph view...
+	# 7. sessions
+	dumpData("sessions", @("host", "local_id", "stype", "platform", "via_payload", "via_exploit", "opened_at", "last_seen", "closed_at", "close_reason"), %data['sessions']);
+
+	[$progress setProgress: 95];
+
+	# 8. take a pretty screenshot of the graph view...
 	[$progress setNote: "host picture :)"];
 
 	makeScreenshot("hosts.png");
