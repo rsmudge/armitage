@@ -204,6 +204,7 @@ public class DatabaseImpl implements RpcConnection  {
 		temp.put("db.workspaces", "SELECT DISTINCT * FROM workspaces");
 		temp.put("db.notes", "SELECT DISTINCT notes.*, hosts.address as host FROM notes, hosts WHERE hosts.id = notes.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.clients", "SELECT DISTINCT clients.*, hosts.address as host FROM clients, hosts WHERE hosts.id = clients.host_id AND hosts.workspace_id = " + workspaceid);
+		temp.put("db.sessions", "SELECT DISTINCT sessions.*, hosts.address as host FROM sessions, hosts WHERE hosts.id = sessions.host_id AND hosts.workspace_id = " + workspaceid);
 		return temp;
 	}
 

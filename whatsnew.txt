@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Data export now includes a sessions file. This lists all of the Metasploit
+  sessions you had in your database. There's some neat data here included
+  which exploit was used, which payload, start time, and close time. You can
+  calculate how much time you spent on your client's boxes. Cool stuff.
+
 5 Jan 12
 --------
 - Armitage d-server now transmits hosts, service, and session state only 
