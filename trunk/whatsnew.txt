@@ -7,6 +7,8 @@ In Progress
   sessions you had in your database. There's some neat data here included
   which exploit was used, which payload, start time, and close time. You can
   calculate how much time you spent on your client's boxes. Cool stuff.
+- Fixed a potential dead-lock caused by mouse enter/exit events firing code
+  that required a lock. Nice landmine to defuse.
 
 5 Jan 12
 --------

@@ -185,7 +185,7 @@ sub createPreferencesTab {
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
-	[$table addMouseListener: lambda({
+	addMouseListener($table, lambda({
 		if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
 			local('$sel $type $color $row $value');
 			$sel  = [$model getSelectedValue: $table];
@@ -271,7 +271,7 @@ sub createPreferencesTab {
 				[$label requestFocus];
 			}
 		}
-	}, \$model, \$table)];
+	}, \$model, \$table));
 
 	local('$button $reset');
 	$button = [new JButton: "Save"];

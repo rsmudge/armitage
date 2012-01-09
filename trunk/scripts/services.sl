@@ -37,7 +37,7 @@ sub createServiceBrowser {
         [$sorter toggleSortOrder: 2];
 	[$table setRowSorter: $sorter];
 
-	[$table addMouseListener: lambda({
+	addMouseListener($table, lambda({
 		if ([$1 isPopupTrigger]) {
 			local('$popup $hosts %r $val');
 			$popup = [new JPopupMenu];
@@ -53,7 +53,7 @@ sub createServiceBrowser {
 				[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 			}
 		}
-	}, \$table, \$model)];
+	}, \$table, \$model));
 	
 	[[$table getColumn: "info"] setPreferredWidth: 300];
 	[[$table getColumn: "host"] setPreferredWidth: 125];

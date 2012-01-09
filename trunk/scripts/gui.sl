@@ -493,3 +493,7 @@ inline safetyCheck {
 	}
 }
 
+sub addMouseListener {
+	[$1 addMouseListener: [new SafeMouseListener: $2]];
+}
+
