@@ -187,7 +187,7 @@ sub createFileBrowser {
 		m_cmd($sid, "cd '" . [$text getText] . "'");
 	}, \$text, $sid => $1, $platform => $2);	
 
-	[$table addMouseListener: lambda({
+	addMouseListener($table, lambda({
 		if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
 			local('$model $sel');
 			$model = %files[$sid];
@@ -213,7 +213,7 @@ sub createFileBrowser {
 			[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 			[$1 consume];
 		}
-	}, $sid => $1, \$table, \$setcwd, \$text)];
+	}, $sid => $1, \$table, \$setcwd, \$text));
 	
 	$fsv = [FileSystemView getFileSystemView];
 	$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];

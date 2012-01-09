@@ -586,7 +586,7 @@ sub addFileListener {
 
 	$actions["RHOSTS"] = $actions["RHOST"];
      
-	[$table addMouseListener: lambda({
+	addMouseListener($table, lambda({
                 if ($0 eq 'mouseClicked' && [$1 getClickCount] >= 2) {
 			local('$type $row $action $change $value');
 
@@ -603,7 +603,7 @@ sub addFileListener {
 				}
 			}
 		}
-	}, \$model, \$table, \$actions)];
+	}, \$model, \$table, \$actions));
 }
 
 sub rankScore {

@@ -98,7 +98,7 @@ sub createModuleList {
 	[$tree setDragEnabled: 1];
 	[$tree setTransferHandler: $2];
 
-	[$tree addMouseListener: lambda({
+	addMouseListener($tree, lambda({
 		local('$t');
 		$t = [$1 isPopupTrigger];
 		if ($t == 0 && ($0 ne "mousePressed" || [$1 getClickCount] < 2)) { 
@@ -127,7 +127,7 @@ sub createModuleList {
 			$hosts = [$targets getSelectedHosts];
 			moduleAction($type, $path, $hosts);
 		}
-	})];
+	}));
 
 	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_NEVER]];
 

@@ -99,11 +99,11 @@ sub createLootBrowser {
 
 	$view = [new JButton: "View"];
 
-	[$table addMouseListener: lambda({
+	addMouseListener($table, lambda({
 		if ($0 eq "mousePressed" && [$1 getClickCount] >= 2) {
 			showLoot(\$model, \$table);
 		}
-	}, \$model, \$table)];
+	}, \$model, \$table));
 
 	[$view addActionListener: lambda({
 		showLoot(\$model, \$table);
