@@ -80,7 +80,7 @@ To do this:
 
 sub checkForCollaborationServer {
 	cmd($client, $console, "set ARMITAGE_SERVER", {
-		if ($3 ismatch "ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n") {
+		if ($3 ismatch "(?s:ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n.*)") {
 			local('$host $port $token');
 			($host, $port, $token) = matched();
 			dispatchEvent(lambda({
