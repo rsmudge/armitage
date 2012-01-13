@@ -14,6 +14,9 @@ In Progress
 - Added check to d-server allowing one lock per/client. Client won't reobtain
   a lock until it let's it go. This prevents you from opening two shell tabs
   for a shell session in team mode.
+- Fixed an infinite loop condition when some Windows shell commands would
+  return output with no newlines (e.g., net stop [some service]). Thanks
+  Jesse for pointing me to this one.
 
 5 Jan 12
 --------

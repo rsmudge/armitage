@@ -131,7 +131,7 @@ global('%shells $ashell $achannel %maxq %wait');
 		$count = size($v);
 		shift($v);
 	
-		while ($v[0] eq "") {
+		while (size($v) > 0 && $v[0] eq "") {
 			shift($v);
 		}
 		#$v = substr($v, join("\n", $v));
