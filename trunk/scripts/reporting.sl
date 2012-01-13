@@ -62,6 +62,12 @@ sub dumpData {
 	deleteFile("$1 $+ .tsv");
 }
 
+sub fixHosts {
+	return sort({
+		return [graph.Route ipToLong: $1['address']] <=> [graph.Route ipToLong: $2['address']];
+	}, $1);
+}
+
 sub fixVulns {
 	local('$id $vuln %vulns %refs $info');
 	%refs  = ohash();
@@ -141,10 +147,17 @@ sub queryData {
 	%r['sessions'] = call($mclient, "db.sessions")["sessions"];
 
 	if ($progress) {
+		[$progress setProgress: 36];
+	}
+
+	# 6. timeline
+	%r['timeline'] = call($mclient, "db.events")['events'];
+
+	if ($progress) {
 		[$progress setProgress: 38];
 	}
 
-	# 6. hosts and services
+	# 7. hosts and services
 	local('@hosts @services $temp $h $s $x');
 	call($mclient, "armitage.prep_export", $1);
 
@@ -162,7 +175,7 @@ sub queryData {
 		$temp = call($mclient, "armitage.export_data");
 	}
 
-	%r['hosts'] = @hosts;
+	%r['hosts'] = fixHosts(@hosts);
 	%r['services'] = @services;
 
 	return %r;
@@ -250,9 +263,14 @@ sub _generateArtifacts {
 	# 7. sessions
 	dumpData("sessions", @("host", "local_id", "stype", "platform", "via_payload", "via_exploit", "opened_at", "last_seen", "closed_at", "close_reason"), %data['sessions']);
 
-	[$progress setProgress: 95];
+	[$progress setProgress: 93];
 
-	# 8. take a pretty screenshot of the graph view...
+	# 8. timeline
+	dumpData("timeline", @("created_at", "info", "username"), %data['timeline']);
+
+	[$progress setProgress: 96];
+
+	# 9. take a pretty screenshot of the graph view...
 	[$progress setNote: "host picture :)"];
 
 	makeScreenshot("hosts.png");
