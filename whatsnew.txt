@@ -9,6 +9,11 @@ In Progress
   calculate how much time you spent on your client's boxes. Cool stuff.
 - Fixed a potential dead-lock caused by mouse enter/exit events firing code
   that required a lock. Nice landmine to defuse.
+- Fixed a weird condition with d-server detection. Sometimes (rarely)
+  Armitage wouldn't detect the d-server even when it's present.
+- Added check to d-server allowing one lock per/client. Client won't reobtain
+  a lock until it let's it go. This prevents you from opening two shell tabs
+  for a shell session in team mode.
 
 5 Jan 12
 --------

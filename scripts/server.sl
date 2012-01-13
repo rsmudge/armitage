@@ -40,7 +40,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time');
 
 	#
 	# verify the client
@@ -110,10 +110,9 @@ sub client {
 			$data = %locks[$sid];
 			if ($data is $null) {
 				%locks[$sid] = $eid;
-				$data = $eid;
 			}
 			release($lock_lock);
-			if ($data eq $eid) {
+			if ($data is $null) {
 				writeObject($handle, result(%()));
 			}
 			else {
@@ -219,7 +218,7 @@ sub client {
 			$response = [$client execute: $method, $args];
 			writeObject($handle, $response);
 		}
-		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "session.list") {
+		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "db.creds" || $method eq "session.list") {
 			$response = [$client_cache execute: $eid, $method, $null];
 	
 			if ($args !is $null && -isarray $args && size($args) == 1 && $args[0] == [armitage.ArmitageTimer dataIdentity: $response]) {
@@ -235,7 +234,6 @@ sub client {
 		}
 		else if ("module.*" iswm $method && size($args) == 0) {
 			# never underestimate the power of caching to alleviate load.
-			local('$response $time');
 			$response = $null;
 
 			acquire($cach_lock);
@@ -256,7 +254,7 @@ sub client {
 		} 
 		else {
 			if ($args) {
-				$response = [$client execute: $method, $args];
+				$response = [$client execute: $method, cast($args, ^Object)];
 			}
 			else {
 				$response = [$client execute: $method];
