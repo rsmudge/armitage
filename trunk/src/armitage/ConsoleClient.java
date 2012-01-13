@@ -214,12 +214,32 @@ public class ConsoleClient implements Runnable, ActionListener {
 		}
 	}
 
+	protected LinkedList commands = new LinkedList();
+
+	public void sendStringQueue(String text) {
+		synchronized (listeners) {
+			commands.add(text);
+		}
+	}
+
 	public void run() {
 		Map read;
 		boolean shouldRead = go_read;
+		String command = null;
 
 		try {
 			while (shouldRead) {
+				synchronized (listeners) {
+					if (commands.size() > 0) {
+						command = (String)commands.removeFirst();
+					}
+				}
+
+				if (command != null) {
+					sendString(command);
+					command = null;
+				}
+
 				read = readResponse();
 
 				if (read == null || "failure".equals( read.get("result") + "" )) {
