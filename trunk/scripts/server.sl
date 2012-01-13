@@ -134,6 +134,12 @@ sub client {
 			event("* $eid $data $+ \n");
 			writeObject($handle, result(%()));
 		}
+		else if ($method eq "armitage.skip") {
+			acquire($poll_lock);
+			$index = size(@events);
+			release($poll_lock);
+			writeObject($handle, result(%()));
+		}
 		else if ($method eq "armitage.push") {
 			($null, $data) = $args;
 			event("< $+ $[10]eid $+ > " . $data);
