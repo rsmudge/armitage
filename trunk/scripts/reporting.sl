@@ -68,6 +68,16 @@ sub fixHosts {
 	}, $1);
 }
 
+sub fixTimeline {
+	local('$event $source $username');
+	foreach $event ($1) {
+		($source, $username) = split('//', $event['username']);
+		$event['source'] = $source;
+		$event['username'] = $username;
+	}
+	return $1;
+}
+
 sub fixVulns {
 	local('$id $vuln %vulns %refs $info');
 	%refs  = ohash();
@@ -151,7 +161,7 @@ sub queryData {
 	}
 
 	# 6. timeline
-	%r['timeline'] = call($mclient, "db.events")['events'];
+	%r['timeline'] = fixTimeline(call($mclient, "db.events")['events']);
 
 	if ($progress) {
 		[$progress setProgress: 38];
@@ -266,7 +276,7 @@ sub _generateArtifacts {
 	[$progress setProgress: 93];
 
 	# 8. timeline
-	dumpData("timeline", @("created_at", "info", "username"), %data['timeline']);
+	dumpData("timeline", @("source", "username", "created_at", "info"), %data['timeline']);
 
 	[$progress setProgress: 96];
 

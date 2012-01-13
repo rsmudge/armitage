@@ -22,7 +22,7 @@ sub arp_scan_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		elog("ARP scan: $host $+ /" . maskToCIDR($mask) . " via $sid");
+		elog("ARP scan: $host $+ /" . maskToCIDR($mask) . " via $sid", sessionToHost($sid));
 		module_execute("post", "windows/gather/arp_scanner", %(THREADS => 24, SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
 	}
 	[$dialog setVisible: 0];
@@ -34,7 +34,7 @@ sub ping_sweep_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		elog("ping sweep: $host $+ /" . maskToCIDR($mask) . " via $sid");
+		elog("ping sweep: $host $+ /" . maskToCIDR($mask) . " via $sid", sessionToHost($sid));
 		module_execute("post", "multi/gather/ping_sweep", %(SESSION => $sid, RHOSTS => "$host $+ /" . maskToCIDR($mask)));
 	}
 	[$dialog setVisible: 0];
@@ -46,7 +46,7 @@ sub add_pivot_function  {
 	$mask = [$model getSelectedValueFromColumn: $table, "mask"];
 	
 	if ($host ne "" && $mask ne "") {
-		elog("added pivot: $host $mask $sid");
+		elog("added pivot: $host $mask $sid", sessionToHost($sid));
 		cmd_safe("route add $host $mask $sid", {
 			if ($3 ne "") { showError($3); } 
 		});

@@ -456,21 +456,26 @@ sub connectDialog {
 
 sub _elog {
 	if ($client !is $mclient) {
-		call($mclient, "armitage.log", $1);
+		call($mclient, "armitage.log", $1, $2);
 	}
 	else {
-		call($client, "db.log_event", "", $1);
+		call($client, "db.log_event", "$2 $+ //", $1);
 	}
 }
 
 sub elog {
+	local('$2');
+	if ($2 is $null) {
+		$2 = $MY_ADDRESS;
+	}
+
 	if ([SwingUtilities isEventDispatchThread]) {
 		thread(lambda({
-			_elog($message);
-		}, $message => $1));
+			_elog($message, $source);
+		}, $message => $1, $source => $2));
 	}
 	else {
-		_elog($1);
+		_elog($1, $2);
 	}
 }
 
