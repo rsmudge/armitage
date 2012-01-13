@@ -205,6 +205,7 @@ public class DatabaseImpl implements RpcConnection  {
 		temp.put("db.notes", "SELECT DISTINCT notes.*, hosts.address as host FROM notes, hosts WHERE hosts.id = notes.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.clients", "SELECT DISTINCT clients.*, hosts.address as host FROM clients, hosts WHERE hosts.id = clients.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.sessions", "SELECT DISTINCT sessions.*, hosts.address as host FROM sessions, hosts WHERE hosts.id = sessions.host_id AND hosts.workspace_id = " + workspaceid);
+		temp.put("db.events", "SELECT DISTINCT username, info, created_at FROM events WHERE events.name = 'armitage.event'");
 		return temp;
 	}
 
@@ -236,6 +237,14 @@ public class DatabaseImpl implements RpcConnection  {
 				Map result = new HashMap();
 				result.put("vulns", a);
 				return result;
+			}
+			else if (methodName.equals("db.log_event")) {
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("INSERT INTO events (name, username, info, created_at) VALUES ('armitage.event', ?, ?, now())");
+				stmt.setString(1, params[0] + "");
+				stmt.setString(2, params[1] + "");
+				stmt.executeUpdate();
+				return new HashMap();
 			}
 			else if (methodName.equals("db.key_add")) {
 				PreparedStatement stmt = null;

@@ -132,6 +132,7 @@ sub client {
 		else if ($method eq "armitage.log") {
 			($data) = $args;
 			event("* $eid $data $+ \n");
+			call($client, "db.log_event", $eid, $data);
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.skip") {
