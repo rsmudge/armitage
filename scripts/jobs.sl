@@ -389,7 +389,7 @@ sub _launch_dialog {
 					foreach $session (@sessions) {
 						$session = sessionToHost($session) . "/ $+ $session";
 					}
-		                        elog("is logging keystrokes on " . join(", ", @sessions));
+		                        elog("started logging keystrokes on " . join(", ", @sessions));
 				}
 				else if ($command eq "windows/manage/persistence") {
 					foreach $session (@sessions) {

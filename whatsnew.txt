@@ -17,6 +17,10 @@ In Progress
 - Fixed an infinite loop condition when some Windows shell commands would
   return output with no newlines (e.g., net stop [some service]). Thanks
   Jesse for pointing me to this one.
+- Data export now includes a timeline file. This file documents all of the
+  major engagement events seen by Armitage. Included with each of these 
+  events is the source ip of the attack system and the user who carried out
+  the action (when teaming is setup).
 
 5 Jan 12
 --------

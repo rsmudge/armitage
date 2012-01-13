@@ -40,7 +40,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address');
 
 	#
 	# verify the client
@@ -130,9 +130,9 @@ sub client {
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.log") {
-			($data) = $args;
+			($data, $address) = $args;
 			event("* $eid $data $+ \n");
-			call($client, "db.log_event", $eid, $data);
+			call($client, "db.log_event", "$address $+ // $+ $eid", $data);
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.skip") {
