@@ -21,7 +21,7 @@ In Progress
   major engagement events seen by Armitage. Included with each of these 
   events is the source ip of the attack system and the user who carried out
   the action (when teaming is setup).
-- Data export now exported timestamps with current timezone (not GMT)
+- Data export now exports timestamps with current timezone (not GMT)
 
 5 Jan 12
 --------
