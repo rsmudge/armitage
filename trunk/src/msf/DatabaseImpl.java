@@ -76,10 +76,17 @@ public class DatabaseImpl implements RpcConnection  {
 		queries = build();
 	}
 
+	private static long tzfix = 0;
+
+	static {
+		Calendar now = Calendar.getInstance();
+		tzfix = now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET);
+	}
+
 	/* marshall the type into something we'd rather deal with */
 	protected Object fixResult(Object o) {
 		if (o instanceof java.sql.Timestamp) {
-			return new Long(((Timestamp)o).getTime());
+			return new Long( ((Timestamp)o).getTime() + tzfix );
 		}
 		return o;
 	}
@@ -240,7 +247,7 @@ public class DatabaseImpl implements RpcConnection  {
 			}
 			else if (methodName.equals("db.log_event")) {
 				PreparedStatement stmt = null;
-				stmt = db.prepareStatement("INSERT INTO events (name, username, info, created_at) VALUES ('armitage.event', ?, ?, now())");
+				stmt = db.prepareStatement("INSERT INTO events (name, username, info, created_at) VALUES ('armitage.event', ?, ?, now() AT TIME ZONE 'GMT')");
 				stmt.setString(1, params[0] + "");
 				stmt.setString(2, params[1] + "");
 				stmt.executeUpdate();
