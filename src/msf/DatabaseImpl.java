@@ -282,7 +282,7 @@ public class DatabaseImpl implements RpcConnection  {
 					System.err.println("Key '" + key + "' did not validate!");
 					return new HashMap();
 				}
-				results.put("values", executeQuery("SELECT * FROM notes WHERE ntype = '" + key + "'"));
+				results.put("values", executeQuery("SELECT DISTINCT * FROM notes WHERE ntype = '" + key + "' ORDER BY id"));
 				return results;
 			}
 			else if (methodName.equals("db.clear")) {
