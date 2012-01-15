@@ -122,6 +122,9 @@ public class ConsoleClient implements Runnable, ActionListener {
 	private static final Pattern interact = Pattern.compile("sessions -i (\\d+)\n");
 
 	public void sendString(String text) {
+		if (writeCommand == null)
+			return;
+
 		/* intercept sessions -i and deliver it to a listener within armitage */
 		if (sessionListener != null) {
 			Matcher m = interact.matcher(text);

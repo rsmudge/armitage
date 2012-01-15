@@ -212,7 +212,7 @@ public class DatabaseImpl implements RpcConnection  {
 		temp.put("db.notes", "SELECT DISTINCT notes.*, hosts.address as host FROM notes, hosts WHERE hosts.id = notes.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.clients", "SELECT DISTINCT clients.*, hosts.address as host FROM clients, hosts WHERE hosts.id = clients.host_id AND hosts.workspace_id = " + workspaceid);
 		temp.put("db.sessions", "SELECT DISTINCT sessions.*, hosts.address as host FROM sessions, hosts WHERE hosts.id = sessions.host_id AND hosts.workspace_id = " + workspaceid);
-		temp.put("db.events", "SELECT DISTINCT username, info, created_at FROM events WHERE events.name = 'armitage.event'");
+		temp.put("db.events", "SELECT DISTINCT id, username, info, created_at FROM events WHERE events.name = 'armitage.event' ORDER BY id ASC");
 		return temp;
 	}
 
@@ -282,7 +282,7 @@ public class DatabaseImpl implements RpcConnection  {
 					System.err.println("Key '" + key + "' did not validate!");
 					return new HashMap();
 				}
-				results.put("values", executeQuery("SELECT DISTINCT * FROM notes WHERE ntype = '" + key + "' ORDER BY id"));
+				results.put("values", executeQuery("SELECT DISTINCT * FROM notes WHERE ntype = '" + key + "' ORDER BY id ASC"));
 				return results;
 			}
 			else if (methodName.equals("db.clear")) {
