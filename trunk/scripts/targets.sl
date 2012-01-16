@@ -326,8 +326,8 @@ sub clearHostFunction {
 
 sub clearDatabase {
 	thread({
-		call($mclient, "db.clear");
 		elog("cleared the database");
+		call($mclient, "db.clear");
 	});
 }
 
