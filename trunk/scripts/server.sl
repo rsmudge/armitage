@@ -286,7 +286,7 @@ sub client {
 }
 
 sub main {
-	global('$client');
+	global('$client $mclient');
 	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth %cache $cach_lock $client_cache');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
@@ -324,6 +324,7 @@ sub main {
 		sleep(1000);
 		$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), 1, $null];
 	}
+	$mclient = $client;
 	$port += 1;
 
 	# setg ARMITAGE_SERVER host:port/token
