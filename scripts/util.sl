@@ -169,16 +169,30 @@ sub createConsoleTab {
 	return $thread;
 }
 
+sub createDefaultHandler {
+	warn("Creating a default reverse handler...");
+	# setup a handler for meterpreter
+	call($client, "core.setg", "LPORT", randomPort());
+	call($client, "module.execute", "exploit", "multi/handler", %(
+		PAYLOAD => "windows/meterpreter/reverse_tcp",
+		LHOST => "0.0.0.0",
+		ExitOnSession => "false"
+	));
+}
+
 sub setupHandlers {
 	find_job("Exploit: multi/handler", {
 		if ($1 == -1) {
-			# setup a handler for meterpreter
-			call($client, "core.setg", "LPORT", randomPort());
-			call($client, "module.execute", "exploit", "multi/handler", %(
-				PAYLOAD => "windows/meterpreter/reverse_tcp",
-				LHOST => "0.0.0.0",
-				ExitOnSession => "false"
-			));
+			createDefaultHandler();
+		}
+		else {
+			cmd_safe("setg LPORT", {
+				local('$text');
+				$text = [$3 trim];
+				if ($text !ismatch 'LPORT => (.*?)') {
+					createDefaultHandler();
+				}
+			});
 		}
 	});
 }
