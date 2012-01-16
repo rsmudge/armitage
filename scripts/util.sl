@@ -187,9 +187,7 @@ sub setupHandlers {
 		}
 		else {
 			cmd_safe("setg LPORT", {
-				local('$text');
-				$text = [$3 trim];
-				if ($text !ismatch 'LPORT => (.*?)') {
+				if ($3 !ismatch '(?s:LPORT => (.*?)\n.*)') {
 					createDefaultHandler();
 				}
 			});
