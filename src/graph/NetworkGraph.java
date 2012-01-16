@@ -418,7 +418,8 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		/* clear the existing edges... */
 		Iterator ij = edges.iterator();
 		while (ij.hasNext()) {
-			((mxCell)(ij.next())).removeFromTerminal(true);
+			mxCell cell = (mxCell)ij.next();
+			graph.getModel().remove(cell);
 		}
 
 		edges = new LinkedList();

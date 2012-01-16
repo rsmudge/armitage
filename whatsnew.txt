@@ -22,6 +22,10 @@ In Progress
   events is the source ip of the attack system and the user who carried out
   the action (when teaming is setup).
 - Data export now exports timestamps with current timezone (not GMT)
+- Fixed a nasty bug that's been with Armitage since the beginning! I wasn't
+  freeing edges properly in the graph view. If you had pivots setup in graph
+  view and used Armitage long enough--eventually Armitage would slow down until 
+  the program became unusable. At least it's fixed now.
 
 5 Jan 12
 --------
