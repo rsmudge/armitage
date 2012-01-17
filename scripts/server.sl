@@ -225,7 +225,7 @@ sub client {
 			$response = [$client execute: $method, $args];
 			writeObject($handle, $response);
 		}
-		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "db.creds" || $method eq "session.list") {
+		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "db.creds" || $method eq "session.list" || $method eq "db.loots") {
 			$response = [$client_cache execute: $eid, $method, $null];
 	
 			if ($args !is $null && -isarray $args && size($args) == 1 && $args[0] == [armitage.ArmitageTimer dataIdentity: $response]) {
