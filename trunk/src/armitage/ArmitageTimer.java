@@ -14,7 +14,7 @@ public class ArmitageTimer implements Runnable {
 
 	/* keep track of the last response we got *and* its hashcode... */
 	protected Map                 lastRead = new HashMap();
-	protected long                lastCode = 0L;
+	protected long                lastCode = -1L; /* can't be 0 or we'll never fire an initial event */
 
 	public ArmitageTimer(RpcConnection connection, String command, long sleepPeriod, ArmitageTimerClient client, boolean doCache) {
 		this.connection  = connection;
@@ -29,30 +29,35 @@ public class ArmitageTimer implements Runnable {
 		long r = 0L;
 
 		if (v == null) {
-			return r;
+			return 1L;
 		}
 		else if (v instanceof Collection) {
 			Iterator j = ((Collection)v).iterator();
 			while (j.hasNext()) {
-				r ^= dataIdentity(j.next());
+				r += dataIdentity(j.next());
 			}
 		}
 		else if (v instanceof Map) {
 			Iterator i = ((Map)v).values().iterator();
 			while (i.hasNext()) {
-				r ^= dataIdentity(i.next());
+				r += dataIdentity(i.next());
 			}
 		}
 		else if (v instanceof Number) {
-			r ^= v.hashCode();
+			r += v.hashCode();
 		}
 		else {
-			r ^= v.toString().hashCode();
+			r += v.toString().hashCode();
 		}
 		return r;
 	}
 
 	protected boolean changed = false;
+
+	/* we will override this in a subclass if we need to change it */
+	protected boolean alwaysFire() {
+		return false;
+	}
 
 	private Map readFromClient() throws java.io.IOException {
 		Object arguments[];
@@ -83,7 +88,7 @@ public class ArmitageTimer implements Runnable {
 
 		try {
 			while ((read = readFromClient()) != null) {
-				if (changed || command.equals("session.list")) {
+				if (changed || command.equals("session.list") || alwaysFire()) {
 					if (client.result(command, null, read) == false) {
 						return;
 					}
