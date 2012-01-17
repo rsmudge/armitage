@@ -26,7 +26,8 @@ In Progress
   freeing edges properly in the graph view. If you had pivots setup in graph
   view and used Armitage long enough--eventually Armitage would slow down until 
   the program became unusable. At least it's fixed now.
-- Adjusted the d-server state identity algorithm to better avoid collissions.
+- Adjusted the d-server state identity hash combination algorithm to better
+  avoid collissions.
 
 5 Jan 12
 --------
