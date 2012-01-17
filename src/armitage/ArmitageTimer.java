@@ -34,20 +34,20 @@ public class ArmitageTimer implements Runnable {
 		else if (v instanceof Collection) {
 			Iterator j = ((Collection)v).iterator();
 			while (j.hasNext()) {
-				r += dataIdentity(j.next());
+				r += 11 * dataIdentity(j.next());
 			}
 		}
 		else if (v instanceof Map) {
 			Iterator i = ((Map)v).values().iterator();
 			while (i.hasNext()) {
-				r += dataIdentity(i.next());
+				r += 13 * dataIdentity(i.next());
 			}
 		}
 		else if (v instanceof Number) {
-			r += v.hashCode();
+			return v.hashCode();
 		}
 		else {
-			r += v.toString().hashCode();
+			return v.toString().hashCode();
 		}
 		return r;
 	}
@@ -77,6 +77,7 @@ public class ArmitageTimer implements Runnable {
 			changed  = true;
 		}
 		else {
+			//System.err.println("No change: " + command + ", " + lastCode);
 			changed = false;
 		}
 
