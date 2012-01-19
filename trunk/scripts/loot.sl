@@ -18,7 +18,6 @@ sub updateLootModel {
 		[$model clear: 16];
 		$loots = call($mclient, "db.loots")["loots"];
 		foreach $entry ($loots) {
-			warn($entry);
 			$entry["date"] = rtime($entry["updated_at"] / 1000L);
 			$entry["type"] = $entry["ltype"];
 			[$model addEntry: $entry];
