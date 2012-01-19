@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+19 Jan 12
+---------
 - Data export now includes a sessions file. This lists all of the Metasploit
   sessions you had in your database. There's some neat data here including
   which exploit was used, which payload, start time, and close time. You can
@@ -12,7 +12,7 @@ In Progress
 - Fixed a weird condition with d-server detection. Sometimes (rarely)
   Armitage wouldn't detect the d-server even when it's present.
 - Added check to d-server allowing one lock per/client. Client won't reobtain
-  a lock until it let's it go. This prevents you from opening two shell tabs
+  a lock until it lets it go. This prevents you from opening two shell tabs
   for a shell session in team mode.
 - Fixed an infinite loop condition when some Windows shell commands would
   return output with no newlines (e.g., net stop [some service]). Thanks
