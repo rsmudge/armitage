@@ -18,13 +18,20 @@ import java.awt.image.*;
 global('$frame $tabs $menubar $msfrpc_handle $REMOTE');
 
 sub describeHost {
-	local('$sessions $os @overlay $ver');
+	local('$sessions $os @overlay $ver $info');
 	($sessions, $os, $ver) = values($1, @('sessions', 'os_name', 'os_flavor'));
 
 	if (size($sessions) == 0) {
 		return $1['address'];
 	}
-	return $1['address'] . "\n" . values($sessions)[0]["info"];
+
+	$info = values($sessions)[0]["info"];
+	if ("Microsoft Corp." isin $info) {
+		return $1['address'] . "\nshell session";
+	}
+	else {
+		return $1['address'] . "\n $+ $info";
+	}
 }
 
 sub showHost {

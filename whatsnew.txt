@@ -28,6 +28,8 @@ Armitage Changelog
   the program became unusable. At least it's fixed now.
 - Adjusted the d-server state identity hash combination algorithm to better
   avoid collissions.
+- Armitage now displays 'shell session' below a host if the host info is just
+  the Windows shell banner.
 
 5 Jan 12
 --------
