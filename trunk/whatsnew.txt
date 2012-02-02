@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Added ports 5631 (pc anywhere) and 902 (vmauthd) to the MSF Scans feature.
+
 19 Jan 12
 ---------
 - Data export now includes a sessions file. This lists all of the Metasploit
