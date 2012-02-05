@@ -72,47 +72,7 @@ sub parseListing {
 
 # setupSizeRenderer($table, "columnname")
 sub setupSizeRenderer {
-	[[$1 getColumn: $2] setCellRenderer: safeColumnRenderer({ 
-		local('$label');
-
-		$label = [$parent getTableCellRendererComponent: $1, $null, $3, $4, $5, $6];
-
-		local('$size $units');
-		$size = long($2);
-		$units = "b";
-		
-		if ($2 eq "") {
-			[$label setText: ""];
-			return $label;
-		}
-
-		if ($size > 1024) {
-			$size = long($size / 1024);
-			$units = "kb";			
-		}
-
-		if ($size > 1024) {
-			$size = round($size / 1024.0, 2);
-			$units = "mb";
-		}
-
-		if ($size > 1024) {
-			$size = round($size / 1024.0, 2);
-			$units = "gb";
-		}
-
-		[$label setText: "$size $+ $units"];
-		return $label;
-	}, $parent => [$1 getDefaultRenderer: ^Object], $table => $1)];
-}
-
-sub safeColumnRenderer {
-	# this function creates a new sleep thread (a separate script environment for locking purposes)
-	# and sanitizes the specified function through it. This returned function is now safe for use
-	# in a swing thread and will not cause deadlock.
-	return wait(fork({
-		return lambda($function, \$table, \$parent);
-	}, \$table, \$parent, $function => $1));
+	[[$1 getColumn: $2] setCellRenderer: [ATable getSizeTableRenderer]];
 }
 
 sub createFileBrowser {
@@ -122,7 +82,7 @@ sub createFileBrowser {
 	[$panel setLayout: [new BorderLayout]];
 
 	$model = %files[$1];
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	[$table setShowGrid: 0];
 
         $sorter = [new TableRowSorter: $model];
@@ -139,34 +99,12 @@ sub createFileBrowser {
 		return convertDate($1) <=> convertDate($2);
 	}];
 
-	[[$table getColumn: "D"] setMaxWidth: 32];
+	[[$table getColumn: "D"] setMaxWidth: 38];
 
-	[[$table getColumn: "D"] setCellRenderer: safeColumnRenderer({
-		# getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
-		local('$label');
-
-		$label = [$parent getTableCellRendererComponent: $1, $null, $3, $4, $5, $6];
-
-		if ($2 eq "dir") {
-			local('$fsv $chooser');
-			$fsv = [FileSystemView getFileSystemView];
-			$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];
-			[$label setIcon: $chooser];
-		}
-		else {
-			[$label setIcon: $null];
-		}		
-	
-		return $label;
-	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
+	[[$table getColumn: "D"] setCellRenderer: [ATable getFileTypeTableRenderer]];
 
 	# make sure subsequent columns do not have an icon associated with them...
-	[[$table getColumn: "Name"] setCellRenderer: safeColumnRenderer({
-		local('$label');
-		$label = [$parent getTableCellRendererComponent: $1, $2, $3, $4, $5, $6];
-		[$label setIcon: $null];
-		return $label;
-	}, $parent => [$table getDefaultRenderer: ^Object], \$table)];
+	[[$table getColumn: "Name"] setCellRenderer: [ATable getSimpleTableRenderer]];
 
 	setupSizeRenderer($table, "Size");
 
