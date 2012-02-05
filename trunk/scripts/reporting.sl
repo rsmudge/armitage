@@ -68,6 +68,25 @@ sub fixHosts {
 	}, $1);
 }
 
+sub fixSessions {
+	local('$session $info');
+	foreach $session ($1) {
+		if ("exploit/*" iswm $session['via_exploit'] && substr($session['via_exploit'], 8) in @exploits) {
+			$info = call($mclient, "module.info", "exploit", substr($session['via_exploit'], 8));
+
+			# fix some options
+			$session['exploit_name'] = $info['name'];
+		}
+		else if ("auxiliary/*" iswm $session['via_exploit'] && substr($session['via_exploit'], 10) in @auxiliary) {
+			$info = call($mclient, "module.info", "auxiliary", substr($session['via_exploit'], 10));
+
+			# fix some options
+			$session['exploit_name'] = $info['name'];
+		}
+	}
+	return $1;
+}
+
 sub fixTimeline {
 	local('$event $source $username');
 	foreach $event ($1) {
@@ -154,7 +173,7 @@ sub queryData {
 	}
 
 	# 5. sessions...
-	%r['sessions'] = call($mclient, "db.sessions")["sessions"];
+	%r['sessions'] = fixSessions(call($mclient, "db.sessions")["sessions"]);
 
 	if ($progress) {
 		[$progress setProgress: 36];
