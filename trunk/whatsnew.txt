@@ -4,6 +4,8 @@ Armitage Changelog
 In Progress
 -----------
 - Added ports 5631 (pc anywhere) and 902 (vmauthd) to the MSF Scans feature.
+- Several cosmetic tweaks to the spacing in Armitage tables.
+- Moved table render code from Sleep to Java to avoid potential lock conflicts
 
 19 Jan 12
 ---------
