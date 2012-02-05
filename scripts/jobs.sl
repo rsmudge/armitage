@@ -333,7 +333,7 @@ sub _launch_dialog {
 	}
 
 	$center = [new JScrollPane: $table];
-	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vbs,loop-vbs,asp,war,multi/handler")), "multi/handler");
+	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vba-exe,vbs,loop-vbs,asp,war,multi/handler")), "multi/handler");
 	$button = [new JButton: "Launch"];
 
 	local('$combobox');
