@@ -13,6 +13,7 @@ import javax.swing.table.*;
 
 import java.io.*;
 import msf.DatabaseImpl;
+import ui.*;
 
 global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE');
 
@@ -177,7 +178,7 @@ sub createPreferencesTab {
 
 	$model = makePrefModel();
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	$sorter = [new TableRowSorter: $model];
 	[$table setRowSorter: $sorter];
 

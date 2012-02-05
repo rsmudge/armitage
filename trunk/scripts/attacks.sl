@@ -11,6 +11,8 @@ import javax.swing.table.*;
 import msf.*;
 import table.*;
 
+import ui.*;
+
 global('%results @always_reverse %exploits %results2');
 %results = ohash();
 %results2 = ohash();
@@ -348,7 +350,7 @@ sub attack_dialog {
 
 	$textarea = [new JTextArea: [join(" ", split('[\\n\\s]+', $1["description"])) trim]];
 	[$textarea setEditable: 0];
-	[$textarea setOpaque: 0];
+	[$textarea setOpaque: 1];
 	[$textarea setLineWrap: 1];
 	[$textarea setWrapStyleWord: 1];
 	[$textarea setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
@@ -376,7 +378,7 @@ sub attack_dialog {
 	[$model _addEntry: %(Option => "LHOST", Value => $MY_ADDRESS, Tooltip => "Address (for connect backs)", Hide => '0')];
 	[$model _addEntry: %(Option => "LPORT", Value => randomPort(), Tooltip => "Bind meterpreter to this port", Hide => '0')];
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	$sorter = [new TableRowSorter: $model];
         [$sorter toggleSortOrder: 0];
 	[$table setRowSorter: $sorter];

@@ -10,6 +10,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import ui.*;
 
 sub updateDownloadModel {
 	thread(lambda({
@@ -40,7 +41,7 @@ sub createDownloadBrowser {
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	setupSizeRenderer($table, "size");
 	$sorter = [new TableRowSorter: $model];
         [$sorter toggleSortOrder: 0];

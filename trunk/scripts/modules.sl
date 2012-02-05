@@ -93,7 +93,7 @@ sub moduleAction {
 
 sub createModuleList {
 	local('$tree $split $scroll1 $t');
-	$tree = [new JTree: treeNodes($null, $1)];
+	$tree = [new ATree: treeNodes($null, $1)];
 	[$tree setRootVisible: 0];
 	[$tree setDragEnabled: 1];
 	[$tree setTransferHandler: $2];
@@ -129,7 +129,7 @@ sub createModuleList {
 		}
 	}));
 
-	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_NEVER]];
+	$scroll1 = [new JScrollPane: $tree, [JScrollPane VERTICAL_SCROLLBAR_AS_NEEDED], [JScrollPane HORIZONTAL_SCROLLBAR_AS_NEEDED]];
 
 	local('$search $button');
 	$search = [new ATextField: 10];
