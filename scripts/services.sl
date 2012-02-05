@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import ui.*;
+
 sub updateServiceModel {
 	local('$port $row $host');
 	[$model clear: 256];
@@ -32,7 +34,7 @@ sub createServiceBrowser {
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	$sorter = [new TableRowSorter: $model];
         [$sorter toggleSortOrder: 2];
 	[$table setRowSorter: $sorter];

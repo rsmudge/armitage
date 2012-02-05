@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import ui.*;
+
 global('%processes');
 %processes = ohash();
 
@@ -46,7 +48,7 @@ sub createProcessBrowser {
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	$sorter = [new TableRowSorter: $model];
 	[$sorter toggleSortOrder: 0];
 	[$table setRowSorter: $sorter];

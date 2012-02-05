@@ -9,6 +9,7 @@ import msf.*;
 import table.*;
 
 import graph.*;
+import ui.*;
 
 sub maskToCIDR {
 	local ('$x');
@@ -116,7 +117,7 @@ sub pivot_dialog {
 			[$model _addEntry: $route];
 		}
 
-		$table = [new JTable: $model];
+		$table = [new ATable: $model];
 	        [[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
 		$sorter = [new TableRowSorter: $model];
 		[$table setRowSorter: $sorter];

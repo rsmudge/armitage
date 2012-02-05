@@ -13,6 +13,7 @@ import javax.swing.table.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import ui.*;
 
 sub manage_proxy_server {
 	manage_job("Auxiliary: server/socks4a", 
@@ -252,7 +253,7 @@ sub _launch_dialog {
 
 	$textarea = [new JTextArea: [join(" ", split('[\\n\\s]+', $info["description"])) trim]];
 	[$textarea setEditable: 0];
-	[$textarea setOpaque: 0];
+	[$textarea setOpaque: 1];
 	[$textarea setLineWrap: 1];
 	[$textarea setWrapStyleWord: 1];
 	[$textarea setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
@@ -314,7 +315,7 @@ sub _launch_dialog {
 		[$model _addEntry: %(Option => "Encoder", Value => "x86/shikata_ga_nai", Tooltip => "The name of the encoder module to use", Hide => "0")];
 	}
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	$sorter = [new TableRowSorter: $model];
 	[$sorter toggleSortOrder: 0];
 	[$table setRowSorter: $sorter];
@@ -517,7 +518,7 @@ sub createJobsTab {
 
 	$model = [new GenericTableModel: @("Id", "Name", "Payload", "Port", "URL", "Start"), "Id", 8];
 
-	$table = [new JTable: $model];
+	$table = [new ATable: $model];
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_INTERVAL_SELECTION]];
 	[[$table getColumn: "Id"] setPreferredWidth: 125];
 	[[$table getColumn: "Port"] setPreferredWidth: 200];
