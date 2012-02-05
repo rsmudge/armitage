@@ -75,13 +75,13 @@ sub refreshCredsTable {
 }
 
 sub show_hashes {
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain');	
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $scroll');	
 
 	$dialog = dialog($1, 480, $2);
 
         $model = [new GenericTableModel: @("user", "pass", "host"), "user", 128];
  	
-        $table = [new JTable: $model];
+        $table = [new ATable: $model];
         $sorter = [new TableRowSorter: $model];
 	[$sorter toggleSortOrder: 0];
 	[$sorter setComparator: 2, &compareHosts];
@@ -89,7 +89,10 @@ sub show_hashes {
 
 	refreshCredsTable($model);
 
-	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
+	$scroll = [new JScrollPane: $table];
+	[$scroll setPreferredSize: [new Dimension: 480, 130]];
+	[$dialog add: $scroll, [BorderLayout CENTER]];
+
 	return @($dialog, $table, $model);
 }
 
@@ -210,9 +213,9 @@ sub pass_the_hash {
 	[$b2 add: $bottom, [BorderLayout NORTH]];
 	[$b2 add: center($button), [BorderLayout SOUTH]];
 
-	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	[$dialog add: $b2, [BorderLayout SOUTH]];
 
+	[$dialog pack];
 	[$dialog setVisible: 1];
 }
 
@@ -221,7 +224,7 @@ sub show_login_dialog {
 	local('$port $srvc');
 	($port, $srvc) = values($service, @("port", "name"));
 
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2 $brute @controls');
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $bottom $b2 $brute @controls $scroll');
 
 	($dialog, $table, $model) = show_hashes("login", 320);
 	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
@@ -277,9 +280,12 @@ sub show_login_dialog {
 	[$b2 add: $bottom, [BorderLayout NORTH]];
 	[$b2 add: center($button), [BorderLayout SOUTH]];
 
-	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
+	$scroll = [new JScrollPane: $table];
+	[$scroll setPreferredSize: [new Dimension: 480, 130]];
+	[$dialog add: $scroll, [BorderLayout CENTER]];
 	[$dialog add: $b2, [BorderLayout SOUTH]];
 
+	[$dialog pack];
 	[$dialog setVisible: 1];
 }
 
