@@ -10,6 +10,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 
 import java.util.*;
+import ui.ATable;
 
 import graph.Route;
 import graph.GraphPopup;
@@ -52,7 +53,7 @@ public class NetworkTable extends JComponent implements ActionListener {
 		this.display = display;
 
 		model = new GenericTableModel(new String[] { " ", "Address", "Description", "Pivot" }, "Address", 256);
-		table = new JTable(model);
+		table = new ATable(model);
 		TableRowSorter sorter = new TableRowSorter(model);
 		sorter.toggleSortOrder(1);
 
@@ -115,7 +116,7 @@ public class NetworkTable extends JComponent implements ActionListener {
 
 		table.getColumn(" ").setCellRenderer(new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-				JLabel component = (JLabel)parent.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+				JLabel component = (JLabel)parent.getTableCellRendererComponent(table, value, isSelected, false, row, col);
 				component.setIcon(new ImageIcon((Image)model.getValueAt(table, row, "Image")));
 				component.setText("");
 
