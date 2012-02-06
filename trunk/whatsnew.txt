@@ -9,6 +9,7 @@ In Progress
 - Added support for vba-exe payload output type.
 - Payload generation dialog now sets more appropriate default options for the
   vba output type when it is selected.
+- Meterp command shell "read more stuff?" heuristic now accounts for Yes/No/All
 
 19 Jan 12
 ---------

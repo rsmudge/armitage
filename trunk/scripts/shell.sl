@@ -152,6 +152,10 @@ global('%shells $ashell $achannel %maxq %wait');
 			sleep(1500);
 			m_cmd($1, "read $achannel");
 		} 
+		else if (size($v) > 0 && $v[-1] ismatch '.*?\\? \\(Yes/No/All\\):') {
+			# make our shell heuristic tolerant of prompts like this.
+			%wait[$achannel] = $null;
+		}
 		else if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
 			m_cmd($1, "read $achannel");
 		}
