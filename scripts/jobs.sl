@@ -336,6 +336,17 @@ sub _launch_dialog {
 	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,c,js_be,js_le,java,dll,exe,exe-small,elf,macho,vba,vba-exe,vbs,loop-vbs,asp,war,multi/handler")), "multi/handler");
 	$button = [new JButton: "Launch"];
 
+	# setup some default options on a output type basis.
+	[$combo addActionListener: lambda({
+		local('$sel');
+		$sel = [$combo getSelectedItem];
+		if ($sel eq "vba") {
+			[$model setValueForKey: "Encoder", "Value", "generic/none"];
+			[$model setValueForKey: "EXITFUNC", "Value", "thread"];
+			[$model fireListeners];
+		}
+	}, \$model, \$combo)];
+
 	local('$combobox');
 	if ('targets' in $info) {
 		$combobox = targetsCombobox($info);
