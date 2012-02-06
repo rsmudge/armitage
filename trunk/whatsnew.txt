@@ -7,6 +7,8 @@ In Progress
 - Several cosmetic tweaks to the spacing in Armitage tables.
 - Moved table render code from Sleep to Java to avoid potential lock conflicts
 - Added support for vba-exe payload output type.
+- Payload generation dialog now sets more appropriate default options for the
+  vba output type when it is selected.
 
 19 Jan 12
 ---------
