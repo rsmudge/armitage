@@ -244,12 +244,16 @@ sub graph_items {
 }
 
 sub _importHosts {
-	local('$console $success');
+	local('$console $success $file');
 	$console = createConsoleTab("Import", 1);
 	$success = size($files);
 	yield 1024;
 	elog("imported hosts from $success file" . iff($success != 1, "s"));
-	[$console sendString: "db_import \"" . join(" ", $files) . "\"\n"];
+	foreach $file ($files) {
+		$file = '"' . $file . '"';
+	}
+
+	[$console sendString: "db_import " . join(" ", $files) . "\n"];
 }
 
 # need to pass this function a $command local...
