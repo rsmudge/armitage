@@ -15,7 +15,7 @@ import java.io.*;
 import msf.DatabaseImpl;
 import ui.*;
 
-global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE');
+global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE $CLIENT_CONFIG');
 
 sub iHateYaml {
 	local('$handle %result $current $text $key $value');
@@ -94,6 +94,13 @@ sub loadPreferences {
 		}
 		else if (@ARGV[0] eq "--server") {
 			break;
+		}
+		else if (@ARGV[0] eq "--client") {
+			$CLIENT_CONFIG = @ARGV[1];
+			@ARGV = sublist(@ARGV, 2);
+			if (!-exists $CLIENT_CONFIG) {
+				warn("$CLIENT_CONFIG file does not exist. Will show something else.");
+			}
 		}
 		else {
 			showError("I don't understand these arguments:\n" . join("\n", @ARGV));

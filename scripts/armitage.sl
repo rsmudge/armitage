@@ -87,8 +87,8 @@ sub showHost {
 }
 
 sub connectToMetasploit {
-	local('$thread');
-	$thread = [new Thread: lambda(&_connectToMetasploit, \$1, \$2, \$3, \$4)];
+	local('$thread $5');
+	$thread = [new Thread: lambda(&_connectToMetasploit, \$1, \$2, \$3, \$4, \$5)];
 	[$thread start];
 }
 
@@ -103,8 +103,10 @@ sub _connectToMetasploit {
 	%props['connect.user.string'] = $3;
 	%props['connect.pass.string'] = $4;
 
-	foreach $property => $value (%props) {
-		[$preferences setProperty: $property, $value];
+	if ($5 is $null) {
+		foreach $property => $value (%props) {
+			[$preferences setProperty: $property, $value];
+		}
 	}
 	savePreferences();
 
@@ -258,4 +260,16 @@ sub checkDir {
 
 setLookAndFeel();
 checkDir();
-connectDialog();
+
+if ($CLIENT_CONFIG !is $null && -exists $CLIENT_CONFIG) {
+	local('$config');
+	$config = [new Properties];
+	[$config load: [new java.io.FileInputStream: $CLIENT_CONFIG]];
+	connectToMetasploit([$config getProperty: "host", "127.0.0.1"], 
+				[$config getProperty: "port", "55553"],
+				[$config getProperty: "user", "msf"],
+				[$config getProperty: "pass", "test"], 1);
+}
+else {
+	connectDialog();
+}
