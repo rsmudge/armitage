@@ -292,7 +292,7 @@ sub _launch_dialog {
 			$default = $value["default"];
 		}
 
-		if ($2 ne "exploit" || $key !in @("DisablePayloadHandler", "PAYLOAD", "LHOST", "LPORT", "ExitOnSession")) {
+		if ($2 ne "exploit" || "$key" !in @("DisablePayloadHandler", "PAYLOAD", "LHOST", "LPORT", "ExitOnSession")) {
 			[$model _addEntry: %(Option => $key, Value => $default, Tooltip => $value["desc"], Hide => iff($value["advanced"] eq '0' && $value["evasion"] eq '0', '0', '1'))]; 
 		}
 	}
