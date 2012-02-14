@@ -10,6 +10,8 @@ In Progress
 - Payload generation dialog now sets more appropriate default options for the
   vba output type when it is selected.
 - Meterp command shell "read more stuff?" heuristic now accounts for Yes/No/All
+- Fixed ExitOnSession showing up twice when setting advanced options for a 
+  client-side exploit
 
 19 Jan 12
 ---------
