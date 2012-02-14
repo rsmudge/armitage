@@ -14,6 +14,14 @@ Armitage Changelog
   client-side exploit
 - You may now import multiple files through Hosts -> Import again.
 - Added 5s timeout to d-server connect attempt.
+- Added a --client [connect.properties] to specify which Metasploit server to 
+  connect to. The connect.properties file is a Java properties file that looks
+  like this (without the leading whitespace):
+
+  host=127.0.0.1
+  port=55553
+  user=msf
+  pass=test
 
 19 Jan 12
 ---------
