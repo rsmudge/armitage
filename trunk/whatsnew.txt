@@ -12,6 +12,7 @@ In Progress
 - Meterp command shell "read more stuff?" heuristic now accounts for Yes/No/All
 - Fixed ExitOnSession showing up twice when setting advanced options for a 
   client-side exploit
+- You may now import multiple files through Hosts -> Import again.
 
 19 Jan 12
 ---------
