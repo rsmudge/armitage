@@ -28,7 +28,7 @@ sub c_client {
 	# run this thing in its own thread to avoid really stupid deadlock situations
 	return wait(fork({
 		local('$handle $client');
-		$handle = connect($host, $port);
+		$handle = connect($host, $port, 5000);
 		$client = newInstance(^RpcConnection, lambda({
 			writeObject($handle, @_);
 			return readObject($handle);

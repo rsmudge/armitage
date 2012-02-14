@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+14 Feb 12
+---------
 - Added ports 5631 (pc anywhere) and 902 (vmauthd) to the MSF Scans feature.
 - Several cosmetic tweaks to the spacing in Armitage tables.
 - Moved table render code from Sleep to Java to avoid potential lock conflicts
@@ -13,6 +13,7 @@ In Progress
 - Fixed ExitOnSession showing up twice when setting advanced options for a 
   client-side exploit
 - You may now import multiple files through Hosts -> Import again.
+- Added 5s timeout to d-server connect attempt.
 
 19 Jan 12
 ---------
