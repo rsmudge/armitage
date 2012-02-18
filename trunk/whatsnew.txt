@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Added Cut/Copy/Paste menu to table cell editor.
+
 14 Feb 12
 ---------
 - Added ports 5631 (pc anywhere) and 902 (vmauthd) to the MSF Scans feature.

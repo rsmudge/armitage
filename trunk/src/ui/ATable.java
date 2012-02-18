@@ -3,6 +3,8 @@ package ui;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.text.*;
+import javax.swing.event.*;
 import javax.swing.filechooser.*;
 import table.*;
 import java.util.*;
@@ -109,6 +111,45 @@ public class ATable extends JTable {
 		setShowGrid(false);
 		setIntercellSpacing(new Dimension(0, 0));
 		setRowHeight(getRowHeight() + 2);
+
+		final TableCellEditor defaulte = getDefaultEditor(Object.class);
+		setDefaultEditor(Object.class, new TableCellEditor() {
+			public Component getTableCellEditorComponent(JTable table, Object value, boolean selected, int row, int col) {
+				Component editor = defaulte.getTableCellEditorComponent(table, value, selected, row, col);
+				if (editor instanceof JTextComponent)
+					new CutCopyPastePopup((JTextComponent)editor);
+
+				return editor;
+			}
+
+			public void addCellEditorListener(CellEditorListener l) {
+				defaulte.addCellEditorListener(l);
+			}
+
+			public void cancelCellEditing() {
+				defaulte.cancelCellEditing();
+			}
+
+			public Object getCellEditorValue() {
+				return defaulte.getCellEditorValue();
+			}
+
+			public boolean isCellEditable(EventObject anEvent) {
+				return defaulte.isCellEditable(anEvent);
+			}
+
+			public void removeCellEditorListener(CellEditorListener l) {
+				defaulte.removeCellEditorListener(l);
+			}
+
+			public boolean shouldSelectCell(EventObject anEvent) {
+				return defaulte.shouldSelectCell(anEvent);
+			}
+
+			public boolean stopCellEditing() {
+				return defaulte.stopCellEditing();
+			}
+		});
 
 		final TableCellRenderer defaultr = getDefaultRenderer(Object.class);
 		setDefaultRenderer(Object.class, new TableCellRenderer() {
