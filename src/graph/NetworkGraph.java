@@ -134,6 +134,9 @@ public class NetworkGraph extends JComponent implements ActionListener {
 
 		graph = new mxGraph() {
 			public String getToolTipForCell(Object cell) {
+				if (tooltips.get(cell) == null) {
+					return "";
+				}
 				return tooltips.get(cell) + "";
 			}
 		};
