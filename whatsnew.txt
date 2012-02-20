@@ -4,6 +4,8 @@ Armitage Changelog
 In Progress
 ---------
 - Added Cut/Copy/Paste menu to table cell editor.
+- Module browser search field now treats spaces as a wildcard. You may type:
+  "win meterp" and Armitage will treat it as "win*meterp"
 
 14 Feb 12
 ---------

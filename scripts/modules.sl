@@ -138,7 +138,7 @@ sub createModuleList {
 		local('$model');
 		if ([$1 getActionCommand] ne "") {
 			local('$filter %list $a $e $p $o $x');
-			$filter = lambda({ return iff(lc("* $+ $s $+ *") iswm lc($1), $1); }, $s => [$1 getActionCommand]);
+			$filter = lambda({ return iff(lc("* $+ $s $+ *") iswm lc($1), $1); }, $s => strrep([$1 getActionCommand], ' ', '*'));
 			%list = ohash();
 			$a = filter($filter, @auxiliary);
 			$e = filter($filter, @exploits);
