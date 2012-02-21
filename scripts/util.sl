@@ -233,7 +233,7 @@ sub _cmd_safe {
 	local('$tmp_console $2');
 
 	$tmp_console = createConsole($client);
-	cmd($client, $tmp_console, $1, lambda({
+	cmd_async($client, $tmp_console, $1, lambda({
 		call($client, "console.destroy", $tmp_console);
 		if ($f) {
 			invoke($f, @_);
