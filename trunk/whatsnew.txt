@@ -4,6 +4,9 @@ Armitage Changelog
 In Progress
 ---------
 - Armitage now displays a VMWare icon for hosts flagged as ESX/ESXi servers
+- Overhauled token stealing user experience--this is the cadillac version. You
+  now get a nice list of the available tokens (from the post module), click to
+  impersonate, refresh, rev2self, and getuid. 
 
 21 Feb 12
 ---------

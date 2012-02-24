@@ -68,11 +68,6 @@ sub parseMeterpreter {
 		# this is a hack to force the file browser to refresh when a file is uploaded
 		m_cmd($sid, "ls");
 	}
-	else if ("[-]*Unknown command: *list_tokens*" iswm $data) {
-		warn("Uhm... still an unknown command?!?");
-		m_cmd($sid, "load incognito");
-		return; 
-	}
 	else if ("[-]*Unknown command: *" iswm $data) {
 		%handlers["list_tokens"] = $null;
 		%handlers["getuid"] = $null;
@@ -152,47 +147,9 @@ sub showMeterpreterMenu {
 			showPostModules($sid, "*escalate*");
 		}, $sid => "$sid"));
 
-		item($j, "Steal Token", "S", lambda({
-			%handlers["list_tokens"] = lambda({
-				$watch['value'] += 1;
-
-				if ($0 eq "update" && '\\' isin $2) {
-					%tokens[$2] = %(Token => $2, Type => $type);
-				}
-				else if ($0 eq "update") {
-					if ("Delegation" isin $2) {
-						$type = "Delegation";
-					}
-					else if ("Impersonation" isin $2) {
-						$type = "Impersonation";
-					}
-				}
-				else if ($0 eq "end" && $show is $null) {
-					$show = 1;
-					thread(lambda({
-						# keep going and wait for watch value to stay at 0 for 3.5s
-						while ($watch['value'] > 0) {
-							$watch['value'] = 0;
-							yield 3500;
-						}
-
-						# ok, now we can display the tokens...
-						quickListDialog("Steal Token $sid", "Impersonate", @("Token", "Token", "Type"), values(%tokens), $width => 480, $height => 240, lambda({
-							oneTimeShow("impersonate_token");
-							m_cmd($sid, "impersonate_token ' $+ $1 $+ '");
-						}, \$sid));
-					}, \$sid, \%tokens, \$watch));
-				}
-			}, \$sid, %tokens => ohash(), $show => $null, $watch => %(value => 1), $type => "");
-
-			%handlers["load"] = lambda({
-				if ($0 eq "end" && "*incognito*" iswm $2) {
-					m_cmd($sid, "list_tokens -u");
-					m_cmd($sid, "list_tokens -g");
-				}
-			}, \$sid);
-
+		item($j, "Steal Token" , "S", lambda({
 			m_cmd($sid, "load incognito");
+			stealToken($sid);
 		}, $sid => "$sid"));
 
 		local('$h');
