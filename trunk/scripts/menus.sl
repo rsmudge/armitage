@@ -41,6 +41,7 @@ sub host_selected_items {
 		item($o, "Printer", 'P', setHostValueFunction($2, "os_name", "Printer"));
 		item($o, "Solaris", 'S', setHostValueFunction($2, "os_name", "Solaris"));
 		item($o, "Unknown", 'U', setHostValueFunction($2, "os_name", ""));
+		item($o, "VMware", 'V', setHostValueFunction($2, "os_name", "VMware"));
 		$i = menu($o, "Windows", 'W');
 			item($i, '1. 95/98/2000', '1', setHostValueFunction($2, "os_name", "Micosoft Windows", "os_flavor", "2000"));
 			item($i, '2. XP/2003', '2', setHostValueFunction($2, "os_name", "Microsoft Windows", "os_flavor", "XP"));
