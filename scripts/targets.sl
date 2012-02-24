@@ -318,7 +318,7 @@ sub clearHostFunction {
 
 			$tmp_console = createConsole($client);
 			cmd_all_async($client, $tmp_console, @commands, lambda({
-				if ($1 eq "hosts -h") {
+				if ($1 eq "hosts -h\n") {
 					elog("removed " . join(" ", @hosts));
 					call($client, "console.destroy", $tmp_console);
 				}

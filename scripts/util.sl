@@ -594,3 +594,42 @@ sub listDownloads {
 
 	return $files;
 }
+
+# parseTextTable("string", @(columns))
+sub parseTextTable {
+	local('$cols $regex $line @results $template %r $row $col $matches');
+
+	# create the regex to hunt for our table...
+	$cols = copy($2);
+	map({ $1 = '(' . $1 . '\s+)'; }, $cols);
+	$cols[-1] = '(' . $2[-1] . '.*)';
+	$regex = join("", $cols);
+
+	# search for stuff
+	foreach $line (split("\n", $1)) {
+		$line = ["$line" trim];
+
+		if ($line ismatch $regex) {
+			# ok... construct a template to parse our fixed width rows.
+			$matches = matched();
+			map({ $1 = 'Z' . strlen($1); }, $matches);
+			$matches[-1] = 'Z*';
+			$template = join("", $matches);
+		}
+		else if ($line eq "" && $template !is $null) {
+			# oops, row is empty? we're done then...
+			return @results;
+		}
+		else if ($template !is $null && "---*" !iswm $line) {
+			# extract the row from the template and add to our results
+			$row = map({ return [$1 trim]; }, unpack($template, $line));
+			%r = %();
+			foreach $col ($2) {
+				%r[$col] = shift($row);
+			}
+			push(@results, %r);
+		}
+	}
+	return @results;
+}
+
