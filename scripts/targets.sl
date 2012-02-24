@@ -299,7 +299,6 @@ sub setHostValueFunction {
 
 			foreach $host (@hosts) {
 				%map['host'] = $host;
-				warn(%map);
 				call($mclient, "db.report_host", %map);
 			}
 		}, \@hosts, \@args));

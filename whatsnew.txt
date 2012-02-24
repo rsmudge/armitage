@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Armitage now displays a VMWare icon for hosts flagged as ESX/ESXi servers
+
 21 Feb 12
 ---------
 - Added Cut/Copy/Paste menu to table cell editor.

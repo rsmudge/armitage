@@ -72,6 +72,9 @@ sub showHost {
 	else if ($os eq "Solaris") {
 		push(@overlay, 'resources/solaris.png');
 	}
+	else if ($os eq "VMware") {
+		push(@overlay, 'resources/vmware.png');
+	}
 	else {
 		push(@overlay, 'resources/unknown.png');
 	}
