@@ -625,7 +625,7 @@ sub parseTextTable {
 			$row = map({ return [$1 trim]; }, unpack($template, $line));
 			%r = %();
 			foreach $col ($2) {
-				%r[$col] = shift($row);
+				%r[$col] = iff(size($row) > 0, shift($row), "");
 			}
 			push(@results, %r);
 		}
