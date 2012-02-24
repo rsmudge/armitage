@@ -19,32 +19,14 @@ global('%processes');
 setMissPolicy(%processes, { return [new GenericTableModel: @("PID", "Name", "Arch", "Session", "User", "Path"), "PID", 128]; });
 
 sub parseProcessList {
-	if ($0 eq "begin") {
-		this('$string');
-		$string = 'Z6 Z18 Z6 Z9 Z30 Z*'; # a default and probably wrong string.
+	if ($0 eq "end") {
+		local('@rows $row');
 		[%processes[$1] clear: 128];
-	}
-	else if ($0 eq "end") {
+		@rows = parseTextTable($2, @("PID", "Name", "Arch", "Session", "User", "Path"));
+		foreach $row (@rows) {
+			[%processes[$1] addEntry: $row];
+		}
 		[%processes[$1] fireListeners];
-	}
-	else if ($0 eq "update") {
-		this('$string');
-		local('$pid $process $arch $session $user $path');
-		$2 = [$2 trim];
-
-		if ($2 ismatch '(PID\s+)(Name\s+)(Arch\s+)(Session\s+)(User\s+)(Path.*)') {
-			($pid, $process, $arch, $session, $user) = matched();
-			$string  = 'Z' . strlen($pid);
-			$string .= 'Z' . strlen($process);
-			$string .= 'Z' . strlen($arch);
-			$string .= 'Z' . strlen($session);
-			$string .= 'Z' . strlen($user);
-			$string .= 'Z*';
-		}
-		else if ($2 ismatch '(\d{1,})\s{2,}(.*?)') {
-			($pid, $process, $arch, $session, $user, $path) = map({ return [$1 trim]; }, unpack($string, $2));
-			[%processes[$1] addEntry: %(PID => $pid, Name => $process, Arch => $arch, Session => $session, User => $user, Path => $path)]; 
-		}
 	}
 }
 
