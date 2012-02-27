@@ -226,21 +226,21 @@ sub graph_items {
 
 	$a = menu($1, 'Auto-Layout', 'A');
 	item($a, 'Circle', 'C', auto_layout_function('circle', $2));
-	item($a, 'Hierarchy', 'C', auto_layout_function('hierarchical', $2));
-	item($a, 'Stack', 'C', auto_layout_function('stack', $2));
+	item($a, 'Hierarchy', 'H', auto_layout_function('hierarchical', $2));
+	item($a, 'Stack', 'S', auto_layout_function('stack', $2));
 	separator($a);
-	item($a, 'None', 'C', auto_layout_function('', $2));
+	item($a, 'None', 'N', auto_layout_function('', $2));
 	
 	$b = menu($1, 'Layout', 'L');
 	item($b, 'Circle', 'C', lambda({ [$graph doCircleLayout]; }, $graph => $2));
-	item($b, 'Hierarchy', 'C', lambda({ [$graph doHierarchicalLayout]; }, $graph => $2));
-	item($b, 'Stack', 'C', lambda({ [$graph doStackLayout]; }, $graph => $2));
+	item($b, 'Hierarchy', 'H', lambda({ [$graph doHierarchicalLayout]; }, $graph => $2));
+	item($b, 'Stack', 'S', lambda({ [$graph doStackLayout]; }, $graph => $2));
 
 	$c = menu($1, 'Zoom', 'Z');
 	item($c, 'In', 'I', lambda({ [$graph zoom: 0.25]; }, $graph => $2));
 	item($c, 'Out', 'O', lambda({ [$graph zoom: -0.25]; }, $graph => $2));
 	separator($c);
-	item($c, 'Reset', 'I', lambda({ [$graph resetZoom]; }, $graph => $2));
+	item($c, 'Reset', 'R', lambda({ [$graph resetZoom]; }, $graph => $2));
 }
 
 sub _importHosts {
@@ -308,18 +308,25 @@ sub setHostValueFunction {
 sub clearHostFunction {
 	return lambda({
 		thread(lambda({
-			local('$host @commands $tmp_console');
-			foreach $host (@hosts) {
-				%hosts[$host] = $null;
+			local('@hosts2 $host @commands $tmp_console');
+			@hosts2 = copy(@hosts);
+			while (size(@hosts2) > 0) {
+				push(@commands, "hosts -d " . join(" ", sublist(@hosts2, 0, 20)));
+
+				if (size(@hosts2) > 20) {
+					@hosts2 = sublist(@hosts2, 20);
+				}
+				else {
+					@hosts2 = @();
+				}
 			}
 
-			@commands = map({ return "hosts -d $1"; }, @hosts);
 			push(@commands, "hosts -h");
 
 			$tmp_console = createConsole($client);
 			cmd_all_async($client, $tmp_console, @commands, lambda({
 				if ($1 eq "hosts -h\n") {
-					elog("removed " . join(" ", @hosts));
+					elog("removed " . size(@hosts) . iff(size(@hosts) == 1, " host", " hosts"));
 					call($client, "console.destroy", $tmp_console);
 				}
 			}, \@hosts, \$tmp_console));

@@ -56,6 +56,10 @@ public class NetworkGraph extends JComponent implements ActionListener {
 		public NetworkGraphComponent(mxGraph graph) {
 			super(graph);
 			setBorder(BorderFactory.createEmptyBorder());
+			getHorizontalScrollBar().setUnitIncrement(15);
+			getHorizontalScrollBar().setBlockIncrement(60);
+			getVerticalScrollBar().setUnitIncrement(15);
+			getVerticalScrollBar().setBlockIncrement(60);
 		}
 
 		public void paint(Graphics g) {
