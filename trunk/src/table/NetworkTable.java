@@ -158,8 +158,21 @@ public class NetworkTable extends JComponent implements ActionListener {
 	}
 
 	public void fixSelection(int rows[]) {
-		if (rows.length > 0)
-			table.setRowSelectionInterval(rows[0], rows[rows.length - 1] < table.getRowCount() ? rows[rows.length - 1] : table.getRowCount() - 1);
+		if (rows.length == 0)
+			return;
+
+		table.getSelectionModel().setValueIsAdjusting(true);
+
+		int rowcount = table.getModel().getRowCount();
+
+		for (int x = 0; x < rows.length; x++) {
+			if (rows[x] < rowcount) {
+				table.getSelectionModel().addSelectionInterval(rows[x], rows[x]);
+			}
+		}
+
+		table.getSelectionModel().setValueIsAdjusting(false);
+
 	}
 
 	public void end() {

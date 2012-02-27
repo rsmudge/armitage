@@ -319,7 +319,7 @@ public class DatabaseImpl implements RpcConnection  {
 						System.err.println("Host value did not validate!");
 						return new HashMap();
 					}
-					String[] routes = h.split(",\\s+");
+					String[] routes = h.split(",\\s*");
 					rFilter = new Route[routes.length];
 
 					for (int x = 0; x < routes.length; x++) {
@@ -330,7 +330,7 @@ public class DatabaseImpl implements RpcConnection  {
 				if (values.containsKey("ports") && (values.get("ports") + "").length() > 0) {
 					List ports = new LinkedList();
 					List ports2 = new LinkedList();
-					String[] p = (values.get("ports") + "").split(",\\s+");
+					String[] p = (values.get("ports") + "").split(",\\s*");
 					for (int x = 0; x < p.length; x++) {
 						if (!p[x].matches("[0-9]+")) {
 							return new HashMap();
@@ -344,7 +344,7 @@ public class DatabaseImpl implements RpcConnection  {
 				}
 
 				if (values.containsKey("os") && (values.get("os") + "").length() > 0) {
-					oFilter = (values.get("os") + "").toLowerCase().split(",\\s+");
+					oFilter = (values.get("os") + "").toLowerCase().split(",\\s*");
 				}
 
 				if (hosts.size() == 0) {

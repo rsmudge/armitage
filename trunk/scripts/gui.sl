@@ -480,3 +480,12 @@ sub addMouseListener {
 	[$1 addMouseListener: [new SafeMouseListener: $2]];
 }
 
+sub pad {
+	local('$panel');
+	$panel = [new JPanel];
+	[$panel setLayout: [new BorderLayout]];
+	[$panel add: $1, [BorderLayout CENTER]];
+	[$panel setBorder: [BorderFactory createEmptyBorder: $2, $3, $4, $5]];
+	return $panel;
+}
+

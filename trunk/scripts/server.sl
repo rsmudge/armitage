@@ -65,7 +65,15 @@ sub client {
 		event("*** $eid joined\n");
 	}
 
-	$index = 0;
+        # limit our replay of the event log to 100 events...
+        acquire($poll_lock);
+        if (size(@events) > 100) {
+                $index = size(@events) - 100;
+        }
+        else {
+                $index = 0;
+        }
+        release($poll_lock);
 
 	#
 	# on our merry way processing it...

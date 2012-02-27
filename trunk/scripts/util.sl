@@ -518,7 +518,10 @@ sub module_execute {
 
 				foreach $key => $value ($options) {
 					[$console sendString: "set $key $value $+ \n"];
+					sleep(10);
 				}
+
+				sleep(100);
 
 				if ($type eq "exploit") {
 					[$console sendString: "exploit -j\n"];

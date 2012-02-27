@@ -17,23 +17,14 @@ import javax.swing.text.*;
 import java.io.*;
 import ui.*;
 
-global('%files %icons %paths %attribs');
+global('%files %paths %attribs');
 %files = ohash();
 %paths = ohash();
 %attribs = ohasha();
 setMissPolicy(%paths, { return [new PlainDocument]; });
-
-%icons = ohash();
 setMissPolicy(%files, { return [new GenericTableModel: @("D", "Name", "Size", "Modified", "Mode"), "Name", 128]; });
-setMissPolicy(%icons, {
-	local('$file');
-	$file = [new File: $2];
-#	return [[FileSystemView getFileSystemView] getSystemIcon: $file];
-});
 
 sub parseListing {
-	this('$cwd');
-
 	local('$model');
 	$model = %files[$1];
 
@@ -42,14 +33,10 @@ sub parseListing {
 	}
 	else if ($0 eq "end") {
 		[$model fireListeners];
-		if ($cwd !is $null) {
-			[$cwd reset];
-			$cwd = $null;
-		}
 	}
 	else if ($0 eq "update") {
 		if ("*Operation failed*" iswm $2) {
-			showError("$2 $+ \n\nMaybe you don't have permission to access \nthis folder? Press the directory up button.");
+			showError("$2 $+ \n\nMaybe you don't have permission to access \nthis folder? Press the Refresh button.");
 		}
 		else if ($2 ismatch 'Listing: (.*?)' || $2 ismatch 'No entries exist in (.*?)') {
 			local('$path');
@@ -114,11 +101,12 @@ sub createFileBrowser {
 	[$text addActionListener: lambda({
 		local('$dir');
 		$dir = [[$1 getSource] getText];
+		[$model clear: 128];
+		[$model fireListeners];
 		m_cmd($sid, "cd ' $+ $dir $+ '");
-		m_cmd($sid, "pwd");
 		m_cmd($sid, "ls");
 		[[$1 getSource] setText: ""];
-	}, $sid => $1)];
+	}, $sid => $1, \$model)];
 
 	# this function should be called before every browser action to keep things in sync.
 	$setcwd = lambda({
@@ -131,6 +119,9 @@ sub createFileBrowser {
 			$model = %files[$sid];
 			$sel = [$model getSelectedValue: $table];
 
+			[$model clear: 128];
+			[$model fireListeners];
+
 			if ("*Windows*" iswm sessionToOS($sid)) {
 				m_cmd($sid, "cd '" . [$text getText] . "\\ $+ $sel $+ '");
 			}
@@ -139,7 +130,6 @@ sub createFileBrowser {
 				m_cmd($sid, "cd ' $+ $sel $+ '");
 			}
 
-			m_cmd($sid, "pwd");
 			m_cmd($sid, "ls");
 			[$1 consume];
 		}
@@ -157,12 +147,12 @@ sub createFileBrowser {
 	$chooser = [$fsv getSystemIcon: [$fsv getDefaultDirectory]];
 	
 	$up = [new JButton: $chooser];
-	[$up setPressedIcon: 
-		[new ImageIcon: iconToImage($chooser, 2, 2)]
-	];
-	[$up setBorder: [BorderFactory createEmptyBorder: 2, 2, 2, 8]];
-	[$up setOpaque: 0];
-	[$up setContentAreaFilled: 0];
+	#[$up setPressedIcon: 
+	#	[new ImageIcon: iconToImage($chooser, 2, 2)]
+	#];
+	#[$up setBorder: [BorderFactory createEmptyBorder: 2, 2, 2, 8]];
+	#[$up setOpaque: 0];
+	#[$up setContentAreaFilled: 0];
 	[$up setToolTipText: "Go up one directory"];
 
 	[$up addActionListener: lambda({ 
@@ -174,6 +164,8 @@ sub createFileBrowser {
 		}
 		$last = ticks();
 
+		[$model clear: 128];
+		[$model fireListeners];
 		if ("*Windows*" iswm sessionToOS($sid)) {
 			m_cmd($sid, "cd '" . [$text getText] . "\\..'");
 		}
@@ -181,9 +173,8 @@ sub createFileBrowser {
 			[$setcwd];
 			m_cmd($sid, "cd ..");
 		}
-		m_cmd($sid, "pwd");
 		m_cmd($sid, "ls");
-	}, $sid => $1, \$setcwd, \$text)];
+	}, $sid => $1, \$setcwd, \$text, \$model)];
 
 	# setup the whatever it's called...
 
@@ -239,7 +230,7 @@ sub createFileBrowser {
 	[$top setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
 	[$top setLayout: [new BorderLayout]];
 	[$top add: $text, [BorderLayout CENTER]];
-	[$top add: $up, [BorderLayout WEST]];
+	[$top add: pad($up, 0, 0, 0, 4), [BorderLayout WEST]];
 
 	[$panel add: $top, [BorderLayout NORTH]];
 	[$panel add: center($upload, $mkdir, $refresh), [BorderLayout SOUTH]];
