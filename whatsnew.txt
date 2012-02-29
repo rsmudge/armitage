@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+29 Feb 12
 ---------
 - Armitage now displays a VMWare icon for hosts flagged as ESX/ESXi servers
 - Overhauled token stealing user experience--this is the cadillac version. You
