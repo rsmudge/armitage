@@ -61,23 +61,20 @@ sub add_pivot_function  {
 
 # pivot_dialog($sid, $network output?))
 sub pivot_dialog {
-	this('@routes $platform');
-
-	if ($0 eq "begin") {
-		local('$data');
+	if ($0 eq "end") {
+		local('$data $platform');
 		$data = sessionData($1);
 		if ($data && 'platform' in $data) {
 			$platform = $data['platform'];
 		}
-	}
-	else if ($0 eq "update") {
-		local('$ip_pattern $host $mask $gateway');
-		$ip_pattern = "(\\d+\\.\\d+.\\d+.\\d+)";
 
-		if ($2 ismatch "\\s+ $+ $ip_pattern $+ \\s+ $+ $ip_pattern $+ \\s+ $+ $ip_pattern") {
-			($host, $mask, $gateway) = matched();
+		# parse through the routing table...
+		local('@tempr $entry $host $mask $gateway @routes');
+		@tempr = parseTextTable($2, @('Subnet', 'Netmask', 'Gateway', 'Metric', 'Interface'));
+		foreach $entry (@tempr) {
+			($host, $mask, $gateway) = values($entry, @('Subnet', 'Netmask', 'Gateway'));
 
-			if ($host ne "127.0.0.0" && $host ne "224.0.0.0" && $host ne "0.0.0.0" && $mask ne "255.255.255.255") {
+			if ($host ne "127.0.0.1" && $host ne "127.0.0.0" && $host ne "224.0.0.0" && $host ne "0.0.0.0" && $mask ne "255.255.255.255") {
 				# work around a Metasploit bug that returns the host IP/mask rather than the actual route info
 				# for Java meterpreter... 
 				if ($platform eq "java/java") {
@@ -98,11 +95,16 @@ sub pivot_dialog {
 				push(@routes, %(host => $host, mask => $mask, gateway => $gateway));
 			}
 		}
-	}
-	else if ($0 eq "end") {
+
+		# ok, let's close down this handler...
 		$platform = $null;
 		$handler = $null;
 		%handlers["route"] = $null;
+
+		if (size(@routes) == 0) {
+			# eventually, we're going to need to parse IPv6 stuff...
+			return;
+		}
 
 		local('$dialog $model $table $sorter $center $a $route $button');
 		$dialog = [new JDialog: $frame, $title, 0];
