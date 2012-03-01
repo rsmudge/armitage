@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+2 Mar 12 - Catching up to a few MSF 4.3.0-dev changes...
+--------
+- Added a tab rename feature.
+
 29 Feb 12
 ---------
 - Armitage now displays a VMWare icon for hosts flagged as ESX/ESXi servers
