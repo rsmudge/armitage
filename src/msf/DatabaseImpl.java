@@ -373,6 +373,9 @@ public class DatabaseImpl implements RpcConnection  {
 				String host = values.get("host") + "";
 				PreparedStatement stmt = null;
 
+				/* before we change this hosts info, kill its notes. We do this so future normalized data isn't ignored */
+				executeUpdate("DELETE FROM notes WHERE EXISTS (SELECT id, address FROM hosts WHERE notes.host_id = id AND address = '" + host + "'::text::inet AND workspace_id = " + workspaceid + ")");
+
 				if (values.containsKey("os_name") && values.containsKey("os_flavor")) {
 					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = ?, os_sp = '' WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("os_name") + "");
