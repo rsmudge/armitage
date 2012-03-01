@@ -50,7 +50,7 @@ sub showHost {
 		if ("*2000*" iswm $match || "*95*" iswm $match || "*98*" iswm $match || "*ME*" iswm $match || "*Me*" iswm $match) {
 			push(@overlay, 'resources/windows2000.png');
 		}
-		else if ("*XP*" iswm $match || "*2003*" iswm $match) {
+		else if ("*XP*" iswm $match || "*2003*" iswm $match || "*.NET*" iswm $match) {
 			push(@overlay, 'resources/windowsxp.png');
 		}
 		else {
