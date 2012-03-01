@@ -199,8 +199,18 @@ public class ArmitageApplication extends JFrame {
 						}
 					});
 
+					JMenuItem d = new JMenuItem("Rename Tab", 'R');
+					d.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							String text = JOptionPane.showInputDialog("Rename tab to:", (label.getText() + "").trim());
+							if (text != null)
+								label.setText(text + "   ");
+						}
+					});
+
 					menu.add(a);
 					menu.add(c);
+					menu.add(d);
 					menu.addSeparator();
 					menu.add(b);
 
