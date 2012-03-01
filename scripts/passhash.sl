@@ -306,7 +306,7 @@ sub createUserPassFile {
 	if ($client !is $mclient) {
 		local('$file');
 		$file = uploadFile("userpass.txt");
-		deleteFile("userpass.txt");
+		deleteOnExit("userpass.txt");
 		return $file;
 	}
 	else {
