@@ -5,6 +5,7 @@ Armitage Changelog
 --------
 - Added a tab rename feature.
 - Hosts that self report as .NET server now display an XP/2003 era icon.
+- Updated route command parser to conform to Metasploit 4.3.0's output for it
 
 29 Feb 12
 ---------
