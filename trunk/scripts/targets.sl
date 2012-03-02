@@ -69,7 +69,11 @@ sub refreshSessions {
 	map({ $1['sessions'] = %(); }, values(%hosts));
 
 	foreach $key => $session ($data) {
-		$address = $session['target_host'];
+		$address = $session['session_host'];
+
+		if ($address eq "") {
+			$address = $session['target_host'];
+		}
 
 		if ($address eq "") {
 			$address = split(':', $session['tunnel_peer'])[0];
@@ -244,16 +248,16 @@ sub graph_items {
 }
 
 sub _importHosts {
-	local('$console $success $file');
-	$console = createConsoleTab("Import", 1);
-	$success = size($files);
-	yield 1024;
-	elog("imported hosts from $success file" . iff($success != 1, "s"));
-	foreach $file ($files) {
-		$file = '"' . $file . '"';
-	}
+        local('$console $success $file');
+        $console = createConsoleTab("Import", 1);
+        $success = size($files);
+        yield 1024;
+        elog("imported hosts from $success file" . iff($success != 1, "s"));
+        foreach $file ($files) {
+                $file = '"' . $file . '"';
+        }
 
-	[$console sendString: "db_import " . join(" ", $files) . "\n"];
+        [$console sendString: "db_import " . join(" ", $files) . "\n"];
 }
 
 # need to pass this function a $command local...

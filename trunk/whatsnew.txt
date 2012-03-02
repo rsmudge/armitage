@@ -1,6 +1,12 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage now uses session_host to determine which host a session is associated
+  with. This value is grabbed directly from the OS itself. You'll no longer have
+  20 meterpreter sessions associated with a NAT/firewall device.
+
 2 Mar 12 - Catching up to a few MSF 4.3.0-dev changes...
 --------
 - Added a tab rename feature.
