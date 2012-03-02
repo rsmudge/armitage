@@ -15,6 +15,9 @@ sub updateTokenList {
 		"set SESSION $1",
 		"run");
 
+	[$3 setEnabled: 0];
+	[$3 setText: "Grabbing tokens..."];
+
 	$tmp_console = createConsole($client);
 	cmd_all_async($client, $tmp_console, @commands, lambda({
 		local('$row @rows');
@@ -26,8 +29,13 @@ sub updateTokenList {
 			}
 			call($client, "console.destroy", $tmp_console);
 			[$model fireListeners];
+
+			dispatchEvent(lambda({
+				[$refresh setEnabled: 1];
+				[$refresh setText: "Refresh"];
+			}, \$refresh));
 		}
-	}, \$tmp_console, $model => $2));
+	}, \$tmp_console, $model => $2, $refresh => $3));
 }
 
 sub stealToken {
@@ -36,7 +44,6 @@ sub stealToken {
         [$dialog setLayout: [new BorderLayout]];
 
         ($table, $model) = setupTable("Name", @("Token Type", "Account Type", "Name", "Domain Admin"), @());
-	updateTokenList($1, $model);
 	[$table setSelectionMode: [ListSelectionModel SINGLE_SELECTION]];
         [$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
@@ -63,8 +70,10 @@ sub stealToken {
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
-		updateTokenList($sid, $model);
-	}, $sid => $1, \$model)];
+		updateTokenList($sid, $model, $refresh);
+	}, $sid => $1, \$model, \$refresh)];
+
+	updateTokenList($1, $model, $refresh);
 
         [$dialog add: center($steal, $revert, $whoami, $refresh), [BorderLayout SOUTH]];
         [$frame addTab: "Tokens $1", $dialog, $null];

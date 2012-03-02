@@ -9,6 +9,8 @@ In Progress
 - Armitage now spins up a new listener for each client-side attack (no longer
   relying on the random default listener created on startup). Of course you can
   change this... double-click the PAYLOAD option to set it to something else.
+- Token stealing dialog now disables refresh button while grabbing tokens. Enables
+  it again when done.
 
 2 Mar 12 - Catching up to a few MSF 4.3.0-dev changes...
 --------
