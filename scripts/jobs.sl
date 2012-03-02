@@ -220,20 +220,11 @@ sub updatePayloads {
 	thread(lambda({
 		local('$best');
 		$best = best_client_payload($exploit, $target);
-		if ($best eq "windows/meterpreter/reverse_tcp") {
-			[$model setValueForKey: "PAYLOAD", "Value", $best];
-			[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
-			[$model setValueForKey: "LPORT", "Value", ""];
-			[$model setValueForKey: "DisablePayloadHandler", "Value", "true"];
-			[$model setValueForKey: "ExitOnSession", "Value", ""];
-		}
-		else {
-			[$model setValueForKey: "PAYLOAD", "Value", $best];
-			[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
-			[$model setValueForKey: "LPORT", "Value", randomPort()];
-			[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
-			[$model setValueForKey: "ExitOnSession", "Value", "false"];
-		}
+		[$model setValueForKey: "PAYLOAD", "Value", $best];
+		[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+		[$model setValueForKey: "LPORT", "Value", randomPort()];
+		[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+		[$model setValueForKey: "ExitOnSession", "Value", "false"];
 		[$model fireListeners];
 	}, $model => $1, $exploit => $2, $target => $3));
 }
