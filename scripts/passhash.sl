@@ -177,6 +177,7 @@ sub pass_the_hash {
 	[$button addActionListener: lambda({
 		local('$u $p %options $host');
 		%options["SMBDomain"] = [$domain getText];
+		%options['RPORT']     = "445";
 		
 		if ([$brute isSelected]) {
 			%options["RHOSTS"] = join(", ", $hosts);
