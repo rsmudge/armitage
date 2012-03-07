@@ -35,8 +35,8 @@ sub describeHost {
 }
 
 sub showHost {
-	local('$sessions $os @overlay $match');
-	($sessions, $os, $match) = values($1, @('sessions', 'os_name', 'os_flavor'));
+	local('$sessions $os @overlay $match $purpose');
+	($sessions, $os, $match, $purpose) = values($1, @('sessions', 'os_name', 'os_flavor', 'purpose'));
 	$os = normalize($os);
 
 	if ($match eq "") {
@@ -74,6 +74,9 @@ sub showHost {
 	}
 	else if ($os eq "VMware") {
 		push(@overlay, 'resources/vmware.png');
+	}
+	else if ($purpose eq "firewall") {
+		return overlay_images(@('resources/firewall.png'));
 	}
 	else {
 		push(@overlay, 'resources/unknown.png');
