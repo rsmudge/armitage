@@ -274,6 +274,18 @@ sub best_client_payload {
 	}
 }
 
+sub isIPv6 {
+	local('$inet $exception');
+	try {
+		$inet = [java.net.InetAddress getByName: $1];
+		if ($inet isa ^java.net.Inet6Address) {
+			return 1;
+		}
+	}
+	catch $exception { }
+	return $null;
+}
+
 # choose a payload...
 # best_payload(host, exploit, reverse preference)
 sub best_payload {
@@ -303,10 +315,20 @@ sub best_payload {
 	}
 	
 	if (($os eq "Windows" || "windows" isin $2) && "windows/meterpreter/bind_tcp" in $compatible) {
-		return "windows/meterpreter/bind_tcp";
+		if (isIPv6($1)) {
+			return "windows/meterpreter/bind_ipv6_tcp";
+		}
+		else {
+			return "windows/meterpreter/bind_tcp";
+		}
 	}
 	else if (($os eq "Windows" || "windows" isin $2) && "windows/shell/bind_tcp" in $compatible) {
-		return "windows/shell/bind_tcp";
+		if (isIPv6($1)) {
+			return "windows/shell/bind_ipv6_tcp";
+		}
+		else {
+			return "windows/shell/bind_tcp";
+		}
 	}
 	else if ("java/meterpreter/bind_tcp" in $compatible) {
 		return "java/meterpreter/bind_tcp";

