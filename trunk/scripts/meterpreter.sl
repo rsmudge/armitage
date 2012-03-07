@@ -287,6 +287,7 @@ sub launch_msf_scans {
 								foreach $module ($modules) {
 									@c = @("use $module");
 									push(@c, "set RHOSTS " . join(", ", $hosts));
+									push(@c, "set RPORT $port");
 									push(@c, "set THREADS 24");
 									push(@c, "run -j");
 
