@@ -15,6 +15,7 @@ Armitage Changelog
 - Armitage now displays a firewall icon for hosts with no OS marked as a firewall
   by MSF.
 - Armitage now selects an IPv6 bind payload when attacking IPv6 hosts.
+- Login -> psexec now sets RPORT in case this value is set in the global scope.
 
 2 Mar 12 - Catching up to a few MSF 4.3.0-dev changes...
 --------
