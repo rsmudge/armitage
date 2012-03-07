@@ -1,6 +1,21 @@
 Armitage Changelog
 ==================
 
+8 Mar 12
+--------
+- Armitage now uses session_host to determine which host a session is associated
+  with. This value is grabbed directly from the OS itself. You'll no longer have
+  20 meterpreter sessions associated with a NAT/firewall device.
+- Armitage now spins up a new listener for each client-side attack (no longer
+  relying on the random default listener created on startup). Of course you can
+  change this... double-click the PAYLOAD option to set it to something else.
+- Token stealing dialog now disables refresh button while grabbing tokens. Enables
+  it again when done.
+- Armitage now talks to Metasploit every two minutes to prevent auth timeout.
+- Armitage now displays a firewall icon for hosts with no OS marked as a firewall
+  by MSF.
+- Armitage now selects an IPv6 bind payload when attacking IPv6 hosts.
+
 2 Mar 12 - Catching up to a few MSF 4.3.0-dev changes...
 --------
 - Added a tab rename feature.
