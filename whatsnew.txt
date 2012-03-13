@@ -4,9 +4,11 @@ Armitage Changelog
 In Progress
 -----------
 - Updated Armitage NMap profiles with the following:
-	-T4 (instead of -T5) [forces NMap to wait longer for open service replies]
+	-T4 (instead of -T5) [wait longer for open services to reply]
 	-n  [forces NMap to not resolve the hostname of IP addresses]
 	--min-hostgroup 96 [allows more parallelism when scanning hosts]
+- Armitage now intercepts screenshot and webcam_snap commands from meterpreter 
+  shell and performs the appropriate action with them.
 
 8 Mar 12 1.43-dev
 --------

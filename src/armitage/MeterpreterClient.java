@@ -75,9 +75,15 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 			public void actionPerformed(ActionEvent ev) {
 				String text = window.getInput().getText() + "\n";
 				window.getInput().setText("");
-		
+
 				if (shellCommand != null && text.trim().equals("shell")) {
 					shellCommand.actionPerformed(new ActionEvent(this, 0, "shell"));
+				}
+				else if (shellCommand != null && text.trim().equals("screenshot")) {
+					shellCommand.actionPerformed(new ActionEvent(this, 0, "screenshot"));
+				}
+				else if (shellCommand != null && text.trim().equals("webcam_snap")) {
+					shellCommand.actionPerformed(new ActionEvent(this, 0, "webcam_snap"));
 				}
 				else {
 					sendString(text);
