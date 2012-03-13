@@ -94,6 +94,18 @@ sub parseMeterpreter {
 	}
 }
 
+sub interpretMeterpreterCommand {
+	if ([$1 getActionCommand] eq "shell") {
+		createShellTab($sid);
+	}
+	else if ([$1 getActionCommand] eq "screenshot") {
+		[createScreenshotViewer($sid)];
+	}
+	else if ([$1 getActionCommand] eq "webcam_snap") {
+		[createWebcamViewer($sid)];
+	}
+}
+
 #
 # this code creates and managers a meterpreter tab.
 #
@@ -115,7 +127,7 @@ sub createMeterpreterTab {
 		[new MeterpreterClient: $console, $session, $null];
 	}
 	else {
-		[new MeterpreterClient: $console, $session, newInstance(^java.awt.event.ActionListener, lambda({ createShellTab($sid); }, $sid => $1))];
+		[new MeterpreterClient: $console, $session, newInstance(^java.awt.event.ActionListener, lambda(&interpretMeterpreterCommand, $sid => $1))];
 	}
 
         [$frame addTab: "Meterpreter $1", $console, $null];
