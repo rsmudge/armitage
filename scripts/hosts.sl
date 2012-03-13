@@ -47,14 +47,14 @@ sub host_items {
 	separator($1);
 
 	$j = menu($1, "Nmap Scan", 'S');
-		item($j, "Intense Scan", $null, createNmapFunction("-T5 -A -v"));
-		item($j, "Intense Scan + UDP", $null, createNmapFunction("-sS -sU -T5 -A -v"));
-		item($j, "Intense Scan, all TCP ports", $null, createNmapFunction("-p 1-65535 -T5 -A -v"));
-		item($j, "Intense Scan, no ping", $null, createNmapFunction("-T5 -A -v -Pn"));
-		item($j, "Ping Scan", $null, createNmapFunction("-T5 -sn"));
-		item($j, "Quick Scan", $null, createNmapFunction("-T5 -F"));
-		item($j, "Quick Scan (OS detect)", $null, createNmapFunction("-sV -T5 -O -F --version-light"));
-		item($j, "Comprehensive", $null, createNmapFunction("-sS -sU -T5 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
+		item($j, "Intense Scan", $null, createNmapFunction("--min-hostgroup 96 -T4 -A -v -n"));
+		item($j, "Intense Scan + UDP", $null, createNmapFunction("--min-hostgroup 96 -sS -n -sU -T4 -A -v"));
+		item($j, "Intense Scan, all TCP ports", $null, createNmapFunction("--min-hostgroup 96 -p 1-65535 -n -T4 -A -v"));
+		item($j, "Intense Scan, no ping", $null, createNmapFunction("--min-hostgroup 96 -T4 -n -A -v -Pn"));
+		item($j, "Ping Scan", $null, createNmapFunction("--min-hostgroup 96 -T4 -n -sn"));
+		item($j, "Quick Scan", $null, createNmapFunction("--min-hostgroup 96 -T4 -n -F"));
+		item($j, "Quick Scan (OS detect)", $null, createNmapFunction("--min-hostgroup 96 -sV -n -T4 -O -F --version-light"));
+		item($j, "Comprehensive", $null, createNmapFunction("--min-hostgroup 96 -sS -n -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
 
 	item($1, "MSF Scans...", "M", {
 		local('$address');

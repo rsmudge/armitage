@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Updated Armitage NMap profiles with the following:
+	-T4 (instead of -T5) [forces NMap to wait longer for open service replies]
+	-n  [forces NMap to not resolve the hostname of IP addresses]
+	--min-hostgroup 96 [allows more parallelism when scanning hosts]
+
 8 Mar 12 1.43-dev
 --------
 - Armitage now uses session_host to determine which host a session is associated
