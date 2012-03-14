@@ -119,17 +119,20 @@ sub createCredentialsTab {
 
 	$export = [new JButton: "Export"];
 	[$export addActionListener: {
-		local('$file');
-		$file = iff($REMOTE, ask("Where should I save the file?"), saveFile2());
-		if ($file !is $null) {
+		if ($client !is $mclient) {
+			cmd_safe("db_export -f pwdump -a creds.export", {
+				thread({
+					downloadFile("creds.export", saveFile2());
+				});
+			});
+		}
+		else {
+			local('$file');
+			$file = saveFile2();
 			$file = strrep($file, '\\', '\\\\');
-			cmd_safe("db_export -f pwdump -a $file", lambda({
-				showError("Exported credentials to:\n $+ $file");
-
-				if ($mclient !is $client) {
-					downloadFile($file);
-				}
-			}, \$file));
+			cmd_safe("db_export -f pwdump -a $file", {
+				showError("Saved credentials");
+			});
 		}
 	}];
 
