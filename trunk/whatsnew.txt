@@ -11,6 +11,8 @@ In Progress
   shell and performs the appropriate action with them.
 - View -> Creds -> Export button now works in team mode.
 - Doh! Armitage now properly shows VMWare icon when OS is set to a VMWare ESXi
+- Armitage "is command finished?" heuristic now accounts for commands like
+  del /S which prompt with a (Y/N)? - you can safely use these commands again.
 
 8 Mar 12 1.43-dev
 --------

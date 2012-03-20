@@ -156,6 +156,10 @@ global('%shells $ashell $achannel %maxq %wait');
 			# make our shell heuristic tolerant of prompts like this.
 			%wait[$achannel] = $null;
 		}
+		else if (size($v) > 0 && $v[-1] ismatch '.*?\\(Y/N\\)\\?') {
+			# make our shell heuristic tolerant of prompts like this.
+			%wait[$achannel] = $null;
+		}
 		else if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
 			m_cmd($1, "read $achannel");
 		}
