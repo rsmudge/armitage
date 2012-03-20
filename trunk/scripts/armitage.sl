@@ -72,7 +72,7 @@ sub showHost {
 	else if ($os eq "Solaris") {
 		push(@overlay, 'resources/solaris.png');
 	}
-	else if ($os eq "VMware") {
+	else if ("*VMware*" iswm $os) {
 		push(@overlay, 'resources/vmware.png');
 	}
 	else if ($purpose eq "firewall") {
