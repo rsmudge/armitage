@@ -10,6 +10,7 @@ In Progress
 - Armitage now intercepts screenshot and webcam_snap commands from meterpreter 
   shell and performs the appropriate action with them.
 - View -> Creds -> Export button now works in team mode.
+- Doh! Armitage now properly shows VMWare icon when OS is set to a VMWare ESXi
 
 8 Mar 12 1.43-dev
 --------
