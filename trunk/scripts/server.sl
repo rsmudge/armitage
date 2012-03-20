@@ -40,7 +40,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver');
 
 	#
 	# verify the client
@@ -52,9 +52,19 @@ sub client {
 		return;
 	}
 	else {
-		($null, $eid) = $args;
-	
-		if ($motd ne "" && -exists $motd) {
+		($null, $eid, $app, $ver) = $args;
+
+		if ($app ne "armitage") {
+			warn("Rejected $eid (wrong application)");
+			writeObject($handle, result(%(success => "1", message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
+			return;
+		}
+		else if ($ver < 120320) {
+			warn("Rejected $eid (old software -- srsly, update people!)");
+			writeObject($handle, result(%(success => "1", message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
+			return;
+		}
+		else if ($motd ne "" && -exists $motd) {
 			$temp = openf($motd);
 			writeObject($handle, result(%(success => "1", message => readb($temp, -1))));
 			closef($temp);

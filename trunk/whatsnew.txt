@@ -13,6 +13,10 @@ In Progress
 - Doh! Armitage now properly shows VMWare icon when OS is set to a VMWare ESXi
 - Armitage "is command finished?" heuristic now accounts for commands like
   del /S which prompt with a (Y/N)? - you can safely use these commands again.
+- Armitage now detects whether a client connecting to the team server is out 
+  dated or not. It rejects old clients. They will get a message indicating they
+  need to update and then their client won't do anything else. You'll see a
+  message printed to STDOUT where the team server ran about the rejection.
 
 8 Mar 12 1.43-dev
 --------
