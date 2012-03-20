@@ -22,6 +22,7 @@ public class ATable extends JTable {
 		specialitems.add("NAMELIST");
 		specialitems.add("SigningKey");
 		specialitems.add("SigningCert");
+		specialitems.add("WORDLIST");
 
 		return new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {

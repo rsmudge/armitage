@@ -20,6 +20,7 @@ In Progress
 - Added a * indicator to the active workspace in the workspaces menu.
 - Added Hosts -> DNS Enumerate, this menu launches a Metasploit module that will
   attempt to discover hosts by querying a name server in different ways.
+- Added a file chooser helper to WORDLIST option.
 
 8 Mar 12 1.43-dev
 --------
