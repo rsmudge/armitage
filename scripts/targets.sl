@@ -61,7 +61,7 @@ sub sessionToHost {
 sub refreshSessions {
 	if ($0 ne "result") { return; }
 
-	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask');
+	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer');
 	$data = convertAll($3);
 #	warn("&refreshSessions - $data");
 
@@ -70,13 +70,14 @@ sub refreshSessions {
 
 	foreach $key => $session ($data) {
 		$address = $session['session_host'];
+		$peer    = split(':', $session['tunnel_peer'])[0];
 
 		if ($address eq "") {
 			$address = $session['target_host'];
 		}
 
 		if ($address eq "") {
-			$address = split(':', $session['tunnel_peer'])[0];
+			$address = $peer;
 		}
 
 		if ($address !in %hosts) {
@@ -84,6 +85,12 @@ sub refreshSessions {
 		}
 
 		%hosts[$address]['sessions'][$key] = $session;
+
+		# add a highlight / route for a firewall / NAT device
+		if ($peer ne $address) {
+			push(@routes, [new Route: $address, "255.255.255.255", $peer]);
+			push(@highlights, @($peer, $address));
+		}
 
 		# save the highlightable edges
 		if ($session['tunnel_local'] ne "") {
