@@ -164,7 +164,7 @@ sub client_workspace_items {
 	foreach $x => $workspace (workspaces()) {
 		$name = $workspace['name'];
 
-		if ([$title endsWith: $name]) {
+		if ($title eq "$TITLE - $name") {
 			item($1, "$x $+ . $+ $name *", $x, lambda({
 				set_workspace($name);
 			}, \$name));
