@@ -18,6 +18,8 @@ In Progress
   need to update and then their client won't do anything else. You'll see a
   message printed to STDOUT where the team server ran about the rejection.
 - Added a * indicator to the active workspace in the workspaces menu.
+- Added Hosts -> DNS Enumerate, this menu launches a Metasploit module that will
+  attempt to discover hosts by querying a name server in different ways.
 
 8 Mar 12 1.43-dev
 --------

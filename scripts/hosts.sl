@@ -63,6 +63,10 @@ sub host_items {
 		launch_msf_scans($address);
 	});
 
+	item($1, "DNS Enumerate", 'D', {
+		launch_dialog("Enumerate DNS Server", "auxiliary", "auxiliary/gather/dns_enum", 1, $null, %());
+	});
+
 	separator($1);
 
 	item($1, "Clear Database", 'C', &clearDatabase);
