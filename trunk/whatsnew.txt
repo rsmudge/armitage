@@ -17,6 +17,7 @@ In Progress
   dated or not. It rejects old clients. They will get a message indicating they
   need to update and then their client won't do anything else. You'll see a
   message printed to STDOUT where the team server ran about the rejection.
+- Added a * indicator to the active workspace in the workspaces menu.
 
 8 Mar 12 1.43-dev
 --------
