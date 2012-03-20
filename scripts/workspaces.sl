@@ -159,12 +159,21 @@ sub client_workspace_items {
 		});
 	});
 
-	local('$x $workspace $name');
+	local('$x $workspace $name $title');
+	$title = [$frame getTitle];
 	foreach $x => $workspace (workspaces()) {
 		$name = $workspace['name'];
-		item($1, "$x $+ . $+ $name", $x, lambda({
-			set_workspace($name);
-		}, \$name));
+
+		if ([$title endsWith: $name]) {
+			item($1, "$x $+ . $+ $name *", $x, lambda({
+				set_workspace($name);
+			}, \$name));
+		}
+		else {
+			item($1, "$x $+ . $+ $name", $x, lambda({
+				set_workspace($name);
+			}, \$name));
+		}
 	}
 }
 
