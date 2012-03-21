@@ -64,7 +64,7 @@ sub host_items {
 	});
 
 	item($1, "DNS Enumerate", 'D', {
-		launch_dialog("Enumerate DNS", "auxiliary", "gather/dns_enum", 1, $null, %());
+		launch_dialog("Enumerate DNS", "auxiliary", "gather/enum_dns", 1, $null, %());
 	});
 
 	separator($1);
