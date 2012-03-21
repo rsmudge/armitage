@@ -14,6 +14,7 @@ import javax.imageio.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
+import java.awt.datatransfer.*;
 
 import graph.*;
 import armitage.*;
@@ -489,3 +490,16 @@ sub pad {
 	return $panel;
 }
 
+sub setClipboard {
+	local('$sel $cb');
+	$sel = [new StringSelection: $1];
+	$cb = [[Toolkit getDefaultToolkit] getSystemSelection];
+	if ($cb !is $null) {
+		[$cb setContents: $sel, $null];
+	}
+
+	$cb = [[Toolkit getDefaultToolkit] getSystemClipboard];
+	if ($cb !is $null) {
+		[$cb setContents: $sel, $null];
+	}
+}

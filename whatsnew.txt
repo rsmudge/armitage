@@ -23,6 +23,8 @@ In Progress
 - Added a file chooser helper to WORDLIST option.
 - Armitage now displays a pivot relationship between a compromised host and the
   NAT/proxy device it is connected through.
+- Added a Copy button to services tab. This button copies the highlighted hosts
+  to the clipboard. I found myself needing this several times recently.
 
 8 Mar 12 1.43-dev
 --------
