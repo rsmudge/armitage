@@ -27,7 +27,7 @@ sub updateServiceModel {
 }
 
 sub createServiceBrowser {
-	local('$table $model $panel $refresh $buttons $sorter $host');
+	local('$table $model $panel $refresh $sorter $host $copy');
 
 	$model = [new GenericTableModel: @("host", "name", "port", "proto", "info"), "host", 16];
 
@@ -74,12 +74,20 @@ sub createServiceBrowser {
 		}, \$hosts, \$model));
 	}, \$model, $hosts => $1)];
 
+	$copy = [new JButton: "Copy"];
+	[$copy addActionListener: lambda({
+		local('%r $val $hosts');
+		%r = %();
+		foreach $val ([$model getSelectedValues: $table]) {
+			%r[$val] = 1;
+		}
+		$hosts = keys(%r);
+		setClipboard(join(" ", $hosts));
+		showError("Copied selected hosts to clipboard");
+	}, \$model, \$table)];
+
 	updateServiceModel($hosts => $1, \$model); 		
 
-	$buttons = [new JPanel];
-	[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
-	[$buttons add: $refresh];
-	[$panel add: $buttons, [BorderLayout SOUTH]];
-
+	[$panel add: center($refresh, $copy), [BorderLayout SOUTH]];
 	[$frame addTab: "Services", $panel, $null];
 }
