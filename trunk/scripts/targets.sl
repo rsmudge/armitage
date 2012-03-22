@@ -61,7 +61,7 @@ sub sessionToHost {
 sub refreshSessions {
 	if ($0 ne "result") { return; }
 
-	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer');
+	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer $gateway %addr');
 	$data = convertAll($3);
 #	warn("&refreshSessions - $data");
 
@@ -85,6 +85,7 @@ sub refreshSessions {
 		}
 
 		%hosts[$address]['sessions'][$key] = $session;
+		%addr[$key] = $address;
 
 		# add a highlight / route for a firewall / NAT device
 		if ($peer ne $address) {
@@ -92,26 +93,22 @@ sub refreshSessions {
 			push(@highlights, @($peer, $address));
 		}
 
-		# save the highlightable edges
-		if ($session['tunnel_local'] ne "") {
-			($host) = split(':', $session['tunnel_local']);
-
-			if ('-' isin $host) {
-				push(@highlights, @(split('\-', $host)[-1], $address));
-			}
-			else if ($host eq "Local Pipe") {
-				# do something to setup a default pivot highlight
-			}
-			else {
-				push(@highlights, @($host, $address));
-			}
-		}
-
 		# save the route information related to this meterpreter session
 		if ($session['routes'] ne "") {
 			foreach $route (split(',', $session['routes'])) {
 				($host, $mask) = split('/', $route);
 				push(@routes, [new Route: $host, $mask, $address]);
+			}
+		}
+	}
+
+	# setup the highlighted edges
+	foreach $route (@routes) {
+		$gateway = [$route getGateway];
+		foreach $key => $session ($data) {
+			$host = %addr[$key];
+			if ($gateway ne $host && [$route shouldRoute: $host]) {
+				push(@highlights, @($gateway, $host)); 
 			}
 		}
 	}
