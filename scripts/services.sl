@@ -82,7 +82,7 @@ sub createServiceBrowser {
 			%r[$val] = 1;
 		}
 		$hosts = keys(%r);
-		setClipboard(join(" ", $hosts));
+		setClipboard(join(", ", $hosts));
 		showError("Copied selected hosts to clipboard");
 	}, \$model, \$table)];
 

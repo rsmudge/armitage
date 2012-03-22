@@ -22,7 +22,7 @@ setMissPolicy(%results2, { return @(); });
 # %exploits is populated in menus.sl when the client-side attacks menu is constructed
 
 # a list of exploits that should always use a reverse shell... this list needs to grow.
-@always_reverse = @("multi/samba/usermap_script", "unix/misc/distcc_exec");
+@always_reverse = @("multi/samba/usermap_script", "unix/misc/distcc_exec", "windows/http/xampp_webdav_upload_php");
 
 #
 # generate menus for a given OS
@@ -289,15 +289,16 @@ sub isIPv6 {
 # choose a payload...
 # best_payload(host, exploit, reverse preference)
 sub best_payload {
-	local('$compatible $os');
+	local('$compatible $os $win');
 	$compatible = call($client, "module.compatible_payloads", $2)["payloads"];
 	$os = iff($1 in %hosts, %hosts[$1]['os_name']);
+	$win = iff($os eq "Windows" || "windows" isin $2);
 
 	if ($3) {
-		if (($os eq "Windows" || "windows" isin $2) && "windows/meterpreter/reverse_tcp" in $compatible) {
+		if ($win && "windows/meterpreter/reverse_tcp" in $compatible) {
 			return "windows/meterpreter/reverse_tcp";
 		}
-		else if (($os eq "Windows" || "windows" isin $2) && "windows/shell/reverse_tcp" in $compatible) {
+		else if ($win && "windows/shell/reverse_tcp" in $compatible) {
 			return "windows/shell/reverse_tcp";
 		}
 		else if ("java/meterpreter/reverse_tcp" in $compatible) {
@@ -308,6 +309,9 @@ sub best_payload {
 		}
 		else if ("java/jsp_shell_reverse_tcp" in $compatible) {
 			return "java/jsp_shell_reverse_tcp";
+		}
+		else if ("php/meterpreter_reverse_tcp" in $compatible) {
+			return "php/meterpreter_reverse_tcp";
 		}
 		else {
 			return "generic/shell_reverse_tcp";
