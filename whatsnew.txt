@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+22 Mar 12
+---------
 - Updated Armitage NMap profiles with the following:
 	-T4 (instead of -T5) [wait longer for open services to reply]
 	-n  [forces NMap to not resolve the hostname of IP addresses]
@@ -26,6 +26,7 @@ In Progress
 - Added a Copy button to services tab. This button copies the highlighted hosts
   to the clipboard. I found myself needing this several times recently.
 - Improved reverse payload selection logic (now it includes rev php meterpreter)
+- Armitage now sets a different LPORT for each exploit launched with a rev payload
 
 8 Mar 12 1.43-dev
 --------
