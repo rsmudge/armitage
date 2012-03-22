@@ -25,6 +25,7 @@ In Progress
   NAT/proxy device it is connected through.
 - Added a Copy button to services tab. This button copies the highlighted hosts
   to the clipboard. I found myself needing this several times recently.
+- Improved reverse payload selection logic (now it includes rev php meterpreter)
 
 8 Mar 12 1.43-dev
 --------
