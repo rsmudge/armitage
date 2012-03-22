@@ -456,6 +456,10 @@ sub attack_dialog {
 			foreach $host ($hosts) {
 				$options["PAYLOAD"] = best_payload($host, $exploit, [$b isSelected]);
 				$options["RHOST"] = $host;
+				if ([$b isSelected]) {
+					$options["LPORT"] = randomPort();
+				}
+
 				if (size($hosts) >= 4) {
 					call_async($client, "module.execute", "exploit", $exploit, $options);
 				}
