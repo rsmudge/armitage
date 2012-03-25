@@ -27,11 +27,16 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	public void addListener(MeterpreterCallback l) {
-		listeners.add(l);
+		synchronized (this) {
+			listeners.add(l);
+		}
 	}
 
 	public void fireEvent(Command command, Map response, boolean timeout) {
-		Iterator i = listeners.iterator();
+		Iterator i;
+		synchronized (this) {
+			i = new LinkedList(listeners).iterator();
+		}
 		while (i.hasNext()) {
 			if (timeout) {
 				((MeterpreterCallback)i.next()).commandTimeout(session, command != null ? command.token : null, response);
