@@ -88,7 +88,7 @@ sub refreshSessions {
 		%addr[$key] = $address;
 
 		# add a highlight / route for a firewall / NAT device
-		if ($peer ne $address) {
+		if ($peer ne $address && $peer ne "") {
 			push(@routes, [new Route: $address, "255.255.255.255", $peer]);
 			push(@highlights, @($peer, $address));
 		}
