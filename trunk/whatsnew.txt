@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Team server now delivers chat messages in batches vs. one line at a time. 
+  This will make syncing on reconnect much better (in theory)
+
 22 Mar 12
 ---------
 - Updated Armitage NMap profiles with the following:

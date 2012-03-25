@@ -167,8 +167,8 @@ sub client {
 		else if ($method eq "armitage.poll") {
 			acquire($poll_lock);
 			if (size(@events) > $index) {
-				$rv = result(%(data => @events[$index], encoding => "base64", prompt => "$eid $+ > "));
-				$index++;
+				$rv = result(%(data => join("", sublist(@events, $index)), encoding => "base64", prompt => "$eid $+ > "));
+				$index = size(@events);
 			}
 			else {
 				$rv = result(%(data => "", prompt => "$eid $+ > ", encoding => "base64"));
