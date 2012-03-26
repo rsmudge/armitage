@@ -62,12 +62,8 @@ global('%shells $ashell $achannel %maxq %wait');
 				}
 
 				if ($client !is $mclient) {
-					thread(lambda({
-						local('$file');
-						$file = call($mclient, "armitage.write", $sid, "$text $+ \r\n", $channel)["file"];
-						%wait[$channel] = 1;
-						m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
-					}, \$sid, \%wait, \$channel, \$text));
+					%wait[$channel] = 1;
+					m_cmd($sid, "write -c $channel $text");
 				}
 				else {
 					$handle = openf(">command $+ $sid $+ .txt");
@@ -96,6 +92,10 @@ global('%shells $ashell $achannel %maxq %wait');
 	this('$channel $ashell');
 
 	if ($0 eq "execute" && $2 ismatch 'write -f .*? (\d+)') {
+		($channel) = matched();
+		$ashell = %shells[$1][$channel];
+	}
+	else if ($0 eq "execute" && $2 ismatch 'write -c (\d+) .*') {
 		($channel) = matched();
 		$ashell = %shells[$1][$channel];
 	}
