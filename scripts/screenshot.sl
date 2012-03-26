@@ -51,7 +51,7 @@ sub image_viewer
 			[$buttons add: $watch];
 		[$panel add: $buttons, [BorderLayout SOUTH]];
 	
-	[$frame addTab: "$title $2", $panel, lambda({ $container[$key] = $null; size($container); }, $key => $2, \$container)];
+	[$frame addTab: "$title $2", $panel, lambda({ $container[$key] = $null; size($container); }, $key => $2, \$container), "$title " . sessionToHost($2)];
 	return $viewer;
 }
 

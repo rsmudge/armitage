@@ -81,7 +81,7 @@ global('%shells $ashell $achannel %maxq %wait');
 				m_cmd($sid, "close $channel");
 				m_cmd($sid, "kill $pid");
 				%shells[$sid][$channel] = $null;
-			}, \$sid, \$channel, \$console, \$pid, \$console)];
+			}, \$sid, \$channel, \$console, \$pid, \$console), "$command $pid $+ @" . sessionToHost($sid)];
 
 			m_cmd($sid, "read $channel");
 		}, \$command, \$channel, \$pid, $sid => $1));
@@ -279,7 +279,7 @@ sub createShellSessionTab {
 				call_async($mclient, "armitage.unlock", $sid);
 			}
 			[$thread kill];
-		}, \$sid, \$thread)];
+		}, \$sid, \$thread), "Shell " . sessionToHost($sid)];
 	}, \$sid, \$console));
 }
 

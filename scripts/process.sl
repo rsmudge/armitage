@@ -93,6 +93,6 @@ sub createProcessBrowser {
 
 	[$panel add: center($a, $b, $bb, $c), [BorderLayout SOUTH]];
 
-	[$frame addTab: "Processes $1", $panel, $null];
+	[$frame addTab: "Processes $1", $panel, $null, "Processes " . sessionToHost($1)];
 	m_cmd($1, "ps");
 }

@@ -74,7 +74,7 @@ sub showLoot {
 
 		[$dialog add: $text, [BorderLayout CENTER]];
 		[$dialog add: center($refresh), [BorderLayout SOUTH]];
-		[$frame addTab: "View", $dialog, $null];
+		[$frame addTab: "View", $dialog, $null, $v];
 		#[$dialog show];
 	}	
 }

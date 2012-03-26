@@ -130,7 +130,7 @@ sub createMeterpreterTab {
 		[new MeterpreterClient: $console, $session, newInstance(^java.awt.event.ActionListener, lambda(&interpretMeterpreterCommand, $sid => $1))];
 	}
 
-        [$frame addTab: "Meterpreter $1", $console, $null];
+        [$frame addTab: "Meterpreter $1", $console, $null, "Meterpreter " . sessionToHost($1)];
 }
 
 sub meterpreterPopup {

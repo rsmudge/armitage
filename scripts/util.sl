@@ -164,8 +164,8 @@ sub createConsoleTab {
 	}
 
 	dispatchEvent(lambda({
-		[$frame addTab: iff($title is $null, "Console", $title), $console, $thread];
-	}, $title => $1, \$console, \$thread));
+		[$frame addTab: iff($title is $null, "Console", $title), $console, $thread, $host];
+	}, $title => $1, \$console, \$thread, \$host));
 	return $thread;
 }
 

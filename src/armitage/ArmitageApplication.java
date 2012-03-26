@@ -69,12 +69,25 @@ public class ArmitageApplication extends JFrame {
 
 	public void addTab(final String title, final JComponent tab, final ActionListener removeListener) {
 		if (SwingUtilities.isEventDispatchThread()) {
-			_addTab(title, tab, removeListener);
+			_addTab(title, tab, removeListener, null);
 		}
 		else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					_addTab(title, tab, removeListener);
+					_addTab(title, tab, removeListener, null);
+				}
+			});
+		}
+	}
+
+	public void addTab(final String title, final JComponent tab, final ActionListener removeListener, final String tooltip) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			_addTab(title, tab, removeListener, tooltip);
+		}
+		else {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					_addTab(title, tab, removeListener, tooltip);
 				}
 			});
 		}
@@ -128,10 +141,10 @@ public class ArmitageApplication extends JFrame {
 
 	public void removeAppTab(Component tab, String title, ActionEvent ev) {
 		Iterator i = apptabs.iterator();
-		String titleshort = title.split(" ")[0];
+		String titleshort = title != null ? title.split(" ")[0] : "%b%";
 		while (i.hasNext()) {
 			ApplicationTab t = (ApplicationTab)i.next();
-			String tshort = t.title.split(" ")[0];
+			String tshort = t.title != null ? t.title.split(" ")[0] : "%a%";
 			if (t.component == tab || tshort.equals(titleshort)) {
 				tabs.remove(t.component);
 
@@ -143,7 +156,7 @@ public class ArmitageApplication extends JFrame {
 		}
 	}
 
-	public void _addTab(final String title, final JComponent tab, final ActionListener removeListener) {
+	public void _addTab(final String title, final JComponent tab, final ActionListener removeListener, final String tooltip) {
 		final Component component = tabs.add("", tab);
 		final JLabel label = new JLabel(title + "   ");
 
@@ -151,6 +164,10 @@ public class ArmitageApplication extends JFrame {
 		control.setOpaque(false);
 		control.setLayout(new BorderLayout());
 		control.add(label, BorderLayout.CENTER);
+
+		if (tooltip != null) {
+			control.setToolTipText(tooltip);
+		}
 
 		if (tab instanceof Activity) {
 			((Activity)tab).registerLabel(label);
