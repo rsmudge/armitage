@@ -49,4 +49,4 @@ msfrpcd -U msf -P $2
 echo "[+] sleeping for 20s (to let msfrpcd initialize)"
 sleep 20
 echo "[+] Starting Armitage team server"
-java -jar armitage.jar --server $1 55553 msf $2
+java -server -XX:+UseParallelGC -jar armitage.jar --server $1 55553 msf $2
