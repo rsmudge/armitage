@@ -14,7 +14,7 @@ global('%sessions %handlers $handler');
 
 sub session {
 	if ($1 !in %sessions && $mclient !is $null) {
-		%sessions[$1] = [new MeterpreterSession: $mclient, $1];
+		%sessions[$1] = [new MeterpreterSession: $mclient, $1, iff($client !is $mclient)];
 		[%sessions[$1] addListener: lambda(&parseMeterpreter)];		
 	}
 

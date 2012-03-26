@@ -388,7 +388,7 @@ sub main {
 		setMissPolicy(%sessions, { 
 			warn("Creating a thread for $2");
 			local('$session');
-			$session = [new MeterpreterSession: $client, $2]; 
+			$session = [new MeterpreterSession: $client, $2, 0]; 
 			[$session addListener: lambda({
 				if ($0 eq "commandTimeout" || $2 is $null) {
 					return;

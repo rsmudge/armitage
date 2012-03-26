@@ -251,7 +251,10 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 				processRead(read);
 
-				if ((System.currentTimeMillis() - lastRead) <= 500) {
+				if (readCommand.equals("armitage.poll")) {
+					Thread.sleep(1000);
+				}
+				else if ((System.currentTimeMillis() - lastRead) <= 500) {
 					Thread.sleep(10);
 				}
 				else {
