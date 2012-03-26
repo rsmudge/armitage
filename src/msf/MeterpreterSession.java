@@ -12,6 +12,7 @@ public class MeterpreterSession implements Runnable {
 	protected LinkedList	listeners = new LinkedList();
 	protected LinkedList    commands  = new LinkedList();
 	protected String        session;
+	protected boolean       teammode;
 
 	public static long DEFAULT_WAIT = 12000;
 
@@ -47,13 +48,17 @@ public class MeterpreterSession implements Runnable {
 		}
 	}
 
-	public MeterpreterSession(RpcConnection connection, String session) {
+	public MeterpreterSession(RpcConnection connection, String session, boolean teammode) {
 		this.connection = connection;
 		this.session = session;
+		this.teammode = teammode;
 		new Thread(this).start();
 	}
 
 	protected void emptyRead() {
+		if (teammode)
+			return;
+
 		try {
 			Map read = readResponse();
 			while (!"".equals(read.get("data"))) {
@@ -118,7 +123,6 @@ public class MeterpreterSession implements Runnable {
 						return;
 					}
 
-					Thread.sleep(10);
 					read = readResponse();
 				}
 
@@ -127,7 +131,6 @@ public class MeterpreterSession implements Runnable {
 			}
 
 			/* grab any additional readable data */
-			Thread.sleep(10);
 			read = readResponse();
 			while (!"".equals(read.get("data"))) {
 				fireEvent(c, read, false);
@@ -167,14 +170,15 @@ public class MeterpreterSession implements Runnable {
 		while (true) {
 			try {
 				Command next = grabCommand();
-				if (next == null && (System.currentTimeMillis() - lastRead) > 250) {
+				if (next == null && (System.currentTimeMillis() - lastRead) > 500) {
 					lastRead = System.currentTimeMillis();
 					emptyRead();
 				}
 				else if (next == null) {
-					Thread.sleep(10);
+					Thread.sleep(25);
 				}
 				else {
+					lastRead = System.currentTimeMillis();
 					processCommand(next);
 				}
 			}
@@ -186,6 +190,10 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	private Map readResponse() throws Exception {
+		try {
+			Thread.sleep(10);
+		}
+		catch (Exception ex) {}
 		return (Map)(connection.execute("session.meterpreter_read", new Object[] { session }));
 	}
 }
