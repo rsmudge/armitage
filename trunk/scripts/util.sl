@@ -547,7 +547,7 @@ sub deleteOnExit {
 
 sub listDownloads {
 	this('%types');
-	local('$files $root $findf $hosts $host $path');
+	local('$files $root $findf $hosts $host');
 	$files = @();
 	$root = $1;
 	$findf = {
@@ -556,7 +556,7 @@ sub listDownloads {
 		}
 		else {
 			# determine the file content type
-			local('$type $handle $data');
+			local('$type $handle $data $path');
 			if ($1 in %types) {
 				$type = %types[$1];				
 			}
