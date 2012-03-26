@@ -117,8 +117,20 @@ sub client {
 			release($sess_lock);
 			#warn("V $sess_lock");
 
-			#warn("Write $id -> $sid = " . $data);
-			[$session addCommand: $id, $data];
+			if ($data ismatch "write -c (\\d+) (.*)\n") {
+				($channel, $data) = matched();
+
+				$file = getFileProper("command $+ $sid $+ . $+ $channel $+ .txt");
+				$h = openf("> $+ $file");
+				writeb($h, "$data $+ \r\n");
+				closef($h);
+				deleteOnExit($file);
+
+				[$session addCommand: $id, "write -f \"" . strrep($file, "\\", "/") . "\" $channel $+ \n"];
+			}
+			else {
+				[$session addCommand: $id, $data];
+			}
 
 			writeObject($handle, [new HashMap]);
 		}
@@ -222,25 +234,6 @@ sub client {
 		}
 		else if ($method eq "armitage.downloads") {
 			$response = listDownloads("downloads");
-			writeObject($handle, $response);
-		}
-		else if ($method eq "armitage.write") {
-			($sid, $data, $channel) = $args;
-
-			acquire($sess_lock);
-				$session = %sessions[$sid];
-			release($sess_lock);
-
-			# write the data to our command file
-			$h = openf(">command $+ $sid $+ . $+ $channel $+ .txt");
-			writeb($h, $data);
-			closef($h);
-			deleteOnExit("command $+ $sid $+ . $+ $channel $+ .txt");
-
-			writeObject($handle, result(%(file => getFileProper("command $+ $sid $+ . $+ $channel $+ .txt"))) );
-		}
-		else if ($method eq "session.shell_write" || $method eq "session.shell_read") {
-			$response = [$client execute: $method, $args];
 			writeObject($handle, $response);
 		}
 		else if ($method eq "db.hosts" || $method eq "db.services" || $method eq "db.creds" || $method eq "session.list" || $method eq "db.loots") {
