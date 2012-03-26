@@ -59,7 +59,7 @@ sub client {
 			writeObject($handle, result(%(success => "1", message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
 			return;
 		}
-		else if ($ver < 120320) {
+		else if ($ver < 120326) {
 			warn("Rejected $eid (old software -- srsly, update people!)");
 			writeObject($handle, result(%(success => "1", message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
 			return;
