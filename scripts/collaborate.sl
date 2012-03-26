@@ -117,7 +117,7 @@ sub setup_collaboration {
 
 	try {
 		$mclient = c_client($1, $2);	
-		%r = call($mclient, "armitage.validate", $3, $nick, "armitage", 120320);
+		%r = call($mclient, "armitage.validate", $3, $nick, "armitage", 120326);
 		if (%r["success"] eq '1') {
 			if (%r["message"] eq "") {
 				showError("Collaboration Setup!");
