@@ -76,5 +76,5 @@ sub stealToken {
 	updateTokenList($1, $model, $refresh);
 
         [$dialog add: center($steal, $revert, $whoami, $refresh), [BorderLayout SOUTH]];
-        [$frame addTab: "Tokens $1", $dialog, $null];
+        [$frame addTab: "Tokens $1", $dialog, $null, "Tokens " . sessionToHost($1)];
 }

@@ -235,7 +235,7 @@ sub createFileBrowser {
 	[$panel add: $top, [BorderLayout NORTH]];
 	[$panel add: center($upload, $mkdir, $refresh), [BorderLayout SOUTH]];
 
-	[$frame addTab: "Files $1", $panel, $null];
+	[$frame addTab: "Files $1", $panel, $null, "Files " . sessionToHost($1)];
 
 	m_cmd($1, "ls");
 }
