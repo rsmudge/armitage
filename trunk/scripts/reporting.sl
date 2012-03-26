@@ -132,7 +132,9 @@ sub fixVulns {
 		}
 	}
 
-	return values(%vulns);
+	return sort({ 
+		return [graph.Route ipToLong: $1['host']] <=> [graph.Route ipToLong: $2['host']];
+	}, values(%vulns));
 }
 
 #
