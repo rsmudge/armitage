@@ -547,7 +547,7 @@ sub deleteOnExit {
 
 sub listDownloads {
 	this('%types');
-	local('$files $root $findf $hosts $host');
+	local('$files $root $findf $hosts $host $path');
 	$files = @();
 	$root = $1;
 	$findf = {
@@ -573,6 +573,12 @@ sub listDownloads {
 				%types[$1] = $type;
 			}
 
+                        # figure out the path...
+                        $path = strrep(getFileParent($1), $root, '');
+                        if (strlen($path) >= 2) {
+                                $path = substr($path, 1);
+                        }
+
 			# return a description of the file.
 			return %(
 				host => $host,
@@ -580,7 +586,7 @@ sub listDownloads {
 				size => lof($1),
 				updated_at => lastModified($1),
 				location => $1,
-				path => substr(strrep(getFileParent($1), $root, ''), 1),
+				path => $path,
 				content_type => $type
 			);
 		}
