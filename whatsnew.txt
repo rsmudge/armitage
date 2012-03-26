@@ -11,6 +11,7 @@ In Progress
   all tabs in the same group (e.g., all screenshots, file browsers, command 
   shells, etc.)
 - Armitage now logs launches of the enum_dns module.
+- Hosts -> DNS Enumerate now populates NS field with highlighted host.
 
 22 Mar 12
 ---------

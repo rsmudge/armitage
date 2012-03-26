@@ -64,7 +64,12 @@ sub host_items {
 	});
 
 	item($1, "DNS Enumerate", 'D', {
-		launch_dialog("Enumerate DNS", "auxiliary", "gather/enum_dns", 1, $null, %());
+		if (size([$targets getSelectedHosts]) > 0) {
+			launch_dialog("Enumerate DNS", "auxiliary", "gather/enum_dns", 1, $null, %(NS => [$targets getSelectedHosts][0]));
+		}
+		else {
+			launch_dialog("Enumerate DNS", "auxiliary", "gather/enum_dns", 1, $null, %());
+		}
 	});
 
 	separator($1);
