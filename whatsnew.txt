@@ -10,6 +10,7 @@ In Progress
 - Use Shift+Click to close all tabs with the same name. This feature now closes
   all tabs in the same group (e.g., all screenshots, file browsers, command 
   shells, etc.)
+- Armitage now logs launches of the enum_dns module.
 
 22 Mar 12
 ---------

@@ -437,7 +437,7 @@ sub _launch_dialog {
 				launch_service($title, "$type $+ / $+ $command", $options, $type, $format => [$combo getSelectedItem], \$listener);
 			}
 			else {
-				if ($type eq "auxiliary" && $command eq "gather/dns_enum") {
+				if ($type eq "auxiliary" && $command eq "gather/enum_dns") {
 					local('$domain $ns');
 					($domain, $ns) = values($options, @('DOMAIN', 'NS'));
 					if ($ns ne "") {
