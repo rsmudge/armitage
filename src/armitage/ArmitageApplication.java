@@ -128,9 +128,11 @@ public class ArmitageApplication extends JFrame {
 
 	public void removeAppTab(Component tab, String title, ActionEvent ev) {
 		Iterator i = apptabs.iterator();
+		String titleshort = title.split(" ")[0];
 		while (i.hasNext()) {
 			ApplicationTab t = (ApplicationTab)i.next();
-			if (t.component == tab || t.title.equals(title)) {
+			String tshort = t.title.split(" ")[0];
+			if (t.component == tab || tshort.equals(titleshort)) {
 				tabs.remove(t.component);
 
 				if (t.removeListener != null)
