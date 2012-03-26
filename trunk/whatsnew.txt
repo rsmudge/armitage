@@ -13,7 +13,7 @@ In Progress
 - Armitage now logs launches of the enum_dns module.
 - Hosts -> DNS Enumerate now populates NS field with highlighted host.
 - Armitage now adds a tooltip to tabs associated with a session. Hover your 
-  mouse over a tab to see which host the tab is associated with.
+  mouse over a tab X button to see which host the tab is associated with.
 - Fixed a potential exception caused when listing downloads.
 
 22 Mar 12

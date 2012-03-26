@@ -165,10 +165,6 @@ public class ArmitageApplication extends JFrame {
 		control.setLayout(new BorderLayout());
 		control.add(label, BorderLayout.CENTER);
 
-		if (tooltip != null) {
-			control.setToolTipText(tooltip);
-		}
-
 		if (tab instanceof Activity) {
 			((Activity)tab).registerLabel(label);
 		}
@@ -178,6 +174,10 @@ public class ArmitageApplication extends JFrame {
 		close.setContentAreaFilled(false);
 		close.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		control.add(close, BorderLayout.EAST);
+
+		if (tooltip != null) {
+			close.setToolTipText(tooltip);
+		}
 
 		int index = tabs.indexOfComponent(component);
 		tabs.setTabComponentAt(index, control);
