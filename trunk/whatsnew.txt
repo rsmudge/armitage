@@ -5,6 +5,11 @@ In Progress
 ---------
 - Team server now delivers chat messages in batches vs. one line at a time. 
   This will make syncing on reconnect much better (in theory)
+- Several optimizations to prevent unnecessary reads/calls to deconfliction
+  server when in team mode. This will primarily affect high latency situations.
+- Use Shift+Click to close all tabs with the same name. This feature now closes
+  all tabs in the same group (e.g., all screenshots, file browsers, command 
+  shells, etc.)
 
 22 Mar 12
 ---------
