@@ -314,10 +314,11 @@ sub setHostValueFunction {
 sub clearHostFunction {
 	return lambda({
 		thread(lambda({
-			local('@hosts2 $host @commands $tmp_console');
+			local('@hosts2 $host @commands $queue');
+			$queue = [new armitage.ConsoleQueue: $client];
 			@hosts2 = copy(@hosts);
 			while (size(@hosts2) > 0) {
-				push(@commands, "hosts -d " . join(" ", sublist(@hosts2, 0, 20)));
+				[$queue addCommand: $null, "hosts -d " . join(" ", sublist(@hosts2, 0, 20))];
 
 				if (size(@hosts2) > 20) {
 					@hosts2 = sublist(@hosts2, 20);
@@ -327,15 +328,13 @@ sub clearHostFunction {
 				}
 			}
 
-			push(@commands, "hosts -h");
+			[$queue addCommand: "x", "hosts -h"];
+			[$queue addListener: lambda({
+				elog("removed " . size(@hosts) . iff(size(@hosts) == 1, " host", " hosts"));
+				[$queue stop];
+			}, \@hosts, \$queue)];
 
-			$tmp_console = createConsole($client);
-			cmd_all_async($client, $tmp_console, @commands, lambda({
-				if ($1 eq "hosts -h\n") {
-					elog("removed " . size(@hosts) . iff(size(@hosts) == 1, " host", " hosts"));
-					call_async($client, "console.destroy", $tmp_console);
-				}
-			}, \@hosts, \$tmp_console));
+			[$queue start];
 		}, \@hosts));
 	}, @hosts => $1);
 }
