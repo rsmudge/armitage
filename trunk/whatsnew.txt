@@ -19,6 +19,8 @@ In Progress
   in a throttled manner. Started moving some Armitage calls to it. Now you can
   fire an exploit at 1,000 hosts and Armitage won't blink. It might take awhile
   before that exploit finishes firing against all of the hosts though :)
+- The file browser now has a "List Drives" button. It's only available on 
+  Windows sessions. Click it to see which drives are available.
 
 22 Mar 12
 ---------

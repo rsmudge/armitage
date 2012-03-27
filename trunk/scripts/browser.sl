@@ -275,7 +275,13 @@ sub createFileBrowser {
 	[$top add: pad($up, 0, 0, 0, 4), [BorderLayout WEST]];
 
 	[$panel add: $top, [BorderLayout NORTH]];
-	[$panel add: center($upload, $mkdir, $drives, $refresh), [BorderLayout SOUTH]];
+
+	if ("*Windows*" iswm sessionToOS($1)) {
+		[$panel add: center($upload, $mkdir, $drives, $refresh), [BorderLayout SOUTH]];
+	}
+	else {
+		[$panel add: center($upload, $mkdir, $refresh), [BorderLayout SOUTH]];
+	}
 
 	[$frame addTab: "Files $1", $panel, $null, "Files " . sessionToHost($1)];
 
