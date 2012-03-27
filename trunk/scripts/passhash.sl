@@ -13,7 +13,7 @@ import table.*;
 import ui.*;
 
 %handlers["hashdump"] = {
-	this('$host @commands $safe $last');
+	this('$host $safe $queue');
 
 	if ($0 eq "begin" && "*Unknown command*hashdump*" iswm $2) {
 		$host = $null;
@@ -30,9 +30,10 @@ import ui.*;
 	}
 	else if ($0 eq "execute") {
 		$host = sessionToHost($1);
+		$queue = [new armitage.ConsoleQueue: $client];
+		[$queue start];
 		elog("dumped hashes on $host");
-		showError("Hashes dumped.\nUse View -> Credentials to see them.");
-		@commands = @();
+		showError("Dumping Hashes.\nUse View -> Credentials to see them.");
 	}
 	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
 		local('$user $gid $hash');
@@ -41,23 +42,15 @@ import ui.*;
 		# strip any funky characters that will cause this call to throw an exception
 		$user = replace($user, '\P{Graph}', "");
 
-		push(@commands, "creds -a $host -p 445 -t smb_hash -u $user -P $hash");
+		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u $user -P $hash"];
 	}
 	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
+		[$queue stop];
 		showError("Hash dump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.");
 		$host = $null;
 	}
-	else if ($0 eq "end" && $host !is $null && size(@commands) > 0) {
-		local('@c $tmp_console');
-		@c = copy(@commands);
-		@commands = @();
-
-		$tmp_console = createConsole($client);
-		cmd_all_async($client, $tmp_console, copy(@c), lambda({
-			if ($1 eq $last) {
-				call_async($client, "console.destroy", $tmp_console);
-			}
-		}, \$tmp_console, $last => @c[-1])); 
+	else if ($0 eq "end" && $host !is $null) {
+		[$queue stop];
 	}
 };
 
