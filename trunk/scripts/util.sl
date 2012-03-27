@@ -205,29 +205,12 @@ sub getWorkspaces
 # creates a new console and execs a cmd in it.
 # cmd_safe("command to execute");
 sub cmd_safe {
-	local('$a $b');
-	($a, $b) = @_;
-
-	if ([SwingUtilities isEventDispatchThread]) {
-		thread(lambda({
-			_cmd_safe($a, $b);
-		}, \$a, \$b));
-	}
-	else {
-		_cmd_safe($a, $b);
-	}
-}
-
-sub _cmd_safe {
-	local('$tmp_console $2');
-
-	$tmp_console = createConsole($client);
-	cmd_async($client, $tmp_console, $1, lambda({
-		call_async($client, "console.destroy", $tmp_console);
-		if ($f) {
-			invoke($f, @_);
-		}
-	}, \$tmp_console, $f => $2));
+	local('$queue');
+	$queue = [new ConsoleQueue: $client];
+	[$queue start];
+	[$queue addCommand: "x", $1];
+	[$queue addListener: $2];
+	[$queue stop];
 }
 
 sub createNmapFunction {
