@@ -51,7 +51,7 @@ sub showModulePopup {
 				}
 
 				if (size(%filter) > 0) {
-					call($mclient, "db.filter", %filter);
+					call_async($mclient, "db.filter", %filter);
 					[$frame setTitle: "$TITLE - $module"]
 					showError("Created a dynamic workspace for this module.\nUse Workspaces -> Show All to see all hosts.");
 				}

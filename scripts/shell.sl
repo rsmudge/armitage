@@ -213,7 +213,7 @@ sub showShellMenu {
 						yield 1;
 
 						if ([$progress isCanceled]) {
-							call($client, "session.shell_write", $sid, "rm -f $name $+ \n");
+							call_async($client, "session.shell_write", $sid, "rm -f $name $+ \n");
 							closef($handle);
 							return;
 						}

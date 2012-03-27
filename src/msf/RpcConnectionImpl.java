@@ -20,6 +20,7 @@ public abstract class RpcConnectionImpl implements RpcConnection {
 	private Map callCache = new HashMap();
 	protected RpcConnection database = null;
 	protected Map hooks = new HashMap();
+	protected RpcQueue queue = null;
 
 	public void addHook(String name, RpcConnection hook) {
 		hooks.put(name, hook);
@@ -64,6 +65,17 @@ public abstract class RpcConnectionImpl implements RpcConnection {
 		catch (Exception ex) { 
 			throw new RuntimeException(ex);
 		}
+	}
+
+	public void execute_async(String methodName) {
+		execute_async(methodName, new Object[]{});
+	}
+
+	public void execute_async(String methodName, Object[] args) {
+		if (queue == null) {
+			queue = new RpcQueue(this);
+		}
+		queue.execute(methodName, args);
 	}
 
 	/** Runs command with no args */
