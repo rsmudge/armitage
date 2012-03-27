@@ -152,17 +152,24 @@ public class ConsoleQueue implements Runnable {
 				return;
 			}
 
-			while (!stop) {
+			while (true) {
 				Command next = grabCommand();
 				if (next != null) {
 					processCommand(next);
 					Thread.sleep(10);
 				}
 				else {
+					synchronized (this) {
+						if (stop) {
+							System.err.println("Queue is empty... stopping thread");
+							break;
+						}
+					}
 					Thread.sleep(250);
 				}
 			}
 
+			System.err.println("Destroying console");
 			connection.execute("console.destroy", new Object[] { consoleid });
 		}
 		catch (Exception ex) {
