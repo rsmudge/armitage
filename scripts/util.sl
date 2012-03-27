@@ -22,20 +22,6 @@ sub cmd {
 	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, 0];
 }
 
-sub cmd_all {
-	local('$c');
-	#warn("cmd_all called: " . @_);
-	$c = cast(map({ return "$1 $+ \n"; }, $3), ^String);
-	[new CommandClient: $1, $c, 0, "console.read", "console.write", $2, $4, $null, 0];
-}
-
-sub cmd_all_async {
-	local('$c');
-	#warn("cmd_all_async called: " . @_);
-	$c = cast(map({ return "$1 $+ \n"; }, $3), ^String);
-	[new CommandClient: $1, $c, 0, "console.read", "console.write", $2, $4, 1];
-}
-
 # cmd_async($client, "console", "command here", &callback);
 #    invokes a metasploit command... calls the specified callback with the output when the command is complete.
 #    this function expects that $client is a newly created console (one that will be destroyed on completion)
