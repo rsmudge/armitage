@@ -199,9 +199,9 @@ sub getWorkspaces
 sub cmd_safe {
 	local('$queue');
 	$queue = [new ConsoleQueue: $client];
+	[$queue addListener: $2];
 	[$queue start];
 	[$queue addCommand: "x", $1];
-	[$queue addListener: $2];
 	[$queue stop];
 }
 
