@@ -276,7 +276,7 @@ sub createFileBrowser {
 
 	[$panel add: $top, [BorderLayout NORTH]];
 
-	if ("*Windows*" iswm sessionToOS($1)) {
+	if ("*win*" iswm lc(sessionPlatform($1))) {
 		[$panel add: center($upload, $mkdir, $drives, $refresh), [BorderLayout SOUTH]];
 	}
 	else {
