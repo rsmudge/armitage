@@ -9,7 +9,7 @@ public class GenericTableModel extends AbstractTableModel {
 	protected String[] columnNames;
 	protected List     rows;
 	protected String   leadColumn;
-	protected boolean[] editable;	
+	protected boolean[] editable;
 	protected boolean   hidden = false;
 	protected List     all;
 
@@ -65,7 +65,10 @@ public class GenericTableModel extends AbstractTableModel {
 
 			for (int x = 0; x < row.length; x++) {
 				int r = t.convertRowIndexToModel(row[x]);
-				rv[x] = ( (Map)rows.get(r) ).get(leadColumn);
+				if (r < rows.size() && r >= 0)
+					rv[x] = ( (Map)rows.get(r) ).get(leadColumn);
+				else
+					rv[x] = null;
 			}
 
 			return rv;
@@ -233,8 +236,11 @@ public class GenericTableModel extends AbstractTableModel {
 
 	public Object getValueAt(int row, int col) {
 		synchronized (this) {
-			Map temp = (Map)rows.get(row);
-			return temp.get(getColumnName(col));
+			if (row < rows.size()) {
+				Map temp = (Map)rows.get(row);
+				return temp.get(getColumnName(col));
+			}
+			return null;
 		}
 	}
 

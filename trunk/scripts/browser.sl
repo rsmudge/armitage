@@ -62,8 +62,34 @@ sub setupSizeRenderer {
 	[[$1 getColumn: $2] setCellRenderer: [ATable getSizeTableRenderer]];
 }
 
+sub listDrives {
+	local('$queue');
+	$queue = [new armitage.ConsoleQueue: $client];
+	[$model clear: 128];
+	[$queue addCommand: $null, "use post/windows/gather/forensics/enum_drives"];
+	[$queue addCommand: $null, "set SESSION $1"];
+	[$queue addCommand: "x", "run"];
+	[$queue addListener: lambda({
+		local('@entries $entry $d $s $f');
+		@entries = parseTextTable($3, @('Device Name.', 'Type.', 'Size .bytes..'));
+		foreach $entry (@entries) {
+			$d = $entry['Device Name.'];
+			if ($d ismatch '....([A-Z]\\:)') {
+				[$model addEntry: %(Name => matched()[0], D => "dir", Size => "", Modified => "", Mode => "")];
+				$f = 1;
+			}
+		}
+
+		[$refresh setEnabled: 1];
+		[$model fireListeners];
+		[$queue stop];
+	}, \$queue, \$model, \$refresh)];
+	[$refresh setEnabled: 0];
+	[$queue start];
+}
+
 sub createFileBrowser {
-	local('$table $tree $model $panel $split $scroll1 $sorter $up $text $fsv $chooser $upload $mkdir $refresh $top $setcwd');
+	local('$table $tree $model $panel $split $scroll1 $sorter $up $text $fsv $chooser $upload $mkdir $refresh $top $setcwd $drives');
 
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -123,7 +149,12 @@ sub createFileBrowser {
 			[$model fireListeners];
 
 			if ("*Windows*" iswm sessionToOS($sid)) {
-				m_cmd($sid, "cd '" . [$text getText] . "\\ $+ $sel $+ '");
+				if ([$text getText] eq "List Drives") {
+					m_cmd($sid, "cd ' $+ $sel $+ '");
+				}
+				else {
+					m_cmd($sid, "cd '" . [$text getText] . "\\ $+ $sel $+ '");
+				}
 			}
 			else {
 				[$setcwd];
@@ -174,7 +205,7 @@ sub createFileBrowser {
 			m_cmd($sid, "cd ..");
 		}
 		m_cmd($sid, "ls");
-	}, $sid => $1, \$setcwd, \$text, \$model)];
+	}, $sid => $1, \$setcwd, \$text, \$model, \$refresh)];
 
 	# setup the whatever it's called...
 
@@ -220,9 +251,20 @@ sub createFileBrowser {
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
-		[$setcwd];
-		m_cmd($sid, "ls");
-	}, $sid => $1, \$setcwd)];
+		if ([$text getText] eq "List Drives") {
+			listDrives($sid, \$model, \$refresh);
+		}
+		else {
+			[$setcwd];
+			m_cmd($sid, "ls");
+		}
+	}, $sid => $1, \$setcwd, \$text, \$model, \$refresh)];
+
+	$drives = [new JButton: "List Drives"];
+	[$drives addActionListener: lambda({
+		listDrives($sid, \$model, \$refresh);
+		[$text setText: "List Drives"];
+	}, \$refresh, \$model, \$text, $sid => $1)];
 
 	# do the overall layout...
 
@@ -233,7 +275,7 @@ sub createFileBrowser {
 	[$top add: pad($up, 0, 0, 0, 4), [BorderLayout WEST]];
 
 	[$panel add: $top, [BorderLayout NORTH]];
-	[$panel add: center($upload, $mkdir, $refresh), [BorderLayout SOUTH]];
+	[$panel add: center($upload, $mkdir, $drives, $refresh), [BorderLayout SOUTH]];
 
 	[$frame addTab: "Files $1", $panel, $null, "Files " . sessionToHost($1)];
 
