@@ -21,6 +21,7 @@ In Progress
   before that exploit finishes firing against all of the hosts though :)
 - The file browser now has a "List Drives" button. It's only available on 
   Windows sessions. Click it to see which drives are available.
+- File browser can now navigate to folders with apostrophes in their name.
 
 22 Mar 12
 ---------

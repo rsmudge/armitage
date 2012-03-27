@@ -148,7 +148,7 @@ sub createFileBrowser {
 			[$model clear: 128];
 			[$model fireListeners];
 
-			if ("*Windows*" iswm sessionToOS($sid)) {
+			if ("*Windows*" iswm sessionToOS($sid) && "'" !isin $sel && "'" !isin [$text getText]) {
 				if ([$text getText] eq "List Drives") {
 					m_cmd($sid, "cd ' $+ $sel $+ '");
 				}
@@ -158,7 +158,7 @@ sub createFileBrowser {
 			}
 			else {
 				[$setcwd];
-				m_cmd($sid, "cd ' $+ $sel $+ '");
+				m_cmd($sid, "cd \" $+ $sel $+ \"");
 			}
 
 			m_cmd($sid, "ls");
@@ -197,7 +197,7 @@ sub createFileBrowser {
 
 		[$model clear: 128];
 		[$model fireListeners];
-		if ("*Windows*" iswm sessionToOS($sid)) {
+		if ("*Windows*" iswm sessionToOS($sid) && "'" !isin [$text getText]) {
 			m_cmd($sid, "cd '" . [$text getText] . "\\..'");
 		}
 		else {
