@@ -22,11 +22,6 @@ sub cmd {
 	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, 0];
 }
 
-sub cmd_async_display {
-	#warn("cmd_async called: " . @_);
-	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, $5, 1];
-}
-
 sub call_async {
 	if (size(@_) > 2) {
 		[$1 execute_async: $2, cast(sublist(@_, 2), ^Object)];
