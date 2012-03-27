@@ -154,9 +154,7 @@ sub client_workspace_items {
 
 	item($1, "Show All", "S", {
 		[$frame setTitle: $TITLE];
-		thread({
-			call($mclient, "db.filter", %());
-		});
+		call_async($mclient, "db.filter", %());
 	});
 
 	local('$x $workspace $name $title');
@@ -181,9 +179,7 @@ sub set_workspace {
 	local('$x $workspace');
 	foreach $x => $workspace (workspaces()) {
 		if ($workspace['name'] eq $1) {
-			thread(lambda({
-				call($mclient, "db.filter", $workspace);
-			}, \$workspace));
+			call_async($mclient, "db.filter", $workspace);
 			[$frame setTitle: "$TITLE - $1"];
 			return;
 		}

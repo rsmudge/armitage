@@ -162,7 +162,7 @@ sub client {
 		else if ($method eq "armitage.log") {
 			($data, $address) = $args;
 			event("* $eid $data $+ \n");
-			call($client, "db.log_event", "$address $+ // $+ $eid", $data);
+			call_async($client, "db.log_event", "$address $+ // $+ $eid", $data);
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.skip") {
@@ -339,8 +339,8 @@ sub main {
 	$port += 1;
 
 	# setg ARMITAGE_SERVER host:port/token
-	call($client, "core.setg", "ARMITAGE_SERVER", "$host $+ : $+ $port $+ / $+ $auth");
-	call($client, "core.setg", "LHOST", $host);
+	call_async($client, "core.setg", "ARMITAGE_SERVER", "$host $+ : $+ $port $+ / $+ $auth");
+	call_async($client, "core.setg", "LHOST", $host);
 
 	#
 	# setup the client cache

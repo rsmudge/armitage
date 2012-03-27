@@ -50,9 +50,12 @@ sub cmd_async_display {
 }
 
 sub call_async {
-	fork({
-		invoke(&call, $args);
-	}, $args => @_);
+	if (size(@_) > 2) {
+		[$1 execute_async: $2, cast(sublist(@_, 2), ^Object)];
+	}
+	else {
+		[$1 execute_async: $2];
+	}
 }
 
 # invokes an RPC call: call($console, "function", arg1, arg2, ...)
@@ -172,8 +175,8 @@ sub createConsoleTab {
 sub createDefaultHandler {
 	warn("Creating a default reverse handler...");
 	# setup a handler for meterpreter
-	call($client, "core.setg", "LPORT", randomPort());
-	call($client, "module.execute", "exploit", "multi/handler", %(
+	call_async($client, "core.setg", "LPORT", randomPort());
+	call_async($client, "module.execute", "exploit", "multi/handler", %(
 		PAYLOAD => "windows/meterpreter/reverse_tcp",
 		LHOST => "0.0.0.0",
 		ExitOnSession => "false"
@@ -234,7 +237,7 @@ sub _cmd_safe {
 
 	$tmp_console = createConsole($client);
 	cmd_async($client, $tmp_console, $1, lambda({
-		call($client, "console.destroy", $tmp_console);
+		call_async($client, "console.destroy", $tmp_console);
 		if ($f) {
 			invoke($f, @_);
 		}
@@ -258,7 +261,7 @@ sub createNmapFunction {
 
 			cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
 				lambda({ 
-					call($client, "console.destroy", $tmp_console);
+					call_async($client, "console.destroy", $tmp_console);
 					fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
 				}, \$tmp_console),
 				$display
@@ -290,7 +293,7 @@ sub getBindAddress {
 						if ($address ne "") {
 							$MY_ADDRESS = $address;
 							thread({
-								call($client, "core.setg", "LHOST", $MY_ADDRESS);
+								call_async($client, "core.setg", "LHOST", $MY_ADDRESS);
 								setupHandlers();
 							});
 						}
@@ -298,7 +301,7 @@ sub getBindAddress {
 				}
 				else {
 					warn("Used the tab method: $address");
-					call($client, "core.setg", "LHOST", $address);
+					call_async($client, "core.setg", "LHOST", $address);
 					setupHandlers();
 					$MY_ADDRESS = $address;
 				}
@@ -468,10 +471,10 @@ sub connectDialog {
 
 sub _elog {
 	if ($client !is $mclient) {
-		call($mclient, "armitage.log", $1, $2);
+		call_async($mclient, "armitage.log", $1, $2);
 	}
 	else {
-		call($client, "db.log_event", "$2 $+ //", $1);
+		call_async($client, "db.log_event", "$2 $+ //", $1);
 	}
 }
 
@@ -481,14 +484,7 @@ sub elog {
 		$2 = $MY_ADDRESS;
 	}
 
-	if ([SwingUtilities isEventDispatchThread]) {
-		thread(lambda({
-			_elog($message, $source);
-		}, $message => $1, $source => $2));
-	}
-	else {
-		_elog($1, $2);
-	}
+	_elog($1, $2);
 }
 
 sub module_execute {

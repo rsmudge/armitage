@@ -55,7 +55,7 @@ import ui.*;
 		$tmp_console = createConsole($client);
 		cmd_all_async($client, $tmp_console, copy(@c), lambda({
 			if ($1 eq $last) {
-				call($client, "console.destroy", $tmp_console);
+				call_async($client, "console.destroy", $tmp_console);
 			}
 		}, \$tmp_console, $last => @c[-1])); 
 	}

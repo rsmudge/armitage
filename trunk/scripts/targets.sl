@@ -295,21 +295,19 @@ sub importHosts {
 #   returns a function that when called will update the metasploit database
 sub setHostValueFunction {
 	return lambda({
-		thread(lambda({
-			local('$host %map $key $value');
+		local('$host %map $key $value');
 
-			while (size(@args) >= 2) {
-				($key, $value) = sublist(@args, 0, 2);
-				%map[$key] = $value;
-				shift(@args);
-				shift(@args);
-			}
+		while (size(@args) >= 2) {
+			($key, $value) = sublist(@args, 0, 2);
+			%map[$key] = $value;
+			shift(@args);
+			shift(@args);
+		}
 
-			foreach $host (@hosts) {
-				%map['host'] = $host;
-				call($mclient, "db.report_host", %map);
-			}
-		}, \@hosts, \@args));
+		foreach $host (@hosts) {
+			%map['host'] = $host;
+			call_async($mclient, "db.report_host", %map);
+		}
 	}, @hosts => $1, @args => sublist(@_, 1));
 }
 
@@ -335,7 +333,7 @@ sub clearHostFunction {
 			cmd_all_async($client, $tmp_console, @commands, lambda({
 				if ($1 eq "hosts -h\n") {
 					elog("removed " . size(@hosts) . iff(size(@hosts) == 1, " host", " hosts"));
-					call($client, "console.destroy", $tmp_console);
+					call_async($client, "console.destroy", $tmp_console);
 				}
 			}, \@hosts, \$tmp_console));
 		}, \@hosts));
@@ -343,10 +341,8 @@ sub clearHostFunction {
 }
 
 sub clearDatabase {
-	thread({
-		elog("cleared the database");
-		call($mclient, "db.clear");
-	});
+	elog("cleared the database");
+	call_async($mclient, "db.clear");
 }
 
 # called when a target is clicked on...

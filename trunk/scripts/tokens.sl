@@ -27,7 +27,7 @@ sub updateTokenList {
 			foreach $row (@rows) {
 				[$model addEntry: $row];
 			}
-			call($client, "console.destroy", $tmp_console);
+			call_async($client, "console.destroy", $tmp_console);
 			[$model fireListeners];
 
 			dispatchEvent(lambda({

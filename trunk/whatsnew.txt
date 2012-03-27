@@ -15,6 +15,10 @@ In Progress
 - Armitage now adds a tooltip to tabs associated with a session. Hover your 
   mouse over a tab X button to see which host the tab is associated with.
 - Fixed a potential exception caused when listing downloads.
+- Created a queue to process certain commands meant for Metasploit in order and
+  in a throttled manner. Started moving some Armitage calls to it. Now you can
+  fire an exploit at 1,000 hosts and Armitage won't blink. It might take awhile
+  before that exploit finishes firing against all of the hosts though :)
 
 22 Mar 12
 ---------

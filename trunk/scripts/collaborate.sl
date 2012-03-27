@@ -33,7 +33,7 @@ sub c_client {
 			writeObject($handle, @_);
 			return readObject($handle);
 		}, \$handle));
-		return $client;
+		return [new RpcAsync: $client];
 	}, $host => $1, $port => $2));
 }
 
@@ -73,7 +73,7 @@ To do this:
 			}
 		}
 		else {
-			call($client, "core.setg", "ARMITAGE_USER", userFingerprint());
+			call_async($client, "core.setg", "ARMITAGE_USER", userFingerprint());
 		}
 	});
 }
