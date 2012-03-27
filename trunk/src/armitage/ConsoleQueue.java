@@ -33,6 +33,10 @@ public class ConsoleQueue implements Runnable {
 		listeners.add(l);
 	}
 
+	public void setDisplay(Console display) {
+		this.display = display;
+	}
+
 	public void fireEvent(Command command, String output) {
 		if (command.token == null)
 			return;

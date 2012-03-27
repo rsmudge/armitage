@@ -211,23 +211,19 @@ sub createNmapFunction {
 		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(" ", [$targets getSelectedHosts]));
 		if ($address eq "") { return; }
 
-		thread(lambda({
-			local('$tmp_console $display');
-			$tmp_console = createConsole($client);
-			$display = createDisplayTab("nmap");
-		
-			elog("started a scan: nmap $args $address");
+		local('$display $queue');
+		$display = createDisplayTab("nmap");
+		elog("started a scan: nmap $args $address");
+		[$display append: "msf > db_nmap $args $address\n\n"];
 
-			[$display append: "msf > db_nmap $args $address\n\n"];
-
-			cmd_async_display($client, $tmp_console, "db_nmap $args $address", 
-				lambda({ 
-					call_async($client, "console.destroy", $tmp_console);
-					fork({ showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets."); }, \$frame);
-				}, \$tmp_console),
-				$display
-			);
-		}, \$address, \$args));
+		$queue = [new ConsoleQueue: $client];
+		[$queue setDisplay: $display];
+		[$queue addCommand: "x", "db_nmap $args $address"];
+		[$queue addListener: {
+			showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets.");
+		}];
+		[$queue start];
+		[$queue stop];
 	}, $args => $1);
 }
 
