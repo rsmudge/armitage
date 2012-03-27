@@ -8,34 +8,33 @@ import java.awt.event.*;
 import javax.swing.*;
 
 sub updateTokenList {
-	local('@commands $tmp_console');
-
-	@commands = @(
-		"use post/windows/gather/enum_domain_tokens",
-		"set SESSION $1",
-		"run");
+	local('$queue');
+	$queue = [new armitage.ConsoleQueue: $client];
+	[$queue addCommand: $null, "use post/windows/gather/enum_domain_tokens"];
+	[$queue addCommand: $null, "set SESSION $1"];
+	[$queue addCommand: "x", "run"];
 
 	[$3 setEnabled: 0];
 	[$3 setText: "Grabbing tokens..."];
 
-	$tmp_console = createConsole($client);
-	cmd_all_async($client, $tmp_console, @commands, lambda({
-		local('$row @rows');
-		if ($1 eq "run\n") {
-			@rows = parseTextTable($3, @("Token Type", "Account Type", "Name", "Domain Admin"));
-			[$model clear: size(@rows)];
-			foreach $row (@rows) {
-				[$model addEntry: $row];
-			}
-			call_async($client, "console.destroy", $tmp_console);
-			[$model fireListeners];
+	[$queue addListener: lambda({
+		local('@rows $row');
 
-			dispatchEvent(lambda({
-				[$refresh setEnabled: 1];
-				[$refresh setText: "Refresh"];
-			}, \$refresh));
+		@rows = parseTextTable($3, @("Token Type", "Account Type", "Name", "Domain Admin"));
+		[$model clear: size(@rows)];
+		foreach $row (@rows) {
+			[$model addEntry: $row];
 		}
-	}, \$tmp_console, $model => $2, $refresh => $3));
+		[$model fireListeners];
+
+		dispatchEvent(lambda({
+			[$refresh setEnabled: 1];
+			[$refresh setText: "Refresh"];
+		}, \$refresh));
+
+		[$queue stop];
+	}, $model => $2, $refresh => $3, \$queue)];
+	[$queue start];
 }
 
 sub stealToken {
