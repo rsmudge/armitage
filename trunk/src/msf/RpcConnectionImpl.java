@@ -15,7 +15,7 @@ import org.w3c.dom.*;
  * This is a modification of msfgui/RpcConnection.java by scriptjunkie. Taken from 
  * the Metasploit Framework Java GUI. 
  */
-public abstract class RpcConnectionImpl implements RpcConnection {
+public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	protected String rpcToken;
 	private Map callCache = new HashMap();
 	protected RpcConnection database = null;

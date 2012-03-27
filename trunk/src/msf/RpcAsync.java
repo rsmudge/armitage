@@ -2,7 +2,7 @@ package msf;
 
 import java.io.*;
 
-public class RpcAsync implements RpcConnection {
+public class RpcAsync implements RpcConnection, Async {
 	protected RpcQueue queue;
 	protected RpcConnection connection;
 
