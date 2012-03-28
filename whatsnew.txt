@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+28 Mar 12
 ---------
 - Team server now delivers chat messages in batches vs. one line at a time. 
   This will make syncing on reconnect much better (in theory)
