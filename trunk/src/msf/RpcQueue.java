@@ -29,9 +29,6 @@ public class RpcQueue implements Runnable {
 
 	protected void processRequest(Request r) {
 		try {
-			synchronized (this) {
-				System.err.println("Executing: " + r.method + " (" + requests.size() + " left)");
-			}
 			connection.execute(r.method, r.args);
 		}
 		catch (Exception ex) {
@@ -45,7 +42,6 @@ public class RpcQueue implements Runnable {
 	}
 
 	public void execute(String method, Object[] args) {
-		System.err.println("Received: " + method);
 		synchronized (this) {
 			Request temp = new Request();
 			temp.method = method;

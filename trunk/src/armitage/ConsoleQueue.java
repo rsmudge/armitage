@@ -179,7 +179,6 @@ public class ConsoleQueue implements Runnable {
 				else {
 					synchronized (this) {
 						if (stop) {
-							System.err.println("Queue is empty... stopping thread");
 							break;
 						}
 					}
@@ -187,7 +186,6 @@ public class ConsoleQueue implements Runnable {
 				}
 			}
 
-			System.err.println("Destroying console");
 			connection.execute("console.destroy", new Object[] { consoleid });
 		}
 		catch (Exception ex) {
