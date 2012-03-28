@@ -42,13 +42,12 @@ sub userFingerprint {
 }
 
 sub checkForUserConflict {
-	cmd_safe("set ARMITAGE_USER", {
-		if ($3 ismatch "ARMITAGE_USER => (.*?)\n") {
-			local('$user');
-			$user = matched()[0];
-			if ($user ne userFingerprint()) {
-				warn("$user vs. " . userFingerprint());
-				showError("Congratulations! You're eligible for a free ringtone.
+	if ('ARMITAGE_USER' in %MSF_GLOBAL) {
+		local('$user');
+		$user = %MSF_GLOBAL['ARMITAGE_USER'];
+		if ($user ne userFingerprint()) {
+			warn("$user vs. " . userFingerprint());
+			showError("Congratulations! You're eligible for a free ringtone.
 
 Just kidding. *This is serious*
 
@@ -70,41 +69,37 @@ To do this:
    Metasploit's RPC daemon. Do not use 127.0.0.1 for [host].
 
 3. Reconnect and enjoy the collaboration features.");
-			}
 		}
-		else {
-			call_async($client, "core.setg", "ARMITAGE_USER", userFingerprint());
-		}
-	});
+	}
+	else {
+		setg("ARMITAGE_USER", userFingerprint());
+	}
 }
 
 sub checkForCollaborationServer {
-	cmd_safe("set ARMITAGE_SERVER", {
-		if ($3 ismatch "(?s:ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n.*)") {
-			local('$host $port $token');
-			($host, $port, $token) = matched();
-			dispatchEvent(lambda({
-				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
-				setup_collaboration($host, $port, $token);
-				postSetup();
-			}, \$host, \$port, \$token));
+	if (%MSF_GLOBAL['ARMITAGE_SERVER'] ismatch "(.*?):(.*?)/(.*?)") {
+		local('$host $port $token');
+		($host, $port, $token) = matched();
+		dispatchEvent(lambda({
+			setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
+			setup_collaboration($host, $port, $token);
+			postSetup();
+		}, \$host, \$port, \$token));
+	}
+	else {
+		if ($REMOTE) {
+			dispatchEvent({
+				showError("You must start Armitage's deconfliction server\non the Metasploit host to connect remotely.\n\nUse:\n\narmitage --server [ip] [port] [user] [pass]");
+				[System exit: 0];
+			});
 		}
-		else {
-			if ($REMOTE) {
-				dispatchEvent({
-					showError("You must start Armitage's deconfliction server\non the Metasploit host to connect remotely.\n\nUse:\n\narmitage --server [ip] [port] [user] [pass]");
-					[System exit: 0];
-				});
-			}
-			warn("No collaboration server is present!");
-			$mclient = $client;
-			initReporting();
-			checkForUserConflict();
-			dispatchEvent(&postSetup);
-		}
-	});
+		warn("No collaboration server is present!");
+		$mclient = $client;
+		initReporting();
+		checkForUserConflict();
+		dispatchEvent(&postSetup);
+	}
 }
-
 
 sub setup_collaboration {
 	local('$host $port $ex $nick %r');

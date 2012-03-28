@@ -150,8 +150,8 @@ sub _connectToMetasploit {
 			$flag++;
 			sleep(2500);
 		}
-	}	
-	$console = createConsole($client);
+	}
+
 	let(&postSetup, \$progress);
 
 	[$progress setNote: "Connected: Getting base directory"];
@@ -178,11 +178,22 @@ sub _connectToMetasploit {
 	[$progress setNote: "Connected: Getting local address"];
 	[$progress setProgress: 50];
 
-	getBindAddress();
-	[$progress setNote: "Connected: Checking for collaboration server"];
-	[$progress setProgress: 60];
+	cmd_safe("setg", lambda({
+		# store the current global vars to save several other calls later
+		global('%MSF_GLOBAL');
+		local('$value');
+	
+		foreach $value (parseTextTable($3, @("Name", "Value"))) {
+			%MSF_GLOBAL[$value['Name']] = $value['Value'];
+		}
 
-	checkForCollaborationServer($client);
+		# ok, now let's continue on with what we're doing...
+		getBindAddress();
+		[$progress setNote: "Connected: Checking for collaboration server"];
+		[$progress setProgress: 60];
+
+		checkForCollaborationServer($client);
+	}, \$progress));
 }
 
 sub postSetup {
