@@ -42,7 +42,7 @@ sub userFingerprint {
 }
 
 sub checkForUserConflict {
-	cmd($client, $console, "set ARMITAGE_USER", {
+	cmd_safe("set ARMITAGE_USER", {
 		if ($3 ismatch "ARMITAGE_USER => (.*?)\n") {
 			local('$user');
 			$user = matched()[0];
@@ -79,7 +79,7 @@ To do this:
 }
 
 sub checkForCollaborationServer {
-	cmd($client, $console, "set ARMITAGE_SERVER", {
+	cmd_safe("set ARMITAGE_SERVER", {
 		if ($3 ismatch "(?s:ARMITAGE_SERVER => (.*?):(.*?)/(.*?)\n.*)") {
 			local('$host $port $token');
 			($host, $port, $token) = matched();

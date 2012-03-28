@@ -29,6 +29,20 @@ public class ConsoleQueue implements Runnable {
 		public void commandComplete(String consoleid, Object token, String response);
 	}
 
+	/* I'm not necessarily trying to bloat this class, but this method will let me get rid of another class */
+	public java.util.List tabComplete(String pcommand) {
+		try {
+			Map read = (Map)connection.execute("console.tabs", new Object[] { consoleid, pcommand });
+			if (read.containsKey("tabs")) {
+				return (java.util.List)read.get("tabs");
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return new LinkedList();
+	}
+
 	public void addListener(ConsoleCallback l) {
 		listeners.add(l);
 	}
