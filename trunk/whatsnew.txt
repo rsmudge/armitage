@@ -22,6 +22,8 @@ In Progress
 - The file browser now has a "List Drives" button. It's only available on 
   Windows sessions. Click it to see which drives are available.
 - File browser can now navigate to folders with apostrophes in their name.
+- Made some major internal changes to how Armitage interacts with Metasploit. The
+  goal is to make a more robust and faster hacking experience for you.
 
 22 Mar 12
 ---------
