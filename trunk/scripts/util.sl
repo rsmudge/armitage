@@ -138,10 +138,15 @@ sub createConsoleTab {
 	return $thread;
 }
 
+sub setg {
+	%MSF_GLOBAL[$1] = $2;
+	call_async($client, "core.setg", $1, $2);
+}
+
 sub createDefaultHandler {
 	warn("Creating a default reverse handler...");
 	# setup a handler for meterpreter
-	call_async($client, "core.setg", "LPORT", randomPort());
+	setg("LPORT", randomPort());
 	call_async($client, "module.execute", "exploit", "multi/handler", %(
 		PAYLOAD => "windows/meterpreter/reverse_tcp",
 		LHOST => "0.0.0.0",
@@ -154,12 +159,8 @@ sub setupHandlers {
 		if ($1 == -1) {
 			createDefaultHandler();
 		}
-		else {
-			cmd_safe("setg LPORT", {
-				if ($3 !ismatch '(?s:LPORT => (.*?)\n.*)') {
-					createDefaultHandler();
-				}
-			});
+		else if ('LPORT' !in %MSF_GLOBAL) {
+			createDefaultHandler();
 		}
 	});
 }
@@ -216,46 +217,43 @@ sub createNmapFunction {
 }
 
 sub getBindAddress {
-	cmd_safe("setg LHOST", {
-		local('$text $queue');
-		$text = [$3 trim];
-		if ($text ismatch 'LHOST => (.*?)') {
-			$MY_ADDRESS = matched()[0];
-			setupHandlers();
-			warn("Used the incumbent: $MY_ADDRESS");
-		}
-		else {
-			$queue = [new ConsoleQueue: $client];
-			[$queue addCommand: "x", "use windows/meterpreter/reverse_tcp"];
-			[$queue addListener: lambda({
-				local('$address');
-				$address = convertAll([$queue tabComplete: "setg LHOST "]);
-				$address = split('\\s+', $address[0])[2];
+	local('$queue');
+	if ('LHOST' in %MSF_GLOBAL) {
+		$MY_ADDRESS = %MSF_GLOBAL['LHOST'];
+		setupHandlers();
+		warn("Used the incumbent: $MY_ADDRESS");
+	}
+	else {
+		$queue = [new ConsoleQueue: $client];
+		[$queue addCommand: "x", "use windows/meterpreter/reverse_tcp"];
+		[$queue addListener: lambda({
+			local('$address');
+			$address = convertAll([$queue tabComplete: "setg LHOST "]);
+			$address = split('\\s+', $address[0])[2];
 		
-				if ($address eq "127.0.0.1") {
-					[SwingUtilities invokeLater: {
-						local('$address');
-						$address = ask("Could not determine attack computer IP\nWhat is it?");
-						if ($address ne "") {
-							$MY_ADDRESS = $address;
-							thread({
-								call_async($client, "core.setg", "LHOST", $MY_ADDRESS);
-								setupHandlers();
-							});
-						}
-					}];
-				}
-				else {
-					warn("Used the tab method: $address");
-					call_async($client, "core.setg", "LHOST", $address);
-					setupHandlers();
-					$MY_ADDRESS = $address;
-				}
-			}, \$queue)];
-			[$queue start];
-			[$queue stop];
-		}
-	});
+			if ($address eq "127.0.0.1") {
+				[SwingUtilities invokeLater: {
+					local('$address');
+					$address = ask("Could not determine attack computer IP\nWhat is it?");
+					if ($address ne "") {
+						$MY_ADDRESS = $address;
+						thread({
+							setg("LHOST", $MY_ADDRESS);
+							setupHandlers();
+						});
+					}
+				}];
+			}
+			else {
+				warn("Used the tab method: $address");
+				setg("LHOST", $address);
+				setupHandlers();
+				$MY_ADDRESS = $address;
+			}
+		}, \$queue)];
+		[$queue start];
+		[$queue stop];
+	}
 }
 
 sub randomPort {

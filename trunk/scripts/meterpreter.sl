@@ -179,19 +179,11 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
-			cmd_safe("setg LPORT", lambda({
-				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
-					launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => matched()[0], HANDLER => "0"));
-				}
-			}, \$sid));
+			launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
 		}, $sid => "$sid"));
 
 		item($j, "Pass Session", 'S', lambda({
-			cmd_safe("setg LPORT", lambda({
-				if ([$3 trim] ismatch 'LPORT .. (\d+).*') {
-					launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => matched()[0], HANDLER => "0"));
-				}
-			}, \$sid));
+			launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
 		}, $sid => "$sid"));
 	}
 			
