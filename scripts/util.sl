@@ -15,13 +15,6 @@ import ui.*;
 
 global('$MY_ADDRESS $RPC_CONSOLE');
 
-# cmd($client, "console", "command here", &callback);
-#    invokes a metasploit command... calls the specified callback with the output when the command is complete.
-sub cmd {
-	#warn("cmd called: " . @_);
-	[new CommandClient: $1, "$3 $+ \n", "console.read", "console.write", $2, $4, 0];
-}
-
 sub call_async {
 	if (size(@_) > 2) {
 		[$1 execute_async: $2, cast(sublist(@_, 2), ^Object)];
