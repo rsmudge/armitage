@@ -387,6 +387,11 @@ public class DatabaseImpl implements RpcConnection  {
 					stmt.setString(1, values.get("os_name") + "");
 					stmt.setString(2, host);
 				}
+				else if (values.containsKey("purpose")) {
+					stmt = db.prepareStatement("UPDATE hosts SET purpose = ? WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
+					stmt.setString(1, values.get("purpose") + "");
+					stmt.setString(2, host);
+				}
 				else {
 					return new HashMap();
 				}
