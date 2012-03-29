@@ -164,6 +164,11 @@ sub _connectToMetasploit {
 		[$progress setProgress: 40];
 
 		try {
+			# create a console to force the database to initialize
+			local('$c');
+			$c = createConsole($client);
+			call($client, "console.destroy", $c);
+
 			# connect to the database plz...
 			$database = connectToDatabase();
 			[$client setDatabase: $database];
