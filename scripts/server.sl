@@ -360,8 +360,7 @@ sub main {
 	# create a thread to push console messages to the event queue for all clients.
 	#
 	fork({
-		global('$console $r');
-		$console = createConsole($client);
+		global('$r');
 		while (1) {
 			$r = call($client, "console.read", $console);
 			if ($r["data"] ne "") {
@@ -371,7 +370,7 @@ sub main {
 			}
 			sleep(2000);
 		}
-	}, \$client, \$poll_lock, \@events);
+	}, \$client, \$poll_lock, \@events, $console => createConsole($client));
 
 	#
 	# Create a shared hash that contains a thread for each session...
