@@ -136,11 +136,18 @@ sub createModuleList {
 	local('$search $button');
 	$search = [new ATextField: 10];
 	[$search setToolTipText: "Enter a query to filter the MSF modules"];
-	[$search addActionListener: lambda({
-		local('$model');
-		if ([$1 getActionCommand] ne "") {
-			local('$filter %list $a $e $p $o $x');
-			$filter = lambda({ return iff(lc("* $+ $s $+ *") iswm lc($1), $1); }, $s => strrep([$1 getActionCommand], ' ', '*'));
+	[$search addKeyListener: lambda({
+		this('$id');
+
+		if ($0 ne "keyReleased") {
+			return;
+		}
+
+		local('$model $_id $text');
+		$text = [$search getText];
+		if ($text ne "" && strlen($text) >= 3) {
+			local('$filter %list $a $e $p $o $x $f');
+			$filter = lambda({ return iff(lc("* $+ $s $+ *") iswm lc($1), $1); }, $s => strrep($text, ' ', '*'));
 			%list = ohash();
 			$a = filter($filter, @auxiliary);
 			$e = filter($filter, @exploits);
@@ -150,15 +157,21 @@ sub createModuleList {
 			if (size($e) > 0) { %list["exploit"] = buildTree($e); }
 			if (size($p) > 0) { %list["payload"] = buildTree($p); }
 			if (size($o) > 0) { %list["post"] = buildTree($o); }
-			$model = treeNodes($null, %list);
-			[[$tree getModel] setRoot: $model];
 
-			for ($x = 0; $x < [$tree getRowCount]; $x++) {
-				[$tree expandRow: $x];
+			$_id = [(%list . "") hashCode];
+
+			if ($id ne $_id) {
+				$id = $_id;
+				$model = treeNodes($null, %list);
+				[[$tree getModel] setRoot: $model];
+	
+				for ($x = 0; $x < [$tree getRowCount]; $x++) {
+					[$tree expandRow: $x];
+				}
 			}
-			[$search setText: ""];
 		}
-		else {
+		else if ($id != -1L) {
+			$id = -1L;
 			$model = treeNodes($null, $original);
 			[[$tree getModel] setRoot: $model];
 		}

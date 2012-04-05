@@ -1,6 +1,12 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- The search field in the module browser now updates results in real time.
+  Start typing and Armitage will start filtering the module tree for you. 
+  Clear the field to reset it to the default state.
+
 29 Mar 12
 ---------
 - Fixed a bug that affects first-time users. Armitage was not initializing a
