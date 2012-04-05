@@ -143,6 +143,13 @@ sub workspaceDialog {
 	}, \$dialog, \$host, \$ports, \$os, \$name, \$session, \$table, \$model)];
 }
 
+sub reset_workspace {
+	[$frame setTitle: $TITLE];
+	thread({
+		call($mclient, "db.filter", %());
+	});
+}
+
 sub client_workspace_items {
 	local('$index $workspace');
 
@@ -152,16 +159,12 @@ sub client_workspace_items {
 
 	separator($1);
 
-	item($1, "Show All", "S", {
-		[$frame setTitle: $TITLE];
-		thread({
-			call($mclient, "db.filter", %());
-		});
-	});
+	item($1, "Show All", "S", &reset_workspace);
 
-	local('$x $workspace $name $title');
+	local('$x $y $workspace $name $title');
 	$title = [$frame getTitle];
-	foreach $x => $workspace (workspaces()) {
+	foreach $y => $workspace (workspaces()) {
+		$x = $y + 1;
 		$name = $workspace['name'];
 
 		if ($title eq "$TITLE - $name") {
@@ -174,7 +177,15 @@ sub client_workspace_items {
 				set_workspace($name);
 			}, \$name));
 		}
+
+		# setup a keyboard shortcut for this workspace...
+		[$frame bindKey: "Ctrl+ $+ $x", lambda({
+			set_workspace($name);
+		}, \$name)];
 	}
+
+	# setup a keyboard shortcut for this workspace...
+	[$frame bindKey: "Ctrl+0", &reset_workspace];
 }
 
 sub set_workspace {

@@ -16,9 +16,14 @@ public class ArmitageApplication extends JFrame {
 	protected JSplitPane split = null;
 	protected JMenuBar menus = new JMenuBar();
 	protected ScreenshotManager screens = null;
+	protected KeyBindings keys = new KeyBindings();
 
 	public void setScreenshotManager(ScreenshotManager m) {
 		screens = m;
+	}
+
+	public void bindKey(String description, KeyHandler b) {
+		keys.bind(description, b);
 	}
 
 	public void addMenu(JMenuItem menu) {
@@ -264,7 +269,7 @@ public class ArmitageApplication extends JFrame {
 				}
 				System.gc();
 			}
-		}); 
+		});
 
 		component.addComponentListener(new ComponentAdapter() {
 			public void componentShown(ComponentEvent ev) {
@@ -297,6 +302,9 @@ public class ArmitageApplication extends JFrame {
 
 		/* add our tabbed pane */
 		add(split, BorderLayout.CENTER);
+
+		/* setup our key bindings */
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keys);
 
 		/* ... */
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

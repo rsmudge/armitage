@@ -6,6 +6,11 @@ In Progress
 - The search field in the module browser now updates results in real time.
   Start typing and Armitage will start filtering the module tree for you. 
   Clear the field to reset it to the default state.
+- Added keyboard shortcuts to switch dynamic workspaces...
+	Ctrl+1 = first workspace
+	Ctrl+2 = second workspace
+	....
+	Ctrl+0 = show all 
 
 29 Mar 12
 ---------
