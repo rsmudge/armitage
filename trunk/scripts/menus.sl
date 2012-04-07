@@ -229,23 +229,13 @@ sub help_items {
 }
 
 sub init_menus {
-	local('$top $a $b $c $d $e $f');
+	local('$top');
 	$top = [$1 getJMenuBar];
 
-	$a = menu($top, "$TITLE", charAt($TITLE, 0));
-	armitage_items($a);
-
-	$a = menu($top, "View", 'V');
-	view_items($a);
-
-	$c = menu($top, 'Hosts', 'o');
-	host_items($c);
-
-	$d = menu($top, 'Attacks', 'C');
-	main_attack_items($d);
-
-	dynmenu($top, 'Workspaces', 'W', &client_workspace_items);
-
-	$f = menu($top, 'Help', 'H');
-	help_items($f);
+	dynmenu($top, "$TITLE", charAt($TITLE, 0), &armitage_items);
+	dynmenu($top, "View", 'V', &view_items);
+	dynmenu($top, "Hosts", 'H', &host_items);
+	dynmenu($top, "Attacks", 'A', &main_attack_items);
+	dynmenu($top, "Workspaces", 'W', &client_workspace_items);
+	dynmenu($top, "Help", 'H', &help_items);
 }
