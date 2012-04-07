@@ -313,6 +313,8 @@ sub buildFileBrowserMenu {
 	local('%types');
 	map(lambda({ %types[$1["Name"]] = $1["D"]; }, \%types), $3);
 
+	setupMenu($1, "file_browser", @($2, %types[$2]));
+
 	item($1, "Download", 'D', lambda({ 
 		local('$f $dir @temp $tdir');
 		@temp = split('\\\\', [$text getText]);

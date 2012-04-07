@@ -43,10 +43,12 @@ sub host_items {
 	local('$i $j $k');
 	item($1, "Import Hosts", 'I', &importHosts);
 	item($1, "Add Hosts...", 'A', &addHostDialog);
+	setupMenu($1, "hosts_top", @());
 
 	separator($1);
 
 	$j = menu($1, "Nmap Scan", 'S');
+		setupMenu($j, "hosts_nmap", @());
 		item($j, "Intense Scan", $null, createNmapFunction("--min-hostgroup 96 -T4 -A -v -n"));
 		item($j, "Intense Scan + UDP", $null, createNmapFunction("--min-hostgroup 96 -sS -n -sU -T4 -A -v"));
 		item($j, "Intense Scan, all TCP ports", $null, createNmapFunction("--min-hostgroup 96 -p 1-65535 -n -T4 -A -v"));
@@ -72,8 +74,9 @@ sub host_items {
 		}
 	});
 
+	setupMenu($1, "hosts_middle", @());
 	separator($1);
-
+	setupMenu($1, "hosts_bottom", @());
 	item($1, "Clear Database", 'C', &clearDatabase);
 }
 

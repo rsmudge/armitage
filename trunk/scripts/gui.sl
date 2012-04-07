@@ -503,3 +503,8 @@ sub setClipboard {
 		[$cb setContents: $sel, $null];
 	}
 }
+
+sub setupMenu {
+	# do nothing for now... this is for something coming later.
+}
+

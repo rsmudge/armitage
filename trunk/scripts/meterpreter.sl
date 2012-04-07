@@ -147,6 +147,8 @@ sub showMeterpreterMenu {
 	
 	$platform = lc($session['platform']);
 
+	setupMenu($1, "meterpreter_top", @($sid));
+
 	if ("*win*" iswm $platform) {
 		$j = menu($1, "Access", 'A');
 	
@@ -249,6 +251,8 @@ sub showMeterpreterMenu {
 	else {
 		item($1, "Ping Sweep...", 'P', setupPingSweepDialog("$sid"));
 	}
+
+	setupMenu($1, "meterpreter_bottom", @($sid));
 
 	separator($1);
 
