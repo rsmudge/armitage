@@ -232,6 +232,8 @@ sub auto_layout_function {
 sub graph_items {
 	local('$a $b $c');
 
+	setupMenu($1, "graph", @());
+
 	$a = menu($1, 'Auto-Layout', 'A');
 	item($a, 'Circle', 'C', auto_layout_function('circle', $2));
 	item($a, 'Hierarchy', 'H', auto_layout_function('hierarchical', $2));

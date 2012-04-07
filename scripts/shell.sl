@@ -187,6 +187,8 @@ sub shellPopup {
 sub showShellMenu {
 	item($1, "Interact", 'I', lambda(&createShellSessionTab, \$sid, \$session));
 
+	setupMenu($1, "shell", @($sid));
+
 	if ("*Windows*" iswm sessionToOS($sid)) {
 		item($1, "Meterpreter...", 'M', lambda({
 			call_async($client, "session.shell_upgrade", $sid, $MY_ADDRESS, randomPort());

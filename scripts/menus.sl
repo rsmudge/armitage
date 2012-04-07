@@ -11,6 +11,8 @@ sub host_selected_items {
 
 	host_attack_items($1, $2);
 
+	setupMenu($1, "host_top", $2);
+
 	if ($2[0] in %hosts && 'sessions' in %hosts[$2[0]]) {
 		foreach $sid => $session (%hosts[$2[0]]['sessions']) {
 			if ($session["type"] eq "meterpreter") {
@@ -26,6 +28,8 @@ sub host_selected_items {
 
 	item($1, "Services", 'v', lambda({ createServiceBrowser($hosts) }, $hosts => $2));
 	item($1, "Scan", 'c', lambda({ launch_msf_scans(join(", ", $hosts)); }, $hosts => $2));
+
+	setupMenu($1, "host_bottom", $2);
 
 	separator($1);
 
@@ -66,12 +70,16 @@ sub view_items {
 		item($1, 'Event Log', 'E', &createEventLogTab);
 	}
 
+	setupMenu($1, "view_top", @());
+
 	separator($1);
 
 	item($1, 'Credentials', 'r', { thread(&createCredentialsTab); });
 	item($1, 'Downloads', 'D', { thread(&createDownloadBrowser); });
 	item($1, 'Jobs', 'J', { thread(&createJobsTab); });
 	item($1, 'Loot', 'L', { thread(&createLootBrowser) });
+
+	setupMenu($1, "view_middle", @());
 
 	separator($1);
 
@@ -82,6 +90,9 @@ sub view_items {
 	item($t, 'Export Data', 'E', {
 		thread(&generateArtifacts);
 	});
+
+	setupMenu($1, "view_bottom", @());
+
 }
 
 sub armitage_items {
@@ -135,6 +146,8 @@ sub armitage_items {
 		}
 	});
 
+	setupMenu($1, "main_top", @());
+
 	separator($1);
 
 	item($1, 'SOCKS Proxy...', 'r', &manage_proxy_server);
@@ -142,6 +155,8 @@ sub armitage_items {
 	$m = menu($1, 'Listeners', 'L');
 		item($m, 'Bind (connect to)', 'B', &connect_for_shellz);
 		item($m, 'Reverse (wait for)', 'R', &listen_for_shellz); 
+
+	setupMenu($1, "main_middle", @());
 
 	separator($1);
 
@@ -169,29 +184,7 @@ sub main_attack_items {
 		});
 	});
 
-	cmd_safe("show exploits", {
-		local('$line $os $type $id $rank $name $k $date $exploit');
-
-		foreach $line (split("\n", $3)) {
-			local('@ranks');
-			@ranks = @('normal', 'good', 'great', 'excellent');
-			while (size(@ranks) > 0 && @ranks[0] ne min_rank()) {
-				@ranks = sublist(@ranks, 1);
-			}
-
-			if ($line ismatch '\s+((.*?)\/.*?\/.*?)\s+(\d\d\d\d-\d\d-\d\d)\s+(' . join('|', @ranks) . ')\s+(.*?)') {
-				($exploit, $os, $date, $rank, $name) = matched();
-				%exploits[$exploit] = %(
-					name => $name,
-					os => $os,
-					date => parseDate('yyyy-MM-dd', $date),
-					rank => $rank,
-					rankScore => rankScore($rank)
-				);
-			}
-		}
-		warn("Remote Exploits Synced");
-	});
+	setupMenu($1, "attacks", @());
 }
 
 sub gotoURL {
@@ -205,6 +198,7 @@ sub help_items {
 	item($1, "Tutorial", 'T', gotoURL("http://www.fastandeasyhacking.com/manual")); 
 	item($1, "Issue Tracker", 'I', gotoURL("http://code.google.com/p/armitage/issues/list")); 
 	item($1, "User Survey", 'U', gotoURL("https://docs.google.com/spreadsheet/viewform?formkey=dEdSNGdJY2Z1LVloWXBnX2o4SkdGZHc6MQ"));
+	setupMenu($1, "help", @());
 	separator($1);
 	item($1, "About", 'A', {
 		local('$dialog $handle $label');
@@ -238,4 +232,28 @@ sub init_menus {
 	dynmenu($top, "Attacks", 'A', &main_attack_items);
 	dynmenu($top, "Workspaces", 'W', &client_workspace_items);
 	dynmenu($top, "Help", 'H', &help_items);
+
+	cmd_safe("show exploits", {
+		local('$line $os $type $id $rank $name $k $date $exploit');
+
+		foreach $line (split("\n", $3)) {
+			local('@ranks');
+			@ranks = @('normal', 'good', 'great', 'excellent');
+			while (size(@ranks) > 0 && @ranks[0] ne min_rank()) {
+				@ranks = sublist(@ranks, 1);
+			}
+
+			if ($line ismatch '\s+((.*?)\/.*?\/.*?)\s+(\d\d\d\d-\d\d-\d\d)\s+(' . join('|', @ranks) . ')\s+(.*?)') {
+				($exploit, $os, $date, $rank, $name) = matched();
+				%exploits[$exploit] = %(
+					name => $name,
+					os => $os,
+					date => parseDate('yyyy-MM-dd', $date),
+					rank => $rank,
+					rankScore => rankScore($rank)
+				);
+			}
+		}
+		warn("Remote Exploits Synced");
+	});
 }

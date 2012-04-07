@@ -63,6 +63,8 @@ sub showModulePopup {
 			}, \$module, \$type));
 		}, $module => $3, $type => $2));
 
+		setupMenu($menu, "module", @($2, $3));
+
 		[$menu show: [$1 getSource], [$1 getX], [$1 getY]];
 	}
 }
