@@ -508,3 +508,6 @@ sub setupMenu {
 	# do nothing for now... this is for something coming later.
 }
 
+sub installMenu {
+	# do nothing for now... this is for something coming later.
+}
