@@ -67,6 +67,9 @@ sub showModulePopup {
 
 		[$menu show: [$1 getSource], [$1 getX], [$1 getY]];
 	}
+	else {
+		installMenu($1, "module", @($2, $3));
+	}
 }
 
 sub moduleAction {

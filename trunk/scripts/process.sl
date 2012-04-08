@@ -46,6 +46,17 @@ sub createProcessBrowser {
 	[$sorter toggleSortOrder: 0];
 	[$table setRowSorter: $sorter];
 
+	# setup popup hook for processes
+	addMouseListener($table, lambda({
+		if ([$1 isPopupTrigger]) {
+			local('$r');
+			$r = [$model getSelectedValuesFromColumns: $table, @("PID", "Name", "User", "Path")];
+			if (size($r) > 0) {
+				installMenu($1, "process", $r);
+			}
+		}
+        }, \$table, \$model));
+
 	# allow only one row to be selected at a time.
 
 	[$sorter setComparator: 0, {
