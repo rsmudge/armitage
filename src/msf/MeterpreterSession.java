@@ -109,6 +109,14 @@ public class MeterpreterSession implements Runnable {
 			else if (c.text.startsWith("migrate")) {
 				expectedReads = 2;
 			}
+			else if (c.text.startsWith("hashdump")) {
+				readUntilSuccessful(c, true);
+				return;
+			}
+			else if (c.text.startsWith("route")) {
+				readUntilSuccessful(c, false);
+				return;
+			}
 
 			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
 
@@ -186,6 +194,37 @@ public class MeterpreterSession implements Runnable {
 				System.err.println("This session appears to be dead! " + session + ", " + ex);
 				return;
 			}
+		}
+	}
+
+	/* keep reading until we get no data for a set period... this is a more aggressive
+	   alternate read strategy for commands that I can't predict the end point well */
+	private void readUntilSuccessful(Command c, boolean pieces) throws Exception {
+		/* our first read gets the default wait period at least... */
+		long start = System.currentTimeMillis() + DEFAULT_WAIT;
+		long timeout = pieces ? 2000 : 500;
+
+		StringBuffer buffer = new StringBuffer();
+		Map read = null;
+
+		/* keep reading until we see nothing (up to the timeout) */
+		while ((System.currentTimeMillis() - start) < timeout) {
+			read = readResponse();
+			String data = read.get("data") + "";
+			if (data.length() > 0) {
+				if (pieces) {
+					fireEvent(c, read, false);
+				}
+				else {
+					buffer.append(data);
+				}
+				start = System.currentTimeMillis();
+			}
+		}
+
+		if (!pieces) {
+			read.put("data", buffer.toString());
+			fireEvent(c, read, false);
 		}
 	}
 
