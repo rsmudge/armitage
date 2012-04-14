@@ -175,7 +175,7 @@ sub createModuleList {
 				}
 			}
 		}
-		else if ($id != -1L) {
+		else {
 			$id = -1L;
 			$model = treeNodes($null, $original);
 			[[$tree getModel] setRoot: $model];
@@ -193,19 +193,20 @@ sub createModuleList {
 	[$panel setMinimumSize: [new Dimension: 180, 0]];
 
 	let(&showPostModules, \$tree, \$search)
-	let(&showExploitModules, \$tree, \$search)
+	let(&showModules, \$tree, \$search)
 	return $panel;
 }
 
 # shows the post modules compatible with a session... for this to work, the
 # code that creates the module browser must call: let(&showExploitModules, $tree => ..., $search => ...)
-sub showExploitModules {
-	local('%list $model');
-	if (size($1) == 0) {
-		return;
-	}
+sub showModules {
+	local('%list $model $1 $2 $3 $4');
 
-	%list = ohash(exploit => buildTree($1));
+	%list = ohash(
+			auxiliary => iff($1, buildTree($1), $null), 
+			exploit => iff($2, buildTree($2), $null),
+			payload => iff($3, buildTree($3), $null),
+			post => iff($4, buildTree($4), $null));
 	$model = treeNodes($null, %list);
 
 	dispatchEvent(lambda({
@@ -217,6 +218,15 @@ sub showExploitModules {
 		}
 		[$search setText: ""];
 	}, \$search, \$tree, \$model));
+}
+
+sub showExploitModules {
+	local('%list $model');
+	if (size($1) == 0) {
+		return;
+	}
+
+	showModules($null, $1, $null, $null);
 }
 
 # shows the post modules compatible with a session... for this to work, the
