@@ -11,6 +11,14 @@ In Progress
 	Ctrl+2 = second workspace
 	....
 	Ctrl+0 = show all 
+- Added keyboard shortcuts:
+	Ctrl+N = new console
+	Ctrl+O = open preferences
+- Armitage's Meterpreter -> Access -> Dump Hashes -> lsass method is now 
+  much better about grabbing all of the hashdump output and adding it to 
+  the creds table. The hashdump command returns output as an arbitrary
+  number of chunks. I now use a different read strategy for determining when
+  the output is complete.
 
 29 Mar 12
 ---------
