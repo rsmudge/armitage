@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+16 Apr 12
 ---------
 - The search field in the module browser now updates results in real time.
   Start typing and Armitage will start filtering the module tree for you. 
@@ -22,6 +22,8 @@ In Progress
 - You may now use Ctrl+Alt to deselect highlighted items in a range in the
   Jobs and Workspaces table views (most other table views that do multi
   selection should allow this already).
+- Added Shell -> Pass Session for *NIX shell sessions. Uses the system_session
+  module to pass a shell session elsewhere (or duplicate the current shell)
 
 29 Mar 12
 ---------

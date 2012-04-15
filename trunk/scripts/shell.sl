@@ -245,6 +245,9 @@ sub showShellMenu {
 				}, \$file, \$sid, \$progress, \$name));
 			}
 		}, \$sid));
+		item($1, "Pass Session", 'S', lambda({
+			launch_dialog("Pass Session", "post", "multi/manage/system_session", 1, $null, %(SESSION => $sid, LPORT => randomPort(), HANDLER => "1"));
+		}, \$sid));
 	}
 
 	item($1, "Post Modules", 'P', lambda({
