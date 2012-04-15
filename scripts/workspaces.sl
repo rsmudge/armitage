@@ -35,7 +35,7 @@ sub listWorkspaces {
 
 	($table, $model) = setupTable("name", @("name", "hosts", "ports", "os", "session"), @());
 	updateWorkspaceList($table, $model);
-	[$table setSelectionMode: [ListSelectionModel SINGLE_INTERVAL_SELECTION]];
+	[$table setSelectionMode: [ListSelectionModel MULTIPLE_INTERVAL_SELECTION]];
 	
 	[$dialog add: [new JScrollPane: $table], [BorderLayout CENTER]];
 

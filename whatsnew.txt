@@ -19,6 +19,9 @@ In Progress
   the creds table. The hashdump command returns output as an arbitrary
   number of chunks. I now use a different read strategy for determining when
   the output is complete.
+- You may now use Ctrl+Alt to deselect highlighted items in a range in the
+  Jobs and Workspaces table views (most other table views that do multi
+  selection should allow this already).
 
 29 Mar 12
 ---------

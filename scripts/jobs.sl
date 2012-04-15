@@ -532,7 +532,7 @@ sub createJobsTab {
 	$model = [new GenericTableModel: @("Id", "Name", "Payload", "Port", "URL", "Start"), "Id", 8];
 
 	$table = [new ATable: $model];
-	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel SINGLE_INTERVAL_SELECTION]];
+	[[$table getSelectionModel] setSelectionMode: [ListSelectionModel MULTIPLE_INTERVAL_SELECTION]];
 	[[$table getColumn: "Id"] setPreferredWidth: 125];
 	[[$table getColumn: "Port"] setPreferredWidth: 200];
 	[[$table getColumn: "Name"] setPreferredWidth: 1024];
