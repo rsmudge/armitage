@@ -318,7 +318,7 @@ sub best_payload {
 		}
 	}
 	
-	if (($os eq "Windows" || "windows" isin $2) && "windows/meterpreter/bind_tcp" in $compatible) {
+	if ($win && "windows/meterpreter/bind_tcp" in $compatible) {
 		if (isIPv6($1)) {
 			return "windows/meterpreter/bind_ipv6_tcp";
 		}
@@ -326,7 +326,7 @@ sub best_payload {
 			return "windows/meterpreter/bind_tcp";
 		}
 	}
-	else if (($os eq "Windows" || "windows" isin $2) && "windows/shell/bind_tcp" in $compatible) {
+	else if ($win && "windows/shell/bind_tcp" in $compatible) {
 		if (isIPv6($1)) {
 			return "windows/shell/bind_ipv6_tcp";
 		}
