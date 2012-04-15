@@ -57,7 +57,7 @@ sub showHost {
 			push(@overlay, 'resources/windows7.png');
 		}
 	}
-	else if ($os eq "Mac OS X" || "*apple*" iswm lc($os)) {
+	else if ($os eq "Mac OS X" || "*apple*" iswm lc($os) || "*mac*os*x*" iswm lc($os)) {
 		push(@overlay, 'resources/macosx.png');
 	}
 	else if ("*linux*" iswm lc($os)) {
