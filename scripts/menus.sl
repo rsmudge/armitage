@@ -233,6 +233,10 @@ sub init_menus {
 	dynmenu($top, "Workspaces", 'W', &client_workspace_items);
 	dynmenu($top, "Help", 'H', &help_items);
 
+	# setup some global keyboard shortcuts...
+	[$frame bindKey: "Ctrl+N", { thread(&createConsoleTab); }];
+	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
+
 	cmd_safe("show exploits", {
 		local('$line $os $type $id $rank $name $k $date $exploit');
 
