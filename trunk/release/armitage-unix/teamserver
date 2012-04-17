@@ -1,3 +1,4 @@
+#!/bin/bash
 # start msfrpcd and the deconfliction server. Check for common mistakes
 # to save some time and head scratching...
 
