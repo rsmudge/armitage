@@ -121,7 +121,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 	private static final Pattern interact = Pattern.compile("sessions -i (\\d+)\n");
 
-	public void sendString(String text) {
+	public void _sendString(String text) {
 		if (writeCommand == null)
 			return;
 
@@ -149,12 +149,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 			}
 
 			read = readResponse();
-			if ("false".equals(read.get("busy") + "") && "".equals(read.get("data") + "")) {
-				//System.err.println("Should command be resent? " + text + " -- " + read);
-			}
-			else {
-				processRead(read);
-			}
+			processRead(read);
 
 			fireSessionWroteEvent(text);
 		}
@@ -170,11 +165,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 					public void actionPerformed(ActionEvent ev) {
 						final String text = window.getInput().getText() + "\n";
 						window.getInput().setText("");
-						new Thread(new Runnable() {
-							public void run() {
-								sendString(text);
-							}
-						}).start();
+						sendString(text);
 					}
 				});
 			}
@@ -219,7 +210,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 	protected LinkedList commands = new LinkedList();
 
-	public void sendStringQueue(String text) {
+	public void sendString(String text) {
 		synchronized (listeners) {
 			commands.add(text);
 		}
@@ -239,8 +230,9 @@ public class ConsoleClient implements Runnable, ActionListener {
 				}
 
 				if (command != null) {
-					sendString(command);
+					_sendString(command);
 					command = null;
+					lastRead = System.currentTimeMillis();
 				}
 
 				read = readResponse();

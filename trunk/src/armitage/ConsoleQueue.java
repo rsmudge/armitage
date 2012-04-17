@@ -101,10 +101,6 @@ public class ConsoleQueue implements Runnable {
 
 					count++;
 				}
-				else if (!prompt.equals( read.get("prompt") + "" )) {
-					/* this is a state change, we'll count it */
-					count++;
-				}
 				else if ("false".equals( read.get("busy") + "" ) && isEmptyData( read.get("data") + "" )) {
 					if (count > 0) {
 						break;
@@ -117,6 +113,11 @@ public class ConsoleQueue implements Runnable {
 				}
 				else if ("failure".equals( read.get("result") + "" )) {
 					break;
+				}
+
+				if (!prompt.equals( read.get("prompt") + "" )) {
+					/* this is a state change, we'll count it */
+					count++;
 				}
 
 				Thread.sleep(10);
