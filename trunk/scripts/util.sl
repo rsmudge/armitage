@@ -459,11 +459,11 @@ sub module_execute {
 				[$console sendString: "use $type $+ / $+ $module $+ \n"];
 
 				foreach $key => $value ($options) {
-					sleep(10);
+					sleep(50);
 					[$console sendString: "set $key $value $+ \n"];
 				}
 
-				sleep(100);
+				sleep(250);
 
 				if ($type eq "exploit") {
 					[$console sendString: "exploit -j\n"];
