@@ -459,8 +459,8 @@ sub module_execute {
 				[$console sendString: "use $type $+ / $+ $module $+ \n"];
 
 				foreach $key => $value ($options) {
-					[$console sendString: "set $key $value $+ \n"];
 					sleep(10);
+					[$console sendString: "set $key $value $+ \n"];
 				}
 
 				sleep(100);
