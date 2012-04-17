@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Modified how Armitage determines a console command is complete to stay 
+  compat with behavior changes in a recent Metasploit update.
+
 16 Apr 12
 ---------
 - The search field in the module browser now updates results in real time.

@@ -77,7 +77,8 @@ public class ConsoleQueue implements Runnable {
 			writeme.append("\n");
 
 			/* absorb anything misc */
-			readResponse();
+			read = readResponse();
+			String prompt = read.get("prompt") + "";
 
 			/* write our command to whateverz */
 			connection.execute("console.write", new Object[] { consoleid, writeme.toString() });
@@ -86,6 +87,7 @@ public class ConsoleQueue implements Runnable {
 			StringBuffer output = new StringBuffer();
 			Thread.sleep(10);
 			int count = 0;
+			long start = System.currentTimeMillis();
 
 			while ((read = (Map)(connection.execute("console.read", new Object[] { consoleid }))) != null) {
 				String text = null;
@@ -96,18 +98,21 @@ public class ConsoleQueue implements Runnable {
 					if (display != null) {
 						display.append(text);
 					}
+
+					count++;
+				}
+				else if (!prompt.equals( read.get("prompt") + "" )) {
+					/* this is a state change, we'll count it */
+					count++;
 				}
 				else if ("false".equals( read.get("busy") + "" ) && isEmptyData( read.get("data") + "" )) {
-					/* this is a bug that annoys the hell out of me. Sometimes an
-					   executed command is swallowed by metasploit. This is an attempt
-					   to work around that by retrying the command once if nothing was
-					   read in response to it. */
-
 					if (count > 0) {
 						break;
 					}
-					else {
-						connection.execute("console.write", new Object[] { consoleid, writeme.toString() });
+					else if ((System.currentTimeMillis() - start) > 10000) {
+						/* this is a safety check to keep a console from spinning waiting for one command to complete. Shouldn't ever trigger. */
+						System.err.println("Timed out: " + c.text);
+						break;
 					}
 				}
 				else if ("failure".equals( read.get("result") + "" )) {
@@ -115,7 +120,6 @@ public class ConsoleQueue implements Runnable {
 				}
 
 				Thread.sleep(10);
-				count++;
 			}
 
 			/* fire an event with our output */
