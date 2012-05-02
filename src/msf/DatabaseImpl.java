@@ -286,15 +286,18 @@ public class DatabaseImpl implements RpcConnection  {
 				return results;
 			}
 			else if (methodName.equals("db.clear")) {
-				executeUpdate("DELETE FROM hosts");
-				executeUpdate("DELETE FROM services");
-				executeUpdate("DELETE FROM events");
-				executeUpdate("DELETE FROM notes");
-				executeUpdate("DELETE FROM creds");
-				executeUpdate("DELETE FROM loots");
-				executeUpdate("DELETE FROM vulns");
-				executeUpdate("DELETE FROM sessions");
-				executeUpdate("DELETE FROM clients");
+				executeUpdate(
+					"BEGIN;" + 
+					"DELETE FROM hosts;" +
+					"DELETE FROM services;" +
+					"DELETE FROM events;" +
+					"DELETE FROM notes;" +
+					"DELETE FROM creds;" +
+					"DELETE FROM loots;" +
+					"DELETE FROM vulns;" +
+					"DELETE FROM sessions;" +
+					"DELETE FROM clients;" +
+					"COMMIT");
 				return new HashMap();
 			}
 			else if (methodName.equals("db.filter")) {
