@@ -47,32 +47,41 @@ sub client {
 	#
 	$temp = readObject($handle);
 	($method, $args) = $temp;
-	if ($method ne "armitage.validate" || $args[0] ne $auth) {
-		writeObject($handle, result(%(error => "Invalid")));
+	if ($method ne "armitage.validate") {
+		writeObject($handle, result(%(error => 1, message => "You're not authenticated")));
 		return;
 	}
 	else {
-		($null, $eid, $app, $ver) = $args;
+		local('$user $pass');
+		($user, $pass, $eid, $app, $ver) = $args;
 
-		if ($app ne "armitage") {
+		if ($user ne "msf" || $pass ne "test") {
+			warn("Rejected $eid (invalid login)");
+			writeObject($handle, result(%(error => 1, message => "Invalid login.")));
+			return;
+		}
+		else if ($app ne "armitage") {
 			warn("Rejected $eid (wrong application)");
-			writeObject($handle, result(%(success => "1", message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
+			writeObject($handle, result(%(error => 1, message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
 			return;
 		}
 		else if ($ver < 120326) {
 			warn("Rejected $eid (old software -- srsly, update people!)");
-			writeObject($handle, result(%(success => "1", message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
+			writeObject($handle, result(%(error => 1, message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
 			return;
 		}
 		else if ($motd ne "" && -exists $motd) {
 			$temp = openf($motd);
-			writeObject($handle, result(%(success => "1", message => readb($temp, -1))));
+			writeObject($handle, result(%(message => readb($temp, -1))));
 			closef($temp);
 		}
 		else {
-			writeObject($handle, result(%(success => "1")));
+			writeObject($handle, result(%(message => "Collaboration setup!")));
 		}
-		event("*** $eid joined\n");
+
+		if ($eid !is $null) {
+			event("*** $eid joined\n");
+		}
 	}
 
         # limit our replay of the event log to 100 events...
@@ -281,7 +290,9 @@ sub client {
 		}
 	}
 
-	event("*** $eid left.\n");
+	if ($eid !is $null) {
+		event("*** $eid left.\n");
+	}
 
 	# reset the user's filter...
 	[$client_cache setFilter: $eid, $null];
@@ -308,15 +319,20 @@ sub main {
 	if (size(@ARGV) < 5) {
 		println("Armitage deconfliction server requires the following arguments:
 	armitage --server host port user pass 
-		host - the address of this host (where msfrpcd is running as well)
-		port - the port msfrpcd is listening on
-		user - the username for msfrpcd
-		pass - the password for msfprcd");
+		host  - the address of this host (where msfrpcd is running as well)
+		port  - the port msfrpcd is listening on
+		user  - the username for msfrpcd
+		pass  - the password for msfprcd
+		lport - [optional] port to bind the team server to");
 		[System exit: 0];
 	}
 	
-	local('$host $port $user $pass');
-	($host, $port, $user, $pass) = sublist(@_, 1);
+	local('$host $port $user $pass $sport');
+	($host, $port, $user, $pass, $sport) = sublist(@_, 1);
+
+	if ($sport is $null) {
+		$sport = $port + 1;
+	}
 
 	#
 	# some sanity checking
@@ -330,16 +346,14 @@ sub main {
 	# Connect to Metasploit's RPC Daemon
 	#
 
-	$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), 1, $null];
+	$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), $null, $null];
 	while ($client is $null) {
 		sleep(1000);
-		$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), 1, $null];
+		$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), $null, $null];
 	}
 	$mclient = $client;
-	$port += 1;
 
-	# setg ARMITAGE_SERVER host:port/token
-	call_async($client, "core.setg", "ARMITAGE_SERVER", "$host $+ : $+ $port $+ / $+ $auth");
+	# set the LHOST to whatever the user specified
 	call_async($client, "core.setg", "LHOST", $host);
 
 	#
@@ -446,7 +460,7 @@ service framework-postgres start");
 	#
 	println("Use the following connection details to connect your clients:");
 	println("\tHost: $host");
-	println("\tPort: " . ($port - 1));
+	println("\tPort: $sport");
 	println("\tUser: $user");
 	println("\tPass: $pass");
 	println("\n" . rand(@("I'm ready to accept you or other clients for who they are",
@@ -456,7 +470,7 @@ service framework-postgres start");
 
 	$id = 0;
 	while (1) {
-		$server = listen($port, 0);
+		$server = listen($sport, 0);
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
