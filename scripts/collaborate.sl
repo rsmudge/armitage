@@ -53,11 +53,7 @@ sub setup_collaboration {
 	$mclient = c_client($3, $4);
 	%r = call($mclient, "armitage.validate", $1, $2, $nick, "armitage", 120326);
 	if (%r["error"] eq "1") {
-		showError(%r["message"]);
-		dispatchEvent({
-			[System exit: 0];
-		});
-		return;
+		showErrorAndQuit(%r["message"]);
 	}
 
 	%r = call($client, "armitage.validate", $1, $2, $null, "armitage", 120326);
