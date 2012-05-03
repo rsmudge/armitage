@@ -7,6 +7,7 @@ In Progress
   deconfliction server. This is necessary to prevent triggering a race
   condition that was introduced with the dependency changes in Metasploit
   4.3.
+- Module description (in module launch dialog) is now resizable.
 
 17 Apr 12
 ---------
