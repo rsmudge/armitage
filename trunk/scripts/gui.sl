@@ -87,6 +87,11 @@ sub showError {
 	}, $message => $1));
 }
 
+sub showErrorAndQuit {
+	[JOptionPane showMessageDialog: $frame, $1];
+	[System exit: 0];
+}
+
 sub ask {
 	local('$2');
 	return [JOptionPane showInputDialog: "$1", "$2"];

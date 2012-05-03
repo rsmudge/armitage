@@ -61,7 +61,7 @@ sub client {
 		local('$user $pass');
 		($user, $pass, $eid, $app, $ver) = $args;
 
-		if ($user ne "msf" || $pass ne "test") {
+		if ($user ne $_user || $pass ne $_pass) {
 			warn("Rejected $eid (invalid login)");
 			writeObject($handle, result(%(error => 1, message => "Invalid login.")));
 			return;
@@ -491,7 +491,7 @@ service framework-postgres start");
 		warn("New client: $server $id");
 
 		%readq[$id] = %();
-		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache);
+		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache, $_user => $user, $_pass => $pass);
 
 		$id++;
 	}
