@@ -10,6 +10,7 @@ the latest information: http://www.fastandeasyhacking.com/manual#7
   deconfliction server. This is necessary to prevent triggering a race
   condition that was introduced with the changes in Metasploit 4.3.
 - Module description (in module launch dialog) is now resizable.
+- Added Ctrl+D keyboard shortcut to close active tab.
 
 17 Apr 12
 ---------

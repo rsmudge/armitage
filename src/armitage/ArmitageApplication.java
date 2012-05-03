@@ -110,6 +110,13 @@ public class ArmitageApplication extends JFrame {
 
 	protected LinkedList apptabs = new LinkedList();
 
+	public void closeActiveTab() {
+		JComponent tab = (JComponent)tabs.getSelectedComponent();
+		if (tab != null) {
+			removeAppTab(tab, null, new ActionEvent(tab, 0, "boo!"));
+		}
+	}
+
 	public void addAppTab(String title, JComponent component, ActionListener removeListener) {
 		ApplicationTab t = new ApplicationTab();
 		t.title = title;
