@@ -40,7 +40,13 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver %async');
+
+	# do these things asynchronously so we don't tie up a client's thread
+	%async['module.execute'] = 1;
+	%async['core.setg'] = 1;
+	%async['console.destroy'] = 1;
+	%async['console.write'] = 1;
 
 	#
 	# verify the client
@@ -279,6 +285,16 @@ sub client {
 
 			writeObject($handle, $response);
 		} 
+		else if ($method in %async) {
+			if ($args) {
+				[$client execute_async: $method, cast($args, ^Object)];
+			}
+			else {
+				[$client execute_async: $method];
+			}
+
+			writeObject($handle, %());
+		}
 		else {
 			if ($args) {
 				$response = [$client execute: $method, cast($args, ^Object)];
@@ -286,6 +302,7 @@ sub client {
 			else {
 				$response = [$client execute: $method];
 			}
+
 			writeObject($handle, $response);
 		}
 	}
