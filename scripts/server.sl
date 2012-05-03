@@ -40,7 +40,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver %async');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver %async %consoles');
 
 	# do these things asynchronously so we don't tie up a client's thread
 	%async['module.execute'] = 1;
@@ -88,6 +88,7 @@ sub client {
 
 		if ($eid !is $null) {
 			event("*** $eid joined\n");
+			warn("*** $eid joined");
 		}
 	}
 
@@ -285,7 +286,18 @@ sub client {
 			}
 
 			writeObject($handle, $response);
-		} 
+		}
+		else if ($method eq "console.create") {
+			$response = [$client execute: $method];
+			$data = [$response get: 'id'];
+			%consoles[$data] = 1;
+			writeObject($handle, $response);
+		}
+		else if ($method eq "console.destroy") {
+			%consoles[$args[0]] = $null;
+			[$client execute_async: $method, cast($args, ^Object)];
+			writeObject($handle, %());
+		}
 		else if ($method in %async) {
 			if ($args) {
 				[$client execute_async: $method, cast($args, ^Object)];
@@ -323,6 +335,11 @@ sub client {
 		}
 	}
 	release($lock_lock);
+
+	# cleanup any consoles created by not let go of.
+	foreach $key => $value (%consoles) {
+		[$client execute_async: "console.destroy", cast(@("$key"), ^Object)];
+	}
 }
 
 sub main {
@@ -489,7 +506,6 @@ service framework-postgres start");
 	$id = 0;
 	while (1) {
 		$server = listen($sport, 0);
-		warn("New client: $server $id");
 
 		%readq[$id] = %();
 		fork(&client, \$client, $handle => $server, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache, $_user => $user, $_pass => $pass);
