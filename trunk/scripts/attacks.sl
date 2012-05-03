@@ -381,7 +381,6 @@ sub attack_dialog {
 	[$textarea setWrapStyleWord: 1];
 	[$textarea setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
 	$scroll = [new JScrollPane: $textarea];
-	[$scroll setPreferredSize: [new Dimension: 480, 80]];
 	[$scroll setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
 
 	[$north add: $scroll, [BorderLayout CENTER]];
@@ -488,8 +487,15 @@ sub attack_dialog {
 	[$south add: left($d)];
 	[$south add: $c];
 
-	[$dialog add: $north, [BorderLayout NORTH]];
-	[$dialog add: $center, [BorderLayout CENTER]];
+	#[$dialog add: $north, [BorderLayout NORTH]];
+	local('$s');
+	$s = [new JSplitPane: [JSplitPane VERTICAL_SPLIT], $north, $center];
+	[$center setPreferredSize: [new Dimension: 0, 0]];
+	[$north setPreferredSize: [new Dimension: 480, 76]];
+	[$s resetToPreferredSizes];
+	[$s setOneTouchExpandable: 1];
+
+	[$dialog add: $s, [BorderLayout CENTER]];	
 	[$dialog add: $south, [BorderLayout SOUTH]];
 
 	[$button requestFocus];

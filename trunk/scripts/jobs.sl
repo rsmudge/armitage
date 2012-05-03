@@ -249,7 +249,6 @@ sub _launch_dialog {
 	[$textarea setWrapStyleWord: 1];
 	[$textarea setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
 	$scroll = [new JScrollPane: $textarea];
-	[$scroll setPreferredSize: [new Dimension: 480, 48]];
 	[$scroll setBorder: [BorderFactory createEmptyBorder: 3, 3, 3, 3]];
 
 	[$north add: $scroll, [BorderLayout CENTER]];
@@ -492,8 +491,14 @@ sub _launch_dialog {
 	[$panel add: center($button)];
 	[$dialog add: $panel, [BorderLayout SOUTH]];
 
-	[$dialog add: $north, [BorderLayout NORTH]];
-	[$dialog add: $center, [BorderLayout CENTER]];
+	local('$s');
+	$s = [new JSplitPane: [JSplitPane VERTICAL_SPLIT], $north, $center];
+	[$center setPreferredSize: [new Dimension: 0, 0]];
+	[$north setPreferredSize: [new Dimension: 480, 87]]; # from 67...
+	[$s resetToPreferredSizes];
+	[$s setOneTouchExpandable: 1];  
+
+	[$dialog add: $s, [BorderLayout CENTER]];
 
 	[$button requestFocus];
 
