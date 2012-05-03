@@ -169,7 +169,7 @@ sub smarter_autopwn {
 	local('$console');
 	elog("has given up and launched the hail mary!");
 
-	$console = createConsoleTab("Hail Mary", 1, $host => "all", $file => "hailmary");
+	$console = createDisplayTab("Hail Mary", 1, $host => "all", $file => "hailmary");
 	[[$console getWindow] append: "\n\n1) Finding exploits (via local magic)\n\n"];
 
 	resolveAttacks($1, $2, lambda({
@@ -246,7 +246,10 @@ sub smarter_autopwn {
 			[$progress close];
 
 			[[$console getWindow] append: "\n\n4) Listing sessions\n\n"];
-			[$console sendString: "sessions -v\n"];
+
+			[$console addCommand: $null, "sessions -v"];
+			[$console start];
+			[$console stop];
 		}, \@attacks, \$progress, \$console));
 	}, \$console));
 }
@@ -538,20 +541,19 @@ sub host_attack_items {
 			if (size($exploits) > 0) {
 				separator($e);
 				item($e, "check exploits...", 'c', lambda({
-					thread(lambda({
-						local('$result $h $console');
-						$console = createConsoleTab("Check Exploits", 1);
-						$h = $hosts[0];
-						foreach $result (values($exploits)) {
-							[[$console getWindow] append: "\n\n===== Checking $result =====\n\n"];
-							[$console sendString: "use $result $+ \n"];
-							yield 250L;
-							[$console sendString: "set RHOST $h $+ \n"];
-							yield 250L;
-							[$console sendString: "check\n"];
-							yield 1000L;
-						}
-					}, \$hosts, \$exploits));
+					local('$result $h $console');
+					$console = createDisplayTab("Check Exploits", 1);
+		
+					$h = $hosts[0];
+					foreach $result (values($exploits)) {
+						[$console addCommand: $null, "ECHO \n\n===== Checking $result =====\n\n"];
+						[$console addCommand: $null, "use $result"];
+						[$console addCommand: $null, "set RHOST $h"];
+						[$console addCommand: $null, "check"];
+					}
+
+					[$console start];
+					[$console stop];
 				}, $hosts => $2, \$exploits));
 			}
 		}

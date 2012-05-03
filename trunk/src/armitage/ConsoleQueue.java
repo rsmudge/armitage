@@ -76,6 +76,13 @@ public class ConsoleQueue implements Runnable {
 	protected void processCommand(Command c) {
 		Map read = null;
 		try {
+			if (c.text.startsWith("ECHO ")) {
+				if (display != null) {
+					display.append(c.text.substring(5));
+				}
+				return;
+			}
+
 			StringBuffer writeme = new StringBuffer();
 			writeme.append(c.text);
 			writeme.append("\n");

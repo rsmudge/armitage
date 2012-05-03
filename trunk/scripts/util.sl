@@ -70,7 +70,7 @@ sub cleanText {
 }
 
 sub createDisplayTab {
-	local('$console $host $queue');
+	local('$console $host $queue $file');
 	$queue = [new ConsoleQueue: $client];
 	$console = [new Console: $preferences];
 	[$queue setDisplay: $console];
@@ -459,7 +459,7 @@ sub module_execute {
 			[$queue addCommand: $null, "set $key $value"];
 		}
 
-		if ($type eq "exploit") {
+		if ($1 eq "exploit") {
 			[$queue addCommand: $null, "exploit -j"];
 		}
 		else {
