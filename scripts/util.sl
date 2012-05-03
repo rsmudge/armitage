@@ -70,11 +70,13 @@ sub cleanText {
 }
 
 sub createDisplayTab {
-	local('$console');
+	local('$console $host $queue');
+	$queue = [new ConsoleQueue: $client];
 	$console = [new Console: $preferences];
-	logCheck($console, "all", strrep($1, " ", "_"));
-	[$frame addTab: $1, $console, $null];
-	return $console;
+	[$queue setDisplay: $console];
+	logCheck($console, iff($host, $host, "all"), iff($file, $file, strrep($1, " ", "_")));
+	[$frame addTab: $1, $console, lambda({ [$queue stop]; }, \$queue)];
+	return $queue;
 }
 
 # creates a new metasploit console (with all the trimmings)
@@ -200,13 +202,10 @@ sub createNmapFunction {
 		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(" ", [$targets getSelectedHosts]));
 		if ($address eq "") { return; }
 
-		local('$display $queue');
-		$display = createDisplayTab("nmap");
+		local('$queue');
+		$queue = createDisplayTab("nmap");
 		elog("started a scan: nmap $args $address");
-		[$display append: "msf > db_nmap $args $address\n\n"];
 
-		$queue = [new ConsoleQueue: $client];
-		[$queue setDisplay: $display];
 		[$queue addCommand: "x", "db_nmap $args $address"];
 		[$queue addListener: {
 			showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets.");
@@ -437,7 +436,7 @@ sub module_execute {
 	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true") {
 		local('$host');
 
-		# for logging purposes, we should figure out the remote host being targeted		
+		# for logging purposes, we should figure out the remote host being targeted
 
 		if ("RHOST" in $3) {
 			$host = $3["RHOST"];
@@ -451,28 +450,23 @@ sub module_execute {
 
 		# okie then, let's create a console and execute all of this stuff...	
 
-		local('$console');
-		thread(lambda({
-			$console = createConsoleTab("$type", 1, \$host, $file => $type);
-			fork({
-				local('$key $value');
-				[$console sendString: "use $type $+ / $+ $module $+ \n"];
+		local('$queue $key $value');
 
-				foreach $key => $value ($options) {
-					sleep(50);
-					[$console sendString: "set $key $value $+ \n"];
-				}
+		$queue = createDisplayTab($1, \$host);
 
-				sleep(250);
+		[$queue addCommand: $null, "use $1 $+ / $+ $2"];
+		foreach $key => $value ($3) {
+			[$queue addCommand: $null, "set $key $value"];
+		}
 
-				if ($type eq "exploit") {
-					[$console sendString: "exploit -j\n"];
-				}
-				else {
-					[$console sendString: "run -j\n"];
-				}
-			}, \$console, \$options, \$type, \$module);
-		}, \$console, $options => $3, $type => $1, $module => $2, \$host));		
+		if ($type eq "exploit") {
+			[$queue addCommand: $null, "exploit -j"];
+		}
+		else {
+			[$queue addCommand: $null, "run -j"];
+		}
+
+		[$queue start];
 	}
 	else {
 		call_async($client, "module.execute", $1, $2, $3);

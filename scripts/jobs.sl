@@ -153,40 +153,40 @@ sub _launch_service {
 	local('$c $key $value');
 
 	if ('SESSION' in $3) {
-		$c = createConsoleTab("$1", 1, $host => sessionToHost($3['SESSION']), $file => "post");
+		$c = createDisplayTab($1, $host => sessionToHost($3['SESSION']), $file => "post");
 	}
 	else if ('RHOST' in $3) {
-		$c = createConsoleTab("$1", 1, $host => $3['RHOST'], $file => $4);
+		$c = createDisplayTab($1, $host => $3['RHOST'], $file => $4);
 	}
 	else {
-		$c = createConsoleTab("$1", 1);
+		$c = createDisplayTab($1, $file => $4);
 	}
 
 	if ($listener) {
-		[$c addSessionListener: $listener];
+		[$c addListener: $listener];
 	}
-
-	[[$c getWindow] setPrompt: "msf > "];
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
-		[$c sendString: "use exploit/multi/handler\n"];	
-		[$c sendString: "set PAYLOAD ". substr($2, 8) . "\n"];
-		[$c sendString: "set ExitOnSession false\n"];
+		[$c addCommand: $null, "use exploit/multi/handler"];	
+		[$c addCommand: $null, "set PAYLOAD ". substr($2, 8)];
+		[$c addCommand: $null, "set ExitOnSession false"];
 	}
 	else {
-		[$c sendString: "use $2\n"];	
+		[$c addCommand: $null, "use $2"];	
 	}
 
 	foreach $key => $value ($3) {
-		[$c sendString: "set $key $value $+ \n"];		
+		[$c addCommand: $null, "set $key $value"];		
 	}
 	
 	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
-		[$c sendString: "exploit -j\n"];
+		[$c addCommand: $null, "exploit -j"];
 	}
 	else {
-		[$c sendString: "run -j\n"];
+		[$c addCommand: $null, "run -j"];
 	}
+
+	[$c start];
 }
 
 #
@@ -404,7 +404,7 @@ sub _launch_dialog {
 				local('$listener');
 				$listener = {
 					local('$temp $file $path');
-					foreach $temp (split("\n", $2)) {
+					foreach $temp (split("\n", $3)) {
 						if ($temp ismatch '... (.*?) stored at (.*)') {
 							($file, $path) = matched();
 							downloadFile($path, saveFile2());
@@ -422,7 +422,7 @@ sub _launch_dialog {
 				local('$listener');
 				$listener = lambda({
 					local('$temp $file $path');
-					foreach $temp (split("\n", $2)) {
+					foreach $temp (split("\n", $3)) {
 						if ($temp ismatch '...\s+Local IP:\s+(http.*)') {
 							elog("launched $command @ " . matched()[0]);
 						}
