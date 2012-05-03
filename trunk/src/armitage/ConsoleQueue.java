@@ -25,6 +25,10 @@ public class ConsoleQueue implements Runnable {
 		public long	start = System.currentTimeMillis();
 	}
 
+	public Console getWindow() {
+		return display;
+	}
+
 	public static interface ConsoleCallback {
 		public void commandComplete(String consoleid, Object token, String response);
 	}
@@ -78,10 +82,13 @@ public class ConsoleQueue implements Runnable {
 
 			/* absorb anything misc */
 			read = readResponse();
-			String prompt = read.get("prompt") + "";
+			String prompt = ConsoleClient.cleanText(read.get("prompt") + "");
 
 			/* write our command to whateverz */
 			connection.execute("console.write", new Object[] { consoleid, writeme.toString() });
+			if (display != null) {
+				display.append(prompt + writeme.toString());
+			}
 
 			/* start collecting output */
 			StringBuffer output = new StringBuffer();
@@ -89,16 +96,11 @@ public class ConsoleQueue implements Runnable {
 			int count = 0;
 			long start = System.currentTimeMillis();
 
-			while ((read = (Map)(connection.execute("console.read", new Object[] { consoleid }))) != null) {
+			while ((read = readResponse()) != null) {
 				String text = null;
 				if (! isEmptyData( read.get("data") + "" )  ) {
 					text = read.get("data") + "";
 					output.append(text);
-
-					if (display != null) {
-						display.append(text);
-					}
-
 					count++;
 				}
 				else if ("false".equals( read.get("busy") + "" ) && isEmptyData( read.get("data") + "" )) {
@@ -187,11 +189,16 @@ public class ConsoleQueue implements Runnable {
 							break;
 						}
 					}
+
+					if (display != null)
+						readResponse();
+
 					Thread.sleep(250);
 				}
 			}
 
 			connection.execute("console.destroy", new Object[] { consoleid });
+			System.err.println("Destroyed: " + consoleid);
 		}
 		catch (Exception ex) {
 			System.err.println("This console appears to be dead! " + consoleid + ", " + ex);
@@ -200,6 +207,10 @@ public class ConsoleQueue implements Runnable {
 	}
 
         private Map readResponse() throws Exception {
-		return (Map)(connection.execute("console.read", new Object[] { consoleid }));
+		Map temp = (Map)(connection.execute("console.read", new Object[] { consoleid }));
+		if (display != null && !isEmptyData(temp.get("data") + "")) {
+			display.append(temp.get("data") + "");
+		}
+		return temp;
         }
 }
