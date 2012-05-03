@@ -141,7 +141,18 @@ sub _connectToMetasploit {
 				return;
 			}
 
-		        $client = [new MsgRpcImpl: $3, $4, $1, long($2), 1, $debug];
+			# connecting locally? go to Metasploit directly...
+			if ($1 eq "127.0.0.1" || $1 eq "::1" || $1 eq "localhost") {
+			        $client = [new MsgRpcImpl: $3, $4, $1, long($2), $null, $debug];
+				$mclient = $client;
+				initReporting();
+			}
+			# we have a team server... connect and authenticate to it.
+			else {
+				$client = c_client($1, $2);
+				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
+				$mclient = setup_collaboration($3, $4, $1, $2);
+			}
 			$flag = $null;
 		}
 		catch $exception {
@@ -194,10 +205,10 @@ sub _connectToMetasploit {
 
 		# ok, now let's continue on with what we're doing...
 		getBindAddress();
-		[$progress setNote: "Connected: Checking for collaboration server"];
+		[$progress setNote: "Connected: ..."];
 		[$progress setProgress: 60];
 
-		checkForCollaborationServer($client);
+                dispatchEvent(&postSetup);
 	}, \$progress));
 }
 

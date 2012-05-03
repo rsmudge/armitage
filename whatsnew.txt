@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Armitage team mode now routes all Metasploit-bound calls through the
+  deconfliction server. This is necessary to prevent triggering a race
+  condition that was introduced with the dependency changes in Metasploit
+  4.3.
+
 17 Apr 12
 ---------
 - Modified how Armitage determines a console command is complete to stay 

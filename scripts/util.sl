@@ -302,7 +302,7 @@ sub startMetasploit {
 			$msfrpc_handle = exec(@("cmd.exe", "/C", getFileProper("msfrpcd.bat")), convertAll([System getenv]));
 		}
 		else {
-			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -t Msg -p $port", convertAll([System getenv]));
+			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -S -p $port", convertAll([System getenv]));
 		}
 
 		# consume bytes so msfrpcd doesn't block when the output buffer is filled
