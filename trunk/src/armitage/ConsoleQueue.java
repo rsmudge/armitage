@@ -165,6 +165,13 @@ public class ConsoleQueue implements Runnable {
 		}
 	}
 
+	public void destroy() {
+		synchronized (this) {
+			destroyCommand = "console.release_and_destroy";
+			stop = true;
+		}
+	}
+
 	protected Command grabCommand() {
 		synchronized (this) {
 			return (Command)commands.pollFirst();
@@ -197,13 +204,15 @@ public class ConsoleQueue implements Runnable {
 				}
 			}
 
-			connection.execute("console.release", new Object[] { consoleid });
+			connection.execute(destroyCommand, new Object[] { consoleid });
 		}
 		catch (Exception ex) {
 			System.err.println("This console appears to be dead! " + consoleid + ", " + ex);
 			return;
 		}
 	}
+
+	private String destroyCommand = "console.release";
 
         private Map readResponse() throws Exception {
 		Map temp = (Map)(connection.execute("console.read", new Object[] { consoleid }));

@@ -24,6 +24,12 @@ public class ConsolePool implements RpcConnection {
 		else if (methodName.equals("console.release")) {
 			release((String)params[0]);
 		}
+		else if (methodName.equals("console.release_and_destroy")) {
+			synchronized (this) {
+				tracked.remove((String)params[0]);
+			}
+			release((String)params[0]);
+		}
 		return new HashMap();
 	}
 
