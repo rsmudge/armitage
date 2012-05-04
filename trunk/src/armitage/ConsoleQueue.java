@@ -51,8 +51,14 @@ public class ConsoleQueue implements Runnable {
 		listeners.add(l);
 	}
 
-	public void setDisplay(Console display) {
+	public void setDisplay(final Console display) {
 		this.display = display;
+		display.getInput().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				display.getInput().setText("");
+				addCommand(null, ev.getActionCommand());
+			}
+		});
 	}
 
 	public void fireEvent(Command command, String output) {
@@ -219,6 +225,12 @@ public class ConsoleQueue implements Runnable {
 		if (display != null && !isEmptyData(temp.get("data") + "")) {
 			display.append(temp.get("data") + "");
 		}
+
+		if (display != null && !isEmptyData(temp.get("prompt") + "")) {
+			String prompt = ConsoleClient.cleanText(temp.get("prompt") + "");
+			display.updatePrompt(prompt);
+		}
+
 		return temp;
         }
 }
