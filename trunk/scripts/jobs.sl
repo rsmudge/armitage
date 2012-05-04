@@ -510,9 +510,11 @@ sub jobs {
 	$jobs = call($client, "job.list");
 	foreach $jid => $desc ($jobs) {
 		$info = call($client, "job.info", $jid);
-		$data = $info["datastore"];
-		if (!-ishash $data) { $data = %(); }
-		push(@r, %(Id => $jid, Name => $info['name'], Payload => $data['PAYLOAD'], Port => $data['LPORT'], Start => rtime($info['start_time']), Data => $data, URL => $info['uripath']));
+		if ($info !is $null) {
+			$data = $info["datastore"];
+			if (!-ishash $data) { $data = %(); }
+			push(@r, %(Id => $jid, Name => $info['name'], Payload => $data['PAYLOAD'], Port => $data['LPORT'], Start => rtime($info['start_time']), Data => $data, URL => $info['uripath']));
+		}
 	}
 	return @r;
 }
@@ -570,6 +572,7 @@ sub createJobsTab {
 			foreach $jid (@jobs) {
 				call($client, "job.stop", $jid);
 			}
+			yield size(@jobs) * 500;
 			[$jobsf];
 		}, \@jobs, \$jobsf));
 	}, \$table, \$model, \$jobsf)];
