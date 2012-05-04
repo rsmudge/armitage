@@ -226,10 +226,11 @@ public class ConsoleQueue implements Runnable {
 			display.append(temp.get("data") + "");
 		}
 
-		if (display != null && !isEmptyData(temp.get("prompt") + "")) {
+		// let's not bother with a prompt for now...
+		/*if (display != null && !isEmptyData(temp.get("prompt") + "")) {
 			String prompt = ConsoleClient.cleanText(temp.get("prompt") + "");
 			display.updatePrompt(prompt);
-		}
+		}*/
 
 		return temp;
         }
