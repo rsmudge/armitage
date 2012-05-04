@@ -75,7 +75,7 @@ sub createDisplayTab {
 	$console = [new Console: $preferences];
 	[$queue setDisplay: $console];
 	logCheck($console, iff($host, $host, "all"), iff($file, $file, strrep($1, " ", "_")));
-	[$frame addTab: $1, $console, lambda({ [$queue stop]; }, \$queue)];
+	[$frame addTab: $1, $console, lambda({ [$queue destroy]; }, \$queue)];
 	return $queue;
 }
 
@@ -211,7 +211,7 @@ sub createNmapFunction {
 			showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets.");
 		}];
 		[$queue start];
-		[$queue stop];
+		[$queue destroy];
 	}, $args => $1);
 }
 
@@ -583,4 +583,5 @@ sub initConsolePool {
 	$pool = [new ConsolePool: $client];
 	[$client addHook: "console.allocate", $pool];
 	[$client addHook: "console.release", $pool];
+	[$client addHook: "console.release_and_destroy", $pool];
 }
