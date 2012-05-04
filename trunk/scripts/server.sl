@@ -287,13 +287,13 @@ sub client {
 
 			writeObject($handle, $response);
 		}
-		else if ($method eq "console.create") {
+		else if ($method eq "console.create" || $method eq "console.allocate") {
 			$response = [$client execute: $method];
 			$data = [$response get: 'id'];
 			%consoles[$data] = 1;
 			writeObject($handle, $response);
 		}
-		else if ($method eq "console.destroy") {
+		else if ($method eq "console.destroy" || $method eq "console.release") {
 			%consoles[$args[0]] = $null;
 			[$client execute_async: $method, cast($args, ^Object)];
 			writeObject($handle, %());
@@ -338,7 +338,7 @@ sub client {
 
 	# cleanup any consoles created by not let go of.
 	foreach $key => $value (%consoles) {
-		[$client execute_async: "console.destroy", cast(@("$key"), ^Object)];
+		[$client execute_async: "console.release", cast(@("$key"), ^Object)];
 	}
 }
 
@@ -387,6 +387,7 @@ sub main {
 		$client = [new MsgRpcImpl: $user, $pass, "127.0.0.1", long($port), $null, $null];
 	}
 	$mclient = $client;
+	initConsolePool(); # this needs to happen... right now.
 
 	# set the LHOST to whatever the user specified
 	call_async($client, "core.setg", "LHOST", $host);

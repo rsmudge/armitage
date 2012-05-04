@@ -145,6 +145,7 @@ sub _connectToMetasploit {
 			if ($1 eq "127.0.0.1" || $1 eq "::1" || $1 eq "localhost") {
 			        $client = [new MsgRpcImpl: $3, $4, $1, long($2), $null, $debug];
 				$mclient = $client;
+				initConsolePool();
 				initReporting();
 			}
 			# we have a team server... connect and authenticate to it.

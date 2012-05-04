@@ -124,7 +124,7 @@ public class ConsoleQueue implements Runnable {
 					break;
 				}
 
-				if (!prompt.equals( read.get("prompt") + "" )) {
+				if (!prompt.equals( ConsoleClient.cleanText(read.get("prompt") + "") )) {
 					/* this is a state change, we'll count it */
 					count++;
 				}
@@ -174,15 +174,8 @@ public class ConsoleQueue implements Runnable {
 	/* keep grabbing commands, acquiring locks, until everything is executed */
 	public void run() {
 		try {
-			Map read = (Map)connection.execute("console.create", new Object[] {});
-			if (read.get("id") != null) {
-				/* swallow the metasploit banner */
-				connection.execute("console.read", new Object[] { read.get("id") + "" });
-				consoleid = read.get("id") + "";
-			}
-			else {
-				return;
-			}
+			Map read = (Map)connection.execute("console.allocate", new Object[] {});
+			consoleid = read.get("id") + "";
 
 			while (true) {
 				Command next = grabCommand();
@@ -204,8 +197,7 @@ public class ConsoleQueue implements Runnable {
 				}
 			}
 
-			connection.execute("console.destroy", new Object[] { consoleid });
-			System.err.println("Destroyed: " + consoleid);
+			connection.execute("console.release", new Object[] { consoleid });
 		}
 		catch (Exception ex) {
 			System.err.println("This console appears to be dead! " + consoleid + ", " + ex);
