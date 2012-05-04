@@ -61,10 +61,12 @@ sub refreshCredsTable {
 		[$model clear: 128];
 		$creds = call($mclient, "db.creds2", [new HashMap])["creds2"];
 		foreach $cred ($creds) {
-			[$model addEntry: $cred];
+			if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
+				[$model addEntry: $cred];
+			}
 		}
 		[$model fireListeners];
-	}, $model => $1));
+	}, $model => $1, $title => $2));
 }
 
 sub show_hashes {
@@ -80,7 +82,7 @@ sub show_hashes {
 	[$sorter setComparator: 2, &compareHosts];
         [$table setRowSorter: $sorter];
 
-	refreshCredsTable($model);
+	refreshCredsTable($model, $1);
 
 	$scroll = [new JScrollPane: $table];
 	[$scroll setPreferredSize: [new Dimension: 480, 130]];
