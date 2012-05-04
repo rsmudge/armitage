@@ -21,6 +21,7 @@ the latest information: http://www.fastandeasyhacking.com/manual#7
 - Armitage now uses (more robust) console queue for launching post
   modules, handlers, brute force attacks, and other things.
 - Fixed a race condition in the Jobs tab refresh after killing a job
+- Armitage now filters smb hashes from non-psexec/smb login dialogs.
 
 17 Apr 12
 ---------
