@@ -432,10 +432,6 @@ sub createDashboard {
 		[new ArmitageTimer: $mclient, "session.list", 2 * 1000L, lambda(&refreshSessions, \$graph), $null];
 	}
 
-	# this call exists to make sure clients are communicating with the metasploit rpc server
-	# before their token expires (they expire after 5 minutes of no activity)
-	[new ArmitageTimer: $client, "session.list", 2 * 60 * 1000L, lambda(&refreshSessions, \$graph), $null];
-
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed P", lambda({
 		local('$location');

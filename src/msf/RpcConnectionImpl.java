@@ -83,10 +83,27 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 		return execute(methodName, new Object[]{});
 	}
 
+	protected HashMap locks = new HashMap();
+
 	/** Adds token, runs command, and notifies logger on call and return */
 	public Object execute(String methodName, Object[] params) throws IOException {
 		if (database != null && "db.".equals(methodName.substring(0, 3))) {
 			return database.execute(methodName, params);
+		}
+		else if (methodName.equals("armitage.lock")) {
+			if (locks.containsKey(params[0] + "")) {
+				Map res = new HashMap();
+				res.put("error", "session already locked\n" + locks.get(params[0] + ""));
+				return res;
+			}
+			else {
+				locks.put(params[0] + "", params[1]);
+			}
+			return new HashMap();
+		}
+		else if (methodName.equals("armitage.unlock")) {
+			locks.remove(params[0] + "");
+			return new HashMap();
 		}
 		else if (hooks.containsKey(methodName)) {
 			RpcConnection con = (RpcConnection)hooks.get(methodName);
@@ -104,7 +121,7 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	/** Caches certain calls and checks cache for re-executing them.
 	 * If not cached or not cacheable, calls exec. */
 	private Object cacheExecute(String methodName, Object[] params) throws IOException {
-		if (methodName.equals("module.info") || methodName.equals("module.options") || methodName.equals("module.compatible_payloads")) {
+		if (methodName.equals("module.info") || methodName.equals("module.options") || methodName.equals("module.compatible_payloads") || methodName.equals("core.version")) {
 			StringBuilder keysb = new StringBuilder(methodName);
 
 			for(int i = 1; i < params.length; i++)

@@ -578,3 +578,9 @@ sub parseTextTable {
 	return @results;
 }
 
+sub initConsolePool {
+	local('$pool');
+	$pool = [new ConsolePool: $client];
+	[$client addHook: "console.allocate", $pool];
+	[$client addHook: "console.release", $pool];
+}
