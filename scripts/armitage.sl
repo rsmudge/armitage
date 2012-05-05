@@ -184,6 +184,9 @@ sub _connectToMetasploit {
 			# connect to the database plz...
 			$database = connectToDatabase();
 			[$client setDatabase: $database];
+
+			# setup our reporting stuff (has to happen *after* base directory)
+			initReporting();
 		}
 		catch $exception {
 			[JOptionPane showMessageDialog: $null, "Could not connect to database.\nClick Help button for troubleshooting help.\n\n" . [$exception getMessage]];
