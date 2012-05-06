@@ -22,6 +22,11 @@ the latest information: http://www.fastandeasyhacking.com/manual#7
   modules, handlers, brute force attacks, and other things.
 - Fixed a race condition in the Jobs tab refresh after killing a job
 - Armitage now filters smb hashes from non-psexec/smb login dialogs.
+- Added armitage.log_data_here.folder setting. This setting lets you
+  specify where Armitage will save its logs, downloaded files, and
+  screenshots. *cough* Some penetration testers like to dump everything
+  to an encrypted volume. *cough*. I apologize it took this long to
+  get this feature in place.
 
 17 Apr 12
 ---------

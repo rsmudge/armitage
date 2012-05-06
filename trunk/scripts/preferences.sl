@@ -152,7 +152,7 @@ sub updatePrefModel {
 	
 	foreach $key => $value (convertAll($preferences)) {
 		($component, $name, $type) = split('\\.', $key);
-		if ($type eq "color" || $type eq "shortcut" || $type eq "font") {
+		if ($type eq "color" || $type eq "shortcut" || $type eq "font" || $type eq "folder") {
 			$type = "$type \u271A";
 		}
 
@@ -209,6 +209,14 @@ sub createPreferencesTab {
 	
 				if ($color !is $null) {
 					[$model setValueAtRow: $row, "value", '#' . substr(formatNumber(uint([$color getRGB]), 10, 16), 2)];
+					[$model fireListeners];
+				}
+			}
+			else if ($type eq "folder") {
+				local('$file');
+				$file = chooseFile($dirsonly => 1);
+				if ($file !is $null) {
+					[$model setValueAtRow: $row, "value", $file];
 					[$model fireListeners];
 				}
 			}
@@ -347,4 +355,20 @@ sub connectToDatabase {
 	}, \$dbstring));
 
 	return $database;
+}
+
+sub dataDirectory {
+	local('$f');
+
+	if ([$preferences getProperty: "armitage.log_data_here.folder", ""] eq "") {
+		[$preferences setProperty: "armitage.log_data_here.folder", getFileProper(systemProperties()["user.home"], ".armitage")];
+		savePreferences();
+	}
+
+	$f = [$preferences getProperty: "armitage.log_data_here.folder"];
+	if (-exists $f && !-canwrite $f) {
+		println("I do not have permission to write to:\n $+ $f");
+	}
+
+	return $f;
 }

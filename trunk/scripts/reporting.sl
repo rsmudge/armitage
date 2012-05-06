@@ -313,7 +313,7 @@ sub _generateArtifacts {
 	[$progress setProgress: 100];
 	[$progress close];
 
-	return getFileProper(systemProperties()["user.home"], ".armitage", formatDate("yyMMdd"), "artifacts");
+	return getFileProper(dataDirectory(), formatDate("yyMMdd"), "artifacts");
 }
 
 #
