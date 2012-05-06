@@ -121,8 +121,7 @@ sub getFileContent {
 sub downloadDirectory {
 	if ($client is $mclient) {
 		local('@dirs $start $dir');
-		$start = systemProperties()["user.home"];
-		push(@dirs, ".armitage");
+		$start = dataDirectory();
 		push(@dirs, "downloads");
 		addAll(@dirs, @_);
 	
