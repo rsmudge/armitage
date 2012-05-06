@@ -163,7 +163,7 @@ sub _launch_service {
 	}
 
 	if ($listener) {
-		[$c addListener: $listener];
+		[$c addSessionListener: $listener];
 	}
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
