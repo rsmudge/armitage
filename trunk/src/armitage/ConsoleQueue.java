@@ -15,6 +15,7 @@ import java.security.*;
 public class ConsoleQueue implements Runnable {
 	protected RpcConnection connection;
 	protected LinkedList    listeners = new LinkedList();
+	protected LinkedList    listeners_all = new LinkedList();
 	protected LinkedList    commands  = new LinkedList();
 	protected String        consoleid   = null;
 	protected Console display = null;
@@ -51,6 +52,10 @@ public class ConsoleQueue implements Runnable {
 		listeners.add(l);
 	}
 
+	public void addSessionListener(ConsoleCallback l) {
+		listeners_all.add(l);
+	}
+
 	public void setDisplay(final Console display) {
 		this.display = display;
 		display.getInput().addActionListener(new ActionListener() {
@@ -59,6 +64,13 @@ public class ConsoleQueue implements Runnable {
 				addCommand(null, ev.getActionCommand());
 			}
 		});
+	}
+
+	public void fireSessionReadEvent(String text) {
+		Iterator i = listeners_all.iterator();
+		while (i.hasNext()) {
+			((ConsoleCallback)i.next()).commandComplete(consoleid, null, text);
+		}
 	}
 
 	public void fireEvent(Command command, String output) {
@@ -224,6 +236,7 @@ public class ConsoleQueue implements Runnable {
 		Map temp = (Map)(connection.execute("console.read", new Object[] { consoleid }));
 		if (display != null && !isEmptyData(temp.get("data") + "")) {
 			display.append(temp.get("data") + "");
+			fireSessionReadEvent(temp.get("data") + "");
 		}
 
 		if (display != null && !isEmptyData(temp.get("prompt") + "")) {
