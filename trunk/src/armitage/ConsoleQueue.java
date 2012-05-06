@@ -220,7 +220,7 @@ public class ConsoleQueue implements Runnable {
 					if (display != null)
 						readResponse();
 
-					Thread.sleep(250);
+					Thread.sleep(1000);
 				}
 			}
 
