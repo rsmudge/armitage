@@ -50,10 +50,10 @@ public class ConsolePool implements RpcConnection {
 				/* this is a sanity check to make sure this console is not dead or hung */
 				if ("true".equals(temp.get("busy")) || "".equals(temp.get("prompt"))) {
 					((RpcAsync)client).execute_async("console.destroy", new Object[] { rv.get("id") + "" });
-					System.err.println("Kill Console: " + rv.get("id") + " => " + temp);
+					//System.err.println("Kill Console: " + rv.get("id") + " => " + temp);
 				}
 				else {
-					System.err.println("Reusing: " + rv.get("id"));
+					//System.err.println("Reusing: " + rv.get("id"));
 					return rv;
 				}
 			}
@@ -72,7 +72,7 @@ public class ConsolePool implements RpcConnection {
 		/* swallow the banner... making sure this is done will be part of the
 		   contract of the console pool */
 		client.execute("console.read", new Object[] { result.get("id") });
-		System.err.println("New console: " + result);
+		//System.err.println("New console: " + result);
 		return result;
 	}
 
@@ -88,12 +88,12 @@ public class ConsolePool implements RpcConnection {
 			synchronized (this) {
 				HashMap rv = new HashMap();
 				rv.put("id", id);
-				System.err.println("Added: " + rv + " to pool");
+				//System.err.println("Added: " + rv + " to pool");
 				inactive.add(rv);
 			}
 		}
 		else {
-			System.err.println("Destroyed: " + id);
+			//System.err.println("Destroyed: " + id);
 			client.execute("console.destroy", new Object[] { id });
 		}
 	}
