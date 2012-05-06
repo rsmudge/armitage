@@ -109,11 +109,13 @@ public class ConsoleQueue implements Runnable {
 			read = readResponse();
 			String prompt = ConsoleClient.cleanText(read.get("prompt") + "");
 
-			/* write our command to whateverz */
-			connection.execute("console.write", new Object[] { consoleid, writeme.toString() });
+			/* print ze command y0 */
 			if (display != null) {
 				display.append(prompt + writeme.toString());
 			}
+
+			/* write our command to whateverz */
+			connection.execute("console.write", new Object[] { consoleid, writeme.toString() });
 
 			/* start collecting output */
 			StringBuffer output = new StringBuffer();
@@ -233,6 +235,7 @@ public class ConsoleQueue implements Runnable {
 	private String destroyCommand = "console.release";
 
         private Map readResponse() throws Exception {
+		Thread.yield();
 		Map temp = (Map)(connection.execute("console.read", new Object[] { consoleid }));
 		if (display != null && !isEmptyData(temp.get("data") + "")) {
 			display.append(temp.get("data") + "");
