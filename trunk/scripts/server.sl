@@ -298,6 +298,10 @@ sub client {
 			[$client execute_async: $method, cast($args, ^Object)];
 			writeObject($handle, %());
 		}
+		else if ($method eq "module.execute" && $args[0] eq "payload") {
+			$response = [$client execute: $method, cast($args, ^Object)];
+			writeObject($handle, $response);
+		}
 		else if ($method in %async) {
 			if ($args) {
 				[$client execute_async: $method, cast($args, ^Object)];

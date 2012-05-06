@@ -180,10 +180,10 @@ sub _launch_service {
 	}
 	
 	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
-		[$c addCommand: $null, "exploit -j"];
+		[$c addCommand: "x", "exploit -j"];
 	}
 	else {
-		[$c addCommand: $null, "run -j"];
+		[$c addCommand: "x", "run -j"];
 	}
 
 	[$c start];
