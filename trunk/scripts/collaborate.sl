@@ -26,15 +26,16 @@ sub createEventLogTab {
 
 sub c_client {
 	# run this thing in its own thread to avoid really stupid deadlock situations
+	local('$handle');
+	$handle = connect($1, $2, 5000);
 	return wait(fork({
-		local('$handle $client');
-		$handle = connect($host, $port, 5000);
+		local('$client');
 		$client = newInstance(^RpcConnection, lambda({
 			writeObject($handle, @_);
 			return readObject($handle);
 		}, \$handle));
 		return [new RpcAsync: $client];
-	}, $host => $1, $port => $2));
+	}, \$handle));
 }
 
 sub userFingerprint {
