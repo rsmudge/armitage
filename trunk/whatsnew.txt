@@ -27,6 +27,7 @@ the latest information: http://www.fastandeasyhacking.com/manual#7
   screenshots. *cough* Some penetration testers like to dump everything
   to an encrypted volume. *cough*. I apologize it took this long to
   get this feature in place.
+- Improved perceived responsiveness of a console interaction
 
 17 Apr 12
 ---------
