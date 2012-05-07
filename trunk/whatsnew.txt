@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+7 May 12
+--------
 Note: Armitage team server setup has changed. Refer to the manual for
 the latest information: http://www.fastandeasyhacking.com/manual#7
 
