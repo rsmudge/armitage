@@ -7,7 +7,7 @@ EXPECTED=2
 if [ $# -ne $EXPECTED ]; then
 	echo "[-] You must provide: <external IP address> <team password>"
 	echo "    <external IP address> must be reachable by Armitage"
-	echo "          clients on port 55553 and 55554"
+	echo "          clients on port 55553"
 	echo "    <team password> is a shared password your team uses to"
 	echo "          authenticate to the Armitage team server"
 	exit
@@ -46,8 +46,8 @@ fi
 
 # start everything up
 echo "[+] Starting RPC daemon"
-msfrpcd -U msf -P $2
+msfrpcd -U msf -P $2 -a 127.0.0.1 -p 55554 -S
 echo "[+] sleeping for 20s (to let msfrpcd initialize)"
 sleep 20
 echo "[+] Starting Armitage team server"
-java -server -XX:+UseParallelGC -jar armitage.jar --server $1 55553 msf $2
+java -server -XX:+UseParallelGC -jar armitage.jar --server $1 55554 msf $2 55553
