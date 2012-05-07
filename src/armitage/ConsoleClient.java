@@ -137,17 +137,13 @@ public class ConsoleClient implements Runnable, ActionListener {
 		Map read = null;
 
 		try {
-			Map response = (Map)connection.execute(writeCommand, new Object[] { session, text });
-
 			synchronized (this) {
 				if (window != null && echo) {
 					window.append(window.getPromptText() + text);
-					if (! "".equals( response.get("prompt") )) {
-						window.updatePrompt(cleanText(response.get("prompt") + ""));
-					}
 				}
 			}
 
+			connection.execute(writeCommand, new Object[] { session, text });
 			read = readResponse();
 			processRead(read);
 
@@ -243,10 +239,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 
 				processRead(read);
 
-				if (readCommand.equals("armitage.poll")) {
-					Thread.sleep(1000);
-				}
-				else if ((System.currentTimeMillis() - lastRead) <= 500) {
+				if ((System.currentTimeMillis() - lastRead) <= 500) {
 					Thread.sleep(10);
 				}
 				else {
