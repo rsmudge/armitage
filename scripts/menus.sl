@@ -237,6 +237,7 @@ sub init_menus {
 	[$frame bindKey: "Ctrl+N", { thread(&createConsoleTab); }];
 	[$frame bindKey: "Ctrl+D", { [$frame closeActiveTab]; }];
 	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
+	setupWorkspaceShortcuts(workspaces());
 
 	cmd_safe("show exploits", {
 		local('$line $os $type $id $rank $name $k $date $exploit');
