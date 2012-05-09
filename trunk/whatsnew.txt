@@ -5,7 +5,8 @@ In Progress
 --------
 - Oopserific--dynamic workspace shortcuts were not bound until you
   clicked the Workspaces menu. I fixed that.
-- Improved console pool's ability to detect a dead console.
+- Improved console pool's ability to detect a dead console. If you saw
+  "null" prompts in an open tab, it's because of a dead console. Fixed
 - Bound Ctrl+Backspace to reset dynamic workspaces. Ctrl+0 is now back
   to what it originally did (resetting the font size to default).
 
