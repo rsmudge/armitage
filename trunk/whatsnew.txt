@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+- Oopserific--dynamic workspace shortcuts were not bound until you
+  clicked the Workspaces menu. I fixed that.
+
 7 May 12
 --------
 Note: Armitage team server setup has changed. Refer to the manual for
