@@ -117,6 +117,24 @@ public class ArmitageApplication extends JFrame {
 		}
 	}
 
+	public void openActiveTab() {
+		JComponent tab = (JComponent)tabs.getSelectedComponent();
+		if (tab != null) {
+			popAppTab(tab);
+		}
+	}
+
+	public void snapActiveTab() {
+		JComponent tab = (JComponent)tabs.getSelectedComponent();
+		Iterator i = apptabs.iterator();
+		while (i.hasNext()) {
+			ApplicationTab t = (ApplicationTab)i.next();
+			if (t.component == tab) {
+				snapAppTab(t.title, tab);
+			}
+		}
+	}
+
 	public void addAppTab(String title, JComponent component, ActionListener removeListener) {
 		ApplicationTab t = new ApplicationTab();
 		t.title = title;
@@ -148,6 +166,18 @@ public class ArmitageApplication extends JFrame {
 					}
 				});
 			}
+		}
+	}
+
+	public void snapAppTab(String title, Component tab) {
+		/* capture the current tab in an image */
+		BufferedImage image = new BufferedImage(tab.getWidth(), tab.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics g = image.getGraphics();
+		tab.paint(g);
+		g.dispose();
+
+		if (screens != null) {
+			screens.saveScreenshot(image, title);
 		}
 	}
 
@@ -218,15 +248,7 @@ public class ArmitageApplication extends JFrame {
 					JMenuItem c = new JMenuItem("Save screenshot", 'S');
 					c.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent ev) {
-							/* capture the current tab in an image */
-							BufferedImage image = new BufferedImage(tab.getWidth(), tab.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-							Graphics g = image.getGraphics();
-							tab.paint(g);
-							g.dispose();
-
-							if (screens != null) {
-								screens.saveScreenshot(image, title);
-							}
+							snapAppTab(title, tab);
 						}
 					});
 
