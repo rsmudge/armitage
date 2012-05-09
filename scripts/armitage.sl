@@ -179,7 +179,7 @@ sub _connectToMetasploit {
 			# create a console to force the database to initialize
 			local('$c');
 			$c = createConsole($client);
-			call($client, "console.destroy", $c);
+			call_async($client, "console.destroy", $c);
 
 			# connect to the database plz...
 			$database = connectToDatabase();
