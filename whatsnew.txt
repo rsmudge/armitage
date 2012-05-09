@@ -9,6 +9,8 @@ In Progress
   "null" prompts in an open tab, it's because of a dead console. Fixed
 - Bound Ctrl+Backspace to reset dynamic workspaces. Ctrl+0 is now back
   to what it originally did (resetting the font size to default).
+- Added Ctrl+T to take a screenshot of the active tab
+- Added Ctrl+W to pop the active tab into its own window
 
 7 May 12
 --------

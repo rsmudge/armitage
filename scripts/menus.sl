@@ -235,8 +235,10 @@ sub init_menus {
 
 	# setup some global keyboard shortcuts...
 	[$frame bindKey: "Ctrl+N", { thread(&createConsoleTab); }];
+	[$frame bindKey: "Ctrl+W", { [$frame openActiveTab]; }];
 	[$frame bindKey: "Ctrl+D", { [$frame closeActiveTab]; }];
 	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
+	[$frame bindKey: "Ctrl+T", { [$frame snapActiveTab]; }];
 	setupWorkspaceShortcuts(workspaces());
 
 	cmd_safe("show exploits", {
