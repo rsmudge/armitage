@@ -231,4 +231,6 @@ sub setupWorkspaceShortcuts {
 			set_workspace($name);
 		}, \$name)];
 	}
+
+	[$frame bindKey: "Ctrl+Backspace", &reset_workspace];
 }
