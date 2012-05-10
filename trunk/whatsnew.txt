@@ -11,6 +11,11 @@ In Progress
   to what it originally did (resetting the font size to default).
 - Added Ctrl+T to take a screenshot of the active tab
 - Added Ctrl+W to pop the active tab into its own window
+- Armitage team server is now SSL enabled. The teamserver script (you
+  are using it, right?) generates a certificate for you using keytool.
+  The server presents the SHA1 hash of its certificate. Armitage users
+  have the opportunity to verify and trust the hash of the certificate
+  presented to them or to reject it and not connect.
 
 7 May 12
 --------

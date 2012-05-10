@@ -101,6 +101,9 @@ sub connectToMetasploit {
 sub _connectToMetasploit {
 	global('$database $client $mclient $console @exploits @auxiliary @payloads @post');
 
+	# reset rejected fingerprints
+	let(&verify_server, %rejected => %());
+
 	# update preferences
 
 	local('%props $property $value $flag $exception');
