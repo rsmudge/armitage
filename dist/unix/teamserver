@@ -61,7 +61,7 @@ fi
 	# is printed so users may have a chance to verify they're not being owned.
 echo "[+] Generating X509 certificate and keystore (for SSL)"
 rm -f ./armitage.store
-keytool -keystore ./armitage.store -storepass 123456 -keypass 123456 -genkey -keyalg RSA -alias armitage -dname "CN=Armitage Hacker, OU=FastAndEasyHacking, O=Armitage, L=Somewhere, S=Cyberspace, C=Earth" -v
+keytool -keystore ./armitage.store -storepass 123456 -keypass 123456 -genkey -keyalg RSA -alias armitage -dname "CN=Armitage Hacker, OU=FastAndEasyHacking, O=Armitage, L=Somewhere, S=Cyberspace, C=Earth"
 
 # start everything up
 echo "[+] Starting RPC daemon"

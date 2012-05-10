@@ -19,6 +19,11 @@ import java.util.*;
 /* taken from jIRCii, I developed it, so I get to do what I want ;) */
 public class SecureServerSocket {
 	protected ServerSocket server;
+	protected String last = "";
+
+	public String last() {
+		return last;
+	}
 
 	public IOObject accept() {
 		try {
@@ -26,6 +31,7 @@ public class SecureServerSocket {
 			IOObject temp = new IOObject();
 			temp.openRead(client.getInputStream());
 			temp.openWrite(client.getOutputStream());
+			last = client.getInetAddress().getHostAddress();
 			return temp;
 		}
 		catch (Exception ex) {
