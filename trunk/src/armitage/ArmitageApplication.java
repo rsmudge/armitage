@@ -72,6 +72,19 @@ public class ArmitageApplication extends JFrame {
 		split.revalidate();
 	}
 
+	public void nextTab() {
+		tabs.setSelectedIndex((tabs.getSelectedIndex() + 1) % tabs.getTabCount());
+	}
+
+	public void previousTab() {
+		if (tabs.getSelectedIndex() == 0) {
+			tabs.setSelectedIndex(tabs.getTabCount() - 1);
+		}
+		else {
+			tabs.setSelectedIndex((tabs.getSelectedIndex() - 1) % tabs.getTabCount());
+		}
+	}
+
 	public void addTab(final String title, final JComponent tab, final ActionListener removeListener) {
 		if (SwingUtilities.isEventDispatchThread()) {
 			_addTab(title, tab, removeListener, null);
