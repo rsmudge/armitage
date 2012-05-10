@@ -17,6 +17,8 @@ In Progress
   have the opportunity to verify and trust the hash of the certificate
   presented to them or to reject it and not connect.
 - Added Ctrl+Left / Ctrl+Right to quickly navigate through tabs.
+- Added a check to prevent clients from connecting to msfrpcd directly
+  when teaming is enabled.
 
 7 May 12
 --------
