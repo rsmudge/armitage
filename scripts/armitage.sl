@@ -215,7 +215,11 @@ sub _connectToMetasploit {
 		[$progress setNote: "Connected: ..."];
 		[$progress setProgress: 60];
 
-                dispatchEvent(&postSetup);
+		if (!$REMOTE && %MSF_GLOBAL['ARMITAGE_TEAM'] eq '1') {
+			showErrorAndQuit("Do not connect to 127.0.0.1 when\nrunning a team server.");
+		}
+
+		dispatchEvent(&postSetup);
 	}, \$progress));
 }
 

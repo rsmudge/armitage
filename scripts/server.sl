@@ -397,6 +397,9 @@ sub main {
 	# set the LHOST to whatever the user specified
 	call_async($client, "core.setg", "LHOST", $host);
 
+	# make sure clients know a team server is present. can't happen async.
+	call($client, "core.setg", "ARMITAGE_TEAM", '1');
+
 	#
 	# setup the client cache
 	#
