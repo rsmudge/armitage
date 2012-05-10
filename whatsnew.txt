@@ -16,6 +16,7 @@ In Progress
   The server presents the SHA1 hash of its certificate. Armitage users
   have the opportunity to verify and trust the hash of the certificate
   presented to them or to reject it and not connect.
+- Added Ctrl+Left / Ctrl+Right to quickly navigate through tabs.
 
 7 May 12
 --------
