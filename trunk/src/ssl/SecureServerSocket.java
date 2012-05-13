@@ -32,6 +32,7 @@ public class SecureServerSocket {
 			temp.openRead(client.getInputStream());
 			temp.openWrite(client.getOutputStream());
 			last = client.getInetAddress().getHostAddress();
+			client.setSoTimeout(0);
 			return temp;
 		}
 		catch (Exception ex) {
