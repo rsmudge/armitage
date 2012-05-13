@@ -80,13 +80,13 @@ sub _postLoot {
 #
 # $host $+ : $name 
 #
-", [Color green]];
+", "3", "#00ff00"];
 
 	if ("*binary*" iswm $type) {
-		[$2 append: "This is a binary file\n", [Color red]];
+		[$2 append: "This is a binary file\n", "4", "#ff0000"];
 	}
 	else {
-		[$2 append: getFileContent($location), $null];
+		[$2 append: getFileContent($location), $null, $null];
 	}
 }
 
