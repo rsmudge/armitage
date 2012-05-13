@@ -155,6 +155,12 @@ public class Display extends JPanel {
 		setupFindShortcutFeature();
 		setupPageShortcutFeature();
 		setupFontShortcutFeature();
+
+		/* work-around for Nimbus L&F */
+		console.setBackground(new Color(0,0,0,0));
+		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
+		scroll.getViewport().setBackground(background);
+		console.setOpaque(false);
 	}
 
 	private void setupFindShortcutFeature() {
