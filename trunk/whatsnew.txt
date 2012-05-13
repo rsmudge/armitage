@@ -21,6 +21,13 @@ In Progress
   when teaming is enabled.
 - Fixed a bug that prevented command shells from opening on some sessions
 - Team server client now caches certain calls to RPC server.
+- Reworked the Loot/Downloads View button. Now, all highlighted files are
+  displayed in one View tab. This makes searching easier. Each file is
+  displayed with a colored header (to make it easier to tell when one file
+  ends and the other begins). 
+- Added Sync Files button to Loot/Downloads tabs when connected to a team
+  server. This button will download all files associated with the highlighted
+  rows and save them in the Armitage data directory.
 
 7 May 12
 --------
