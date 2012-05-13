@@ -32,6 +32,7 @@ public class SecureSocket {
 			IOObject temp = new IOObject();
 			temp.openRead(socket.getInputStream());
 			temp.openWrite(socket.getOutputStream());
+			socket.setSoTimeout(0);
 			return temp;
 		}
 		catch (Exception ex) {
