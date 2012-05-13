@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+14 May 12
+---------
 - Oopserific--dynamic workspace shortcuts were not bound until you
   clicked the Workspaces menu. I fixed that.
 - Improved console pool's ability to detect a dead console. If you saw
