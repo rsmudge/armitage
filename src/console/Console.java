@@ -16,7 +16,7 @@ import armitage.Activity;
 
 /** A generic multi-feature console for use in the Armitage network attack tool */
 public class Console extends JPanel implements FocusListener {
-	protected JTextArea  console;
+	protected JTextPane  console;
 	protected JTextField input;
 	protected JLabel     prompt;
 
@@ -146,7 +146,10 @@ public class Console extends JPanel implements FocusListener {
 		while (i.hasNext()) {
 			JComponent component = (JComponent)i.next();
 			component.setForeground(foreground);
-			component.setBackground(background);
+			if (component == console)
+				component.setOpaque(false);
+			else
+				component.setBackground(background);
 			component.setFont(consoleFont);
 
 			if (component == console || component == prompt) {
@@ -199,12 +202,12 @@ public class Console extends JPanel implements FocusListener {
 	protected void appendToConsole(String _text) {
 		if (_text.endsWith("\n") || _text.endsWith("\r")) {
 			if (!promptLock) {
-				console.append(_text);
+				Colors.append(console, _text);
 				if (log != null)
 					log.print(_text);
 			}
 			else {
-				console.append(prompt.getText());
+				Colors.append(console, prompt.getText());
 			}
 
 			if (!_text.startsWith(prompt.getText()))
@@ -214,7 +217,7 @@ public class Console extends JPanel implements FocusListener {
 			int breakp = _text.lastIndexOf("\n");
 
 			if (breakp != -1) {
-				console.append(_text.substring(0, breakp + 1));
+				Colors.append(console, _text.substring(0, breakp + 1));
 				prompt.setText(_text.substring(breakp + 1) + " ");
 				if (log != null)
 					log.print(_text.substring(0, breakp + 1));
@@ -224,7 +227,6 @@ public class Console extends JPanel implements FocusListener {
 			}
 			promptLock = true;
 		}
-
 
 		if (console.getDocument().getLength() >= 1) {
 			console.setCaretPosition(console.getDocument().getLength() - 1);
@@ -276,9 +278,9 @@ public class Console extends JPanel implements FocusListener {
 
 		/* init the console */
 
-		console = new JTextArea();
+		console = new JTextPane();
 		console.setEditable(false);
-		console.setLineWrap(true);
+		//console.setLineWrap(true);
 		console.addFocusListener(this);
 
 		JScrollPane scroll = new JScrollPane(
@@ -373,6 +375,12 @@ public class Console extends JPanel implements FocusListener {
 		/* setup our word click listener */
 		clickl = new ClickListener(this);
 		console.addMouseListener(clickl);
+
+		/* work-around for Nimbus L&F */
+		console.setBackground(new Color(0,0,0,0));
+		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
+		scroll.getViewport().setBackground(background);
+		console.setOpaque(false);
 	}
 
 	public JPopupMenu getPopupMenu(final JTextComponent _component) {
