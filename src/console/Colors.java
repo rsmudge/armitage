@@ -61,6 +61,11 @@ public class Colors {
 		}
 	}
 
+	public static void set(JTextPane console, String text) {
+		console.setText("");
+		append(console, text);
+	}
+
 	private static Fragment parse(String text) {
 		Fragment current = new Fragment();
 		Fragment first = current;

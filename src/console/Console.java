@@ -18,7 +18,7 @@ import armitage.Activity;
 public class Console extends JPanel implements FocusListener {
 	protected JTextPane  console;
 	protected JTextField input;
-	protected JLabel     prompt;
+	protected JTextPane  prompt;
 
 	protected PrintStream log = null;
 
@@ -146,7 +146,7 @@ public class Console extends JPanel implements FocusListener {
 		while (i.hasNext()) {
 			JComponent component = (JComponent)i.next();
 			component.setForeground(foreground);
-			if (component == console)
+			if (component == console || component == prompt)
 				component.setOpaque(false);
 			else
 				component.setBackground(background);
@@ -176,11 +176,11 @@ public class Console extends JPanel implements FocusListener {
 	public void setPrompt(String text) {
 		String bad = "\ufffd\ufffd";
 		if (text.equals(bad) || text.equals("null")) {
-			prompt.setText(defaultPrompt);
+			Colors.set(prompt, defaultPrompt);
 		}
 		else {
 			defaultPrompt = text;
-			prompt.setText(text);
+			Colors.set(prompt, text);
 		}
 	}
 
@@ -218,12 +218,12 @@ public class Console extends JPanel implements FocusListener {
 
 			if (breakp != -1) {
 				Colors.append(console, _text.substring(0, breakp + 1));
-				prompt.setText(_text.substring(breakp + 1) + " ");
+				Colors.set(prompt, _text.substring(breakp + 1) + " ");
 				if (log != null)
 					log.print(_text.substring(0, breakp + 1));
 			}
 			else {
-				prompt.setText(_text);
+				Colors.set(prompt, _text);
 			}
 			promptLock = true;
 		}
@@ -292,7 +292,8 @@ public class Console extends JPanel implements FocusListener {
 
 		/* init the prompt */
 		
-		prompt = new JLabel();
+		prompt = new JTextPane();
+		prompt.setEditable(false);
 
 		/* init the input */
 
@@ -377,8 +378,9 @@ public class Console extends JPanel implements FocusListener {
 		console.addMouseListener(clickl);
 
 		/* work-around for Nimbus L&F */
-		console.setBackground(new Color(0,0,0,0));
 		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
+		console.setBackground(new Color(0,0,0,0));
+		prompt.setBackground(new Color(0,0,0,0));
 		scroll.getViewport().setBackground(background);
 		console.setOpaque(false);
 	}
