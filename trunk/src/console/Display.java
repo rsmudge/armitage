@@ -27,8 +27,11 @@ public class Display extends JPanel {
 		Iterator i = components.iterator();
 		while (i.hasNext()) {
 			JComponent component = (JComponent)i.next();
+                        if (component == console)
+                                component.setOpaque(false);
+                        else
+                                component.setBackground(background);
 			component.setForeground(foreground);
-			component.setBackground(background);
 			component.setFont(consoleFont);
 
 			if (component == console) {

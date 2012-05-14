@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+----------
+- Fixed bug with loot/download viewer breaking with a font resize.
+
 14 May 12
 ---------
 - Oopserific--dynamic workspace shortcuts were not bound until you
