@@ -46,6 +46,17 @@ public class Colors {
 		colorTable[16] = new Color(255, 255, 255);
 	}
 
+	/* strip format codes from the text */
+	public static String strip(String text) {
+		StringBuffer buffer = new StringBuffer(text.length());
+		Fragment f = parse(text);
+		while (f != null) {
+			buffer.append(f.text);
+			f = f.next;
+		}
+		return buffer.toString();
+	}
+
 	public static void append(JTextPane console, String text) {
 		StyledDocument doc = console.getStyledDocument();
 		Fragment f = parse(text);
