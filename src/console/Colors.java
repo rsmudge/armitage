@@ -27,7 +27,7 @@ public class Colors {
 
 	public static Color colorTable[] = new Color[17];
 	static {
-		colorTable[0] = Color.lightGray;
+		colorTable[0] = Color.white;
 		colorTable[1] = new Color(0, 0, 0);
 		colorTable[2] = new Color(0, 0, 128);
 		colorTable[3] = new Color(0, 144, 0);
