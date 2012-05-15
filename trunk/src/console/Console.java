@@ -25,6 +25,7 @@ public class Console extends JPanel implements FocusListener {
 
 	protected Properties display;
 	protected Font       consoleFont;
+	protected Colors     colors;
 
 	protected ClickListener clickl;
 
@@ -140,6 +141,8 @@ public class Console extends JPanel implements FocusListener {
 	}
 
 	private void updateComponentLooks() {
+		colors = new Colors(display);
+
 		Color foreground = Color.decode(display.getProperty("console.foreground.color", "#ffffff"));
 		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
 
@@ -177,11 +180,11 @@ public class Console extends JPanel implements FocusListener {
 	public void setPrompt(String text) {
 		String bad = "\ufffd\ufffd";
 		if (text.equals(bad) || text.equals("null")) {
-			Colors.set(prompt, defaultPrompt);
+			colors.set(prompt, defaultPrompt);
 		}
 		else {
 			defaultPrompt = text;
-			Colors.set(prompt, fixText(text));
+			colors.set(prompt, fixText(text));
 		}
 	}
 
@@ -252,12 +255,12 @@ public class Console extends JPanel implements FocusListener {
 
 		if (_text.endsWith("\n") || _text.endsWith("\r")) {
 			if (!promptLock) {
-				Colors.append(console, _text);
+				colors.append(console, _text);
 				if (log != null)
-					log.print(Colors.strip(_text));
+					log.print(colors.strip(_text));
 			}
 			else {
-				Colors.append(console, prompt.getText());
+				colors.append(console, prompt.getText());
 			}
 
 			if (!_text.startsWith(prompt.getText()))
@@ -267,13 +270,13 @@ public class Console extends JPanel implements FocusListener {
 			int breakp = _text.lastIndexOf("\n");
 
 			if (breakp != -1) {
-				Colors.append(console, _text.substring(0, breakp + 1));
-				Colors.set(prompt, _text.substring(breakp + 1) + " ");
+				colors.append(console, _text.substring(0, breakp + 1));
+				colors.set(prompt, _text.substring(breakp + 1) + " ");
 				if (log != null)
-					log.print(Colors.strip(_text.substring(0, breakp + 1)));
+					log.print(colors.strip(_text.substring(0, breakp + 1)));
 			}
 			else {
-				Colors.set(prompt, _text);
+				colors.set(prompt, _text);
 			}
 			promptLock = true;
 		}

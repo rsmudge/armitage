@@ -25,8 +25,8 @@ public class Colors {
 		}
 	}
 
-	public static Color colorTable[] = new Color[17];
-	static {
+	public Colors(java.util.Properties prefs) {
+		colorTable = new Color[16];
 		colorTable[0] = Color.white;
 		colorTable[1] = new Color(0, 0, 0);
 		colorTable[2] = new Color(0, 0, 128);
@@ -43,11 +43,20 @@ public class Colors {
 		colorTable[13] = new Color(255, 0, 255);
 		colorTable[14] = new Color(128, 128, 128);
 		colorTable[15] = Color.lightGray;
-		colorTable[16] = new Color(255, 255, 255);
+
+		for (int x = 0; x < 16; x++) {
+			String temps = prefs.getProperty("console.color_" + x + ".color", null);
+			//System.err.println("console.color_" + x + ".color=\\#" + Integer.toHexString(colorTable[x].getRGB()).substring(2));
+			if (temps != null) {
+				colorTable[x] = Color.decode(temps);
+			}
+		}
 	}
 
+	protected Color colorTable[];
+
 	/* strip format codes from the text */
-	public static String strip(String text) {
+	public String strip(String text) {
 		StringBuffer buffer = new StringBuffer(text.length());
 		Fragment f = parse(text);
 		while (f != null) {
@@ -57,7 +66,7 @@ public class Colors {
 		return buffer.toString();
 	}
 
-	public static void append(JTextPane console, String text) {
+	public void append(JTextPane console, String text) {
 		StyledDocument doc = console.getStyledDocument();
 		Fragment f = parse(text);
 		while (f != null) {
@@ -72,12 +81,12 @@ public class Colors {
 		}
 	}
 
-	public static void set(JTextPane console, String text) {
+	public void set(JTextPane console, String text) {
 		console.setText("");
 		append(console, text);
 	}
 
-	private static Fragment parse(String text) {
+	private Fragment parse(String text) {
 		Fragment current = new Fragment();
 		Fragment first = current;
 		char[] data = text.toCharArray();
