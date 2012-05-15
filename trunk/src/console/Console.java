@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.io.PrintStream;
 
 import java.util.*;
+import java.util.regex.*;
 
 import armitage.Activity;
 
@@ -200,11 +201,11 @@ public class Console extends JPanel implements FocusListener {
 	}
 
 	private static class Replacements {
-		public String original;
+		public Pattern original;
 		public String replacer;
 
 		public Replacements(String o, String r) {
-			original = o;
+			original = Pattern.compile(o);
 			replacer = r;
 		}
 	}
@@ -239,7 +240,7 @@ public class Console extends JPanel implements FocusListener {
 			String temp = lines[x];
 			for (int y = 0; y < colorme.length; y++) {
 				if (colorme[y] != null)
-					temp = temp.replaceFirst(colorme[y].original, colorme[y].replacer);
+					temp = colorme[y].original.matcher(temp).replaceFirst(colorme[y].replacer);
 			}
 			result.append(temp);
 		}
