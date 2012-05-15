@@ -25,6 +25,8 @@ public class Colors {
 		}
 	}
 
+	protected boolean showcolors = true;
+
 	public Colors(java.util.Properties prefs) {
 		colorTable = new Color[16];
 		colorTable[0] = Color.white;
@@ -51,6 +53,9 @@ public class Colors {
 				colorTable[x] = Color.decode(temps);
 			}
 		}
+
+		/* do we want to show colors or automatically strip all of them? */
+		showcolors = "true".equals(prefs.getProperty("console.show_colors.boolean", "true"));
 	}
 
 	protected Color colorTable[];
@@ -72,7 +77,7 @@ public class Colors {
 		while (f != null) {
 			try {
 				if (f.text.length() > 0)
-					doc.insertString(doc.getLength(), f.text.toString(), f.attr);
+					doc.insertString(doc.getLength(), f.text.toString(), showcolors ? f.attr : null);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
