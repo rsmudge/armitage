@@ -4,6 +4,9 @@ Armitage Changelog
 In Progress
 ----------
 - Fixed bug with loot/download viewer breaking with a font resize.
+- Default console font color is now grey. I never noticed that I had
+  white text on a black background before. That's a lot of contrast.
+  This is adjustable too through Armitage -> Preferences.
 
 14 May 12
 ---------
