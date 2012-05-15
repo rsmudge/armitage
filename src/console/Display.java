@@ -17,10 +17,13 @@ public class Display extends JPanel {
 	protected JTextPane  console;
 	protected Properties display;
 	protected Font       consoleFont;
+	protected Colors     colors;
 
 	protected LinkedList components = new LinkedList();
 
 	private void updateComponentLooks() {
+		colors = new Colors(display);
+
 		Color foreground = Color.decode(display.getProperty("console.foreground.color", "#ffffff"));
 		Color background = Color.decode(display.getProperty("console.background.color", "#000000"));
 
@@ -63,7 +66,7 @@ public class Display extends JPanel {
 
 	public void _append(String text) {
 		Rectangle r = console.getVisibleRect();
-		Colors.append(console, text);
+		colors.append(console, text);
 		console.scrollRectToVisible(r);
 	}
 
