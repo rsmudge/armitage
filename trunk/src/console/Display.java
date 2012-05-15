@@ -48,48 +48,23 @@ public class Display extends JPanel {
 		}
 	}
 
-	private static Map colors = new HashMap();
-
-	public static AttributeSet getColor(String index, Properties preferences, String def) {
-		synchronized (colors) {
-			if (colors.get(index) == null) {
-				SimpleAttributeSet attrs = new SimpleAttributeSet();
-				Color temp = Color.decode(preferences.getProperty("console.color_" + index + ".color", def));
-				StyleConstants.setForeground(attrs, temp);
-				colors.put(index, attrs);
-			}
-			return (SimpleAttributeSet)colors.get(index);
-		}
-	}
-
-	public void append(final String text, final String index, final String fg) {
+	public void append(final String text) {
 		if (SwingUtilities.isEventDispatchThread()) {
-			_append(text, index, fg);
+			_append(text);
 		}
 		else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					_append(text, index, fg);
+					_append(text);
 				}
 			});
 		}
 	}
 
-	public void _append(String text, String index, String foreground) {
-		try {
-			Rectangle r = console.getVisibleRect();
-			StyledDocument doc = console.getStyledDocument();
-			if (foreground == null) {
-				doc.insertString(doc.getLength(), text, null);
-			}
-			else {
-				doc.insertString(doc.getLength(), text, getColor(index, display, foreground));
-			}
-			console.scrollRectToVisible(r);
-		}
-		catch(Exception e) {
-			System.out.println(e);
-		}
+	public void _append(String text) {
+		Rectangle r = console.getVisibleRect();
+		Colors.append(console, text);
+		console.scrollRectToVisible(r);
 	}
 
 	public void setText(final String _text) {

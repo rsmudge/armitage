@@ -56,7 +56,7 @@ public class Console extends JPanel implements FocusListener {
 		public ClickListener(Console parent) {
 			this.parent = parent;
 		}
-	
+
 		public void setPopup(ConsolePopup popup) {
 			this.popup = popup;
 		}
@@ -120,7 +120,7 @@ public class Console extends JPanel implements FocusListener {
 				String temp = data.substring(start, end).trim();
 				int a = temp.indexOf("\n");
 				if (a > 0) {
-					return temp.substring(0, a);					
+					return temp.substring(0, a);
 				}
 				return temp;
 			}
@@ -180,7 +180,7 @@ public class Console extends JPanel implements FocusListener {
 		}
 		else {
 			defaultPrompt = text;
-			Colors.set(prompt, text);
+			Colors.set(prompt, fixText(text));
 		}
 	}
 
@@ -199,12 +199,57 @@ public class Console extends JPanel implements FocusListener {
 		}
 	}
 
+	private static class Replacements {
+		public String original;
+		public String replacer;
+
+		public Replacements(String o, String r) {
+			original = o;
+			replacer = r;
+		}
+	}
+
+	public void setStyle(String text) {
+		String lines[] = text.trim().split("\n");
+		colorme = new Replacements[lines.length];
+		for (int x = 0; x < lines.length; x++) {
+			String ab[] = text.split("\\t+");
+			if (ab.length == 2) {
+				ab[1] = ab[1].replace("\\c", "\u0003");
+				ab[1] = ab[1].replace("\\o", "\u001f");
+				ab[1] = ab[1].replace("\\u", "\u000f");
+				colorme[x] = new Replacements(ab[0], ab[1]);
+			}
+		}
+	}
+
+	protected Replacements colorme[] = null;
+
+	protected String fixText(String text) {
+		if (colorme == null)
+			return text;
+
+		StringBuffer result = new StringBuffer();
+		String[] lines = text.split("(?<=\\n)");
+
+		for (int x = 0; x < lines.length; x++) {
+			String temp = lines[x];
+			for (int y = 0; y < colorme.length; y++) {
+				temp = temp.replaceFirst(colorme[y].original, colorme[y].replacer);
+			}
+			result.append(temp);
+		}
+		return result.toString();
+	}
+
 	protected void appendToConsole(String _text) {
+		_text = fixText(_text);
+
 		if (_text.endsWith("\n") || _text.endsWith("\r")) {
 			if (!promptLock) {
 				Colors.append(console, _text);
 				if (log != null)
-					log.print(_text);
+					log.print(Colors.strip(_text));
 			}
 			else {
 				Colors.append(console, prompt.getText());
@@ -220,7 +265,7 @@ public class Console extends JPanel implements FocusListener {
 				Colors.append(console, _text.substring(0, breakp + 1));
 				Colors.set(prompt, _text.substring(breakp + 1) + " ");
 				if (log != null)
-					log.print(_text.substring(0, breakp + 1));
+					log.print(Colors.strip(_text.substring(0, breakp + 1)));
 			}
 			else {
 				Colors.set(prompt, _text);
