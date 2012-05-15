@@ -213,12 +213,15 @@ public class Console extends JPanel implements FocusListener {
 		String lines[] = text.trim().split("\n");
 		colorme = new Replacements[lines.length];
 		for (int x = 0; x < lines.length; x++) {
-			String ab[] = text.split("\\t+");
+			String ab[] = lines[x].split("\\t+");
 			if (ab.length == 2) {
-				ab[1] = ab[1].replace("\\c", "\u0003");
-				ab[1] = ab[1].replace("\\o", "\u001f");
-				ab[1] = ab[1].replace("\\u", "\u000f");
+				ab[1] = ab[1].replace("\\c", Colors.color + "");
+				ab[1] = ab[1].replace("\\o", Colors.cancel + "");
+				ab[1] = ab[1].replace("\\u", Colors.underline + "");
 				colorme[x] = new Replacements(ab[0], ab[1]);
+			}
+			else {
+				System.err.println(lines[x] + "<-- didn't split right:" + ab.length);
 			}
 		}
 	}
@@ -235,7 +238,8 @@ public class Console extends JPanel implements FocusListener {
 		for (int x = 0; x < lines.length; x++) {
 			String temp = lines[x];
 			for (int y = 0; y < colorme.length; y++) {
-				temp = temp.replaceFirst(colorme[y].original, colorme[y].replacer);
+				if (colorme[y] != null)
+					temp = temp.replaceFirst(colorme[y].original, colorme[y].replacer);
 			}
 			result.append(temp);
 		}
