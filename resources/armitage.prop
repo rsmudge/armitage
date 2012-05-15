@@ -55,4 +55,4 @@ console.color_12.color=\#0000ff
 console.color_13.color=\#ff00ff
 console.color_14.color=\#808080
 console.color_15.color=\#c0c0c0
-
+console.show_colors.boolean=true
