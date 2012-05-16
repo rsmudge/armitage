@@ -81,9 +81,6 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 
 	public ArmitageMain(String[] args) {
 		/* tweak the parser to recognize a few useful escapes */
-		ParserConfig.installEscapeConstant('b', console.Colors.bold + "");
-		ParserConfig.installEscapeConstant('_', console.Colors.underline + "");
-		ParserConfig.installEscapeConstant('r', console.Colors.reverse + "");
 		ParserConfig.installEscapeConstant('c', console.Colors.color + "");
 		ParserConfig.installEscapeConstant('o', console.Colors.cancel + "");
 
