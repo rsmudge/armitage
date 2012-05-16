@@ -180,7 +180,7 @@ public class Console extends JPanel implements FocusListener {
 	public void setPrompt(String text) {
 		String bad = "\ufffd\ufffd";
 		if (text.equals(bad) || text.equals("null")) {
-			colors.set(prompt, defaultPrompt);
+			colors.set(prompt, fixText(defaultPrompt));
 		}
 		else {
 			defaultPrompt = text;
