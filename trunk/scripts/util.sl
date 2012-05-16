@@ -80,6 +80,17 @@ sub setupConsoleStyle {
 	[$1 setStyle: $style];
 }
 
+sub setupEventStyle {
+	this('$style');
+	if ($style is $null) {
+		local('$handle');
+		$handle = [SleepUtils getIOHandle: resource("resources/eventlog.style"), $null];
+		$style = join("\n", readAll($handle));
+		closef($handle);
+	}
+	[$1 setStyle: $style];
+}
+
 sub createDisplayTab {
 	local('$console $host $queue $file');
 	$queue = [new ConsoleQueue: $client];
