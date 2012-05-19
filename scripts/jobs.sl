@@ -150,7 +150,8 @@ sub launch_service {
 }
 
 sub _launch_service {
-	local('$c $key $value');
+	local('$c $key $value %options');
+	%options = copy($3);
 
 	if ('SESSION' in $3) {
 		$c = createDisplayTab($1, $host => sessionToHost($3['SESSION']), $file => "post");
@@ -167,15 +168,15 @@ sub _launch_service {
 	}
 
 	if ($4 eq "payload" && $format eq "multi/handler") {
-		[$c addCommand: $null, "use exploit/multi/handler"];	
-		[$c addCommand: $null, "set PAYLOAD ". substr($2, 8)];
-		[$c addCommand: $null, "set ExitOnSession false"];
+		[$c addCommand: $null, "use exploit/multi/handler"];
+		%options['PAYLOAD'] = substr($2, 8);
+		%options['ExitOnSession'] = 'false';
 	}
 	else {
 		[$c addCommand: $null, "use $2"];	
 	}
 
-	[$c setOptions: $3];
+	[$c setOptions: %options];
 	
 	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
 		[$c addCommand: "x", "exploit -j"];
