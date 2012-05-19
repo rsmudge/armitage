@@ -47,8 +47,6 @@ sub client {
 	%async['module.execute'] = 1;
 	%async['core.setg'] = 1;
 	%async['console.destroy'] = 1;
-	%async['console.write'] = 1;
-	%async['session.shell_write'] = 1;
 
 	#
 	# verify the client
