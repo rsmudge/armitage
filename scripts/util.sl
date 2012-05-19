@@ -479,10 +479,8 @@ sub module_execute {
 		$queue = createDisplayTab($1, \$host);
 
 		[$queue addCommand: $null, "use $1 $+ / $+ $2"];
-		foreach $key => $value ($3) {
-			[$queue addCommand: $null, "set $key $value"];
-		}
-
+		[$queue setOptions: $3];
+	
 		if ($1 eq "exploit") {
 			[$queue addCommand: $null, "exploit -j"];
 		}
