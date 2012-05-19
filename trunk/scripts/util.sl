@@ -159,9 +159,7 @@ sub createConsoleTab {
 		logCheck($console, $host, $file);
 	}
 
-	dispatchEvent(lambda({
-		[$frame addTab: iff($title is $null, "Console", $title), $console, $thread, $host];
-	}, $title => $1, \$console, \$thread, \$host));
+	[$frame addTab: iff($1 is $null, "Console", $1), $console, $thread, $host];
 	return $thread;
 }
 
