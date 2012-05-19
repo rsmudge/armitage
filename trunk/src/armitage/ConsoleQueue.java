@@ -234,6 +234,10 @@ public class ConsoleQueue implements Runnable {
 		}
 	}
 
+	public void append(String text) {
+		addCommand(null, "ECHO " + text + "\n");
+	}
+
 	public void setOptions(Map options) {
 		synchronized (this) {
 			Command temp = new Command();
