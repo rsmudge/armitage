@@ -8,6 +8,8 @@ In Progress
 - Updated the color palette to something a little more subtle.
 - Added an optimization to how modules are launched. This will make
   a difference for team use in high latency situations.
+- Rewrote MSF Scans feature to use console queue. This option is more
+  reliable and it makes the code easier to follow.
 
 17 May 12
 ---------
