@@ -1,6 +1,14 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Added a hack to prevent the input area from flickering when the 
+  prompt changes.
+- Updated the color palette to something a little more subtle.
+- Added an optimization to how modules are launched. This will make
+  a difference for team use in high latency situations.
+
 17 May 12
 ---------
 - Fixed bug with loot/download viewer breaking with a font resize.
