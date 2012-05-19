@@ -175,9 +175,7 @@ sub _launch_service {
 		[$c addCommand: $null, "use $2"];	
 	}
 
-	foreach $key => $value ($3) {
-		[$c addCommand: $null, "set $key $value"];		
-	}
+	[$c setOptions: $3];
 	
 	if ($4 eq "exploit" || ($4 eq "payload" && $format eq "multi/handler")) {
 		[$c addCommand: "x", "exploit -j"];
