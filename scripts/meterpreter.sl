@@ -343,7 +343,7 @@ sub launch_msf_scans {
 				}
 				else if ($text ismatch '... Scanned \d+ of \d+ hosts .100. complete.' && size(@launch) == 0) {
 					$time = (ticks() - $time) / 1000.0;
-					[$queue append: "\n[*] Scan complete in $time $+ s\n"];
+					[$queue append: "\n[*] Scan complete in $time $+ s"];
 				}
 			}
 		}, \$hosts, \%ports, \@modules, \%discover, \$queue, $time => ticks())];
