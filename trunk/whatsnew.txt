@@ -13,6 +13,9 @@ In Progress
 - Added a hack to combine chat message writes with a read request.
   This will make the event log more responsive in a high latency 
   situation (can't you tell I care about this "situation")
+- Fixed text highlights through Ctrl+F on Windows. UNIX platforms 
+  were always OK. Another good reason to not use these tools on 
+  Windows. Ever.
 
 17 May 12
 ---------
