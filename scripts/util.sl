@@ -138,9 +138,6 @@ sub createConsolePanel {
 		else if ($word in @payloads) {
 			[$thread sendString: "set PAYLOAD $word $+ \n"];
 		}
-		else if (-exists $word && !$REMOTE) {
-			saveFile($word);
-		}
 	}, \$thread)];
 
 	return @($result['id'], $console, $thread);
