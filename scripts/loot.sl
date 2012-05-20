@@ -76,10 +76,10 @@ sub _postLoot {
 	local('$host $location $name $type $when');
 	($host, $location, $name, $type, $when) = $1;
 
-	[$2 append: "\c9
-#
-# $host $+ : $name 
-#\n"];
+	[$2 append: "
+\c9#
+\c9# $host $+ : $name 
+\c9#\n"];
 
 	if ("*binary*" iswm $type) {
 		[$2 append: "\c4This is a binary file\n"];

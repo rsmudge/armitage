@@ -111,6 +111,10 @@ public class Colors {
 	private Fragment parse(String text) {
 		Fragment current = new Fragment();
 		Fragment first = current;
+
+		if (text == null)
+			return current;
+
 		char[] data = text.toCharArray();
 		int fore, back;
 
