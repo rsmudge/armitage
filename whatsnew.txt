@@ -16,6 +16,8 @@ In Progress
 - Fixed text highlights through Ctrl+F on Windows. UNIX platforms 
   were always OK. Another good reason to not use these tools on 
   Windows. Ever.
+- View -> Downloads Sync Files feature now works on Windows. It looks
+  like leaving those pesky :'s in the file paths is bad.
 
 17 May 12
 ---------

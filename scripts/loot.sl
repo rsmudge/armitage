@@ -33,6 +33,7 @@ sub downloadLoot {
 		local('$dest');
 		#$dest = chooseFile($title => "Where shall I save these files?", $dirsonly => 1, $always => 1);
 		$dest = getFileProper(dataDirectory(), $type);
+		mkdir($dest);
 		_downloadLoot(\$model, \$table, \$getme, \$dest, $dtype => $type);
 	}, \$model, \$table, \$getme, \$type));
 }
@@ -48,7 +49,7 @@ sub _downloadLoot {
 		# make the folder to store our downloads into
 		local('$handle $data $file');
 		if ($dtype eq "downloads") {
-			$file = getFileProper($dest, $host, $path, $name);
+			$file = getFileProper($dest, $host, strrep($path, ':', ''), $name);
 		}
 		else {
 			$file = getFileProper($dest, $host, $name);
