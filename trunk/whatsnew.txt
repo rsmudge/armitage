@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+21 May 12
+---------
 - Added a hack to prevent the input area from flickering when the 
   prompt changes.
 - Updated the color palette to something a little more subtle.
