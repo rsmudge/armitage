@@ -25,6 +25,8 @@ public class Colors {
 		}
 	}
 
+	protected boolean showcolors = true;
+
 	public Colors(java.util.Properties prefs) {
 		colorTable = new Color[16];
 		colorTable[0] = Color.white;
@@ -52,6 +54,9 @@ public class Colors {
 				colorTable[x] = Color.decode(temps);
 			}
 		}
+
+		/* do we want to show colors or automatically strip all of them? */
+		showcolors = "true".equals(prefs.getProperty("console.show_colors.boolean", "true"));
 	}
 
 	protected Color colorTable[];
@@ -87,7 +92,12 @@ public class Colors {
 	public void append(JTextPane console, String text) {
 		StyledDocument doc = console.getStyledDocument();
 		Fragment f = parse(text);
-		append(doc, f);
+		if (showcolors) {
+			append(doc, f);
+		}
+		else {
+			append(doc, parse(strip(f)));
+		}
 	}
 
 	public void set(JTextPane console, String text) {
@@ -100,7 +110,10 @@ public class Colors {
 		StyledDocument doc = console.getStyledDocument();
 		try {
 			doc.remove(0, doc.getLength());
-			append(doc, f);
+			if (showcolors)
+				append(doc, f);
+			else
+				append(doc, parse(strip(f)));
 		}
 		catch (BadLocationException ex) { ex.printStackTrace(); }
 
@@ -109,6 +122,7 @@ public class Colors {
 	}
 
 	private Fragment parse(String text) {
+
 		Fragment current = new Fragment();
 		Fragment first = current;
 
