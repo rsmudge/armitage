@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Fixed an exception when killing a session or removing a route 
+  through the UI. 
+
 21 May 12
 ---------
 - Added a hack to prevent the input area from flickering when the 
