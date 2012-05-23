@@ -121,6 +121,18 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
+			else if (c.text.startsWith("sniffer_interfaces") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("sniffer_dump") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("ps\n")) {
+				readUntilSuccessful(c, false);
+				return;
+			}
 
 			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
 
