@@ -5,6 +5,8 @@ In Progress
 -----------
 - Fixed an exception when killing a session or removing a route 
   through the UI. 
+- Oooh, ps command added a new column to its output. Updated ps  
+  parser to handle this.
 
 21 May 12
 ---------
