@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+30 May 12 - A few quick bug fixes / tweaks...
+---------
 - Fixed an exception when killing a session or removing a route 
   through the UI. 
 - Oooh, ps command added a new column to its output. Updated ps  
