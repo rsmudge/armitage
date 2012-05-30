@@ -7,6 +7,8 @@ In Progress
   through the UI. 
 - Oooh, ps command added a new column to its output. Updated ps  
   parser to handle this.
+- Hosts -> Import Hosts now works under Windows again. Had to 
+  escape the filename. *sigh*
 
 21 May 12
 ---------
