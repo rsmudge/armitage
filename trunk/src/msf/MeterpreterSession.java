@@ -113,6 +113,10 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, true);
 				return;
 			}
+			else if (c.text.startsWith("ps") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
 			else if (c.text.startsWith("execute") && !teammode) {
 				readUntilSuccessful(c, false);
 				return;
@@ -129,7 +133,11 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
-			else if (c.text.startsWith("ps\n")) {
+			else if (c.text.startsWith("use ") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("run ") && !teammode) {
 				readUntilSuccessful(c, false);
 				return;
 			}
@@ -213,12 +221,16 @@ public class MeterpreterSession implements Runnable {
 		}
 	}
 
+	private void readUntilSuccessful(Command c, boolean pieces) throws Exception {
+		long timeout = pieces ? 2000 : 500;
+		readUntilSuccessful(c, pieces, timeout);
+	}
+
 	/* keep reading until we get no data for a set period... this is a more aggressive
 	   alternate read strategy for commands that I can't predict the end point well */
-	private void readUntilSuccessful(Command c, boolean pieces) throws Exception {
+	private void readUntilSuccessful(Command c, boolean pieces, long timeout) throws Exception {
 		/* our first read gets the default wait period at least... */
 		long start = System.currentTimeMillis() + DEFAULT_WAIT;
-		long timeout = pieces ? 2000 : 500;
 
 		StringBuffer buffer = new StringBuffer();
 		Map read = null;
