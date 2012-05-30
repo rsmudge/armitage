@@ -9,6 +9,8 @@ In Progress
   parser to handle this.
 - Hosts -> Import Hosts now works under Windows again. Had to 
   escape the filename. *sigh*
+- Hail Mary now sets LHOST option. This is necessary for some 
+  attacks to work properly.
 
 21 May 12
 ---------
