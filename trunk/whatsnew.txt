@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+- Meterpreter -> Kill now uses session.stop RPC call
+
 7 Jun 12 - Adding on to those quick bug fixes / tweaks
 --------
 - Disabled Nagles algorithm for team server and client SSL sockets.
