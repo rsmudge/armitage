@@ -92,7 +92,7 @@ sub manage_job {
 		else {
 			local('$job $confirm $foo $confirm');
 			$job = call($client, "job.info", $1);
-			$confirm = askYesNo([$stopf : $jid, $job], "Stop Job");
+			$confirm = askYesNo([$stopf : $1, $job], "Stop Job");
 			if ($confirm eq "0") {
 				call_async($client, "job.stop", $1);
 			}
