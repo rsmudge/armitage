@@ -1,6 +1,14 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Disabled Nagles algorithm for team server and client SSL sockets.
+  This makes team server much more responsive for Windows 7 clients.
+- Fixed bug preventing Armitage from showing "Started Service" 
+  message when starting the SOCKS Proxy server.
+- Fixed a find feature highlight bug in the View tab.
+
 30 May 12 - A few quick bug fixes / tweaks...
 ---------
 - Fixed an exception when killing a session or removing a route 
