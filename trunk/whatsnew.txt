@@ -4,6 +4,7 @@ Armitage Changelog
 In Progress
 --------
 - Meterpreter -> Kill now uses session.stop RPC call
+- Simplified code to stop a running job
 
 7 Jun 12 - Adding on to those quick bug fixes / tweaks
 --------
