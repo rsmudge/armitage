@@ -5,6 +5,12 @@ In Progress
 --------
 - Meterpreter -> Kill now uses session.stop RPC call
 - Simplified code to stop a running job
+- Added an option to disable TCP_NODELAY from the comamnd line:
+
+	java -Darmitage.enable_nagle=true -jar armitage.jar
+
+  Use this if you see "bad mac" SSL errors when connected to a
+  team server.
 
 7 Jun 12 - Adding on to those quick bug fixes / tweaks
 --------
