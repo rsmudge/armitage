@@ -11,6 +11,7 @@ In Progress
 
   Use this if you see "bad mac" SSL errors when connected to a
   team server.
+- Log Keystrokes tab now changes color when there is activity
 
 7 Jun 12 - Adding on to those quick bug fixes / tweaks
 --------
