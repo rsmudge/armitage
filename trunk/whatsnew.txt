@@ -14,6 +14,9 @@ In Progress
 - Log Keystrokes tab now changes color when there is activity
 - Randomized filename for USERPASS_FILE to allow multiple brute
   forces to happen at once.
+- Added a View item in the File Browser's popup menu. This will
+  let you quickly read several highlighted text files (it also
+  saves the files to the right place locally too)
 
 7 Jun 12 - Adding on to those quick bug fixes / tweaks
 --------
