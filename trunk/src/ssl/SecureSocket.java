@@ -26,7 +26,6 @@ public class SecureSocket {
 		/* give users a means to disable TCP_NO_DELAY. I experienced a bad_mac SSL error
 		   on another network when this option was enabled. *shrug* */
 		if (!"true".equals(System.getProperty("armitage.enable_nagle"))) {
-			System.err.println("I will not nagle in your SSL business");
 			socket.setTcpNoDelay(true);
 		}
 		socket.setSoTimeout(4048);

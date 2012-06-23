@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+24 Jun 12
+---------
 - Meterpreter -> Kill now uses session.stop RPC call
 - Simplified code to stop a running job
 - Added an option to disable TCP_NODELAY from the comamnd line:
