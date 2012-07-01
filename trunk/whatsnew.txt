@@ -9,6 +9,7 @@ In Progress
 - Progressbar Cancel button now works with the Sync Files button
   in View -> Downloads and View -> Loot
 - Fixed a potential deadlock with the Sync Files feature
+- Clicking the Size column in View -> Downloads now sorts properly
 
 24 Jun 12
 ---------
