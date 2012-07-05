@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
----------
+5 Jul 12
+--------
 - Login -> psexec now sets a different LPORT for each host it's
   launched against when using a reverse payload. Fixes a bug where
   using a reverse connect payload against X hosts didn't work.
