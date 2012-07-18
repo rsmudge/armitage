@@ -1,6 +1,12 @@
 Armitage Changelog
 ==================
 
+????????
+--------
+- Armitage now reports vulnerability module and descriptions 
+  properly (again) when exporting data. Had to update to match a
+  change to the db schema.
+
 5 Jul 12
 --------
 - Login -> psexec now sets a different LPORT for each host it's
