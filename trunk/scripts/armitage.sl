@@ -149,7 +149,6 @@ sub _connectToMetasploit {
 			        $client = [new MsgRpcImpl: $3, $4, $1, long($2), $null, $debug];
 				$mclient = $client;
 				initConsolePool();
-				initReporting();
 			}
 			# we have a team server... connect and authenticate to it.
 			else {
