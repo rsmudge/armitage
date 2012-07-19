@@ -6,6 +6,9 @@ Armitage Changelog
 - Armitage now reports vulnerability module and descriptions 
   properly (again) when exporting data. Had to update to match a
   change to the db schema.
+- Pass-the-Hash and Login dialogs now stay open if you press 
+  shift while clicking Launch. This convention is pretty universal
+  to Armitage.
 
 5 Jul 12
 --------
