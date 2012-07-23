@@ -55,6 +55,7 @@ sub client {
 	($method, $args) = $temp;
 	if ($method ne "armitage.validate") {
 		writeObject($handle, result(%(error => 1, message => "You're not authenticated")));
+		[[$handle getOutputStream] flush];
 		return;
 	}
 	else {
@@ -64,16 +65,19 @@ sub client {
 		if ($user ne $_user || $pass ne $_pass) {
 			warn("Rejected $eid (invalid login)");
 			writeObject($handle, result(%(error => 1, message => "Invalid login.")));
+			[[$handle getOutputStream] flush];
 			return;
 		}
 		else if ($app ne "armitage") {
 			warn("Rejected $eid (wrong application)");
 			writeObject($handle, result(%(error => 1, message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
+			[[$handle getOutputStream] flush];
 			return;
 		}
 		else if ($ver < 120326) {
 			warn("Rejected $eid (old software -- srsly, update people!)");
 			writeObject($handle, result(%(error => 1, message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
+			[[$handle getOutputStream] flush];
 			return;
 		}
 		else if ($motd ne "" && -exists $motd) {
@@ -89,6 +93,7 @@ sub client {
 			event("*** $eid joined\n");
 			warn("*** $eid joined");
 		}
+		[[$handle getOutputStream] flush];
 	}
 
         # limit our replay of the event log to 100 events...
@@ -323,6 +328,7 @@ sub client {
 
 			writeObject($handle, $response);
 		}
+		[[$handle getOutputStream] flush];
 	}
 
 	if ($eid !is $null) {

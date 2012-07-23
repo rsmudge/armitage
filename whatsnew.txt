@@ -9,6 +9,9 @@ Armitage Changelog
 - Pass-the-Hash and Login dialogs now stay open if you press 
   shift while clicking Launch. This convention is pretty universal
   to Armitage.
+- Team server now buffers all of its outgoing data. I've also 
+  disabled SO_NODELAY. This will greatly improve team server latency
+  on congested networks without impacting responsiveness otherwise.
 
 5 Jul 12
 --------

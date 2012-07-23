@@ -61,6 +61,7 @@ sub c_client {
 		local('$client');
 		$client = newInstance(^RpcConnection, lambda({
 			writeObject($handle, @_);
+			[[$handle getOutputStream] flush];
 			return readObject($handle);
 		}, \$handle));
 		return [new RpcAsync: $client];
