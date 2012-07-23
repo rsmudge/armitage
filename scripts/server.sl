@@ -397,6 +397,9 @@ sub main {
 	# set the LHOST to whatever the user specified
 	call_async($client, "core.setg", "LHOST", $host);
 
+	# we need this global to be set so our reverse listeners work as expected.
+	$MY_ADDRESS = $host;
+
 	# make sure clients know a team server is present. can't happen async.
 	call($client, "core.setg", "ARMITAGE_TEAM", '1');
 
@@ -418,9 +421,7 @@ sub main {
 	# create a thread to push console messages to the event queue for all clients.
 	#
 	fork({
-		global('$r $console');
-		sleep(10000);
-		$console = createConsole($client);
+		global('$r');
 		while (1) {
 			sleep(2000);
 			$r = call($client, "console.read", $console);
@@ -430,7 +431,7 @@ sub main {
 				release($poll_lock);
 			}
 		}
-	}, \$client, \$poll_lock, \@events);
+	}, \$client, \$poll_lock, \@events, $console => createConsole($client));
 
 	#
 	# Create a shared hash that contains a thread for each session...
