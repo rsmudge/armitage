@@ -192,7 +192,8 @@ sub gotoURL {
 
 sub help_items {
 	item($1, "Homepage", 'H', gotoURL("http://www.fastandeasyhacking.com/")); 
-	item($1, "Tutorial", 'T', gotoURL("http://www.fastandeasyhacking.com/manual")); 
+	item($1, "Tutorial", 'T', gotoURL("http://www.fastandeasyhacking.com/manual"));
+	item($1, "Scripts", 'S', gotoURL("https://github.com/rsmudge/cortana-scripts"));
 	item($1, "Issue Tracker", 'I', gotoURL("http://code.google.com/p/armitage/issues/list")); 
 	item($1, "User Survey", 'U', gotoURL("https://docs.google.com/spreadsheet/viewform?formkey=dEdSNGdJY2Z1LVloWXBnX2o4SkdGZHc6MQ"));
 	setupMenu($1, "help", @());
