@@ -72,6 +72,7 @@ sub view_items {
 	item($1, 'Downloads', 'D', { thread(&createDownloadBrowser); });
 	item($1, 'Jobs', 'J', { thread(&createJobsTab); });
 	item($1, 'Loot', 'L', { thread(&createLootBrowser) });
+	item($1, 'Script Console', 'S', { showScriptConsole(); });
 
 	setupMenu($1, "view_middle", @());
 
@@ -149,6 +150,8 @@ sub armitage_items {
 	$m = menu($1, 'Listeners', 'L');
 		item($m, 'Bind (connect to)', 'B', &connect_for_shellz);
 		item($m, 'Reverse (wait for)', 'R', &listen_for_shellz); 
+
+	item($1, 'Scripts...', 'S', { showScriptManager(); });
 
 	setupMenu($1, "main_middle", @());
 

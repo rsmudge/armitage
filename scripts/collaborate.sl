@@ -11,10 +11,11 @@ sub createEventLogTab {
 	this('$console $client');
 
 	if ($client is $null && $console is $null) {
-        	$console = [new ActivityConsole: $preferences];
-		$client = [new ConsoleClient: $console, $mclient, "armitage.poll", "armitage.push", $null, "", $null];
+		$client = [$cortana getEventLog];
+		$console = [new ActivityConsole: $preferences];
 		setupEventStyle($console);
 		logCheck($console, "all", "events");
+		[$client setWindow: $console];
 		[$client setEcho: $null];
 		[$console updatePrompt: "> "];
 	}
