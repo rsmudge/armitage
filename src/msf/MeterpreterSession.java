@@ -145,7 +145,7 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
-			else if (c.text.startsWith("sysinfo\n") && !teammode) {
+			else if (c.text.startsWith("sysinfo") && !teammode) {
 				readUntilSuccessful(c, false);
 				return;
 			}
