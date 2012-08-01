@@ -328,6 +328,8 @@ sub _generateArtifacts {
 	[$progress setProgress: 100];
 	[$progress close];
 
+	fire_event_async("user_export", %data);
+
 	return getFileProper(dataDirectory(), formatDate("yyMMdd"), "artifacts");
 }
 
