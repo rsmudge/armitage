@@ -100,7 +100,7 @@ sub createConsolePanel {
 	setupConsoleStyle($console);
 
 	$result = call($client, "console.create");
-	$thread = [new ConsoleClient: $console, $client, "console.read", "console.write", "console.destroy", $result['id'], $1];
+	$thread = [new ConsoleClient: $console, $aclient, "console.read", "console.write", "console.destroy", $result['id'], $1];
 	[$thread setMetasploitConsole];
 
 	[$thread setSessionListener: {
