@@ -17,6 +17,7 @@ ant jar
 #
 mkdir armitage
 cp armitage.jar armitage
+cp cortana.jar armitage
 cp readme.txt armitage
 cp whatsnew.txt armitage
 cp -r dist/unix/* armitage
@@ -33,6 +34,7 @@ rm -rf armitage
 mkdir armitage
 cp -r dist/windows/* armitage
 cp armitage.jar armitage/
+cp cortana.jar armitage/
 cp readme.txt armitage/readme.txt
 cp whatsnew.txt armitage/whatsnew.txt
 
