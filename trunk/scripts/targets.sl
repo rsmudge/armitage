@@ -59,7 +59,7 @@ sub sessionToHost {
 }
 
 on sessions {
-	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer %addr');
+	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer %addr @nodes');
 	$data = $1;
 #	warn("&refreshSessions - $data");
 
@@ -111,27 +111,33 @@ on sessions {
 		}
 	}
 
-	[SwingUtilities invokeLater: let(&refreshGraph, \@routes, \@highlights)];
+	# create a data structure with id, description, icon, and tooltip
+	foreach $id => $host (%hosts) { 
+		local('$tooltip');
+		if ('os_match' in $host) {
+			$tooltip = $host['os_match'];
+		}
+		else {
+			$tooltip = "I know nothing about $id";
+		}
+
+		if ($host['show'] eq "1") {
+			push(@nodes, @($id, describeHost($host), showHost($host), $tooltip));
+		}
+	}
+
+	[SwingUtilities invokeLater: let(&refreshGraph, \@routes, \@highlights, \@nodes)];
 }
 
 sub refreshGraph {
-	local('$address $key $session $data $highlight $id $host $route $mask');
+	local('$node $id $description $icons $tooltip $highlight');
 
 	# update everything...
 	[$graph start];
-		# update the hosts
-		foreach $id => $host (%hosts) { 
-			local('$tooltip');
-			if ('os_match' in $host) {
-				$tooltip = $host['os_match'];
-			}
-			else {
-				$tooltip = "I know nothing about $id";
-			}
-
-			if ($host['show'] eq "1") {
-				[$graph addNode: $id, describeHost($host), showHost($host), $tooltip];
-			}
+		# do the hosts?
+		foreach $node (@nodes) {
+			($id, $description, $icons, $tooltip) = $node;
+			[$graph addNode: $id, $description, $icons, $tooltip];
 		}
 
 		# update the routes
