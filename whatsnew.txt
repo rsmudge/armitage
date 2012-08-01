@@ -16,6 +16,7 @@ Armitage Changelog
   There's a lot of fun to be had here.
 - Armitage now queues messages to destroy a console rather than
   spinning up a new thread for each closed console.
+- Rendering of icons for hosts now happens outside of UI thread.
 
 5 Jul 12
 --------
