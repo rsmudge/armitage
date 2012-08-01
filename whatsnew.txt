@@ -14,6 +14,8 @@ Armitage Changelog
   on congested networks without impacting responsiveness otherwise.
 - Added Cortana, a DARPA funded scripting technology, into Armitage.
   There's a lot of fun to be had here.
+- Armitage now queues messages to destroy a console rather than
+  spinning up a new thread for each closed console.
 
 5 Jul 12
 --------
