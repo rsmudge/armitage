@@ -12,6 +12,8 @@ Armitage Changelog
 - Team server now buffers all of its outgoing data. I've also 
   disabled SO_NODELAY. This will greatly improve team server latency
   on congested networks without impacting responsiveness otherwise.
+- Added Cortana, a DARPA funded scripting technology, into Armitage.
+  There's a lot of fun to be had here.
 
 5 Jul 12
 --------
