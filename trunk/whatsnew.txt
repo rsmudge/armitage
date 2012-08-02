@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-????????
+2 Aug 12
 --------
 - Armitage now reports vulnerability module and descriptions 
   properly (again) when exporting data. Had to update to match a
