@@ -68,6 +68,7 @@ public class Sessions extends ManagedData {
 
 		/* invalidate the cache */
 		cache = null;
+		hosts.cache = null;
 
 		sessions = results;
 

@@ -63,6 +63,7 @@ public class Services extends ManagedData {
 
 		/* invalidate the cache */
 		cache = null;
+		hosts.cache = null;
 
 		Set oldServices = new HashSet();
 		Set newServices = new HashSet();
