@@ -316,18 +316,6 @@ public class DatabaseImpl implements RpcConnection  {
 					"DELETE FROM vulns;" +
 					"DELETE FROM sessions;" +
 					"DELETE FROM clients;" +
-
-					/* clear the module cache as well */
-					"DELETE FROM module_details;" +
-					"DELETE FROM module_details;" +
-					"DELETE FROM module_targets;" +
-					"DELETE FROM module_authors;" +
-					"DELETE FROM module_actions;" +
-					"DELETE FROM module_mixins;" +
-					"DELETE FROM module_platforms;" +
-					"DELETE FROM module_archs;" +
-					"DELETE FROM module_refs;" +
-
 					"COMMIT");
 				return new HashMap();
 			}
