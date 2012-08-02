@@ -1,6 +1,5 @@
 #
 # Cortana Standard Library (written in.... Sleep?!?) => YES!
-# (c) 2011 Raphael Mudge -- dO nOT rELEASE. tHIS iS dOD rESEARCH
 # 
 
 debug(7 | 34);
