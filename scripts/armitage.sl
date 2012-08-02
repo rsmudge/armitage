@@ -205,6 +205,14 @@ sub _connectToMetasploit {
 		}
 	}
 
+	# check the module cache...
+	local('$sanity');
+	$sanity = call($mclient, "module.options", "exploit", "windows/smb/ms08_067_netapi");
+	if ($sanity is $null) {
+		warn("Detected corrupt module cache... forcing rebuild");
+		call($mclient, "db.clear_cache");
+	}
+
 	[$progress setNote: "Connected: Getting local address"];
 	[$progress setProgress: 50];
 

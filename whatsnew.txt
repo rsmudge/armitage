@@ -18,6 +18,8 @@ Armitage Changelog
   spinning up a new thread for each closed console.
 - Rendering of icons for hosts now happens outside of UI thread.
 - Increased timeout for meterpreter read command
+- Armitage now detects a corrupt module cache and attempts to clear
+  it so it can be rebuilt. 
 
 5 Jul 12
 --------
