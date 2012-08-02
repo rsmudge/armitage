@@ -11,11 +11,11 @@ sub createEventLogTab {
 	this('$console $client');
 
 	if ($client is $null && $console is $null) {
-		$client = [$cortana getEventLog];
 		$console = [new ActivityConsole: $preferences];
 		setupEventStyle($console);
 		logCheck($console, "all", "events");
-		[$client setWindow: $console];
+
+		$client = [$cortana getEventLog: $console];
 		[$client setEcho: $null];
 		[$console updatePrompt: "> "];
 	}

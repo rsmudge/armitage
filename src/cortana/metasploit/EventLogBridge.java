@@ -40,9 +40,9 @@ public class EventLogBridge implements Loadable, Function, ConsoleCallback {
 		events.fireEvent("event_write", args);
 	}
 
-	public ConsoleClient start() {
+	public ConsoleClient start(console.Console window) {
 		if (dserver != client) {
-			console = new ConsoleClient(null, dserver, "armitage.poll", "armitage.push", null, "", false);
+			console = new ConsoleClient(window, dserver, "armitage.poll", "armitage.push", null, "", false);
 			console.addSessionListener(this);
 			return console;
 		}

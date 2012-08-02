@@ -398,8 +398,8 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 		}
 	}
 
-	public ConsoleClient getEventLog() {
-		return ((EventLogBridge)log).start();
+	public ConsoleClient getEventLog(console.Console window) {
+		return ((EventLogBridge)log).start(window);
 	}
 
 	public MeterpreterSession getSession(String sid) {
@@ -524,7 +524,7 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 		}
 
 		/* start now that our scripts are loaded */
-		((EventLogBridge)log).start();
+		((EventLogBridge)log).start(null);
 		start(lhost);
 	}
 }
