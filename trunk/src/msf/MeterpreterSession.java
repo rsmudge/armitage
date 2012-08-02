@@ -94,6 +94,9 @@ public class MeterpreterSession implements Runnable {
 			if (c.text.startsWith("ls\n")) {
 				maxwait *= 2;
 			}
+			else if (c.text.startsWith("read ")) {
+				maxwait *= 2;
+			}
 			else if (c.text.startsWith("webcam_snap ")) {
 				expectedReads = 3;
 			}
