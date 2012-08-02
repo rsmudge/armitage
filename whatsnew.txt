@@ -17,6 +17,7 @@ Armitage Changelog
 - Armitage now queues messages to destroy a console rather than
   spinning up a new thread for each closed console.
 - Rendering of icons for hosts now happens outside of UI thread.
+- Increased timeout for meterpreter read command
 
 5 Jul 12
 --------
