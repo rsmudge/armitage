@@ -162,6 +162,7 @@ sub _connectToMetasploit {
 				$client = c_client($1, $2);
 				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
 				$mclient = setup_collaboration($3, $4, $1, $2);
+				$aclient = $mclient;
 			}
 			$flag = $null;
 		}
