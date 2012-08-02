@@ -406,6 +406,10 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 		return meterpreter.getSession(sid);
 	}
 
+	public void updateLocalHost(String lhost) {
+		metasploit.setLocalHost(lhost);
+	}
+
 	public void start(String lhost) {
 		if (!started) {
 			metasploit.setLocalHost(lhost);
