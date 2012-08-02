@@ -113,11 +113,13 @@ sub generatePayload {
 		$options["Format"] = $format;
 		$data = call($client, "module.execute", "payload", $module, $options);
 
-		$handle = openf("> $+ $file");
-		writeb($handle, $data["payload"]);
-		closef($handle);
+		if ($data !is $null) {
+			$handle = openf("> $+ $file");
+			writeb($handle, $data["payload"]);
+			closef($handle);
 
-		showError("Saved $file");
+			showError("Saved $file");
+		}
 	}, $args => @_, \$file));
 }
 
