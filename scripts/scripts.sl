@@ -62,7 +62,7 @@ sub showScriptConsole {
 }
 
 sub showScriptManager {
-	local('$dialog $table $model $load $unload $reload $console');
+	local('$dialog $table $model $load $unload $reload $console $scripts');
 	$dialog = [new JPanel];
 	[$dialog setLayout: [new BorderLayout]];
 
@@ -75,6 +75,7 @@ sub showScriptManager {
 	$load    = [new JButton: "Load"];
 	$unload  = [new JButton: "Unload"];
 	$console = [new JButton: "Console"];
+	$scripts = [new JButton: "Scripts"];
 
 	[$unload addActionListener: lambda({
 		local('$script $s @scripts');
@@ -114,13 +115,13 @@ sub showScriptManager {
 				showError($exception);
 			}
 		}
-
-		
 	}, \$table, \$model)];
+
+	[$scripts addActionListener: gotoURL("https://github.com/rsmudge/cortana-scripts")];
 
 	[$console addActionListener: &showScriptConsole];
 
-	[$dialog add: center($load, $unload, $console), [BorderLayout SOUTH]];
+	[$dialog add: center($load, $unload, $console, $scripts), [BorderLayout SOUTH]];
 	[$frame addTab: "Scripts", $dialog, $null];
 }
 
