@@ -68,10 +68,12 @@ public class ShellSession implements Runnable {
 			/* read until we encounter AAAAAAAAAA */
 			StringBuffer output = new StringBuffer();
 
-			/* loop for 60s trying to read output... give up after 60s, some commands may simply take this long */
-			for (int x = 0; x < 600; x++) {
+			/* loop forever waiting for response to come back. If session is dead
+			   then this loop will break with an exception */
+			while (true) {
 				response = readResponse();
 				String data = (response.get("data") + "");
+
 				if (data.length() > 0) {
 					if (data.endsWith(marker)) {
 						data = data.substring(0, data.length() - marker.length());
@@ -86,7 +88,6 @@ public class ShellSession implements Runnable {
 
 				Thread.sleep(100);
 			}
-			fireEvent(c, output.toString());
 		}
 		catch (Exception ex) {
 			System.err.println(session + " -> " + c.text + " ( " + response + ")");

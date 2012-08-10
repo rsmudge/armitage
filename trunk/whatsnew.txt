@@ -1,6 +1,14 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+
+Cortana Updates (for scripters)
+--------
+- s_cmd no longer times out after 60s. It will wait forever for
+  a command to complete now.
+
 2 Aug 12 (tested again msf r15698)
 --------
 - Armitage now reports vulnerability module and descriptions 
