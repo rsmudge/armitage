@@ -5,6 +5,8 @@ In Progress
 --------
 - Dynamic workspaces now removes closed services from its set of
   hosts matching certain open ports.
+- Cortana console now reports a clear error message a built-in
+  command is executed without the right number of arguments.
 
 Cortana Updates (for scripters)
 --------
