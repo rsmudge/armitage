@@ -7,6 +7,8 @@ In Progress
   hosts matching certain open ports.
 - Cortana console now reports a clear error message a built-in
   command is executed without the right number of arguments.
+- Added host icons for Android and iOS. You may now set these
+  operating systems by going to [host] -> Host -> Operating System
 
 Cortana Updates (for scripters)
 --------
