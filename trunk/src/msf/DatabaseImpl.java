@@ -362,6 +362,7 @@ public class DatabaseImpl implements RpcConnection  {
 						//ports2.add("s.port = " + p[x]);
 					}
 					hosts.add("services.host_id = hosts.id");
+					hosts.add("services.state = 'open'");
 					hosts.add("(" + join(ports, " OR ") + ")");
 				}
 

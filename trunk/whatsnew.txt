@@ -3,6 +3,8 @@ Armitage Changelog
 
 In Progress
 --------
+- Dynamic workspaces now removes closed services from its set of
+  hosts matching certain open ports.
 
 Cortana Updates (for scripters)
 --------
