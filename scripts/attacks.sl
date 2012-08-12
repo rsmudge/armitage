@@ -397,6 +397,9 @@ sub attack_dialog {
 		if ($key eq "RHOST") {
 			$value["default"] = join(", ", $3);
 		}
+		else if ($key eq "RHOSTS") {
+			$value["default"] = join(", ", $3);
+		}
 		
 		[$model _addEntry: %(Option => $key, 
 					Value => $value["default"], 
