@@ -21,7 +21,7 @@ sub createModuleBrowser {
 
 sub showModulePopup {
 	local('$menu');
-	if (($2 eq "exploit" && "*/browser/*" !iswm $3 && "*/fileformat/*" !iswm $3) || ($2 eq "auxiliary" && "*_login" iswm $3)) {
+	if (($2 eq "exploit" && "*/browser/*" !iswm $3 && "*/fileformat/*" !iswm $3 && "windows/smb/smb_relay" ne $3) || ($2 eq "auxiliary" && "*_login" iswm $3)) {
 		$menu = [new JPopupMenu];
 		item($menu, "Relevant Targets", 'R', lambda({
 			thread(lambda({
@@ -79,7 +79,7 @@ sub moduleAction {
 	thread(lambda({
 		if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
 			if ($type eq "exploit") {
-				if ('*/browser/*' iswm $path || '*/fileformat/*' iswm $path) {
+				if ('*/browser/*' iswm $path || '*/fileformat/*' iswm $path || "windows/smb/smb_relay" eq $path) {
 					launch_dialog($path, $type, $path, 1, $hosts);
 				}
 				else {
