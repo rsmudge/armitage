@@ -11,6 +11,8 @@ In Progress
   operating systems by going to [host] -> Host -> Operating System
 - Armitage now shows the client-side exploit dialog for any exploit
   that does not target an RHOST (for example, windows/smb/smb_relay)
+- Added support for remote exploits that use RHOSTS over RHOST
+  (this includes the new windows/local/current_user_psexec)
 
 Cortana Updates (for scripters)
 --------
