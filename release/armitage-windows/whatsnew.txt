@@ -1,6 +1,23 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+- Dynamic workspaces now removes closed services from its set of
+  hosts matching certain open ports.
+- Cortana console now reports a clear error message a built-in
+  command is executed without the right number of arguments.
+- Added host icons for Android and iOS. You may now set these
+  operating systems by going to [host] -> Host -> Operating System
+
+Cortana Updates (for scripters)
+--------
+- s_cmd no longer times out after 60s. It will wait forever for
+  a command to complete now.
+- added shell_read event which fires when a shell s_cmd comes
+  back with intermediate output.
+- fixed a potential deadlock with &open_console_tab
+
 2 Aug 12 (tested again msf r15698)
 --------
 - Armitage now reports vulnerability module and descriptions 
