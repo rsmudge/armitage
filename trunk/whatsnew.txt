@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+16 Aug 12 (tested against msf r15753)
+----------
 - Dynamic workspaces now removes closed services from its set of
   hosts matching certain open ports.
 - Cortana console now reports a clear error message a built-in
