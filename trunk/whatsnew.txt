@@ -14,6 +14,7 @@ In Progress
 - Added a helper to set Wordlist option
 - Armitage now sets a random LPORT for non-exploit modules with an
   LPORT option (e.g., post modules that do priv escalation)
+- Armitage now shows an error if it can't open a Win command shell
 
 Cortana Updates (for scripters)
 --------
