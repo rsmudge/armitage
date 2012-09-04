@@ -7,6 +7,8 @@ In Progress
 - Armitage now complains when it can't write to your preferences
   file (versus just hanging without a real error message)
 - View -> Jobs now queries jobs in a thread outside of UI thread
+- Tab completion now uses a separate thread to call into the RPC
+  server. This prevents a deadlock if server is not responding.
 
 16 Aug 12 (tested against msf r15753)
 ----------
