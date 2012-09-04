@@ -17,6 +17,7 @@ In Progress
 - Armitage now shows an error if it can't open a Win command shell
 - Steal Token dialog now uses incognito module to get token data 
   instead of the MSF post module. This is more reliable.
+- You may now setup the reverse payload for current_user_psexec
 
 Cortana Updates (for scripters)
 --------
