@@ -13,6 +13,10 @@ In Progress
   The old criteria was too restrictive.
 - Added a helper to set Wordlist option
 
+Cortana Updates (for scripters)
+--------
+- added an eventlog popup hook
+
 16 Aug 12 (tested against msf r15753)
 ----------
 - Dynamic workspaces now removes closed services from its set of
