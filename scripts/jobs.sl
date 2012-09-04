@@ -533,7 +533,7 @@ sub createJobsTab {
         [$sorter setComparator: 3, { return $1 <=> $2; }];
 
 	$jobsf = lambda(&updateJobsTable, \$model);
-	[$jobsf];
+	thread($jobsf);
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	
