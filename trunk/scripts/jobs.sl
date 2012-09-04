@@ -250,6 +250,9 @@ sub _launch_dialog {
 		else if ($key eq "LHOST") {
 			$default = $MY_ADDRESS;
 		}
+		else if ($key eq "LPORT" && $value['default'] eq '4444') {
+			$default = randomPort();
+		}
 		else if ($key eq "RHOSTS" && size($5) > 0) {
 			$default = join(", ", $5);
 		}

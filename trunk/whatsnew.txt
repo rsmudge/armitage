@@ -12,6 +12,8 @@ In Progress
 - Login -> psexec now shows when 445 is open on a Windows machine.
   The old criteria was too restrictive.
 - Added a helper to set Wordlist option
+- Armitage now sets a random LPORT for non-exploit modules with an
+  LPORT option (e.g., post modules that do priv escalation)
 
 Cortana Updates (for scripters)
 --------
