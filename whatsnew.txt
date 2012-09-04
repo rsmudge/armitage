@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Setup dialog now trims host, port, user, and pass fields.
+
 16 Aug 12 (tested against msf r15753)
 ----------
 - Dynamic workspaces now removes closed services from its set of
