@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+5 Sept 12 (tested against msf r15804)
 ---------
 - Setup dialog now trims host, port, user, and pass fields.
 - Armitage now complains when it can't write to your preferences
