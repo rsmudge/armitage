@@ -15,6 +15,8 @@ In Progress
 - Armitage now sets a random LPORT for non-exploit modules with an
   LPORT option (e.g., post modules that do priv escalation)
 - Armitage now shows an error if it can't open a Win command shell
+- Steal Token dialog now uses incognito module to get token data 
+  instead of the MSF post module. This is more reliable.
 
 Cortana Updates (for scripters)
 --------
