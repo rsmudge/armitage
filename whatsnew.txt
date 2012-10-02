@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Added port 5985 to MSF Scans list. 
+
 5 Sept 12 (tested against msf r15804)
 ---------
 - Setup dialog now trims host, port, user, and pass fields.
