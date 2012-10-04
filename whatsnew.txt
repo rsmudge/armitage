@@ -5,6 +5,8 @@ In Progress
 ---------
 - Added port 5985 to MSF Scans list.
 - Meterpreter -> Access -> Persistence sets ACTION option for you
+- Changed how LHOST and LPORT are set globally to prevent Ruby 
+  character encoding conversion error in the framework.
 
 5 Sept 12 (tested against msf r15804)
 ---------
