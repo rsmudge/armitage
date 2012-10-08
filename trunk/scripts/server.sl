@@ -423,6 +423,9 @@ sub main {
 	# set the LHOST to whatever the user specified (use console.write to make the string not UTF-8)
 	$console = createConsole($client);
 	call($client, "console.write", $console, "setg LHOST $host $+ \n");
+	sleep(2000);
+		# absorb the output of this command which is LHOST => ...
+	call($client, "console.read", $console);
 
 	#
 	# create a thread to push console messages to the event queue for all clients.
