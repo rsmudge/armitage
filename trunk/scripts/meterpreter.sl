@@ -191,11 +191,15 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Persist", 'P', lambda({
-			launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+			thread(lambda({
+				launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+			}, \$sid));
 		}, $sid => "$sid"));
 
 		item($j, "Pass Session", 'S', lambda({
-			launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+			thread(lambda({
+				launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+			}, \$sid));
 		}, $sid => "$sid"));
 
 		setupMenu($j, "meterpreter_access", @($sid));
@@ -241,7 +245,9 @@ sub showMeterpreterMenu {
 			item($j, "Show Processes", 'P', lambda({ createProcessBrowser($sid); }, $sid => "$sid"));
 			if ("*win*" iswm $platform) {
 				item($j, "Log Keystrokes", 'K', lambda({ 
-					launch_dialog("Log Keystrokes", "post", "windows/capture/keylog_recorder", 1, $null, %(SESSION => $sid, MIGRATE => 1, ShowKeystrokes => 1));
+					thread(lambda({
+						launch_dialog("Log Keystrokes", "post", "windows/capture/keylog_recorder", 1, $null, %(SESSION => $sid, MIGRATE => 1, ShowKeystrokes => 1));
+					}, \$sid));
 				}, $sid => "$sid"));
 			}
 

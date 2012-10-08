@@ -7,6 +7,8 @@ In Progress
 - Meterpreter -> Access -> Persistence sets ACTION option for you
 - Changed how LHOST and LPORT are set globally to prevent Ruby 
   character encoding conversion error in the framework.
+- Pass Session, Log Keystrokes, and Persist now query module info
+  in a separate thread (avoids a deadlock opportunity)
 
 5 Sept 12 (tested against msf r15804)
 ---------
