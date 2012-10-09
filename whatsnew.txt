@@ -9,6 +9,8 @@ In Progress
   character encoding conversion error in the framework.
 - Pass Session, Log Keystrokes, and Persist now query module info
   in a separate thread (avoids a deadlock opportunity)
+- Armitage now shows folder/URL in a popup dialog for environments
+  where JDesktop API to open them directly is not supported
 
 5 Sept 12 (tested against msf r15804)
 ---------
