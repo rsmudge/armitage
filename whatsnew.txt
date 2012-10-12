@@ -13,6 +13,8 @@ In Progress
   where JDesktop API to open them directly is not supported
 - Check all credentials option now filters the list to avoid trying
   a pair of credentials twice.
+- Armitage's exploit payload selection now selects cmd/unix/interact
+  when appropriate.
 
 5 Sept 12 (tested against msf r15804)
 ---------
