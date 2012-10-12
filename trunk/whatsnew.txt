@@ -15,6 +15,7 @@ In Progress
   a pair of credentials twice.
 - Armitage's exploit payload selection now selects cmd/unix/interact
   when appropriate.
+- Explore -> Processes now works with Java Meterpreter again.
 
 5 Sept 12 (tested against msf r15804)
 ---------
