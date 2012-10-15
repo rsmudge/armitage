@@ -16,6 +16,7 @@ Armitage Changelog
 - Armitage's exploit payload selection now selects cmd/unix/interact
   when appropriate.
 - Explore -> Processes now works with Java Meterpreter again.
+- MSF Scans feature now runs http_version against port 443
 
 5 Sept 12 (tested against msf r15804)
 ---------

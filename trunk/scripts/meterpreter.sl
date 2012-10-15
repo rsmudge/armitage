@@ -311,6 +311,9 @@ sub launch_msf_scans {
 				if ('RPORT' in %o) {
 					$port = %o['RPORT']['default'];
 					push(%ports[$port], $scanner);
+					if ($port == 80) {
+						push(%ports['443'], $scanner);
+					}
 				}
 
 				safetyCheck();
@@ -349,7 +352,12 @@ sub launch_msf_scans {
 						if ($port in %ports) {
 							$modules = %ports[$port];
 							foreach $module ($modules) {
-								push(@launch, @($module, %(RHOSTS => join(", ", $hosts), RPORT => $port, THREADS => 24)));
+								if ($port == 443) {
+									push(@launch, @($module, %(RHOSTS => join(", ", $hosts), RPORT => $port, THREADS => 24, SSL => "1")));
+								}
+								else {
+									push(@launch, @($module, %(RHOSTS => join(", ", $hosts), RPORT => $port, THREADS => 24)));
+								}
 							}
 						}
 					}
