@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+15 Oct 12 (tested against msf 15696)
 ---------
 - Added port 5985 to MSF Scans list.
 - Meterpreter -> Access -> Persistence sets ACTION option for you
