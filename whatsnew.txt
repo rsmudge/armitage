@@ -10,6 +10,7 @@ In Progress
 - [host] -> Shell -> Post Modules now shows the framework's unix/local 
   and exploit/linux/local modules
 - Added Ctrl+I shortcut. Lets you choose a session to interact with.
+- Added Steal Token button to Processes dialog.
 
 16 Oct 12 (tested against msf 15972)
 ---------
