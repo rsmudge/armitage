@@ -171,7 +171,9 @@ sub showMeterpreterMenu {
 		}, $sid => "$sid"));
 
 		item($j, "Escalate Privileges", 'E', lambda({
-			showPostModules($sid, "*escalate*");
+			showPostModules($sid, "*escalate*", 
+				ohash(exploit => buildTree(filter({ return iff("*windows/local/*" iswm $1, $1); }, @exploits)))
+			);
 		}, $sid => "$sid"));
 
 		item($j, "Steal Token" , "S", lambda({
