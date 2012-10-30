@@ -104,13 +104,16 @@ sub parseMeterpreter {
 }
 
 sub interpretMeterpreterCommand {
-	if ([$1 getActionCommand] eq "shell") {
+	local('$c');
+	$c = [lc([$1 getActionCommand] . "") trim];
+
+	if ($c eq "shell") {
 		createShellTab($sid);
 	}
-	else if ([$1 getActionCommand] eq "screenshot") {
+	else if ($c eq "screenshot") {
 		[createScreenshotViewer($sid)];
 	}
-	else if ([$1 getActionCommand] eq "webcam_snap") {
+	else if ($c eq "webcam_snap") {
 		[createWebcamViewer($sid)];
 	}
 }
