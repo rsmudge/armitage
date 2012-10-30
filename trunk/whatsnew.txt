@@ -6,7 +6,9 @@ In Progress
 - Windows command shell tab is now friendlier to commands that prompt
   for input (e.g., time command)
 - [host] -> Meterpreter -> Access -> Escalate Privileges now shows all
-  the framework's new exploit/windows/local modules
+  the framework's new exploit/windows/local modules too
+- [host] -> Shell -> Post Modules now shows the framework's unix/local 
+  and exploit/linux/local modules
 
 16 Oct 12 (tested against msf 15972)
 ---------

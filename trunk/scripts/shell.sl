@@ -258,7 +258,14 @@ sub showShellMenu {
 	}
 
 	item($1, "Post Modules", 'P', lambda({
-		showPostModules($sid);
+		if ("*Windows*" iswm sessionToOS($sid)) {
+			showPostModules($sid);
+		}
+		else {
+			showPostModules($sid, "*",
+				ohash(exploit => buildTree(filter({ return iff("*u*x/local/*" iswm $1, $1); }, @exploits)))
+			);
+		}
 	}, \$sid));
 
 	separator($1);
