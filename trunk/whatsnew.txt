@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+-----------
+- Windows command shell tab is now friendlier to commands that prompt
+  for input (e.g., time command)
+
 16 Oct 12 (tested against msf 15972)
 ---------
 - Added port 5985 to MSF Scans list.
