@@ -9,6 +9,7 @@ In Progress
   the framework's new exploit/windows/local modules too
 - [host] -> Shell -> Post Modules now shows the framework's unix/local 
   and exploit/linux/local modules
+- Added Ctrl+I shortcut. Lets you choose a session to interact with.
 
 16 Oct 12 (tested against msf 15972)
 ---------
