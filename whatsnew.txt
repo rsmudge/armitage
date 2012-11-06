@@ -11,6 +11,9 @@ In Progress
   and exploit/linux/local modules
 - Added Ctrl+I shortcut. Lets you choose a session to interact with.
 - Added Steal Token button to Processes dialog.
+- Armitage now asks Metasploit for a non-expiring authentication token.
+  This will prevent Armitage from losing its access to msfrpcd when you
+  put your computer to sleep or pause the VM running Metasploit.
 
 16 Oct 12 (tested against msf 15972)
 ---------
