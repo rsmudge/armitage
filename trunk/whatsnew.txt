@@ -14,6 +14,8 @@ In Progress
 - Armitage now asks Metasploit for a non-expiring authentication token.
   This will prevent Armitage from losing its access to msfrpcd when you
   put your computer to sleep or pause the VM running Metasploit.
+- add_user and add_[local]group_user now show all of their output when
+  the -h flag is used to operate on a remote host.
 
 Cortana Updates (for scripters)
 --------
