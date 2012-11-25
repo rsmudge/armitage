@@ -16,6 +16,7 @@ In Progress
   put your computer to sleep or pause the VM running Metasploit.
 - add_user and add_[local]group_user now show all of their output when
   the -h flag is used to operate on a remote host.
+- added a Delete menu to creds table. Right-click a cred to delete it
 
 Cortana Updates (for scripters)
 --------
