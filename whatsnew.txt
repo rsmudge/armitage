@@ -15,6 +15,12 @@ In Progress
   This will prevent Armitage from losing its access to msfrpcd when you
   put your computer to sleep or pause the VM running Metasploit.
 
+Cortana Updates (for scripters)
+--------
+- aliased &data_delete to &data_clear to match the documentation.
+- &file_get, &loot_get, and &file_content no longer delete the remote 
+  file when connected to a teamserver.
+
 16 Oct 12 (tested against msf 15972)
 ---------
 - Added port 5985 to MSF Scans list.
