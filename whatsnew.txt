@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
------------
+26 Nov 12 (tested against msf 16114)
+---------
 - Windows command shell tab is now friendlier to commands that prompt
   for input (e.g., time command)
 - [host] -> Meterpreter -> Access -> Escalate Privileges now shows all
