@@ -678,6 +678,7 @@ sub addFileListener {
 	$actions["SigningKey"] = $actions["*FILE*"];
 	$actions["Wordlist"]   = $actions["*FILE*"];
 	$actions["WORDLIST"]   = $actions["*FILE*"];
+	$actions["REXE"]   = $actions["*FILE*"];
 
 	# set up an action to choose a session
 	$actions["SESSION"] = lambda(&chooseSession);
