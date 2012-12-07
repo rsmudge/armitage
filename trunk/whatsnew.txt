@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Added a helper to set REXE option
+
 26 Nov 12 (tested against msf 16114)
 ---------
 - Windows command shell tab is now friendlier to commands that prompt
