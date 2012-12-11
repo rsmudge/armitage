@@ -5,6 +5,8 @@ In Progress
 ---------
 - Added a helper to set REXE option
 - Added an icon to represent Windows 8
+- [host] -> Login menu is now built using open services for all 
+  highlighted hosts, not just the first one.
 
 26 Nov 12 (tested against msf 16114)
 ---------

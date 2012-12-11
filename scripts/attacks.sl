@@ -599,26 +599,28 @@ sub host_attack_items {
 		}
 	}
 
-	local('$service $name @options $a $port $foo');
+	local('$name %options $a $port $host $service');
+	%options = ohash();
 
-	foreach $port => $service (%hosts[$2[0]]['services']) {
-		$name = $service['name'];
-		if ($port == 445 && "*Windows*" iswm getHostOS($2[0])) {
-			push(@options, @("psexec", lambda(&pass_the_hash, $hosts => $2)));
-		}
-		else if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
-			push(@options, @($name, lambda(&show_login_dialog, \$service, $hosts => $2)));
-		}
-		else if ($name eq "microsoft-ds") {
-			push(@options, @("psexec", lambda(&pass_the_hash, $hosts => $2)));
+	foreach $host ($2) {
+		foreach $port => $service (%hosts[$host]['services']) {
+			$name = $service['name'];
+			if ($port == 445 && "*Windows*" iswm getHostOS($host)) {
+				%options["psexec"] = lambda(&pass_the_hash, $hosts => $2);
+			}
+			else if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
+				%options[$name] = lambda(&show_login_dialog, \$service, $hosts => $2);
+			}
+			else if ($name eq "microsoft-ds") {
+				%options["psexec"] = lambda(&pass_the_hash, $hosts => $2);
+			}
 		}
 	}
 
-	if (size(@options) > 0) {
+	if (size(%options) > 0) {
 		$a = menu($1, 'Login', 'L');
-		foreach $service (@options) {
-			($name, $foo) = $service;
-			item($a, $name, $null, $foo);
+		foreach $name (sorta(keys(%options))) {
+			item($a, $name, $null, %options[$name]);
 		}
 	}
 }
