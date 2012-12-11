@@ -41,6 +41,7 @@ import ui.*;
 
 		# strip any funky characters that will cause this call to throw an exception
 		$user = replace($user, '\P{Graph}', "");
+		$hash = fixPass($hash);
 
 		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u $user -P $hash"];
 	}
@@ -106,6 +107,7 @@ sub createCredentialsTab {
 				$queue = [new armitage.ConsoleQueue: $client];
 				foreach $entry ($entries) {
 					($user, $pass, $host) = $entry;
+					$pass = fixPass($pass);
 					[$queue addCommand: $null, "creds -d $host -u $user -P $pass"];
 				}
 
@@ -214,7 +216,7 @@ sub pass_the_hash {
 		}
 		else {
 			%options["SMBUser"] = [$user getText];
-			%options["SMBPass"] = [$pass getText];
+			%options["SMBPass"] = fixPass([$pass getText]);
 			%options["LPORT"] = randomPort();
 
 			foreach $host ($hosts) {
@@ -297,7 +299,7 @@ sub show_login_dialog {
 		}
 		else {
 			%options["USERNAME"] = [$user getText];
-			%options["PASSWORD"] = [$pass getText];
+			%options["PASSWORD"] = fixPass([$pass getText]);
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";
 			warn("$srvc $+ : $port => " . %options);
@@ -369,4 +371,8 @@ sub launchBruteForce {
 		[$console addCommand: $null, "run -j"];
 		[$console start];
 	}, $type => $1, $module => $2, $options => $3, $title => $4));
+}
+
+sub fixPass {
+	return replace(strrep($1, '\\', '\\\\'), '(\p{Punct})', '\\\\$1');
 }
