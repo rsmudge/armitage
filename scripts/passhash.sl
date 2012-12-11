@@ -216,7 +216,7 @@ sub pass_the_hash {
 		}
 		else {
 			%options["SMBUser"] = [$user getText];
-			%options["SMBPass"] = fixPass([$pass getText]);
+			%options["SMBPass"] = [$pass getText];
 			%options["LPORT"] = randomPort();
 
 			foreach $host ($hosts) {
@@ -299,7 +299,7 @@ sub show_login_dialog {
 		}
 		else {
 			%options["USERNAME"] = [$user getText];
-			%options["PASSWORD"] = fixPass([$pass getText]);
+			%options["PASSWORD"] = [$pass getText];
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";
 			warn("$srvc $+ : $port => " . %options);
@@ -371,8 +371,4 @@ sub launchBruteForce {
 		[$console addCommand: $null, "run -j"];
 		[$console start];
 	}, $type => $1, $module => $2, $options => $3, $title => $4));
-}
-
-sub fixPass {
-	return replace(strrep($1, '\\', '\\\\'), '(\p{Punct})', '\\\\$1');
 }
