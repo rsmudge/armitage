@@ -9,6 +9,8 @@ In Progress
   highlighted hosts, not just the first one.
 - [host] -> Login items now escape punctuation characters in passwords
   before passing them to a framework module.
+- Added the windows and linux postgres_payload exploits to the use a
+  reverse payload by default list.
 
 Cortana Updates (for scripters)
 --------
