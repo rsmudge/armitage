@@ -22,7 +22,7 @@ setMissPolicy(%results2, { return @(); });
 # %exploits is populated in menus.sl when the client-side attacks menu is constructed
 
 # a list of exploits that should always use a reverse shell... this list needs to grow.
-@always_reverse = @("multi/samba/usermap_script", "unix/misc/distcc_exec", "windows/http/xampp_webdav_upload_php");
+@always_reverse = @("multi/samba/usermap_script", "unix/misc/distcc_exec", "windows/http/xampp_webdav_upload_php", "windows/postgres/postgres_payload", "linux/postgres/postgres_payload");
 
 #
 # generate menus for a given OS
