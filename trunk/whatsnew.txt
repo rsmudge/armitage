@@ -11,6 +11,8 @@ In Progress
   before passing them to a framework module.
 - Added the windows and linux postgres_payload exploits to the use a
   reverse payload by default list.
+- Small tweak to allow Armitage to work with Metasploit 4.5 installed
+  environment on Windows.
 
 Cortana Updates (for scripters)
 --------
