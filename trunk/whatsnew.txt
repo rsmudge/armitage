@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
----------
+4 Jan 13 (tested against msf 16252)
+--------
 - Added a helper to set REXE option
 - Added an icon to represent Windows 8
 - [host] -> Login menu is now built using open services for all 
