@@ -4,6 +4,7 @@ Armitage Changelog
 In Progress
 --------
 - Added helpers to set EXE::Custom and EXE::Template.
+- Fixed a bug displaying a Windows 8 icon for Windows 2008 hosts
 
 4 Jan 13 (tested against msf 16252)
 --------
