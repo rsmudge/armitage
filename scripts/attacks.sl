@@ -679,6 +679,8 @@ sub addFileListener {
 	$actions["SigningCert"] = $actions["*FILE*"];
 	$actions["SigningKey"] = $actions["*FILE*"];
 	$actions["Wordlist"]   = $actions["*FILE*"];
+	$actions["EXE::Custom"] = $actions["*FILE*"];
+	$actions["EXE::Template"] = $actions["*FILE*"];
 	$actions["WORDLIST"]   = $actions["*FILE*"];
 	$actions["REXE"]   = $actions["*FILE*"];
 

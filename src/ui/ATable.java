@@ -26,6 +26,8 @@ public class ATable extends JTable {
 		specialitems.add("WORDLIST");
 		specialitems.add("SESSION");
 		specialitems.add("REXE");
+		specialitems.add("EXE::Custom");
+		specialitems.add("EXE::Template");
 
 		return new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {
