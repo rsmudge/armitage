@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+- Added helpers to set EXE::Custom and EXE::Template.
+
 4 Jan 13 (tested against msf 16252)
 --------
 - Added a helper to set REXE option
