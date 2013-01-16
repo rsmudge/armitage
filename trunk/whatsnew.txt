@@ -11,6 +11,10 @@ In Progress
   start process. An event is posted to the event log too.
 - Created an option helper to select credentials for SMBUser, SMBPass, 
   USERNAME, and PASSWORD. 
+- Added a feature to label hosts. A label will show up in its own column
+  in table view or below all info in graph view. Any team member may
+  change a label through [host] -> host -> Set Label. You may also use
+  dynamic workspaces to show hosts with certain labels attached.
 
 4 Jan 13 (tested against msf 16252)
 --------
