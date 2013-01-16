@@ -416,7 +416,7 @@ sub connectDialog {
 		[$dialog setVisible: 0];
 		connectToMetasploit($h, $p, $u, $s);
 
-		if ($h eq "127.0.0.1" || $h eq "localhost") {
+		if ($REMOTE is $null) {
 			try {
 				closef(connect("127.0.0.1", $p, 1000));
 			}
