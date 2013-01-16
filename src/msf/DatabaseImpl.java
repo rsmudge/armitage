@@ -21,7 +21,7 @@ public class DatabaseImpl implements RpcConnection  {
 	protected int sindex = 0;
 
 	/* keep track of labels associated with each host */
-	protected Map labels = null;
+	protected Map labels = new HashMap();
 
 	/* define the maximum hosts in a workspace */
 	protected int maxhosts = 512;
@@ -162,10 +162,36 @@ public class DatabaseImpl implements RpcConnection  {
 		return false;
 	}
 
-	protected void mergeLabels(Map l) {
-		if (labels == null)
-			labels = new HashMap();
+	protected void loadLabels() {
+		try {
+			/* query database for label data */
+			List rows = executeQuery("SELECT DISTINCT data FROM notes WHERE ntype = 'armitage.labels'");
+			if (rows.size() == 0)
+				return;
 
+			/* extract our BASE64 encoded data */
+			String data = ((Map)rows.get(0)).get("data") + "";
+			System.err.println("Read: " + data.length() + " bytes");
+
+			/* turn our data into raw data */
+			byte[] raw  = Base64.decode(data);
+
+			/* deserialize our notes data */
+			ByteArrayInputStream store = new ByteArrayInputStream(raw);
+			ObjectInputStream handle = new ObjectInputStream(store);
+			Map temp = (Map)(handle.readObject());
+			handle.close();
+			store.close();
+
+			/* merge with our new map */
+			labels.putAll(temp);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	protected void mergeLabels(Map l) {
 		/* accept any label values and merge them into our global data set */
 		Iterator i = l.entrySet().iterator();
 		while (i.hasNext()) {
@@ -181,7 +207,7 @@ public class DatabaseImpl implements RpcConnection  {
 
 	/* add labels to our hosts */
 	public List addLabels(List rows) {
-		if (labels == null)
+		if (labels.size() == 0)
 			return rows;
 
 		Iterator i = rows.iterator();
@@ -252,6 +278,7 @@ public class DatabaseImpl implements RpcConnection  {
 	public void connect(String dbstring, String user, String password) throws Exception {
 		db = DriverManager.getConnection(dbstring, user, password);
 		setWorkspace("default");
+		loadLabels();
 	}
 
 	public Object execute(String methodName) throws IOException {
@@ -485,8 +512,28 @@ public class DatabaseImpl implements RpcConnection  {
 				return result;
 			}
 			else if (methodName.equals("db.report_labels")) {
+				/* merge out global label data */
 				Map values = (Map)params[0];
 				mergeLabels(values);
+
+				/* delete our saved label data */
+				executeUpdate("DELETE FROM notes WHERE notes.ntype = 'armitage.labels'");
+
+				/* serialize our notes data */
+				ByteArrayOutputStream store = new ByteArrayOutputStream(labels.size() * 128);
+				ObjectOutputStream handle = new ObjectOutputStream(store);
+				handle.writeObject(labels);
+				handle.close();
+				store.close();
+
+				String data = Base64.encode(store.toByteArray());
+
+				/* save our label data */
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("INSERT INTO notes (ntype, data) VALUES ('armitage.labels', ?)");
+				stmt.setString(1, data);
+				stmt.executeUpdate();
+
 				return new HashMap();
 			}
 			else if (methodName.equals("db.report_host")) {
