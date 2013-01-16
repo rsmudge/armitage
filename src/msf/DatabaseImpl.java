@@ -19,6 +19,9 @@ public class DatabaseImpl implements RpcConnection  {
 	protected int hindex = 0;
 	protected int sindex = 0;
 
+	/* keep track of labels associated with each host */
+	protected Map labels = null;
+
 	/* define the maximum hosts in a workspace */
 	protected int maxhosts = 512;
 
@@ -145,6 +148,43 @@ public class DatabaseImpl implements RpcConnection  {
 		return false;
 	}
 
+	protected void mergeLabels(Map l) {
+		if (labels == null)
+			labels = new HashMap();
+
+		/* accept any label values and merge them into our global data set */
+		Iterator i = l.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry entry = (Map.Entry)i.next();
+			if ("".equals(entry.getValue())) {
+				labels.remove(entry.getKey() + "");
+			}
+			else {
+				labels.put(entry.getKey() + "", entry.getValue() + "");
+			}
+		}
+	}
+
+	/* add labels to our hosts */
+	public List addLabels(List rows) {
+		if (labels == null)
+			return rows;
+
+		Iterator i = rows.iterator();
+		while (i.hasNext()) {
+			Map entry = (Map)i.next();
+			String address = (entry.containsKey("address") ? entry.get("address") : entry.get("host")) + "";
+			if (labels.containsKey(address)) {
+				entry.put("label", labels.get(address) + "");
+			}
+			else {
+				entry.put("label", "");
+			}
+		}
+
+		return rows;
+	}
+
 	public List filterByRoute(List rows, int max) {
 		if (rFilter != null || oFilter != null) {
 			Iterator i = rows.iterator();
@@ -235,7 +275,7 @@ public class DatabaseImpl implements RpcConnection  {
 					result.put(methodName.substring(3), filterByRoute(executeQuery(query), maxservices));
 				}
 				else if (methodName.equals("db.hosts")) {
-					result.put(methodName.substring(3), filterByRoute(executeQuery(query), maxhosts));
+					result.put(methodName.substring(3), addLabels(filterByRoute(executeQuery(query), maxhosts)));
 				}
 				else {
 					result.put(methodName.substring(3), executeQuery(query));
@@ -405,6 +445,11 @@ public class DatabaseImpl implements RpcConnection  {
 				Map result = new HashMap();
 				result.put("rows", new Integer(stmt.executeUpdate()));
 				return result;
+			}
+			else if (methodName.equals("db.report_labels")) {
+				Map values = (Map)params[0];
+				mergeLabels(values);
+				return new HashMap();
 			}
 			else if (methodName.equals("db.report_host")) {
 				Map values = (Map)params[0];
