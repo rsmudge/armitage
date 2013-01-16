@@ -3,12 +3,14 @@ Armitage Changelog
 
 In Progress
 --------
-- Added helpers to set EXE::Custom and EXE::Template.
+- Added helpers to set EXE::Custom and EXE::Template options.
 - Fixed a bug displaying a Windows 8 icon for Windows 2008 hosts
 - Cleaned up Armitage -> SOCKS Proxy job management code. The code to
   check if a proxy server is up was deadlock prone. Removed it.
 - Starting SOCKS Proxy module now opens a tab displaying the module
   start process. An event is posted to the event log too.
+- Created an option helper to select credentials for SMBUser, SMBPass, 
+  USERNAME, and PASSWORD. 
 
 4 Jan 13 (tested against msf 16252)
 --------
