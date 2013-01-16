@@ -14,6 +14,7 @@ public class DatabaseImpl implements RpcConnection  {
 	protected String workspaceid = "0";
 	protected String hFilter = null;
 	protected String sFilter = null;
+	protected String[] lFilter = null;
 	protected Route[]  rFilter = null;
 	protected String[] oFilter = null;
 	protected int hindex = 0;
@@ -138,6 +139,19 @@ public class DatabaseImpl implements RpcConnection  {
 		return false;
 	}
 
+	private boolean checkLabel(String host) {
+		if (!labels.containsKey(host))
+			return false;
+
+		String label_l = (labels.get(host) + "").toLowerCase();
+
+		for (int x = 0; x < lFilter.length; x++) {
+			if (label_l.indexOf(lFilter[x]) != -1)
+				return true;
+		}
+		return false;
+	}
+
 	private boolean checkOS(String os) {
 		String os_l = os.toLowerCase();
 
@@ -186,10 +200,12 @@ public class DatabaseImpl implements RpcConnection  {
 	}
 
 	public List filterByRoute(List rows, int max) {
-		if (rFilter != null || oFilter != null) {
+		if (rFilter != null || oFilter != null || lFilter != null) {
 			Iterator i = rows.iterator();
 			while (i.hasNext()) {
 				Map entry = (Map)i.next();
+
+				/* make sure the address is within a route we care about */
 				if (rFilter != null && entry.containsKey("address")) {
 					if (!checkRoute(entry.get("address") + "")) {
 						i.remove();
@@ -203,9 +219,25 @@ public class DatabaseImpl implements RpcConnection  {
 					}
 				}
 
+				/* make sure the host is something we care about too */
 				if (oFilter != null && entry.containsKey("os_name")) {
 					if (!checkOS(entry.get("os_name") + ""))
 						i.remove();
+						continue;
+				}
+
+				/* make sure the host has the right label */
+				if (lFilter != null && entry.containsKey("address")) {
+					if (!checkLabel(entry.get("address") + "")) {
+						i.remove();
+						continue;
+					}
+				}
+				else if (lFilter != null && entry.containsKey("host")) {
+					if (!checkLabel(entry.get("host") + "")) {
+						i.remove();
+						continue;
+					}
 				}
 			}
 
@@ -372,6 +404,7 @@ public class DatabaseImpl implements RpcConnection  {
 
 				rFilter = null;
 				oFilter = null;
+				lFilter = null;
 
 				List hosts = new LinkedList();
 				List srvcs = new LinkedList();
@@ -423,6 +456,11 @@ public class DatabaseImpl implements RpcConnection  {
 
 				if (values.containsKey("os") && (values.get("os") + "").length() > 0) {
 					oFilter = (values.get("os") + "").toLowerCase().split(",\\s*");
+				}
+
+				/* label filter */
+				if (values.containsKey("labels") && (values.get("labels") + "").length() > 0) {
+					lFilter = (values.get("labels") + "").toLowerCase().split(",\\s*");
 				}
 
 				if (hosts.size() == 0) {
