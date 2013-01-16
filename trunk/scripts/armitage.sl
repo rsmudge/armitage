@@ -139,7 +139,7 @@ sub _connectToMetasploit {
 	$progress = [new ProgressMonitor: $null, "Connecting to $1 $+ : $+ $2", "first try... wish me luck.", 0, 100];
 
 	# keep track of whether we're connected to a local or remote Metasploit instance. This will affect what we expose.
-	$REMOTE = iff($1 eq "127.0.0.1", $null, 1);
+	$REMOTE = iff($1 eq "127.0.0.1" || $1 eq "::1" || $1 eq "localhost", $null, 1);
 
 	$flag = 10;
 	while ($flag) {
@@ -160,7 +160,7 @@ sub _connectToMetasploit {
 			}
 
 			# connecting locally? go to Metasploit directly...
-			if ($1 eq "127.0.0.1" || $1 eq "::1" || $1 eq "localhost") {
+			if ($REMOTE is $null) {
 				$client = [new MsgRpcImpl: $3, $4, $1, long($2), $null, $debug];
 				$aclient = [new RpcAsync: $client];
 				$mclient = $client;
