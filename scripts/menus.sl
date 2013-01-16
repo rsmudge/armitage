@@ -55,8 +55,18 @@ sub host_selected_items {
 			item($i, '4. 8/RT', '4', setHostValueFunction($2, "os_name", "Microsoft Windows", "os_flavor", "8"));
 
 		item($h, "Set Label...", 'S', lambda({
+			# calculate preexisting label to prompt with
 			local('$label %l $host');
-			$label = ask("Set label to:");
+
+			# get a label
+			foreach $host ($hosts) {
+				if ($label eq "") {
+					$label = getHostLabel($host);
+				}
+			}
+
+			# ask for a label 
+			$label = ask("Set label to:", $label);
 			foreach $host ($hosts) {
 				%l[$host] = "$label";
 			}
