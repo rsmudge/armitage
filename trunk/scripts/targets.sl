@@ -21,6 +21,10 @@ sub getHostOS {
 	return iff($1 in %hosts, %hosts[$1]['os_name'], $null);
 }
 
+sub getHostLabel {
+	return iff($1 in %hosts, %hosts[$1]['label'], $null);
+}
+
 sub getSessions {
 	return iff($1 in %hosts && 'sessions' in %hosts[$1], %hosts[$1]['sessions']);
 }
