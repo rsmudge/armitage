@@ -67,10 +67,12 @@ sub host_selected_items {
 
 			# ask for a label 
 			$label = ask("Set label to:", $label);
-			foreach $host ($hosts) {
-				%l[$host] = "$label";
+			if ($label !is $null) {
+				foreach $host ($hosts) {
+					%l[$host] = ["$label" trim];
+				}
+				call_async($mclient, "db.report_labels", %l);
 			}
-			call_async($mclient, "db.report_labels", %l);
 		}, $hosts => $2));
 
 		separator($h);
