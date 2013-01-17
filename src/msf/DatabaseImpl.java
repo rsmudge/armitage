@@ -146,8 +146,9 @@ public class DatabaseImpl implements RpcConnection  {
 		String label_l = (labels.get(host) + "").toLowerCase();
 
 		for (int x = 0; x < lFilter.length; x++) {
-			if (label_l.indexOf(lFilter[x]) != -1)
+			if (label_l.indexOf(lFilter[x]) != -1) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -247,9 +248,10 @@ public class DatabaseImpl implements RpcConnection  {
 
 				/* make sure the host is something we care about too */
 				if (oFilter != null && entry.containsKey("os_name")) {
-					if (!checkOS(entry.get("os_name") + ""))
+					if (!checkOS(entry.get("os_name") + "")) {
 						i.remove();
 						continue;
+					}
 				}
 
 				/* make sure the host has the right label */
@@ -291,8 +293,8 @@ public class DatabaseImpl implements RpcConnection  {
 		/* this is an optimization. If we have a network or OS filter, we need to pull back all host/service records and
 		   filter them here. If we do not have these types of filters, then we can let the database do the heavy lifting
 		   and limit the size of the final result there. */
-		int limit1 = rFilter == null && oFilter == null ? maxhosts : 30000;
-		int limit2 = rFilter == null && oFilter == null ? maxservices : 100000;
+		int limit1 = rFilter == null && oFilter == null && lFilter == null ? maxhosts : 30000;
+		int limit2 = rFilter == null && oFilter == null && lFilter == null ? maxservices : 100000;
 
 		temp.put("db.creds", "SELECT DISTINCT creds.*, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
 
