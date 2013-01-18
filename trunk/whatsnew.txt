@@ -18,6 +18,10 @@ In Progress
 - Fixed bad things happening when connecting Armitage to 'localhost' and
   not '127.0.0.1'.
 
+Cortana Updates (for scripters)
+--------
+- &handler function now works as advertised.
+
 4 Jan 13 (tested against msf 16252)
 --------
 - Added a helper to set REXE option
