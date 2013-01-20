@@ -96,7 +96,7 @@ public class NetworkTable extends JComponent implements ActionListener {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 				JLabel component = (JLabel)parent.getTableCellRendererComponent(table, value, isSelected, false, row, col);
 
-				if (col == 3 && Boolean.TRUE.equals(model.getValueAt(table, row, "Active"))) {
+				if (col == 4 && Boolean.TRUE.equals(model.getValueAt(table, row, "Active"))) {
 					component.setFont(component.getFont().deriveFont(Font.BOLD));
 				}
 				else if (col == 1 && !"".equals(model.getValueAt(table, row, "Description"))) {
