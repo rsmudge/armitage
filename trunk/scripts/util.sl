@@ -307,7 +307,12 @@ sub startMetasploit {
 				savePreferences();
 			}
 
-			$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd.bat"), $null];
+			if ("*apps*pro*" iswm $msfdir) {
+				$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd_new.bat"), $null];
+			}
+			else {
+				$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd.bat"), $null];
+			}
 			$data = join("\r\n", readAll($handle, -1));
 			closef($handle);
 
@@ -416,7 +421,7 @@ sub connectDialog {
 		[$dialog setVisible: 0];
 		connectToMetasploit($h, $p, $u, $s);
 
-		if ($REMOTE is $null) {
+		if ($h eq "127.0.0.1" || $h eq "::1" || $h eq "localhost") {
 			try {
 				closef(connect("127.0.0.1", $p, 1000));
 			}
