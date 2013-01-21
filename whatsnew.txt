@@ -17,6 +17,7 @@ In Progress
   dynamic workspaces to show hosts with certain labels attached.
 - Fixed bad things happening when connecting Armitage to 'localhost' and
   not '127.0.0.1'.
+- Screenshots and Webcam shots are now centered in their tab.
 
 Cortana Updates (for scripters)
 --------
