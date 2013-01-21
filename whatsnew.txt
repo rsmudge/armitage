@@ -18,6 +18,8 @@ In Progress
 - Fixed bad things happening when connecting Armitage to 'localhost' and
   not '127.0.0.1'.
 - Screenshots and Webcam shots are now centered in their tab.
+- Added an alternate .bat file to start msfrpcd on Windows in the
+  Metasploit 4.5 installer's environment.
 
 Cortana Updates (for scripters)
 --------
