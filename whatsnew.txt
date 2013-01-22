@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+23 Jan 13 (tested against msf 16351)
+---------
 - Added helpers to set EXE::Custom and EXE::Template options.
 - Fixed a bug displaying a Windows 8 icon for Windows 2008 hosts
 - Cleaned up Armitage -> SOCKS Proxy job management code. The code to
