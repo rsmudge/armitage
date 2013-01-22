@@ -20,6 +20,7 @@ In Progress
 - Screenshots and Webcam shots are now centered in their tab.
 - Added an alternate .bat file to start msfrpcd on Windows in the
   Metasploit 4.5 installer's environment.
+- Added a color-style for [!] warning messages
 
 Cortana Updates (for scripters)
 --------
