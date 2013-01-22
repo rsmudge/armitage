@@ -25,6 +25,7 @@ In Progress
 Cortana Updates (for scripters)
 --------
 - &handler function now works as advertised.
+- Cortana now avoids use of core.setg
 
 4 Jan 13 (tested against msf 16252)
 --------

@@ -9,7 +9,7 @@ import msf.*;
 
 # setg("varname", "value")
 sub setg {
-	call_async("core.setg", $1, $2);
+	cmd_safe("setg $1 $2");
 }
 
 sub readg {
