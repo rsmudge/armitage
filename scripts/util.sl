@@ -159,12 +159,15 @@ sub setg {
 }
 
 sub createDefaultHandler {
-	warn("Creating a default reverse handler...");
 	# setup a handler for meterpreter
-	setg("LPORT", randomPort());
+	local('$port');
+	$port = randomPort();
+	setg("LPORT", $port);
+	warn("Creating a default reverse handler... 0.0.0.0: $+ $port");
 	call_async($client, "module.execute", "exploit", "multi/handler", %(
 		PAYLOAD => "windows/meterpreter/reverse_tcp",
 		LHOST => "0.0.0.0",
+		LPORT => $port,
 		ExitOnSession => "false"
 	));
 }
