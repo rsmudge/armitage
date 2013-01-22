@@ -42,8 +42,13 @@ sub c_client {
 sub setupHandlers {
 	find_job("Exploit: multi/handler", {
 		if ($1 == -1) {
+			# set LPORT for the user...
+			local('$c');
+			$c = call($client, "console.allocate")['id'];
+			call($client, "console.write", $c, "setg LPORT " . randomPort() . "\n");
+			call($client, "console.release", $c);
+
 			# setup a handler for meterpreter
-			call($client, "core.setg", "LPORT", randomPort());
 			call($client, "module.execute", "exploit", "multi/handler", %(
 				PAYLOAD => "windows/meterpreter/reverse_tcp",
 				LHOST => "0.0.0.0",
