@@ -193,6 +193,11 @@ on hosts {
 		$address = $host['address'];
 		if ($address in %hosts && size(%hosts[$address]) > 1) {
 			%newh[$address] = %hosts[$address];
+
+			# set the label to empty b/c team server won't add labels if there are no labels. This fixes
+			# a corner case where a user might clear all labels and find they won't go away
+			%newh[$address]['label'] = '';
+
 			putAll(%newh[$address], keys($host), values($host));
 
 			if ($host['os_name'] eq "") {
