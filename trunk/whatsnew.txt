@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Fixed a corner case preventing the display of removed host labels 
+  when connected to a team server.
+
 23 Jan 13 (tested against msf 16351)
 ---------
 - Added helpers to set EXE::Custom and EXE::Template options.
