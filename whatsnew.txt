@@ -5,6 +5,9 @@ In Progress
 ---------
 - Fixed a corner case preventing the display of removed host labels 
   when connected to a team server.
+- Fixed RPC call cache corruption in team server mode. This bug could 
+  lead to some exploits defaulting to a shell payload when meterpreter 
+  was a possibility.
 
 23 Jan 13 (tested against msf 16351)
 ---------
