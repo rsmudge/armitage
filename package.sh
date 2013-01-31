@@ -10,6 +10,8 @@ ant clean
 ant compile
 cp -r resources/ bin/
 cp -r scripts/ bin/
+rm -rf bin/*/*/.svn
+rm -rf bin/*/.svn
 ant jar
 
 #
@@ -40,6 +42,8 @@ cp whatsnew.txt armitage/whatsnew.txt
 
 	# kill that silly .svn file
 rm -rf armitage/.svn
+rm -rf armitage/*/*/.svn
+rm -rf armitage/*/.svn
 cd armitage
 zip -r ../armitage.zip .
 cd ..
