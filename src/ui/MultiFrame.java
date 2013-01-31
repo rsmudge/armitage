@@ -65,6 +65,10 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 		if (buttons.size() == 0) {
 			System.exit(0);
 		}
+		else if (buttons.size() == 1) {
+			remove(toolbar);
+			validate();
+		}
 
 		if (i.hasNext()) {
 			temp = (ArmitageInstance)i.next();
