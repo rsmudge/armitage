@@ -11,6 +11,7 @@ In Progress
 - Slight optimization to some DB queries. I no longer pull unused
   fields making the query marginally faster. Team server is more
   efficient too as changes to unused fields won't force data (re)sync.
+- Hosts -> Clear Database now clears host labels too.
 
 23 Jan 13 (tested against msf 16351)
 ---------
