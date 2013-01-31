@@ -122,9 +122,9 @@ sub armitage_items {
 	item($1, 'New Connection', 'N', {
 		[new armitage.ArmitageMain: cast(@ARGV, ^String), $__frame__, $null];
 	});
-	item($1, 'Preferences', 'P', &createPreferencesTab);
-
 	separator($1);
+
+	item($1, 'Preferences', 'P', &createPreferencesTab);
 
 	dynmenu($1, 'Set Target View', 'S', {
 		local('$t1 $t2');
