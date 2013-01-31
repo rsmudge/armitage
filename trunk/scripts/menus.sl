@@ -186,12 +186,13 @@ sub armitage_items {
 
 	separator($1);
 
-	item($1, 'Exit', 'x', { 
+	item($1, 'Close', 'C', { 
 		if ($msfrpc_handle !is $null) {
 			closef($msfrpc_handle);
 		}
 
-		[System exit: 0]; 
+		map({ closef($1); }, @CLOSEME);
+		[$__frame__ quit];
 	});
 
 }
