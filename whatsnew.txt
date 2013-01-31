@@ -8,6 +8,9 @@ In Progress
 - Fixed RPC call cache corruption in team server mode. This bug could 
   lead to some exploits defaulting to a shell payload when meterpreter 
   was a possibility.
+- Slight optimization to some DB queries. I no longer pull unused
+  fields making the query marginally faster. Team server is more
+  efficient too as changes to unused fields won't force data (re)sync.
 
 23 Jan 13 (tested against msf 16351)
 ---------
