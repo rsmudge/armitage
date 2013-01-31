@@ -95,12 +95,12 @@ sub dispatchEvent {
 
 sub showError {
 	dispatchEvent(lambda({
-		[JOptionPane showMessageDialog: $frame, $message];
+		[JOptionPane showMessageDialog: $__frame__, $message];
 	}, $message => $1));
 }
 
 sub showErrorAndQuit {
-	[JOptionPane showMessageDialog: $frame, $1];
+	[JOptionPane showMessageDialog: $__frame__, $1];
 	[System exit: 0];
 }
 
@@ -155,7 +155,7 @@ sub chooseFile {
 		[$fc setFileSelectionMode: [JFileChooser DIRECTORIES_ONLY]];
 	}
 
-	[$fc showOpenDialog: $frame];
+	[$fc showOpenDialog: $__frame__];
 
 	if ($multi) {
 		return [$fc getSelectedFiles];
@@ -179,7 +179,7 @@ sub saveFile2 {
 		[$fc setSelectedFile: [new java.io.File: $sel]];
 	}
 
-	[$fc showSaveDialog: $frame];
+	[$fc showSaveDialog: $__frame__];
 	$file = [$fc getSelectedFile];
 	if ($file !is $null) {
 		return $file;
@@ -189,7 +189,7 @@ sub saveFile2 {
 sub saveFile {
 	local('$fc $file');
 	$fc = [new JFileChooser];
-	[$fc showSaveDialog: $frame];
+	[$fc showSaveDialog: $__frame__];
 	$file = [$fc getSelectedFile];
 	if ($file !is $null) {
 		local('$ihandle $data $ohandle');
@@ -250,10 +250,10 @@ sub left {
 
 sub dialog {
 	local('$dialog $4');
-        $dialog = [new JDialog: $frame, $1];
+        $dialog = [new JDialog: $__frame__, $1];
         [$dialog setSize: $2, $3];
         [$dialog setLayout: [new BorderLayout]];
-        [$dialog setLocationRelativeTo: $frame];
+        [$dialog setLocationRelativeTo: $__frame__];
 	return $dialog;
 }
 

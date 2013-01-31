@@ -119,6 +119,9 @@ sub view_items {
 sub armitage_items {
 	local('$m');
 
+	item($1, 'New Connection', 'N', {
+		[new armitage.ArmitageMain: cast(@ARGV, ^String), $__frame__, $null];
+	});
 	item($1, 'Preferences', 'P', &createPreferencesTab);
 
 	separator($1);
@@ -246,7 +249,7 @@ sub help_items {
 		
 		[$dialog add: $label, [BorderLayout CENTER]];
 		[$dialog pack];
-		[$dialog setLocationRelativeTo: $null];
+		[$dialog setLocationRelativeTo: $__frame__];
 		[$dialog setVisible: 1];
 	});
 }
