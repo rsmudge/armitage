@@ -15,7 +15,7 @@ import graph.*;
 
 import java.awt.image.*;
 
-global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS');
+global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE');
 
 sub describeHost {
 	local('$desc');
@@ -165,6 +165,7 @@ sub _connectToMetasploit {
 				$aclient = [new RpcAsync: $client];
 				$mclient = $client;
 				initConsolePool();
+				$DESCRIBE = "localhost";
 			}
 			# we have a team server... connect and authenticate to it.
 			else {
@@ -319,28 +320,23 @@ sub postSetup {
 }
 
 sub main {
-        local('$console $panel $dir');
+        local('$console $panel $dir $app');
 
-	$frame = [new ArmitageApplication];
+	$frame = [new ArmitageApplication: $__frame__, $DESCRIBE];
 	[$frame setTitle: $TITLE];
-        [$frame setSize: 800, 600];
-
+	[$frame setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
 	init_menus($frame);
 	initLogSystem();
-
-	[$frame setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
-        [$frame show];
-	[$frame setExtendedState: [JFrame MAXIMIZED_BOTH]];
 
 	# this window listener is dead-lock waiting to happen. That's why we're adding it in a
 	# separate thread (Sleep threads don't share data/locks).
 	fork({
-		[$frame addWindowListener: {
+		[$__frame__ addWindowListener: {
 			if ($0 eq "windowClosing" && $msfrpc_handle !is $null) {
 				closef($msfrpc_handle);
 			}
 		}];
-	}, \$msfrpc_handle, \$frame);
+	}, \$msfrpc_handle, \$__frame__);
 
 	dispatchEvent({
 		if ($client !is $mclient) {

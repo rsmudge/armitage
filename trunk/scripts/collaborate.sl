@@ -94,6 +94,7 @@ sub setup_collaboration {
 	}
 
 	%r = call($client, "armitage.validate", $1, $2, $null, "armitage", 120326);
+	$DESCRIBE = "$nick $+ @ $+ $3";
 	return $mclient;
 }
 
