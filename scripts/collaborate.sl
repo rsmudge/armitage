@@ -63,6 +63,7 @@ sub c_client {
 	# run this thing in its own thread to avoid really stupid deadlock situations
 	local('$handle');
 	$handle = [[new SecureSocket: $1, int($2), &verify_server] client];
+	push(@CLOSEME, $handle);
 	return wait(fork({
 		local('$client');
 		$client = newInstance(^RpcConnection, lambda({
