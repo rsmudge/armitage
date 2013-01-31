@@ -308,6 +308,10 @@ sub client {
 			$response = [$client execute: $method, cast($args, ^Object)];
 			writeObject($handle, $response);
 		}
+		else if ($method eq "module.execute_direct") {
+			$response = [$client execute: "module.execute", cast($args, ^Object)];
+			writeObject($handle, $response);
+		}
 		else if ($method in %async) {
 			if ($args) {
 				[$client execute_async: $method, cast($args, ^Object)];
