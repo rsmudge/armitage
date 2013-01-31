@@ -29,6 +29,18 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 
 	protected ArmitageApplication active;
 
+	/* is localhost running? */
+	public boolean checkLocal() {
+		Iterator i = buttons.iterator();
+		while (i.hasNext()) {
+			ArmitageInstance temp = (ArmitageInstance)i.next();
+			if ("localhost".equals(temp.button.getText())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean dispatchKeyEvent(KeyEvent ev) {
 		if (active != null) {
 			return active.getBindings().dispatchKeyEvent(ev);

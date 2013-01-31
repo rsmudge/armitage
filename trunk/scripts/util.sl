@@ -422,9 +422,14 @@ sub connectDialog {
 		($h, $p, $u, $s) = @o;
 
 		[$dialog setVisible: 0];
-		connectToMetasploit($h, $p, $u, $s);
 
 		if ($h eq "127.0.0.1" || $h eq "::1" || $h eq "localhost") {
+			if ($__frame__ && [$__frame__ checkLocal]) {
+				showError("You can't connect to localhost twice");
+				[$dialog setVisible: 1];
+				return;
+			}
+
 			try {
 				closef(connect("127.0.0.1", $p, 1000));
 			}
@@ -434,6 +439,8 @@ sub connectDialog {
 				}
 			}
 		}
+
+		connectToMetasploit($h, $p, $u, $s);
 	}, \$dialog, \$host, \$port, \$user, \$pass)];
 
 	[$help addActionListener: gotoURL("http://www.fastandeasyhacking.com/start")];
