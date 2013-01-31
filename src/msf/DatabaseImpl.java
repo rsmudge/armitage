@@ -412,6 +412,10 @@ public class DatabaseImpl implements RpcConnection  {
 				return new HashMap();
 			}
 			else if (methodName.equals("db.clear")) {
+				/* clear our local cache of labels */
+				labels = new HashMap();
+
+				/* clear the database */
 				executeUpdate(
 					"BEGIN;" +
 					"DELETE FROM hosts;" +
