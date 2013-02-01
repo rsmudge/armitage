@@ -381,7 +381,7 @@ sub connectDialog {
 		$msfrpc_handle = $null;
 	}
 
-	local('$dialog $host $port $ssl $user $pass $button $cancel $start $center $help $helper');
+	local('$dialog $host $port $ssl $user $pass $button $start $center $help $helper');
 	$dialog = window("Connect...", 0, 0);
 	
 	# setup our nifty form fields..
@@ -397,8 +397,6 @@ sub connectDialog {
 
 	$help   = [new JButton: "Help"];
 	[$help setToolTipText: "<html>Use this button to view the Getting Started Guide on the Armitage homepage</html>"];
-
-	$cancel = [new JButton: "Exit"];
 
 	# lay them out
 
@@ -444,10 +442,6 @@ sub connectDialog {
 	}, \$dialog, \$host, \$port, \$user, \$pass)];
 
 	[$help addActionListener: gotoURL("http://www.fastandeasyhacking.com/start")];
-
-	[$cancel addActionListener: {
-		[System exit: 0];
-	}];
 
 	[$dialog pack];
 	[$dialog setLocationRelativeTo: $null];
