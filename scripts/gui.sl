@@ -261,7 +261,15 @@ sub window {
 	local('$dialog $4');
         $dialog = [new JFrame: $1];
 	[$dialog setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
-	[$dialog setDefaultCloseOperation: [JFrame EXIT_ON_CLOSE]];
+
+	fork({
+		[$dialog addWindowListener: {
+			if ($0 eq "windowClosing") {
+				[$__frame__ closeConnect];
+			}
+		}];
+	}, \$__frame__, \$dialog);
+
         [$dialog setSize: $2, $3];
         [$dialog setLayout: [new BorderLayout]];
 	return $dialog;

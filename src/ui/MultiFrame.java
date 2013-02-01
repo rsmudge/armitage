@@ -61,6 +61,12 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 		}
 	}
 
+	public void closeConnect() {
+		if (buttons.size() == 0) {
+			System.exit(0);
+		}
+	}
+
 	public void quit() {
 		ArmitageInstance temp = null;
 		content.remove(active);
