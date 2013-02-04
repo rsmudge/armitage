@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import armitage.ArmitageApplication;
+import msf.*;
 
 /* A class to host multiple Armitage instances in one frame. Srsly */
 public class MultiFrame extends JFrame implements KeyEventDispatcher {
@@ -20,6 +21,20 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 	private static class ArmitageInstance {
 		public ArmitageApplication app;
 		public JToggleButton       button;
+		public RpcConnection       client;
+	}
+
+	public Map getClients() {
+		synchronized (buttons) {
+			Map r = new HashMap();
+
+			Iterator i = buttons.iterator();
+			while (i.hasNext()) {
+				ArmitageInstance temp = (ArmitageInstance)i.next();
+				r.put(temp.button.getText(), temp.client);
+			}
+			return r;
+		}
 	}
 
 	public void setTitle(ArmitageApplication app, String title) {
@@ -31,14 +46,16 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 
 	/* is localhost running? */
 	public boolean checkLocal() {
-		Iterator i = buttons.iterator();
-		while (i.hasNext()) {
-			ArmitageInstance temp = (ArmitageInstance)i.next();
-			if ("localhost".equals(temp.button.getText())) {
-				return true;
+		synchronized (buttons) {
+			Iterator i = buttons.iterator();
+			while (i.hasNext()) {
+				ArmitageInstance temp = (ArmitageInstance)i.next();
+				if ("localhost".equals(temp.button.getText())) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	public boolean dispatchKeyEvent(KeyEvent ev) {
@@ -62,40 +79,44 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 	}
 
 	public void closeConnect() {
-		if (buttons.size() == 0) {
-			System.exit(0);
+		synchronized (buttons) {
+			if (buttons.size() == 0) {
+				System.exit(0);
+			}
 		}
 	}
 
 	public void quit() {
-		ArmitageInstance temp = null;
-		content.remove(active);
-		Iterator i = buttons.iterator();
-		while (i.hasNext()) {
-			temp = (ArmitageInstance)i.next();
-			if (temp.app == active) {
-				toolbar.remove(temp.button);
-				i.remove();
-				break;
+		synchronized (buttons) {
+			ArmitageInstance temp = null;
+			content.remove(active);
+			Iterator i = buttons.iterator();
+			while (i.hasNext()) {
+				temp = (ArmitageInstance)i.next();
+				if (temp.app == active) {
+					toolbar.remove(temp.button);
+					i.remove();
+					break;
+				}
 			}
-		}
 
-		if (buttons.size() == 0) {
-			System.exit(0);
-		}
-		else if (buttons.size() == 1) {
-			remove(toolbar);
-			validate();
-		}
+			if (buttons.size() == 0) {
+				System.exit(0);
+			}
+			else if (buttons.size() == 1) {
+				remove(toolbar);
+				validate();
+			}
 
-		if (i.hasNext()) {
-			temp = (ArmitageInstance)i.next();
-		}
-		else {
-			temp = (ArmitageInstance)buttons.getFirst();
-		}
+			if (i.hasNext()) {
+				temp = (ArmitageInstance)i.next();
+			}
+			else {
+				temp = (ArmitageInstance)buttons.getFirst();
+			}
 
-		set(temp.button);
+			set(temp.button);
+		}
 	}
 
 	public MultiFrame() {
@@ -129,47 +150,52 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 	}
 
 	protected void set(JToggleButton button) {
-		/* set all buttons to the right state */
-		Iterator i = buttons.iterator();
-		while (i.hasNext()) {
-			ArmitageInstance temp = (ArmitageInstance)i.next();
-			if (temp.button.getText().equals(button.getText())) {
-				temp.button.setSelected(true);
-				active = temp.app;
-				setTitle(active.getTitle());
+		synchronized (buttons) {
+			/* set all buttons to the right state */
+			Iterator i = buttons.iterator();
+			while (i.hasNext()) {
+				ArmitageInstance temp = (ArmitageInstance)i.next();
+				if (temp.button.getText().equals(button.getText())) {
+					temp.button.setSelected(true);
+					active = temp.app;
+					setTitle(active.getTitle());
+				}
+				else {
+					temp.button.setSelected(false);
+				}
 			}
-			else {
-				temp.button.setSelected(false);
-			}
-		}
 
-		/* show our cards? */
-		cards.show(content, button.getText());
-		active.touch();
+			/* show our cards? */
+			cards.show(content, button.getText());
+			active.touch();
+		}
 	}
 
-	public void addButton(String title, ArmitageApplication component) {
-		ArmitageInstance a = new ArmitageInstance();
-		a.button = new JToggleButton(title);
-		a.app    = component;
+	public void addButton(String title, ArmitageApplication component, RpcConnection conn) {
+		synchronized (buttons) {
+			ArmitageInstance a = new ArmitageInstance();
+			a.button = new JToggleButton(title);
+			a.app    = component;
+			a.client = conn;
 
-		a.button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				set((JToggleButton)ev.getSource());
+			a.button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					set((JToggleButton)ev.getSource());
+				}
+			});
+
+			toolbar.add(a.button);
+			content.add(component, title);
+			buttons.add(a);
+			set(a.button);
+
+			if (buttons.size() == 1) {
+				show();
 			}
-		});
-
-		toolbar.add(a.button);
-		content.add(component, title);
-		buttons.add(a);
-		set(a.button);
-
-		if (buttons.size() == 1) {
-			show();
+			else if (buttons.size() == 2) {
+				add(toolbar, BorderLayout.SOUTH);
+			}
+			validate();
 		}
-		else if (buttons.size() == 2) {
-			add(toolbar, BorderLayout.SOUTH);
-		}
-		validate();
 	}
 }

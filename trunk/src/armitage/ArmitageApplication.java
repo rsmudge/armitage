@@ -396,7 +396,7 @@ public class ArmitageApplication extends JComponent {
 		c.requestFocusInWindow();
 	}
 
-	public ArmitageApplication(MultiFrame f, String details) {
+	public ArmitageApplication(MultiFrame f, String details, msf.RpcConnection conn) {
 		super();
 		window = f;
 		tabs = new DraggableTabbedPane();
@@ -416,6 +416,6 @@ public class ArmitageApplication extends JComponent {
 
 		/* ... */
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		((ui.MultiFrame)window).addButton(details, this);
+		((ui.MultiFrame)window).addButton(details, this, conn);
 	}
 }
