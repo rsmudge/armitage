@@ -322,7 +322,7 @@ sub postSetup {
 sub main {
         local('$console $panel $dir $app');
 
-	$frame = [new ArmitageApplication: $__frame__, $DESCRIBE];
+	$frame = [new ArmitageApplication: $__frame__, $DESCRIBE, $mclient];
 	[$frame setTitle: $TITLE];
 	[$frame setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
 	init_menus($frame);

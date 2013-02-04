@@ -330,7 +330,7 @@ sub _generateArtifacts {
 
 	fire_event_async("user_export", %data);
 
-	return getFileProper(dataDirectory(), formatDate("yyMMdd"), "artifacts");
+	return getFileProper(dataDirectory(), formatDate("yyMMdd"), $DESCRIBE, "artifacts");
 }
 
 #
