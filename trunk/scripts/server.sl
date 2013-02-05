@@ -428,6 +428,9 @@ sub main {
 		# absorb the output of this command which is LHOST => ...
 	call($client, "console.read", $console);
 
+	# update server's understanding of this value...
+	call($client, "armitage.set_ip", $host);
+
 	#
 	# create a thread to push console messages to the event queue for all clients.
 	#
