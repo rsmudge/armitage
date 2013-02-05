@@ -475,6 +475,13 @@ sub quickListDialog {
 	[$dialog setVisible: 1];
 }
 
+sub setTableColumnWidths {
+	local('$col $width $temp');
+	foreach $col => $width ($2) {
+		[[$1 getColumn: $col] setPreferredWidth: $width];
+	}
+}
+
 sub tableRenderer {
 	return [ATable getDefaultTableRenderer: $1, $2];
 }
