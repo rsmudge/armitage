@@ -151,6 +151,11 @@ sub createConsoleTab {
 }
 
 sub setg {
+	# update team server's understanding of LHOST
+	if ($1 eq "LHOST") {
+		call_async($client, "armitage.set_ip", $2);
+	}
+
 	%MSF_GLOBAL[$1] = $2;
 	local('$c');
 	$c = createConsole($client);
