@@ -285,12 +285,14 @@ sub overlay_images {
 		return %cache[join(';', $1)];
 	}
 
-	local('$file $image $buffered $graphics');
+	local('$file $image $buffered $graphics $resource');
 
         $buffered = [new BufferedImage: 1000, 776, [BufferedImage TYPE_INT_ARGB]];
 	$graphics = [$buffered createGraphics];
 	foreach $file ($1) {
-		$image = [ImageIO read: resource($file)];
+		$resource = resource($file);
+		$image = [ImageIO read: $resource];
+		closef($resource);
 		[$graphics drawImage: $image, 0, 0, 1000, 776, $null];
 	}
 
