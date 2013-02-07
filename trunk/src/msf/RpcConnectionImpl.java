@@ -86,6 +86,10 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	protected HashMap locks = new HashMap();
 	protected String  address = "";
 
+	public String getLocalAddress() {
+		return address;
+	}
+
 	/** Adds token, runs command, and notifies logger on call and return */
 	public Object execute(String methodName, Object[] params) throws IOException {
 		if (database != null && "db.".equals(methodName.substring(0, 3))) {
@@ -94,7 +98,6 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 		else if (methodName.equals("armitage.ping")) {
 			try {
 				long time = System.currentTimeMillis() - Long.parseLong(params[0] + "");
-				System.err.println("The difference between my clock and theres is: " + time);
 
 				HashMap res = new HashMap();
 				res.put("result", time + "");

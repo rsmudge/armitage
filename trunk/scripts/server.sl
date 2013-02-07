@@ -183,6 +183,9 @@ sub client {
 		else if ($method eq "armitage.log") {
 			($data, $address) = $args;
 			event("* $eid $data $+ \n");
+			if ($address is $null) {
+				$address = [$client getLocalAddress];
+			}
 			call_async($client, "db.log_event", "$address $+ // $+ $eid", $data);
 			writeObject($handle, result(%()));
 		}
