@@ -453,22 +453,20 @@ sub connectDialog {
 	[$dialog setVisible: 1];
 }
 
-sub _elog {
+sub elog {
+	local('$2');
 	if ($client !is $mclient) {
+		# $2 can be NULL here. team server will populate it...
 		call_async($mclient, "armitage.log", $1, $2);
 	}
 	else {
+		# since we're not on a team server, no one else will have
+		# overwritten LHOST, so we can trust $MY_ADDRESS to be current
+		if ($2 is $null) {
+			$2 = $MY_ADDRESS;
+		}
 		call_async($client, "db.log_event", "$2 $+ //", $1);
 	}
-}
-
-sub elog {
-	local('$2');
-	if ($2 is $null) {
-		$2 = $MY_ADDRESS;
-	}
-
-	_elog($1, $2);
 }
 
 sub module_execute {
