@@ -12,6 +12,12 @@ In Progress
   fields making the query marginally faster. Team server is more
   efficient too as changes to unused fields won't force data (re)sync.
 - Hosts -> Clear Database now clears host labels too.
+- Added the ability to manage multiple team server instances through
+  Armitage. Go to Armitage -> New Connection to connect to another
+  server. A button bar will appear that allows you to switch active
+  Armitage connections.
+	- Credentials available across instances are pooled when using
+ 	  the [host] -> Login menu and the credential helper.
 
 23 Jan 13 (tested against msf 16351)
 ---------
