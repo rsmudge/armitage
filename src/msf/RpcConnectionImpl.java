@@ -91,6 +91,21 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 		if (database != null && "db.".equals(methodName.substring(0, 3))) {
 			return database.execute(methodName, params);
 		}
+		else if (methodName.equals("armitage.ping")) {
+			try {
+				long time = System.currentTimeMillis() - Long.parseLong(params[0] + "");
+				System.err.println("The difference between my clock and theres is: " + time);
+
+				HashMap res = new HashMap();
+				res.put("result", time + "");
+				return res;
+			}
+			catch (Exception ex) {
+				HashMap res = new HashMap();
+				res.put("result", "0");
+				return res;
+			}
+		}
 		else if (methodName.equals("armitage.my_ip")) {
 			HashMap res = new HashMap();
 			res.put("result", address);
