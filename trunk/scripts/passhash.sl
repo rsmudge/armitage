@@ -77,8 +77,27 @@ sub refreshCredsTable {
 	}, $model => $1, $title => $2));
 }
 
+sub refreshCredsTableLocal {
+	thread(lambda({
+		[Thread yield];
+		local('$creds $cred $desc $aclient %check $key');
+		[$model clear: 128];
+		$creds = call($client, "db.creds2", [new HashMap])["creds2"];
+		foreach $cred ($creds) {
+			$key = join("~~", values($cred, @("user", "pass", "host")));
+			if ($key in %check) {
+			}
+			else if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
+				[$model addEntry: $cred];
+				%check[$key] = 1;
+			}
+		}
+		[$model fireListeners];
+	}, $model => $1, $title => $2));
+}
+
 sub show_hashes {
-	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $scroll');	
+	local('$dialog $model $table $sorter $o $user $pass $button $reverse $domain $scroll $3');
 
 	$dialog = dialog($1, 480, $2);
 
@@ -90,7 +109,12 @@ sub show_hashes {
 	[$sorter setComparator: 2, &compareHosts];
         [$table setRowSorter: $sorter];
 
-	refreshCredsTable($model, $1);
+	if ($3) {
+		refreshCredsTableLocal($model, $1);
+	}
+	else {
+		refreshCredsTable($model, $1);
+	}
 
 	$scroll = [new JScrollPane: $table];
 	[$scroll setPreferredSize: [new Dimension: 480, 130]];
@@ -101,7 +125,7 @@ sub show_hashes {
 
 sub createCredentialsTab {
 	local('$dialog $table $model $panel $export $crack $refresh');
-	($dialog, $table, $model) = show_hashes("", 320);
+	($dialog, $table, $model) = show_hashes("", 320, 1);
 	[$dialog removeAll];
 
 	addMouseListener($table, lambda({
@@ -138,7 +162,7 @@ sub createCredentialsTab {
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
-		refreshCredsTable($model, $null);
+		refreshCredsTableLocal($model, $null);
 	}, \$model)];
 
 	$crack = [new JButton: "Crack Passwords"];
