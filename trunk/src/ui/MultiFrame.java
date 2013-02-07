@@ -171,16 +171,53 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 		}
 	}
 
-	public void addButton(String title, ArmitageApplication component, RpcConnection conn) {
+	public void addButton(String title, final ArmitageApplication component, RpcConnection conn) {
 		synchronized (buttons) {
-			ArmitageInstance a = new ArmitageInstance();
+			final ArmitageInstance a = new ArmitageInstance();
 			a.button = new JToggleButton(title);
+			a.button.setToolTipText(title);
 			a.app    = component;
 			a.client = conn;
 
 			a.button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
 					set((JToggleButton)ev.getSource());
+				}
+			});
+
+			a.button.addMouseListener(new MouseAdapter() {
+				public void check(MouseEvent ev) {
+					if (ev.isPopupTrigger()) {
+						final JToggleButton source = a.button;
+						JPopupMenu popup = new JPopupMenu();
+						JMenuItem  rename = new JMenuItem("Rename");
+						rename.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent ev) {
+								String name = JOptionPane.showInputDialog("Rename to?", source.getText());
+								if (name != null) {
+									content.remove(component);
+									content.add(component, name);
+									source.setText(name);
+									set(source);
+								}
+							}
+						});
+						popup.add(rename);
+						popup.show((JComponent)ev.getSource(), ev.getX(), ev.getY());
+						ev.consume();
+					}
+				}
+
+				public void mouseClicked(MouseEvent ev) {
+					check(ev);
+				}
+
+				public void mousePressed(MouseEvent ev) {
+					check(ev);
+				}
+
+				public void mouseReleased(MouseEvent ev) {
+					check(ev);
 				}
 			});
 
