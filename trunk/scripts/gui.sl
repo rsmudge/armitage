@@ -179,10 +179,11 @@ sub saveFile2 {
 		[$fc setSelectedFile: [new java.io.File: $sel]];
 	}
 
-	[$fc showSaveDialog: $__frame__];
-	$file = [$fc getSelectedFile];
-	if ($file !is $null) {
-		return $file;
+	if ([$fc showSaveDialog: $__frame__] == 0) {
+		$file = [$fc getSelectedFile];
+		if ($file !is $null) {
+			return $file;
+		}
 	}
 }
 
