@@ -23,6 +23,7 @@ sub createEventLogTab {
 		$client = [$cortana getEventLog: $console];
 		[$client setEcho: $null];
 		[$console updatePrompt: "> "];
+		[new EventLogTabCompletion: $console, $mclient];
 	}
 	else {
 		[$console updateProperties: $preferences];

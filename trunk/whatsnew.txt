@@ -19,6 +19,8 @@ In Progress
 	- Credentials available across instances are pooled when using
  	  the [host] -> Login menu and the credential helper.
 - Rewrote the event log management code in the team server
+- Added nickname tab completion to event log. I feel like I'm writing
+  an IRC client again.
 
 23 Jan 13 (tested against msf 16351)
 ---------

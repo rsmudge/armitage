@@ -53,9 +53,10 @@ public class ArmitageBuffer {
 	}
 
 	/* retrieve a set of all clients consuming this buffer */
-	public Set clients() {
+	public Collection clients() {
 		synchronized (this) {
-			return indices.keySet();
+			LinkedList clients = new LinkedList(indices.keySet());
+			return clients;
 		}
 	}
 
