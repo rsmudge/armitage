@@ -192,6 +192,11 @@ sub client {
 			$rv = result(%(data => [$events get: $eid], encoding => "base64", prompt => "$eid $+ > "));
 			writeObject($handle, $rv);
 		}
+		else if ($method eq "armitage.lusers") {
+			$rv = [new HashMap];
+			[$rv put: "lusers", [$events clients]];
+			writeObject($handle, $rv);
+		}
 		else if ($method eq "armitage.append") {
 			($file, $data) = $args;
 
