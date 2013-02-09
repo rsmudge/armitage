@@ -14,10 +14,11 @@ public class ArmitageBuffer {
 	}
 
 	/* store our messages... */
-	public Message first = null;
-	public Message last  = null;
-	public long    size  = 0;
-	public long    max   = 0;
+	public Message first  = null;
+	public Message last   = null;
+	public long    size   = 0;
+	public long    max    = 0;
+	public String  prompt = "";
 
 	/* store indices into this buffer */
 	public Map  indices  = new HashMap();
@@ -25,6 +26,20 @@ public class ArmitageBuffer {
 	/* setup the buffer?!? :) */
 	public ArmitageBuffer(long max) {
 		this.max = max;
+	}
+
+	/* store a prompt with this buffer... we're not going to do any indexing magic for now */
+	public String getPrompt() {
+		synchronized (this) {
+			return prompt;
+		}
+	}
+
+	/* set the prompt */
+	public void setPrompt(String text) {
+		synchronized (this) {
+			prompt = text;
+		}
 	}
 
 	/* post a message to this buffer */
