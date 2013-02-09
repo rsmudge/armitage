@@ -1,0 +1,120 @@
+package armitage;
+
+import java.util.*;
+
+/*
+ * Implement a thread safe store that any client may write to and
+ * any client may read from (keeping track of their cursor into
+ * the console)
+ */
+public class ArmitageBuffer {
+	private static final class Message {
+		public String  message = null;
+		public Message next    = null;
+	}
+
+	/* store our messages... */
+	public Message first = null;
+	public Message last  = null;
+	public int     size  = 0;
+
+	/* store indices into this buffer */
+	public Map  indices  = new HashMap();
+
+	/* setup the buffer?!? :) */
+	public ArmitageBuffer() {
+	}
+
+	/* post a message to this buffer */
+	public void put(String text) {
+		synchronized (this) {
+			/* create our message */
+			Message m = new Message();
+			m.message = text;
+
+			/* store our message */
+			if (last == null && first == null) {
+				first = m;
+				last = m;
+			}
+			else {
+				last.next = m;
+				last = m;
+			}
+
+			/* increment number of stored messages */
+			size += 1;
+
+			/* limit the total number of past messages to 100 */
+			if (size > 250) {
+				first = first.next;
+			}
+		}
+	}
+
+	/* retrieve a set of all clients consuming this buffer */
+	public Set clients() {
+		synchronized (this) {
+			return indices.keySet();
+		}
+	}
+
+	/* free a client */
+	public void free(String id) {
+		synchronized (this) {
+			indices.remove(id);
+		}
+	}
+
+	/* reset our indices too */
+	public void reset() {
+		synchronized (this) {
+			first = null;
+			last = null;
+			indices.clear();
+			size = 0;
+		}
+	}
+
+	/* retrieve all messages available to the client (if any) */
+	public String get(String id) {
+		synchronized (this) {
+			/* nadaz */
+			if (first == null)
+				return "";
+
+			/* get our index into the buffer */
+			Message index = null;
+			if (!indices.containsKey(id)) {
+				index = first;
+			}
+			else {
+				index = (Message)indices.get(id);
+
+				/* nothing happening */
+				if (index.next == null)
+					return "";
+
+				index = index.next;
+			}
+
+			/* now let's walk through it */
+			StringBuffer result = new StringBuffer();
+			Message temp = index;
+			while (temp != null) {
+				result.append(temp.message);
+				index = temp;
+				temp = temp.next;
+			}
+
+			/* store our index */
+			indices.put(id, index);
+
+			return result.toString();
+		}
+	}
+
+	public String toString() {
+		return "[" + size + " messages]";
+	}
+}

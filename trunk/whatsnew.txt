@@ -18,6 +18,7 @@ In Progress
   Armitage connections.
 	- Credentials available across instances are pooled when using
  	  the [host] -> Login menu and the credential helper.
+- Rewrote the event log management code in the team server
 
 23 Jan 13 (tested against msf 16351)
 ---------

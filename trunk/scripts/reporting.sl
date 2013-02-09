@@ -356,8 +356,6 @@ sub api_export_data {
 }
 
 sub initReporting {
-	global('$poll_lock @events'); # set in the dserver, not in stand-alone Armitage
-
 	wait(fork({
 		global('$db');
 		[$client addHook: "armitage.export_data", &api_export_data];
