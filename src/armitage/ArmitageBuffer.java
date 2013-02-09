@@ -16,13 +16,15 @@ public class ArmitageBuffer {
 	/* store our messages... */
 	public Message first = null;
 	public Message last  = null;
-	public int     size  = 0;
+	public long    size  = 0;
+	public long    max   = 0;
 
 	/* store indices into this buffer */
 	public Map  indices  = new HashMap();
 
 	/* setup the buffer?!? :) */
-	public ArmitageBuffer() {
+	public ArmitageBuffer(long max) {
+		this.max = max;
 	}
 
 	/* post a message to this buffer */
@@ -45,8 +47,8 @@ public class ArmitageBuffer {
 			/* increment number of stored messages */
 			size += 1;
 
-			/* limit the total number of past messages to 100 */
-			if (size > 250) {
+			/* limit the total number of past messages to the max size */
+			if (size > max) {
 				first = first.next;
 			}
 		}
