@@ -407,7 +407,7 @@ sub main {
 	$cach_lock = semaphore(1);
 
 	# setup any shared buffers...
-	$events    = [new armitage.ArmitageBuffer];
+	$events    = [new armitage.ArmitageBuffer: 250];
 
 	# set the LHOST to whatever the user specified (use console.write to make the string not UTF-8)
 	$console = createConsole($client);
