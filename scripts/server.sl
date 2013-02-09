@@ -35,9 +35,7 @@ sub result {
 sub event {
 	local('$result');
 	$result = formatDate("HH:mm:ss") . " $1";
-	acquire($poll_lock);
-	push(@events, $result);
-	release($poll_lock);
+	[$events put: $result];
 }
 
 sub client {
@@ -95,16 +93,6 @@ sub client {
 		}
 		[[$handle getOutputStream] flush];
 	}
-
-        # limit our replay of the event log to 100 events...
-        acquire($poll_lock);
-        if (size(@events) > 100) {
-                $index = size(@events) - 100;
-        }
-        else {
-                $index = 0;
-        }
-        release($poll_lock);
 
 	#
 	# on our merry way processing it...
@@ -190,29 +178,18 @@ sub client {
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.skip") {
-			acquire($poll_lock);
-			$index = size(@events);
-			release($poll_lock);
+			[$events get: $eid];
 			writeObject($handle, result(%()));
 		}
 		else if ($method eq "armitage.poll" || $method eq "armitage.push") {
-			acquire($poll_lock);
 			if ($method eq "armitage.push") {
 				($null, $data) = $args;
 				foreach $temp (split("\n", $data)) {
-					push(@events, formatDate("HH:mm:ss") . " < $+ $[10]eid $+ > " . $data);
+					[$events put: formatDate("HH:mm:ss") . " < $+ $[10]eid $+ > " . $data];
 				}
 			}
 
-			if (size(@events) > $index) {
-				$rv = result(%(data => join("", sublist(@events, $index)), encoding => "base64", prompt => "$eid $+ > "));
-				$index = size(@events);
-			}
-			else {
-				$rv = result(%(data => "", prompt => "$eid $+ > ", encoding => "base64"));
-			}
-			release($poll_lock);
-
+			$rv = result(%(data => [$events get: $eid], encoding => "base64", prompt => "$eid $+ > "));
 			writeObject($handle, $rv);
 		}
 		else if ($method eq "armitage.append") {
@@ -340,6 +317,7 @@ sub client {
 
 	if ($eid !is $null) {
 		event("*** $eid left.\n");
+		[$events free: $eid];
 	}
 
 	# reset the user's filter...
@@ -362,7 +340,7 @@ sub client {
 
 sub main {
 	global('$client $mclient');
-	local('$server %sessions $sess_lock $read_lock $poll_lock $lock_lock %locks %readq $id @events $error $auth %cache $cach_lock $client_cache $handle $console');
+	local('$server %sessions $sess_lock $read_lock $lock_lock %locks %readq $id $error $auth %cache $cach_lock $client_cache $handle $console $events');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
 
@@ -420,9 +398,11 @@ sub main {
 	#
 	$sess_lock = semaphore(1);
 	$read_lock = semaphore(1);
-	$poll_lock = semaphore(1);
 	$lock_lock = semaphore(1);
 	$cach_lock = semaphore(1);
+
+	# setup any shared buffers...
+	$events    = [new armitage.ArmitageBuffer];
 
 	# set the LHOST to whatever the user specified (use console.write to make the string not UTF-8)
 	$console = createConsole($client);
@@ -443,12 +423,10 @@ sub main {
 			sleep(2000);
 			$r = call($client, "console.read", $console);
 			if ($r["data"] ne "") {
-				acquire($poll_lock);
-				push(@events, formatDate("HH:mm:ss") . " " . $r["data"]);
-				release($poll_lock);
+				[$events put: formatDate("HH:mm:ss") . " " . $r["data"]];
 			}
 		}
-	}, \$client, \$poll_lock, \@events, \$console);
+	}, \$client, \$events, \$console);
 
 	#
 	# Create a shared hash that contains a thread for each session...
@@ -545,7 +523,7 @@ service framework-postgres start");
 		$handle = [$server accept];
 		if ($handle !is $null) {
 			%readq[$id] = %();
-			fork(&client, \$client, \$handle, \%sessions, \$read_lock, \$sess_lock, \$poll_lock, $queue => %readq[$id], \$id, \@events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache, $_user => $user, $_pass => $pass);
+			fork(&client, \$client, \$handle, \%sessions, \$read_lock, \$sess_lock, $queue => %readq[$id], \$id, \$events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache, $_user => $user, $_pass => $pass);
 
 			$id++;
 		}
