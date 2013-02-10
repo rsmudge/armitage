@@ -22,6 +22,7 @@ In Progress
 - Added nickname tab completion to event log. I feel like I'm writing
   an IRC client again.
 - Hosts -> Clear Database now asks you to confirm the action.
+- Hosts -> Import Hosts announces successful import to event log again.
 
 23 Jan 13 (tested against msf 16351)
 ---------
