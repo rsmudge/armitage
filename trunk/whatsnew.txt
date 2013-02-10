@@ -21,6 +21,7 @@ In Progress
 - Rewrote the event log management code in the team server
 - Added nickname tab completion to event log. I feel like I'm writing
   an IRC client again.
+- Hosts -> Clear Database now asks you to confirm the action.
 
 23 Jan 13 (tested against msf 16351)
 ---------
