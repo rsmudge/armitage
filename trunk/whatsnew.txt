@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+12 Feb 13 (tested against msf 16438)
 ---------
 - Fixed a corner case preventing the display of removed host labels 
   when connected to a team server.
