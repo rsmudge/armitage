@@ -93,6 +93,7 @@ sub setup_collaboration {
 	%r = call($mclient, "armitage.validate", $1, $2, $nick, "armitage", 120326);
 	if (%r["error"] eq "1") {
 		showErrorAndQuit(%r["message"]);
+		return $null;
 	}
 
 	%r = call($client, "armitage.validate", $1, $2, $null, "armitage", 120326);
