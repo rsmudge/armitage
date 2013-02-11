@@ -101,7 +101,7 @@ sub showError {
 
 sub showErrorAndQuit {
 	[JOptionPane showMessageDialog: $__frame__, $1];
-	[System exit: 0];
+	[$__frame__ closeConnect];
 }
 
 sub ask {
