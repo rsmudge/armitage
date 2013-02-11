@@ -382,15 +382,6 @@ sub wrapComponent {
 	return $panel;
 }
 
-sub setLookAndFeel {
-	local('$laf');
-	foreach $laf ([UIManager getInstalledLookAndFeels]) {
-		if ([$laf getName] eq [$preferences getProperty: "application.skin.skin", "Nimbus"]) {
-			[UIManager setLookAndFeel: [$laf getClassName]];
-		}
-	}
-}
-
 sub thread {
 	local('$thread');
 	$thread = [new ArmitageThread: $1];

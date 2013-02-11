@@ -372,7 +372,6 @@ sub checkDir {
 	}
 }
 
-setLookAndFeel();
 checkDir();
 
 if ($CLIENT_CONFIG !is $null && -exists $CLIENT_CONFIG) {
