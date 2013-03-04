@@ -4,6 +4,8 @@ Armitage Changelog
 In Progress
 ---------
 - Active console now gets higher priority when polling msf for output
+- Improved team server responsiveness in high latency situations by 
+  creating additional connections to server to balance messages over
 
 12 Feb 13 (tested against msf 16438)
 ---------
