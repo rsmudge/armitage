@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Active console now gets higher priority when polling msf for output
+
 12 Feb 13 (tested against msf 16438)
 ---------
 - Fixed a corner case preventing the display of removed host labels 
