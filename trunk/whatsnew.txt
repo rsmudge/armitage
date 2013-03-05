@@ -13,7 +13,7 @@ Cortana Updates (for scripters)
   communication across the team server.
 - Added &table_update to set the contents of a table tab without 
   disturbing the highlighted rows.
-- Added an exec_error event. Fired when &m_exec or &m_exec_loca fail
+- Added an exec_error event. Fired when &m_exec or &m_exec_local fail
   due to an error reported by meterpreter.
 - Fixed a bug that sometimes caused session_sync to fire twice (boo!)
 - Added a 60s timeout to &s_cmd commands. Cortana will give a shell
