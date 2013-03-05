@@ -584,6 +584,39 @@ sub data_add {
 }
 
 #
+# a publish/query/subscribe API
+#
+
+# publish("key", $object)
+sub publish {
+	local('$data');
+	$data = [msf.Base64 encode: cast(pack("o", $2, 1), 'b')];
+	call_async("armitage.publish", $1, "$data $+ \n");
+}
+
+# query("key", "index")
+sub query {
+	local('$r @r $result');
+	$r = call("armitage.query", $1, $2)['data'];
+	if ($r ne "") {
+		foreach $result (split("\n", $r)) {
+			push(@r, unpack("o", [msf.Base64 decode: $result])[0]);
+		}
+	}
+	return @r;
+}
+
+# subscribe("key", "index", "1s/5s/10s/15s/30s/1m/5m/10m/15m/20m/30m/60m")
+sub subscribe {
+	on("heartbeat_ $+ $3", lambda({
+		local('$result');
+		foreach $result (query($key, $index)) {
+			fire_event_local($key, $result, $index);
+		}
+	}, $key => $1, $index => $2));
+}
+
+#
 # Shell shock?
 #
 
