@@ -867,7 +867,7 @@ sub m_exec {
 			}, \$command, \$channel, \$buffer));
 		}
 		else {
-			# this is probably ok...
+			fire_event_local("exec_error", $1, $command, ["$3" trim]);
 		}
 	}, \$command));
 }

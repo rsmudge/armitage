@@ -141,7 +141,8 @@ public class Sessions extends ManagedData {
 		Set newSessions = DataUtils.difference(after, before);
 		fireSessionEvents("session_open", newSessions.iterator(), dataz);
 
-		newSessions.retainAll(syncz);
+		newSessions.removeAll(newsync); /* we already fired events for these */
+		newSessions.retainAll(syncz);   /* keep anything that is synced */
 		fireSessionEvents("session_sync", newSessions.iterator(), dataz);
 
 		Set droppedSessions = DataUtils.difference(before, after);
