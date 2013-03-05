@@ -7,6 +7,13 @@ In Progress
 - Improved team server responsiveness in high latency situations by 
   creating additional connections to server to balance messages over
 
+Cortana Updates (for scripters)
+--------
+- Added a &publish, &query, &subscribe API to allow inter-script 
+  communication across the team server.
+- Added &table_update to set the contents of a table tab without 
+  disturbing the highlighted rows.
+
 12 Feb 13 (tested against msf 16438)
 ---------
 - Fixed a corner case preventing the display of removed host labels 
