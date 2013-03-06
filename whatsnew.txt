@@ -1,11 +1,12 @@
 Armitage Changelog
 ==================
 
-5 Mar 13
+5 Mar 13 (tested against msf ca43900a7)
 --------
 - Active console now gets higher priority when polling msf for output
 - Improved team server responsiveness in high latency situations by 
   creating additional connections to server to balance messages over
+- Preferences are now shared among each Armitage connection.
 
 Cortana Updates (for scripters)
 --------
