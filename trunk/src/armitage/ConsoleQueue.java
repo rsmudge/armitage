@@ -139,7 +139,12 @@ public class ConsoleQueue implements Runnable {
 							expected.remove(kv[0]);
 
 							if (display != null) {
-								display.append(prompt + "set " + kv[0] + " " + kv[1] + "\n");
+								if (kv.length == 2) {
+									display.append(prompt + "set " + kv[0] + " " + kv[1] + "\n");
+								}
+								else {
+									display.append(prompt + "set " + kv[0] + "\n");
+								}
 								display.append(lines[x] + "\n");
 							}
 						}

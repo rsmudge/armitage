@@ -5,6 +5,7 @@ In Progress
 --------
 - Jobs dialog now queries job info in a separate thread context, 
   stopping it from locking up your Armitage instance.
+- Fixed console queue display bug when a required option has no setting
 
 Cortana Updates (for scripters)
 --------
