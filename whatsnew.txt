@@ -1,6 +1,15 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+	[nothing yet, soon precious, soon]
+
+Cortana Updates (for scripters)
+--------
+- Added work-around to prevent &psexec failing due to Ruby complaining
+  about incompatible encodings.
+
 6 Mar 13 (tested against msf ca43900a7)
 --------
 - Active console now gets higher priority when polling msf for output
