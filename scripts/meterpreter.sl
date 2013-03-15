@@ -144,6 +144,7 @@ sub createMeterpreterTab {
 	}
 
         [$frame addTab: "Meterpreter $1", $console, $null, "Meterpreter " . sessionToHost($1)];
+	return $console;
 }
 
 sub meterpreterPopup {
@@ -185,7 +186,12 @@ sub showMeterpreterMenu {
 		$h = menu($j, "Dump Hashes", "D");
 
 		item($h, "lsass method", "l", lambda({
-			m_cmd($sid, "hashdump");
+			local('$m $f');
+			$m = createMeterpreterTab($sid);
+			[$m append: "\Umeterpreter\U> hashdump\n"];
+			$f = lambda(&hashdump_callback, \$m);
+			[$f execute: $sid, "hashdump"];
+			m_cmd_callback($sid, "hashdump", $f);
 		}, $sid => "$sid"));
 
 
