@@ -468,7 +468,7 @@ sub updateJobsTable {
 }
 
 sub createJobsTab {	
-	local('$table $model $refresh $kill $panel $jobsf $sorter');
+	local('$table $model $refresh $kill $panel $sorter');
 	
 	$panel = [new JPanel];
 	[$panel setLayout: [new BorderLayout]];
@@ -490,13 +490,12 @@ sub createJobsTab {
         [$sorter setComparator: 0, { return $1 <=> $2; }];
         [$sorter setComparator: 3, { return $1 <=> $2; }];
 
-	$jobsf = lambda(&updateJobsTable, \$model);
-	thread($jobsf);
+	fork(&updateJobsTable, \$model, \$client);
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 	
 	$refresh = [new JButton: "Refresh"];
-	[$refresh addActionListener: lambda({ thread($jobsf); }, \$jobsf)];
+	[$refresh addActionListener: lambda({ fork(&updateJobsTable, \$model, \$client); }, \$model)];
 
 	$kill = [new JButton: "Kill"];
 	[$kill addActionListener: lambda({
@@ -510,9 +509,9 @@ sub createJobsTab {
 				call($client, "job.stop", $jid);
 			}
 			yield size(@jobs) * 500;
-			[$jobsf];
-		}, \@jobs, \$jobsf));
-	}, \$table, \$model, \$jobsf)];
+			fork(&updateJobsTable, \$model, \$client);
+		}, \@jobs, \$model));
+	}, \$table, \$model)];
 
 	[$panel add: center($refresh, $kill), [BorderLayout SOUTH]];
 

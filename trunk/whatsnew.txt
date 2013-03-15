@@ -3,7 +3,8 @@ Armitage Changelog
 
 In Progress
 --------
-	[nothing yet, soon precious, soon]
+- Jobs dialog now queries job info in a separate thread context, 
+  stopping it from locking up your Armitage instance.
 
 Cortana Updates (for scripters)
 --------
