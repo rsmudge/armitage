@@ -395,9 +395,13 @@ sub login {
 
 # psexec("host", "DOMAIN", "user", "pass", %options)
 sub psexec {
-	local('%o $5');
+	local('%o $5 $k $v');
+	%o = ohash(); # use ohash to prevent a weird msgpack deserialization issue that
+		      # causes an encoding exception when SMBUser is the last element *shrug*
 	if ($5) {
-		%o = copy($5);
+		foreach $k => $v ($5) {
+			%o[$k] = $v;
+		}
 	}
 	%o['SMBDomain'] = $2;
 	%o['SMBUser']   = $3;
