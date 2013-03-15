@@ -8,6 +8,7 @@ In Progress
 - Fixed console queue display bug when a required option has no setting
 - Hashdump -> lsass method now pops open a Meterpreter tab and shows
   its progress. Should help when there's a lot of hashes coming back.
+- Hail Mary attack now gives better feedback about what it's doing
 
 Cortana Updates (for scripters)
 --------
