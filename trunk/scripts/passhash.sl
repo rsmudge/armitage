@@ -12,7 +12,7 @@ import msf.*;
 import table.*;
 import ui.*;
 
-%handlers["hashdump"] = {
+sub hashdump_callback {
 	this('$host $safe $queue');
 
 	if ($0 eq "begin" && "*Unknown command*hashdump*" iswm $2) {
@@ -21,10 +21,11 @@ import ui.*;
 		if ($safe is $null) {
 			$safe = 1;
 			m_cmd($1, "use priv");
-			m_cmd($1, "hashdump");
+			m_cmd_callback($1, "hashdump", $this);
+			[$m append: "[*] stdapi/priv not loaded. Trying again\n"];
 		}
 		else {
-			showError("hashdump is not available here");
+			[$m append: "[-] hashdump is not available here\n"];	
 			$safe = $null;
 		}
 	}
@@ -33,21 +34,23 @@ import ui.*;
 		$queue = [new armitage.ConsoleQueue: $client];
 		[$queue start];
 		elog("dumped hashes on $host");
-		showError("Dumping Hashes.\nUse View -> Credentials to see them.");
+		[$m append: "[*] Dumping password hashes...\n"];
 	}
 	else if ($0 eq "update" && $host !is $null && $2 ismatch '(.*?):(\d+):([a-zA-Z0-9]+:[a-zA-Z0-9]+).*?') {
 		local('$user $gid $hash');
 		($user, $gid, $hash) = matched();
 
 		# strip any funky characters that will cause this call to throw an exception
-		$user = replace($user, '\P{Graph}', "");
 		$hash = fixPass($hash);
 
 		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u $user -P $hash"];
+		[$m append: "[+] \t $+ $2 $+ \n"];
 	}
 	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
+		[$m append: "$2"];
+		[$m append: "[-] hashdump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.\n\n"];
+
 		[$queue stop];
-		showError("Hash dump failed. Ask yourself:\n\n1) Do I have system privileges?\n\nNo? Then use Access -> Escalate Privileges\n\n2) Is meterpreter running in a process owned\nby a System user?\n\nNo? Use Explore -> Show Processes and migrate\nto a process owned by a System user.");
 		$host = $null;
 	}
 	else if ($0 eq "end" && $host !is $null) {
