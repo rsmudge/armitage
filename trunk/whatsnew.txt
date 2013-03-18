@@ -9,6 +9,8 @@ In Progress
 - Hashdump -> lsass method now pops open a Meterpreter tab and shows
   its progress. Should help when there's a lot of hashes coming back.
 - Hail Mary attack now gives better feedback about what it's doing
+- Fixed blank line showing when a host label exists and a session w/o
+  any information is associated with the host.
 
 Cortana Updates (for scripters)
 --------

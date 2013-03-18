@@ -35,8 +35,11 @@ sub _describeHost {
 	if ("Microsoft Corp." isin $info) {
 		return $1['address'] . "\nshell session";
 	}
-	else {
+	else if ($info ne "") {
 		return $1['address'] . "\n $+ $info";
+	}
+	else {
+		return $1['address'];
 	}
 }
 
