@@ -281,7 +281,7 @@ sub smarter_autopwn {
 
 			# loop, indicating that we're waiting 60 seconds before listing sessions...
 			for ($x = 0; $x < 30; $x++) {
-				[[$console getWindow] updatePrompt: "Listing sessions in \c0" . (30 - $x) . "\o second" . iff($x == 1, ' ', 's ') . (" " x 10) ];
+				[[$console getWindow] updatePrompt: "Listing sessions in \c0" . (30 - $x) . "\o second" . iff((30 - $x) == 1, ' ', 's ') . (" " x 10) ];
 				yield 1000;
 			}
 			[[$console getWindow] updatePrompt: ""];
