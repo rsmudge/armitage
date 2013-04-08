@@ -65,6 +65,9 @@ sub showHost {
 		else if ("*8*" iswm $match && "*2008*" !iswm $match) {
 			push(@overlay, 'resources/windows8.png');
 		}
+		else if ("*2012*" iswm $match) {
+			push(@overlay, 'resources/windows8.png');
+		}
 		else {
 			push(@overlay, 'resources/windows7.png');
 		}

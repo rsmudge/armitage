@@ -11,6 +11,8 @@ In Progress
 - Hail Mary attack now gives better feedback about what it's doing
 - Fixed blank line showing when a host label exists and a session w/o
   any information is associated with the host.
+- The correct OS icon is now shown for Windows 2012 Server.
+- Added an Inject button to the Process Explorer
 
 Cortana Updates (for scripters)
 --------

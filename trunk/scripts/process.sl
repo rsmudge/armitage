@@ -75,7 +75,7 @@ sub createProcessBrowser {
 
 	[$panel add: [new JScrollPane: $table], [BorderLayout CENTER]];
 
-	local('$a $b $bb $bbb $c');
+	local('$a $b $bb $bbb $c $inject');
 	$a = [new JButton: "Kill"];
 	[$a addActionListener: lambda({ 
 		local('$procs $v');
@@ -94,6 +94,15 @@ sub createProcessBrowser {
 		if ($v !is $null) {
 			m_cmd($m, "migrate $v"); 
 		}	
+	}, $m => $1, \$table, \$model)];
+
+	$inject = [new JButton: "Inject"];
+	[$inject addActionListener: lambda({
+		local('$v');
+		$v = [$model getSelectedValue: $table];
+		if ($v !is $null) {
+			launch_dialog("Inject", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $m, HANDLER => "false", LPORT => %MSF_GLOBAL['LPORT'], PID => $v));
+		}
 	}, $m => $1, \$table, \$model)];
 
 	$bb = [new JButton: "Log Keystrokes"];
@@ -121,7 +130,7 @@ sub createProcessBrowser {
 		}, $m => $1)
 	];
 
-	[$panel add: center($a, $b, $bb, $bbb, $c), [BorderLayout SOUTH]];
+	[$panel add: center($a, $b, $bb, $inject, $bbb, $c), [BorderLayout SOUTH]];
 
 	[$frame addTab: "Processes $1", $panel, $null, "Processes " . sessionToHost($1)];
 	m_cmd($1, "ps");
