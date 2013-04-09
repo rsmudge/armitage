@@ -13,6 +13,7 @@ In Progress
   any information is associated with the host.
 - The correct OS icon is now shown for Windows 2012 Server.
 - Added an Inject button to the Process Explorer
+- Event log now shows date with timestamp
 
 Cortana Updates (for scripters)
 --------

@@ -34,7 +34,7 @@ sub result {
 
 sub event {
 	local('$result');
-	$result = formatDate("HH:mm:ss") . " $1";
+	$result = formatDate("MM/dd HH:mm:ss") . " $1";
 	[$events put: $result];
 }
 
@@ -185,7 +185,7 @@ sub client {
 			if ($method eq "armitage.push") {
 				($null, $data) = $args;
 				foreach $temp (split("\n", $data)) {
-					[$events put: formatDate("HH:mm:ss") . " < $+ $[10]eid $+ > " . $data];
+					[$events put: formatDate("MM/dd HH:mm:ss") . " < $+ $[10]eid $+ > " . $data];
 				}
 			}
 
@@ -428,7 +428,7 @@ sub main {
 			sleep(2000);
 			$r = call($client, "console.read", $console);
 			if ($r["data"] ne "") {
-				[$events put: formatDate("HH:mm:ss") . " " . $r["data"]];
+				[$events put: formatDate("MM/dd HH:mm:ss") . " " . $r["data"]];
 			}
 		}
 	}, \$client, \$events, \$console);
