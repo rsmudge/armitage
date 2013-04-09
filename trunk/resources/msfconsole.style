@@ -1,7 +1,7 @@
 ^msf>				\umsf\u>
 ^meterpreter >			\umeterpreter\u >
 ^msf >				\umsf\u >
-^msf  (.*?)\((.*?)\) >		\umsf\u  $1(\c4$2\o) >
+^msf (.*?)\((.*?)\) >		\umsf\u $1(\c4$2\o) >
 ^\[\*\] (.*)			\cC[*]\o $1
 ^\[\+\] (.*)			\c9[+]\o $1
 ^\[\!\] (.*)			\c8[!]\o $1
