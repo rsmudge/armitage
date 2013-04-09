@@ -15,6 +15,7 @@ In Progress
 - Added an Inject button to the Process Explorer
 - Event log now shows date with timestamp
 - Messages to your nick in the event log are now highlighted
+- Disabled the display of the MSF banner by default.
 
 Cortana Updates (for scripters)
 --------
