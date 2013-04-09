@@ -69,7 +69,7 @@ sub setupEventStyle {
 	if ($style is $null) {
 		local('$handle');
 		$handle = [SleepUtils getIOHandle: resource("resources/eventlog.style"), $null];
-		$style = join("\n", readAll($handle));
+		$style = strrep(join("\n", readAll($handle)), '$ME$', $NICK);
 		closef($handle);
 	}
 
