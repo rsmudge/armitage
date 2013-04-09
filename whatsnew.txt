@@ -14,6 +14,7 @@ In Progress
 - The correct OS icon is now shown for Windows 2012 Server.
 - Added an Inject button to the Process Explorer
 - Event log now shows date with timestamp
+- Messages to your nick in the event log are now highlighted
 
 Cortana Updates (for scripters)
 --------

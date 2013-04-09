@@ -15,7 +15,7 @@ import graph.*;
 
 import java.awt.image.*;
 
-global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL');
+global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL $NICK');
 
 sub describeHost {
 	local('$desc');
