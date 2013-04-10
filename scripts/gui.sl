@@ -492,10 +492,15 @@ sub tableRenderer {
 
 sub gotoFile {
 	return lambda({
-		local('$exception');
+		local('$exception $ex');
 		try {
 			if ([Desktop isDesktopSupported]) {
-				[[Desktop getDesktop] open: $f];
+				try {
+					[[Desktop getDesktop] open: $f];
+				}
+				catch $ex {
+					ask("Browse to this file:", $f);
+				}
 			}
 			else {
 				ask("Browse to this file:", $f);
