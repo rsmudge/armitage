@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
---------
+10 Apr 13 (tested against msf ca43900a7)
+---------
 - Jobs dialog now queries job info in a separate thread context, 
   stopping it from locking up your Armitage instance.
 - Fixed console queue display bug when a required option has no setting

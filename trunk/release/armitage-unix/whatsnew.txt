@@ -1,6 +1,27 @@
 Armitage Changelog
 ==================
 
+10 Apr 13 (tested against msf ca43900a7)
+---------
+- Jobs dialog now queries job info in a separate thread context, 
+  stopping it from locking up your Armitage instance.
+- Fixed console queue display bug when a required option has no setting
+- Hashdump -> lsass method now pops open a Meterpreter tab and shows
+  its progress. Should help when there's a lot of hashes coming back.
+- Hail Mary attack now gives better feedback about what it's doing
+- Fixed blank line showing when a host label exists and a session w/o
+  any information is associated with the host.
+- The correct OS icon is now shown for Windows 2012 Server.
+- Added an Inject button to the Process Explorer
+- Event log now shows date with timestamp
+- Messages to your nick in the event log are now highlighted
+- Disabled the display of the MSF banner by default.
+
+Cortana Updates (for scripters)
+--------
+- Added work-around to prevent &psexec failing due to Ruby complaining
+  about incompatible encodings.
+
 6 Mar 13 (tested against msf ca43900a7)
 --------
 - Active console now gets higher priority when polling msf for output
