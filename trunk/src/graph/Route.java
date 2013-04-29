@@ -15,10 +15,15 @@ public class Route {
 		if (quads.length != 4)
 			return 0L;
 
-		result += Integer.parseInt(quads[3]);
-		result += Long.parseLong(quads[2]) << 8L;
-		result += Long.parseLong(quads[1]) << 16L;
-		result += Long.parseLong(quads[0]) << 24L;
+		try {
+			result += Integer.parseInt(quads[3]);
+			result += Long.parseLong(quads[2]) << 8L;
+			result += Long.parseLong(quads[1]) << 16L;
+			result += Long.parseLong(quads[0]) << 24L;
+		}
+		catch (Exception ex) {
+			return result;
+		}
 		return result;
 	}
 
