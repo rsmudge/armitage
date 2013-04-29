@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Attacks -> Hail Mary now asks you to confirm the action.
+
 10 Apr 13 (tested against msf ca43900a7)
 ---------
 - Jobs dialog now queries job info in a separate thread context, 

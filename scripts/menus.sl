@@ -206,9 +206,11 @@ sub main_attack_items {
 	});
 
 	item($1, "Hail Mary", 'H', {
-		thread({
-			smarter_autopwn("p", min_rank()); 
-		});
+		if (!askYesNo("Once started, the Hail Mary will launch a flood\nexploits at hosts in the current workspace. There\nis nothing stealthy about this action. If clumsily\nlaunching hundreds of exploits is what you would\nlike to do, press Yes.", "Really?!?")) {
+			thread({
+				smarter_autopwn("p", min_rank()); 
+			});
+		};
 	});
 
 	setupMenu($1, "attacks", @());
