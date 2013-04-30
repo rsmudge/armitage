@@ -13,7 +13,7 @@ import javax.swing.table.*;
 import ui.*;
 
 sub updateDownloadModel {
-	thread(lambda({
+	fork({
 		local('$root $files $entry $findf $hosts $host');
 
 		if ($client !is $mclient) {
@@ -30,7 +30,7 @@ sub updateDownloadModel {
 			[$model addEntry: $entry];
 		}
 		[$model fireListeners];
-	}, \$model));
+	}, \$model, \$mclient, \$client, \$preferences);
 }
 
 sub createDownloadBrowser {
