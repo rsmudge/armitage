@@ -59,8 +59,7 @@ sub hashdump_callback {
 };
 
 sub refreshCredsTable {
-	thread(lambda({
-		[Thread yield];
+	fork({
 		local('$creds $cred $desc $aclient %check $key');
 		[$model clear: 128];
 		foreach $desc => $aclient (convertAll([$__frame__ getClients])) {
@@ -77,12 +76,11 @@ sub refreshCredsTable {
 			}
 		}
 		[$model fireListeners];
-	}, $model => $1, $title => $2));
+	}, $model => $1, $title => $2, \$__frame__);
 }
 
 sub refreshCredsTableLocal {
-	thread(lambda({
-		[Thread yield];
+	fork({
 		local('$creds $cred $desc $aclient %check $key');
 		[$model clear: 128];
 		$creds = call($client, "db.creds2", [new HashMap])["creds2"];
@@ -96,7 +94,7 @@ sub refreshCredsTableLocal {
 			}
 		}
 		[$model fireListeners];
-	}, $model => $1, $title => $2));
+	}, $model => $1, $title => $2, \$client);
 }
 
 sub show_hashes {

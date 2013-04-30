@@ -94,9 +94,11 @@ sub dispatchEvent {
 }
 
 sub showError {
-	dispatchEvent(lambda({
-		[JOptionPane showMessageDialog: $__frame__, $message];
-	}, $message => $1));
+	fork({
+		dispatchEvent(lambda({
+			[JOptionPane showMessageDialog: $__frame__, $message];
+		}, \$message));
+	}, $message => $1, \$__frame__);
 }
 
 sub showErrorAndQuit {
