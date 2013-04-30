@@ -406,9 +406,7 @@ sub launchBruteForce {
 }
 
 sub credentialHelper {
-	thread(lambda({ 
-		[Thread yield];
-
+	fork({ 
 		# gather our credentials please
 		local('$creds $cred @creds');
 		$creds = call($mclient, "db.creds2", [new HashMap])["creds2"];
@@ -431,7 +429,7 @@ sub credentialHelper {
 			[$model setValueForKey: $USER, "Value", $user];
 			[$model setValueForKey: $PASS, "Value", $pass];
 			[$model fireListeners];
-		}, \$callback, \$model, \$USER, \$PASS));
-	}, \$USER, \$PASS, \$model, $callback => $4));
+		}, \$model, \$USER, \$PASS));
+	}, \$USER, \$PASS, \$model, \$mclient, \$__frame__);
 }
 
