@@ -14,8 +14,7 @@ import javax.swing.table.*;
 import ui.*;
 
 sub updateLootModel {
-	thread(lambda({
-		[Thread yield];
+	fork({
 		local('$loots $entry');
 		[$model clear: 16];
 		$loots = call($mclient, "db.loots")["loots"];
@@ -25,7 +24,7 @@ sub updateLootModel {
 			[$model addEntry: $entry];
 		}
 		[$model fireListeners];
-	}, \$model));
+	}, \$model, \$mclient);
 }
 
 sub downloadLoot {
