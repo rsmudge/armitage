@@ -408,11 +408,17 @@ sub launchBruteForce {
 sub credentialHelper {
 	fork({ 
 		# gather our credentials please
-		local('$creds $cred @creds');
-		$creds = call($mclient, "db.creds2", [new HashMap])["creds2"];
-		foreach $cred ($creds) {
-			if ($PASS eq "SMBPass" || $cred['ptype'] ne "smb_hash") {
-				push(@creds, $cred);
+		local('$creds $cred @creds $desc $aclient $key %check');
+		foreach $desc => $aclient (convertAll([$__frame__ getClients])) {
+			$creds = call($aclient, "db.creds2", [new HashMap])["creds2"];
+			foreach $cred ($creds) {
+				$key = join("~~", values($cred, @("user", "pass", "host")));
+				if ($key in %check) {
+				}
+				else if ($PASS eq "SMBPass" || $cred['ptype'] ne "smb_hash") {
+					push(@creds, $cred);
+					%check[$key] = 1;
+				}
 			}
 		}
 

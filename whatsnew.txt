@@ -7,6 +7,8 @@ In Progress
 - Fixed a potential table sorting issue
 - Changed how some tables are updated to minimize blocking of other
   tasks. This should make UI feel snappier in many cases.
+- Credential helper now shows credentials from all servers you're
+  connected to.
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------
