@@ -5,6 +5,8 @@ In Progress
 ---------
 - Attacks -> Hail Mary now asks you to confirm the action.
 - Fixed a potential table sorting issue
+- Changed how some tables are updated to minimize blocking of other
+  tasks. This should make UI feel snappier in many cases.
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------
