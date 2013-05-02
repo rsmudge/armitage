@@ -77,13 +77,16 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 				window.getInput().setText("");
 
 				if (shellCommand != null && text.trim().equals("shell")) {
-					shellCommand.actionPerformed(new ActionEvent(this, 0, "shell"));
+					shellCommand.actionPerformed(new ActionEvent(window, 0, "shell"));
 				}
 				else if (shellCommand != null && text.trim().equals("screenshot")) {
-					shellCommand.actionPerformed(new ActionEvent(this, 0, "screenshot"));
+					shellCommand.actionPerformed(new ActionEvent(window, 0, "screenshot"));
 				}
 				else if (shellCommand != null && text.trim().equals("webcam_snap")) {
-					shellCommand.actionPerformed(new ActionEvent(this, 0, "webcam_snap"));
+					shellCommand.actionPerformed(new ActionEvent(window, 0, "webcam_snap"));
+				}
+				else if (shellCommand != null && text.trim().equals("upload")) {
+					shellCommand.actionPerformed(new ActionEvent(window, 0, "upload"));
 				}
 				else {
 					sendString(text);
