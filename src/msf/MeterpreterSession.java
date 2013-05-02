@@ -179,6 +179,34 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
+			else if (c.text.startsWith("kerberos") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("livessp") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("mimikatz_command") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("msv") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("ssp") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("tspkg") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
+			else if (c.text.startsWith("wdigest") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
 
 			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
 
