@@ -116,6 +116,21 @@ sub interpretMeterpreterCommand {
 	else if ($c eq "webcam_snap") {
 		[createWebcamViewer($sid)];
 	}
+	else if ($c eq "upload") {
+		thread(lambda({
+			# let user choose a file and upload it with this name...
+			local('$file $name');
+			$file = chooseFile($always => iff($client !is $mclient));
+			$name = getFileName($file);
+			if ($file !is $null) {
+				if ($client !is $mclient) {
+					$file = uploadFile($file);
+				}
+				[$console append: "[*] attempting to upload $file => $name $+ \n"];
+				m_cmd($sid, "upload \" $+ $file $+ \" \" $+ $name $+ \"");
+			}
+		}, \$sid, $console => [$1 getSource]));
+	}
 }
 
 #

@@ -11,6 +11,9 @@ In Progress
   connected to.
 - Updated multiplexing code to be compatible with mimikatz extension's
   output scheme.
+- Meterpreter upload command (with no arguments) now prompts for a file.
+  This file will be bounced to team server (if one is present) and 
+  uploaded to the target for you.
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------
