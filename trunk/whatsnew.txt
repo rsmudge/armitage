@@ -9,6 +9,8 @@ In Progress
   tasks. This should make UI feel snappier in many cases.
 - Credential helper now shows credentials from all servers you're
   connected to.
+- Updated multiplexing code to be compatible with mimikatz extension's
+  output scheme.
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------
