@@ -66,7 +66,7 @@ sub refreshCredsTable {
 			$creds = call($aclient, "db.creds2", [new HashMap])["creds2"];
 			foreach $cred ($creds) {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
-				if ($key in %check) {
+				if ($key in %check || $cred['ptype'] eq "ssh_key") {
 
 				}
 				else if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
@@ -86,7 +86,7 @@ sub refreshCredsTableLocal {
 		$creds = call($client, "db.creds2", [new HashMap])["creds2"];
 		foreach $cred ($creds) {
 			$key = join("~~", values($cred, @("user", "pass", "host")));
-			if ($key in %check) {
+			if ($key in %check || $cred['ptype'] eq "ssh_key") {
 			}
 			else if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
 				[$model addEntry: $cred];
