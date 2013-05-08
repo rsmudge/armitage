@@ -14,6 +14,7 @@ In Progress
 - Meterpreter upload command (with no arguments) now prompts for a file.
   This file will be bounced to team server (if one is present) and 
   uploaded to the target for you.
+- Cred tables no longer show SSH keys
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------
