@@ -15,6 +15,7 @@ In Progress
   This file will be bounced to team server (if one is present) and 
   uploaded to the target for you.
 - Cred tables no longer show SSH keys
+- Added vmauthd to the Login menu
 
 10 Apr 13 (tested against msf ca43900a7)
 ---------

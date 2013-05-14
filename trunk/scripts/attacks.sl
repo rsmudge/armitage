@@ -644,6 +644,9 @@ sub host_attack_items {
 			if ($port == 445 && "*Windows*" iswm getHostOS($host)) {
 				%options["psexec"] = lambda(&pass_the_hash, $hosts => $2);
 			}
+			else if ($port == 902) {
+				%options["vmauthd"] = lambda(&show_login_dialog, $hosts => $2, $module => "scanner/vmware/vmauthd_login", $service => %(port => 902, name => "vmauthd"));
+			}
 			else if ("scanner/ $+ $name $+ / $+ $name $+ _login" in @auxiliary) {
 				%options[$name] = lambda(&show_login_dialog, \$service, $hosts => $2);
 			}
