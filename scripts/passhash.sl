@@ -287,6 +287,8 @@ sub pass_the_hash {
 
 
 sub show_login_dialog {
+	this('$module'); # should be $null by default!
+
 	local('$port $srvc');
 	($port, $srvc) = values($service, @("port", "name"));
 
@@ -318,6 +320,10 @@ sub show_login_dialog {
 		map(lambda({ [$1 setEnabled: $enable]; }, $enable => iff([$brute isSelected], 0, 1)), @controls);
 	}, \$brute, \@controls)];
 
+	if ($module is $null) {
+		$module = "scanner/ $+ $srvc $+ / $+ $srvc $+ _login";
+	}
+
 	[$button addActionListener: lambda({
 		local('$u $p %options $host');
 		%options["RHOSTS"] = join(', ', $hosts);
@@ -327,7 +333,7 @@ sub show_login_dialog {
 			%options["USER_AS_PASS"] = "false";
 			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]));
 			elog("brute force $srvc @ " . %options["RHOSTS"]);
-			launchBruteForce("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options, "brute $srvc");
+			launchBruteForce("auxiliary", $module, %options, "brute $srvc");
 		}
 		else {
 			%options["USERNAME"] = [$user getText];
@@ -336,12 +342,12 @@ sub show_login_dialog {
 			%options["USER_AS_PASS"] = "false";
 			warn("$srvc $+ : $port => " . %options);
 			elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
-			module_execute("auxiliary", "scanner/ $+ $srvc $+ / $+ $srvc $+ _login", %options);
+			module_execute("auxiliary", $module, %options);
 		}
 		if (!isShift($1)) {
 			[$dialog setVisible: 0];
 		}
-	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port, \$brute, \$model)];
+	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port, \$brute, \$model, \$module)];
 
 	$b2 = [new JPanel];
 	[$b2 setLayout: [new BorderLayout]];
