@@ -17,6 +17,12 @@ In Progress
 - Cred tables no longer show SSH keys
 - Added vmauthd to the Login menu
 
+Cortana Updates (for scripters)
+--------
+- Updated &log_resource to account for new log folder layout scheme that
+  involves a description of the current Armitage server
+- Fixed a potential argument corruption bug with filters
+
 10 Apr 13 (tested against msf ca43900a7)
 ---------
 - Jobs dialog now queries job info in a separate thread context, 
