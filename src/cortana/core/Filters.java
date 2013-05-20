@@ -32,6 +32,8 @@ public class Filters implements Function, Environment, Loadable {
 	}
 
 	public Scalar evaluate(String name, ScriptInstance script, Stack args) {
+		args = (Stack)args.clone();
+
 		if (name.equals("&filter_data")) {
 			String event = BridgeUtilities.getString(args, "");
 			Stack results =  manager.filterScalarData(event, args);

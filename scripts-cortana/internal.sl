@@ -1080,7 +1080,8 @@ sub _data_directory {
 
 sub log_resource {
 	local('$start $args');
-	$start = getFileProper(_data_directory(), formatDate("yyMMdd"));
+				# data dir          today             describe
+	$start = getFileProper(_data_directory(), formatDate("yyMMdd"), $__describe__);
 	$args  = copy(@_);
 	while (size($args) > 0) {
 		mkdir($start);

@@ -31,6 +31,7 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 	protected ArmitageApplication application = null;
 	protected Properties          preferences = null;
 	protected Shared              shared      = null;
+	protected String              describe    = "default";
 
 	protected EventManager   events;
 	protected FilterManager  filters;
@@ -91,11 +92,12 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 		return shared;
 	}
 
-	public Cortana(RpcConnection client, RpcConnection dserver, EventManager events, FilterManager filters) {
-		this.client  = client;
-		this.dserver = dserver;
-		this.events  = events;
-		this.filters = filters;
+	public Cortana(RpcConnection client, RpcConnection dserver, EventManager events, FilterManager filters, String description) {
+		this.client   = client;
+		this.dserver  = dserver;
+		this.events   = events;
+		this.filters  = filters;
+		this.describe = description;
 
 		/* this bridge provides the lowest abstraction on top of Metasploit */
 		metasploit = new MetasploitBridge(client, dserver, events, filters);
@@ -482,6 +484,7 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 		/* install some variables globally */
 		loader.setGlobal("$client", SleepUtils.getScalar(client));
 		loader.setGlobal("$mclient", SleepUtils.getScalar(dserver));
+		loader.setGlobal("$__describe__", SleepUtils.getScalar(describe));
 
 		/* load and run internal stuff that is scripted (I tire of working in Java) */
 		internal = loader.loadInternalScript("scripts-cortana/internal.sl", internal);
@@ -513,7 +516,7 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 	}
 
 	public Cortana(RpcConnection client, RpcConnection dserver, String[] scripts, String lhost) {
-		this(client, dserver, new EventManager(), new FilterManager());
+		this(client, dserver, new EventManager(), new FilterManager(), "default");
 
 		for (int x = 0; x < scripts.length; x++) {
 			try {
