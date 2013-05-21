@@ -221,6 +221,12 @@ public class ConsoleQueue implements Runnable {
 				else if ("failure".equals( read.get("result") + "" )) {
 					break;
 				}
+				else if ("true".equals( read.get("busy") + "" )) {
+					if ((System.currentTimeMillis() - start) > 60000) {
+						System.err.println("Killed busy console: " + c.text + " => " + read + " (after " + (System.currentTimeMillis() - start) + "ms)");
+						break;
+					}
+				}
 
 				if (!prompt.equals( ConsoleClient.cleanText(read.get("prompt") + "") )) {
 					/* this is a state change, we'll count it */
