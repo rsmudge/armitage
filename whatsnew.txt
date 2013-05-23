@@ -16,6 +16,8 @@ In Progress
   uploaded to the target for you.
 - Cred tables no longer show SSH keys
 - Added vmauthd to the Login menu
+- Increased the number of modules run in response to services found during
+  a sweep with the MSF Scans feature.
 
 Cortana Updates (for scripters)
 --------

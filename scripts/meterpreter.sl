@@ -318,7 +318,7 @@ sub launch_msf_scans {
 	}
 
 	thread(lambda({
-		local('$scanner $index $queue %ports %discover $port %o $temp');
+		local('$scanner $index $queue %ports %discover $port %o $temp $x');
 		%ports = ohash();
 		%discover = ohash();
 		setMissPolicy(%ports, { return @(); });
@@ -348,12 +348,25 @@ sub launch_msf_scans {
 
 		# add these ports to our list of ports to scan.. these come from querying all of Metasploit's modules
 		# for the default ports
-		foreach $port (@(50000, 21, 1720, 80, 443, 143, 3306, 1521, 110, 5432, 50013, 25, 161, 22, 23, 17185, 135, 8080, 4848, 1433, 5560, 512, 513, 514, 445, 5900, 5038, 111, 139, 49, 515, 7787, 2947, 7144, 9080, 8812, 2525, 2207, 3050, 5405, 1723, 1099, 5555, 921, 10001, 123, 3690, 548, 617, 6112, 6667, 3632, 783, 10050, 38292, 12174, 2967, 5168, 3628, 7777, 6101, 10000, 6504, 41523, 41524, 2000, 1900, 10202, 6503, 6070, 6502, 6050, 2103, 41025, 44334, 2100, 5554, 12203, 26000, 4000, 1000, 8014, 5250, 34443, 8028, 8008, 7510, 9495, 1581, 8000, 18881, 57772, 9090, 9999, 81, 3000, 8300, 8800, 8090, 389, 10203, 5093, 1533, 13500, 705, 623, 4659, 20031, 16102, 6080, 6660, 11000, 19810, 3057, 6905, 1100, 10616, 10628, 5051, 1582, 65535, 105, 22222, 30000, 113, 1755, 407, 1434, 2049, 689, 3128, 20222, 20034, 7580, 7579, 38080, 12401, 910, 912, 11234, 46823, 5061, 5060, 2380, 69, 5800, 62514, 42, 5631, 902, 5985)) {
+		foreach $port (@(50000, 21, 1720, 80, 443, 143, 3306, 1521, 110, 5432, 50013, 25, 161, 22, 2222, 23, 17185, 135, 8080, 4848, 1433, 5560, 512, 513, 514, 445, 5900, 5901, 5902, 5903, 5904, 5905, 5906, 5907, 5908, 5909, 5038, 111, 139, 49, 515, 7787, 2947, 7144, 9080, 8812, 2525, 2207, 3050, 5405, 1723, 1099, 5555, 921, 10001, 123, 3690, 548, 617, 6112, 6667, 3632, 783, 10050, 38292, 12174, 2967, 5168, 3628, 7777, 6101, 10000, 6504, 41523, 41524, 2000, 1900, 10202, 6503, 6070, 6502, 6050, 2103, 41025, 44334, 2100, 5554, 12203, 26000, 4000, 1000, 8014, 5250, 34443, 8028, 8008, 7510, 9495, 1581, 8000, 18881, 57772, 9090, 9999, 81, 3000, 8300, 8800, 8090, 389, 10203, 5093, 1533, 13500, 705, 623, 4659, 20031, 16102, 6080, 6660, 11000, 19810, 3057, 6905, 1100, 10616, 10628, 5051, 1582, 65535, 105, 22222, 30000, 113, 1755, 407, 1434, 2049, 689, 3128, 20222, 20034, 7580, 7579, 38080, 12401, 910, 912, 11234, 46823, 5061, 5060, 2380, 69, 5800, 62514, 42, 5631, 902, 5985, 6000, 6001, 6002, 6003, 6004, 6005, 6006, 6007)) {
 			$temp = %ports[$port];
 		}
 
 		# add a few left out modules
 		push(%ports['445'], "scanner/smb/smb_version");
+		push(%ports['1099'], "scanner/misc/java_rmi_server");
+		push(%ports['548'], "scanner/afp/afp_server_info");
+		push(%ports['523'], "scanner/db2/discovery");
+		push(%ports['3500'], "scanner/emc/alphastor_librarymanager");
+		push(%ports['3000'], "scanner/emc/alphastor_devicemanager");
+		push(%ports['3050'], "scanner/misc/ib_service_mgr_info");
+		push(%ports['6379'], "scanner/misc/redis_server");
+		push(%ports['135'], "scanner/dcerpc/endpoint_mapper");
+		push(%ports['111'], "scanner/misc/sunrpc_portmapper");
+		push(%ports['8834'], "scanner/nessus/nessus_xmlrpc_ping");
+		push(%ports['5631'], "scanner/pcanywhere/pcanywhere_tcp");
+		push(%ports['5985'], "scanner/winrm/winrm_auth_methods");
+		push(%ports['2222'], "scanner/ssh/ssh_version"); # I've seen this cleverness before
 
 		[$queue append: "[*] Launching TCP scan"];
 		[$queue addCommand: $null, "use auxiliary/scanner/portscan/tcp"];
