@@ -593,11 +593,12 @@ sub host_attack_items {
 	%m = exploit_menus(%hosts[$2[0]]['os_name'], %results[$2[0]]);
 
 	if (size(%m) > 0) {
-		local('$a $service $exploits $e $name $exploit');
+		local('$a $service $exploits $e $name $exploit $c');
 
 		$a = menu($1, "Attack", 'A');
 
 		foreach $service => $exploits (%m) {
+			$c = 0;
 			$e = menu($a, $service, $null);
 			foreach $name => $exploit  ($exploits) {
 				item($e, $name, $null, lambda({
@@ -608,6 +609,16 @@ sub host_attack_items {
 						attack_dialog($a, $b, $hosts, $exploit);
 					}, \$exploit, \$hosts));
 				}, \$exploit, $hosts => $2));
+
+				# too many items? do something about it
+				if ($c > 8) {
+					separator($e);
+					$e = menu($e, "More...", $null);
+					$c = 0;
+				}
+				else {
+					$c++;
+				}
 			}
 	
 			if ($service eq "smb") {
