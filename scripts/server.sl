@@ -72,7 +72,7 @@ sub client {
 			[[$handle getOutputStream] flush];
 			return;
 		}
-		else if ($ver < 130409) {
+		else if ($ver < 130521) {
 			warn("Rejected $eid (old software -- srsly, update people!)");
 			writeObject($handle, result(%(error => 1, message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
 			[[$handle getOutputStream] flush];
