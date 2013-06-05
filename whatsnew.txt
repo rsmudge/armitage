@@ -20,6 +20,7 @@ In Progress
   a sweep with the MSF Scans feature.
 - Attack menu attached to host now splits menus up if there are more than
   10 items. This will help with the webapp and http menus.
+- Added a menu to mark a host as a firewall
 
 Cortana Updates (for scripters)
 --------
