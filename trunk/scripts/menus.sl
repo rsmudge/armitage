@@ -39,6 +39,7 @@ sub host_selected_items {
 		item($o, "Android", 'A', setHostValueFunction($2, "os_name", "Android"));
 		item($o, "Apple iOS", 'i', setHostValueFunction($2, "os_name", "Apple iOS"));
 		item($o, "Cisco IOS", 'C', setHostValueFunction($2, "os_name", "Cisco IOS"));
+		item($o, "Firewall", 'w', setHostValueFunction($2, "os_name", "", "purpose", "firewall"));
 		item($o, "FreeBSD", 'F', setHostValueFunction($2, "os_name", "FreeBSD"));
 		item($o, "Linux", 'L', setHostValueFunction($2, "os_name", "Linux"));
 		item($o, "NetBSD", 'N', setHostValueFunction($2, "os_name", "NetBSD"));
