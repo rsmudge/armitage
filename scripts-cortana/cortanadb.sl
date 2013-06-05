@@ -77,14 +77,14 @@ sub main {
 	}
 
 	# setup first thread...
-	%r = call($mclient, "armitage.validate", $user, $pass, $nick, "armitage", 130409);
+	%r = call($mclient, "armitage.validate", $user, $pass, $nick, "armitage", 130521);
 	if (%r["error"] eq "1") {
 		println(%r['message']);
 		[System exit: 0];
 	}
 
 	# setup second thread.
-        %r = call($client, "armitage.validate", $user, $pass, $null, "armitage", 130409);
+        %r = call($client, "armitage.validate", $user, $pass, $null, "armitage", 130521);
 
 	# resolve lhost..
 	$c = call($client, "console.allocate")['id'];
