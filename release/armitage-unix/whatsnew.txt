@@ -1,6 +1,33 @@
 Armitage Changelog
 ==================
 
+6 Jun 13 (tested against msf git revision: c705928052)
+--------
+- Attacks -> Hail Mary now asks you to confirm the action.
+- Fixed a potential table sorting issue
+- Changed how some tables are updated to minimize blocking of other
+  tasks. This should make UI feel snappier in many cases.
+- Credential helper now shows credentials from all servers you're
+  connected to.
+- Updated multiplexing code to be compatible with mimikatz extension's
+  output scheme.
+- Meterpreter upload command (with no arguments) now prompts for a file.
+  This file will be bounced to team server (if one is present) and 
+  uploaded to the target for you.
+- Cred tables no longer show SSH keys
+- Added vmauthd to the Login menu
+- Increased the number of modules run in response to services found during
+  a sweep with the MSF Scans feature.
+- Attack menu attached to host now splits menus up if there are more than
+  10 items. This will help with the webapp and http menus.
+- Added a menu to mark a host as a firewall
+
+Cortana Updates (for scripters)
+--------
+- Updated &log_resource to account for new log folder layout scheme that
+  involves a description of the current Armitage server
+- Fixed a potential argument corruption bug with filters
+
 10 Apr 13 (tested against msf ca43900a7)
 ---------
 - Jobs dialog now queries job info in a separate thread context, 

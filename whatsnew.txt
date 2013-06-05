@@ -1,8 +1,8 @@
 Armitage Changelog
 ==================
 
-In Progress
----------
+6 Jun 13 (tested against msf git revision: c705928052)
+--------
 - Attacks -> Hail Mary now asks you to confirm the action.
 - Fixed a potential table sorting issue
 - Changed how some tables are updated to minimize blocking of other
