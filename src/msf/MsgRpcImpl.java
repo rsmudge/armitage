@@ -88,7 +88,13 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 			out = ((FloatType)src).asFloat();
 		}
 		else if (src instanceof IntegerType) {
-			out = ((IntegerType)src).asInt();
+			try {
+				out = ((IntegerType)src).asInt();
+			}
+			catch (Exception ex) {
+				/* this is a bandaid until I have a chance to further examine what's happening */
+				out = ((IntegerType)src).asLong();
+			}
 		}
 		else if (src instanceof MapType) {
 			Set ents = ((MapType)src).asMap().entrySet();
