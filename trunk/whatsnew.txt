@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+--------
+- Removed sunrpc and dcerpc modules from MSF Scans feature
+
 6 Jun 13 (tested against msf git revision: c705928052)
 --------
 - Attacks -> Hail Mary now asks you to confirm the action.
