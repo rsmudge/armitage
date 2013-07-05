@@ -361,8 +361,8 @@ sub launch_msf_scans {
 		push(%ports['3000'], "scanner/emc/alphastor_devicemanager");
 		push(%ports['3050'], "scanner/misc/ib_service_mgr_info");
 		push(%ports['6379'], "scanner/misc/redis_server");
-		push(%ports['135'], "scanner/dcerpc/endpoint_mapper");
-		push(%ports['111'], "scanner/misc/sunrpc_portmapper");
+		#push(%ports['135'], "scanner/dcerpc/endpoint_mapper");
+		#push(%ports['111'], "scanner/misc/sunrpc_portmapper");
 		push(%ports['8834'], "scanner/nessus/nessus_xmlrpc_ping");
 		push(%ports['5631'], "scanner/pcanywhere/pcanywhere_tcp");
 		push(%ports['5985'], "scanner/winrm/winrm_auth_methods");
