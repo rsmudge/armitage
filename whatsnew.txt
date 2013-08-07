@@ -12,6 +12,8 @@ In Progress
 - Module Launcher dialog is now always active when opened.
 - EXE::Custom is no longer treated as an advanced option. When available
   it's always present for you to modify in a module.
+- Meterpreter -> Access -> Persistence now uses the local exploit module
+  (default settings now work without tweaks too)
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

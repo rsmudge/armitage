@@ -218,7 +218,7 @@ sub showMeterpreterMenu {
 
 		item($j, "Persist", 'P', lambda({
 			thread(lambda({
-				launch_dialog("Persistence", "post", "windows/manage/persistence", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+				launch_dialog("Persistence", "exploit", "windows/local/persistence", 1, $null, %(SESSION => $sid, STARTUP => "SYSTEM"));
 			}, \$sid));
 		}, $sid => "$sid"));
 
