@@ -20,7 +20,7 @@ import com.mxgraph.util.*;
 
 import java.awt.image.*;
 
-public class NetworkGraph extends JComponent implements ActionListener {
+public class NetworkGraph extends JComponent implements ActionListener, Refreshable {
 	protected mxGraph graph;
 	protected mxGraphComponent component;
 	protected Object parent;

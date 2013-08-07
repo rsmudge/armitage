@@ -4,6 +4,7 @@ Armitage Changelog
 In Progress
 --------
 - Removed sunrpc and dcerpc modules from MSF Scans feature
+- Fixed a potential deadlock when updating the host display
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------
