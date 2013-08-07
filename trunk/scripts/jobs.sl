@@ -209,6 +209,11 @@ sub _launch_dialog {
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
 		}
+		else if ($key eq "EXE::Custom") {
+			$value["advanced"] = '0';
+			$value["evasion"]  = '0';
+			$default = $value["default"];
+		}
 		else {
 			$default = $value["default"];
 		}

@@ -439,6 +439,10 @@ sub attack_dialog {
 		else if ($key eq "RHOSTS") {
 			$value["default"] = join(", ", $3);
 		}
+		else if ($key eq "EXE::Custom") {
+			$value["advanced"] = '0';
+			$value["evasion"]  = '0';
+		}
 		
 		[$model _addEntry: %(Option => $key, 
 					Value => $value["default"], 
