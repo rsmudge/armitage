@@ -63,9 +63,11 @@ sub sessionToHost {
 }
 
 on sessions {
-	local('$address $key $session $data @routes @highlights $highlight $id $host $route $mask $peer %addr @nodes');
+	local('$address $key $session $data $highlight $id $host $route $mask $peer %addr $refresh $route');
 	$data = $1;
-#	warn("&refreshSessions - $data");
+
+	# setup our action to refresh the graph
+	$refresh = [new RefreshGraph: $targets];
 
 	# clear all sessions from the hosts
 	map({ $1['sessions'] = %(); }, values(%hosts));
@@ -91,15 +93,17 @@ on sessions {
 
 		# add a highlight / route for a firewall / NAT device
 		if ($peer ne $address && $peer ne "") {
-			push(@routes, [new Route: $address, "255.255.255.255", $peer]);
-			push(@highlights, @($peer, $address));
+			[$refresh addRoute: [new Route: $address, "255.255.255.255", $peer]];
+			[$refresh addHighlight: $peer, $address];
 		}
 
 		# save the route information related to this meterpreter session
 		if ($session['routes'] ne "") {
 			foreach $route (split(',', $session['routes'])) {
 				($host, $mask) = split('/', $route);
-				push(@routes, [new Route: $host, $mask, $address]);
+				$route = [new Route: $host, $mask, $address];
+				push(@routes, $route);
+				[$refresh addRoute: $route];
 			}
 		}
 	}
@@ -110,7 +114,7 @@ on sessions {
 		foreach $key => $session ($data) {
 			$host = %addr[$key];
 			if ($gateway ne $host && [$route shouldRoute: $host]) {
-				push(@highlights, @($gateway, $host));
+				[$refresh addHighlight: $gateway, $host];
 			}
 		}
 	}
@@ -119,40 +123,19 @@ on sessions {
 	foreach $id => $host (%hosts) { 
 		local('$tooltip');
 		if ('os_match' in $host) {
-			$tooltip = $host['os_match'];
+			$tooltip = $host['os_match'] . "";
 		}
 		else {
 			$tooltip = "I know nothing about $id";
 		}
 
 		if ($host['show'] eq "1") {
-			push(@nodes, @($id, $host['label'] . "", describeHost($host), showHost($host), $tooltip));
+			[$refresh addNode: $id, $host['label'] . "", describeHost($host), showHost($host), $tooltip];
 		}
 	}
 
-	[SwingUtilities invokeLater: let(&refreshGraph, \@routes, \@highlights, \@nodes)];
-}
-
-sub refreshGraph {
-	local('$node $id $label $description $icons $tooltip $highlight');
-
-	# update everything...
-	[$graph start];
-		# do the hosts?
-		foreach $node (@nodes) {
-			($id, $label, $description, $icons, $tooltip) = $node;
-			[$graph addNode: $id, $label, $description, $icons, $tooltip];
-		}
-
-		# update the routes
-		[$graph setRoutes: cast(@routes, ^Route)];
-
-		foreach $highlight (@highlights) {
-			[$graph highlightRoute: $highlight[0], $highlight[1]];
-		}
-
-		[$graph deleteNodes];
-	[$graph end];
+	# kick off the refresh action in the event dispatch thread
+	[$refresh go];
 }
 
 sub _refreshServices {
@@ -430,8 +413,6 @@ sub createDashboard {
 	[$targets setTransferHandler: $transfer];
 
 	# now we can tell the scripting engine to start pulling data from metasploit...
-	let(&refreshGraph, \$graph);
-
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed P", lambda({
 		local('$location');

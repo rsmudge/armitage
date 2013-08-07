@@ -14,8 +14,9 @@ import ui.ATable;
 
 import graph.Route;
 import graph.GraphPopup;
+import graph.Refreshable;
 
-public class NetworkTable extends JComponent implements ActionListener {
+public class NetworkTable extends JComponent implements ActionListener, Refreshable {
 	protected JScrollPane scroller = null;
 
 	public void actionPerformed(ActionEvent ev) {
