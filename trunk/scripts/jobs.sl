@@ -148,11 +148,17 @@ sub updatePayloads {
 	thread(lambda({
 		local('$best');
 		$best = best_client_payload($exploit, $target);
-		[$model setValueForKey: "PAYLOAD", "Value", $best];
-		[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
-		[$model setValueForKey: "LPORT", "Value", randomPort()];
-		[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+		if ($best eq "windows/meterpreter/reverse_tcp" && "*local*" iswm $exploit) {
+			[$model setValueForKey: "LPORT", "Value", %MSF_GLOBAL['LPORT']];
+			[$model setValueForKey: "DisablePayloadHandler", "Value", "true"];
+		}
+		else {
+			[$model setValueForKey: "LPORT", "Value", randomPort()];
+			[$model setValueForKey: "DisablePayloadHandler", "Value", "false"];
+		}
 		[$model setValueForKey: "ExitOnSession", "Value", "false"];
+		[$model setValueForKey: "LHOST", "Value", $MY_ADDRESS];
+		[$model setValueForKey: "PAYLOAD", "Value", $best];
 		[$model fireListeners];
 	}, $model => $1, $exploit => $2, $target => $3));
 }
