@@ -91,13 +91,7 @@ public class MeterpreterSession implements Runnable {
 			if (c.text.equals("shell\n") || c.text.equals("exit\n") || c.text.equals("rev2self\n"))
 				return;
 
-			if (c.text.startsWith("ls\n")) {
-				maxwait *= 2;
-			}
-			else if (c.text.startsWith("read ")) {
-				maxwait *= 2;
-			}
-			else if (c.text.startsWith("webcam_snap -h")) {
+			if (c.text.startsWith("webcam_snap -h")) {
 				/* do nothing, this is legit */
 			}
 			else if (c.text.startsWith("webcam_snap ")) {
