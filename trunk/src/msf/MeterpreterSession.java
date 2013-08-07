@@ -97,8 +97,17 @@ public class MeterpreterSession implements Runnable {
 			else if (c.text.startsWith("read ")) {
 				maxwait *= 2;
 			}
+			else if (c.text.startsWith("webcam_snap -h")) {
+				/* do nothing, this is legit */
+			}
 			else if (c.text.startsWith("webcam_snap ")) {
 				expectedReads = 3;
+			}
+			else if (c.text.startsWith("webcam_list") && !teammode) {
+				/* insert a dummy command... in case there are no cameras */
+				connection.execute("session.meterpreter_write", new Object[] { session, "getdesktop\n" });
+				readUntilSuccessful(c, false);
+				return;
 			}
 			else if (c.text.startsWith("download ")) {
 				expectedReads = 2;
@@ -208,10 +217,6 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("enumdesktops") && !teammode) {
-				readUntilSuccessful(c, false);
-				return;
-			}
-			else if (c.text.startsWith("webcam_list") && !teammode) {
 				readUntilSuccessful(c, false);
 				return;
 			}

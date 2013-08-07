@@ -103,6 +103,13 @@ sub createWebcamViewer {
 			if ($0 eq "end") {
 				local('$cams');
 				$cams = map({ return %(Camera => $1); }, split("\n", ["$2" trim]));
+				pop($cams);
+
+				# no camera... do nothing.
+				if (size($cams) == 0) {
+					showError("Host does not have a camera");
+					return;
+				}
 
 				quickListDialog("Cameras", "Take Picture", @("Camera", "Camera"), $cams, $width => 320, $height => 200, lambda({
 					if ($1 !is $null) {
