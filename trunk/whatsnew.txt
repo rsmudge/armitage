@@ -8,6 +8,7 @@ In Progress
 - Updated multiplexing code to be compatible with enumdesktops command
 - Updated multiplexing code to be compatible with webcam_list command
 - You may now choose which camera to take a Webcam Shot from
+- Close button now shows w/ Armitage dialogs on Kali Linux.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

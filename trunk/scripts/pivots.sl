@@ -107,12 +107,7 @@ sub pivot_dialog {
 		}
 
 		local('$dialog $model $table $sorter $center $a $route $button');
-		$dialog = [new JDialog: $__frame__, $title, 0];
-		[$dialog setSize: 320, 240];
-		[$dialog setLayout: [new BorderLayout]];
-		[$dialog setLocationRelativeTo: $__frame__];
-
-		[$dialog setLayout: [new BorderLayout]];
+		$dialog = dialog($title, 320, 240);
 	
 		$model = [new GenericTableModel: @("host", "mask"), "Option", 8];
 		foreach $route (@routes) {
