@@ -253,7 +253,7 @@ sub left {
 
 sub dialog {
 	local('$dialog $4');
-        $dialog = [new JDialog: $__frame__, $1];
+        $dialog = [new JDialog: $null, $1, 0];
         [$dialog setSize: $2, $3];
         [$dialog setLayout: [new BorderLayout]];
         [$dialog setLocationRelativeTo: $__frame__];

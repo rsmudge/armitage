@@ -8,10 +8,7 @@ import java.awt.event.*;
 
 sub addHostDialog {
 	local('$dialog $label $text $finish $button');
-	$dialog = [new JDialog: $__frame__, "Add Hosts", 0];
-	[$dialog setSize: 320, 240];
-	[$dialog setLayout: [new BorderLayout]];
-	[$dialog setLocationRelativeTo: $__frame__];
+	$dialog = dialog("Add Hosts", 320, 240);
 
 	$label = [new JLabel: "Enter one host/line:"];
 	$text = [new JTextArea];
