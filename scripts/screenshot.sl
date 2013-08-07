@@ -43,10 +43,10 @@ sub image_viewer {
 						[$timer stop];
 					}
 					else {
-						m_cmd($sid, $command);
+						m_cmd($sid, %refreshcmd[$title][$sid]);
 					}
-				}, \$sid, \$timer, \$container, \$command)];
-			}, $sid => $2, \$container, \$command)];
+				}, \$sid, \$timer, \$container, \$title)];
+			}, $sid => $2, \$container, \$title)];
 			[$buttons add: $watch];
 		[$panel add: $buttons, [BorderLayout SOUTH]];
 	

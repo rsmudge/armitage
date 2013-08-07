@@ -157,7 +157,7 @@ sub chooseFile {
 		[$fc setFileSelectionMode: [JFileChooser DIRECTORIES_ONLY]];
 	}
 
-	[$fc showOpenDialog: $__frame__];
+	[$fc showOpenDialog: $null];
 
 	if ($multi) {
 		return [$fc getSelectedFiles];

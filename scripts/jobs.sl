@@ -440,6 +440,7 @@ sub _launch_dialog {
 	[$button requestFocus];
 
 	[$dialog setVisible: 1];
+	[$dialog toFront];
 }
 
 sub jobs {
