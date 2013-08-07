@@ -12,6 +12,37 @@ import msf.*;
 import table.*;
 import ui.*;
 
+sub wdigest_callback {
+	if ($0 eq "update") {
+		[$m append: "$2 $+ \n"];
+	}
+	else if ($0 eq "end") {
+		local('$cred $u $p $queue $host $creds');
+
+		# parse creds...
+		$creds = parseTextTable($2, @('AuthID', 'Package', 'Domain', 'User', 'Password'));
+		if (size($creds) == 0) {
+			return;
+		}
+
+		# notify team that this has happened
+		$host = sessionToHost($1);
+		elog("dumped credentials on $host");
+
+		# add to database
+		$queue = [new armitage.ConsoleQueue: $client];
+		[$queue start];
+		foreach $cred ($creds) {
+			($u, $p) = values($cred, @('User', 'Password'));
+			if ($u ne "" && $p ne "") {
+				$p = fixPass($p);
+				[$queue addCommand: $null, "creds -a $host -p 445 -t password -u $u -P $p"];
+			}
+		}
+		[$queue stop];
+	}
+}
+
 sub hashdump_callback {
 	this('$host $safe $queue');
 
