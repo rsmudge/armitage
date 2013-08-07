@@ -101,7 +101,7 @@ sub createProcessBrowser {
 		local('$v');
 		$v = [$model getSelectedValue: $table];
 		if ($v !is $null) {
-			launch_dialog("Inject", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $m, HANDLER => "false", LPORT => %MSF_GLOBAL['LPORT'], PID => $v));
+			launch_dialog("Inject", "exploit", "windows/local/payload_inject", 1, $null, %(SESSION => $m, PID => $v));
 		}
 	}, $m => $1, \$table, \$model)];
 
