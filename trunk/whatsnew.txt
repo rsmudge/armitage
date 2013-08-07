@@ -14,6 +14,8 @@ In Progress
   it's always present for you to modify in a module.
 - Meterpreter -> Access -> Persistence now uses the local exploit module
   (default settings now work without tweaks too)
+- Meterpreter -> Access -> Pass Session and Process -> Inject now use the
+  payload_inject local exploit module.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

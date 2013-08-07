@@ -224,7 +224,7 @@ sub showMeterpreterMenu {
 
 		item($j, "Pass Session", 'S', lambda({
 			thread(lambda({
-				launch_dialog("Pass Session", "post", "windows/manage/payload_inject", 1, $null, %(SESSION => $sid, LPORT => %MSF_GLOBAL['LPORT'], HANDLER => "0"));
+				launch_dialog("Pass Session", "exploit", "windows/local/payload_inject", 1, $null, %(SESSION => $sid));
 			}, \$sid));
 		}, $sid => "$sid"));
 
