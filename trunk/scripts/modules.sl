@@ -96,6 +96,9 @@ sub moduleAction {
 	($type, $path, $hosts) = @_;
 
 	thread(lambda({
+		# pause for 100ms to make sure the mouse event goes away... allows dialog to be active
+		yield 100;
+
 		if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
 			if ($type eq "exploit") {
 				if (isClientside($path) || $path eq "windows/local/current_user_psexec") {

@@ -224,7 +224,7 @@ sub createPreferencesTab {
 			$type = substr($type, 0, -2);
 
 			if ($type eq "color") {
-				$color = [JColorChooser showDialog: $table, "pick a color", [Color decode: iff($value eq "", "#000000", $value)]];
+				$color = [JColorChooser showDialog: $null, "pick a color", [Color decode: iff($value eq "", "#000000", $value)]];
 	
 				if ($color !is $null) {
 					[$model setValueAtRow: $row, "value", '#' . substr(formatNumber(uint([$color getRGB]), 10, 16), 2)];

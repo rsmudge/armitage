@@ -580,6 +580,7 @@ sub attack_dialog {
 	[$button requestFocus];
 
 	[$dialog setVisible: 1];
+	[$dialog toFront];
 }
 
 sub min_rank {
