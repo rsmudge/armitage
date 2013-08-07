@@ -207,6 +207,10 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
+			else if (c.text.startsWith("enumdesktops") && !teammode) {
+				readUntilSuccessful(c, false);
+				return;
+			}
 
 			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
 
