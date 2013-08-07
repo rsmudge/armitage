@@ -13,12 +13,11 @@ import ui.*;
 
 import armitage.*;
 
-global('%screenshots %webcams');
+global('%screenshots %webcams %refreshcmd');
 %screenshots = ohash();
 %webcams = ohash();
 
-sub image_viewer
-{
+sub image_viewer {
 	local('$panel $viewer $buttons $refresh $watch');
 
 	$panel = [new JPanel];
@@ -31,8 +30,8 @@ sub image_viewer
 		[$buttons setLayout: [new FlowLayout: [FlowLayout CENTER]]];
 			$refresh = [new JButton: "Refresh"];
 			[$refresh addActionListener: lambda({
-				m_cmd($sid, $command);
-			}, $sid => $2, \$command)];
+				m_cmd($sid, %refreshcmd[$title][$sid]);
+			}, $sid => $2, \$command, \$title)];
 			[$buttons add: $refresh];
 
 			$watch = [new JButton: "Watch (10s)"];
@@ -56,7 +55,10 @@ sub image_viewer
 }
 
 sub update_viewer {
-	if ($0 eq "update" && "*Operation failed*" iswm $2) {
+	if ($0 eq "execute") {
+		%refreshcmd[$title][$1] = $2;
+	}
+	else if ($0 eq "update" && "*Operation failed*" iswm $2) {
 		showError($2);
 	}
 	else if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
@@ -83,11 +85,11 @@ sub update_viewer {
 	}
 }
 
-setMissPolicy(%screenshots, lambda(&image_viewer, $title => "Screenshot", $command => "screenshot -v false", $container => %screenshots));
-setMissPolicy(%webcams, lambda(&image_viewer, $title => "Webcam", $command => "webcam_snap -v false", $container => %webcams));
+setMissPolicy(%screenshots, lambda(&image_viewer, $title => "Screenshot", $container => %screenshots));
+setMissPolicy(%webcams, lambda(&image_viewer, $title => "Webcam", $container => %webcams));
 
-%handlers["screenshot"] = lambda(&update_viewer, $type => "Screenshot", $container => %screenshots);
-%handlers["webcam_snap"] = lambda(&update_viewer, $type => "Webcam shot", $container => %webcams);
+%handlers["screenshot"] = lambda(&update_viewer, $type => "Screenshot", $title => "Screenshot", $container => %screenshots);
+%handlers["webcam_snap"] = lambda(&update_viewer, $type => "Webcam shot", $title => "Webcam", $container => %webcams);
 
 sub createScreenshotViewer {
 	return lambda({
@@ -97,6 +99,19 @@ sub createScreenshotViewer {
 
 sub createWebcamViewer {
 	return lambda({
-		m_cmd($sid, "webcam_snap -v false");
+		m_cmd_callback($sid, "webcam_list", {
+			if ($0 eq "end") {
+				local('$cams');
+				$cams = map({ return %(Camera => $1); }, split("\n", ["$2" trim]));
+
+				quickListDialog("Cameras", "Take Picture", @("Camera", "Camera"), $cams, $width => 320, $height => 200, lambda({
+					if ($1 !is $null) {
+						local('$index');
+						($index) = split(': ', $1);
+						m_cmd($sid, "webcam_snap -i $index -v false");
+					}
+				}, $sid => $1));
+			}
+		});
 	}, $sid => $1);
 }
