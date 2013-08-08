@@ -266,23 +266,14 @@ sub importHosts {
 		return;
 	}
 
-	# upload the files please...
-	if ($client !is $mclient) {
-		$closure = lambda(&_importHosts);
-		$thread = [new ArmitageThread: $closure];
+	foreach $file ($files) {
+		# upload file, wait for it, update this magical list
+		uploadBigFile($file, $this);
+		yield;
+		$file = $1;
+	}
 
-		fork({
-			local('$file');
-			foreach $file ($files) {
-				$file = uploadBigFile($file);
-			}
-			$closure['$files'] = $files;
-			[$thread start];
-		}, \$mclient, \$files, \$thread, \$closure);
-	}
-	else {
-		thread(lambda(&_importHosts, \$files));
-	}
+	thread(lambda(&_importHosts, \$files));
 }
 
 # setHostValueFunction(@hosts, varname, value)
