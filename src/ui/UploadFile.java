@@ -8,7 +8,7 @@ import java.util.*;
 /* upload a file to the team server... */
 public class UploadFile implements Runnable {
 	protected FileInputStream in = null;
-	protected byte[] buffer = new byte[128 * 1024];
+	protected byte[] buffer = new byte[256 * 1024];
 	protected File            file = null;
 	protected RpcConnection   client = null;
 	protected UploadNotify    listener = null;

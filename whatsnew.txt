@@ -18,6 +18,8 @@ In Progress
   payload_inject local exploit module.
 - Added Meterpreter -> Access -> Dump Hashes -> wdigest to run mimikatz's
   wdigest command, to retrieve plaintext creds.
+- Armitage now uses a better method to shuttle files to team server and
+  notify you of the progress of this action.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------
