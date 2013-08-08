@@ -103,14 +103,13 @@ sub setup_collaboration {
 }
 
 sub uploadFile {
-	local('$handle %r $data');
-
-	$handle = openf($1);
-	$data = readb($handle, -1);
-	closef($handle);
-
-	%r = call($mclient, "armitage.upload", getFileName($1), $data);
-	return %r['file'];
+	if ($mclient !is $client) {
+		# upload a (potentially) big file
+		return [[new ui.UploadFile: $mclient, [new java.io.File: $1], $null] getRemoteFile];
+	}
+	else {
+		return $1;
+	}
 }
 
 # upload a file if it needs to be uploaded
