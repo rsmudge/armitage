@@ -126,7 +126,10 @@ sub uploadBigFile {
 		[new ui.UploadFile: $mclient, [new java.io.File: $1], $2];
 	}
 	else {
-		[$2: $1];
+		# should always be async of the caller, hence we do it this way
+		thread(lambda({
+			[$func : $file];
+		}, $func => $2, $file => $1));
 	}
 }
 

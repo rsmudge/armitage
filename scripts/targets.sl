@@ -260,7 +260,7 @@ sub _importHosts {
 
 # need to pass this function a $command local...
 sub importHosts {
-	local('$files $thread $closure');
+	local('$file $files $thread $closure');
 	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1, $always => 1));
 	if ($files is $null || size($files) == 0) {
 		return;
