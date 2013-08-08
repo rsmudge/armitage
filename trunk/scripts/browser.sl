@@ -217,7 +217,6 @@ sub createFileBrowser {
 		if ($file !is $null) {
 			[$setcwd];
 			uploadBigFile($file, lambda({
-				$1 = strrep($1, "\\", "\\\\");
 				m_cmd($sid, "upload \" $+ $1 $+ \" \" $+ $name $+ \"");
 			}, \$sid, \$name, \$file));
 		}
