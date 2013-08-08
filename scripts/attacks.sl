@@ -720,13 +720,14 @@ sub addFileListener {
 	$actions["*FILE*"] = {
 		local('$title $temp');
 		$title = "Select $1";
-		$temp = iff($2 eq "", 
-				chooseFile(\$title, $dir => $DATA_DIRECTORY), 
-				chooseFile(\$title, $sel => $2)
-			);
-		if ($temp !is $null) {
-			[$4: strrep($temp, "\\", "\\\\")];
-		}
+
+		# select a file, but always choose a local one
+		$temp = iff($2 eq "", chooseFile(\$title, $dir => $DATA_DIRECTORY, $always => 1), chooseFile(\$title, $sel => $2, $always => 1));
+
+		# upload our file (in a thread safe way)
+		uploadBigFile($temp, lambda({
+			[$f: strrep($1, "\\", "\\\\")];
+		}, $f => $4));
 	};
 	$actions["NAMELIST"] = $actions["*FILE*"];
 	$actions["DICTIONARY"] = $actions["*FILE*"];

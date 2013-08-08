@@ -113,26 +113,21 @@ sub uploadFile {
 	return %r['file'];
 }
 
+# upload a file if it needs to be uploaded
+# uploadBigFile("/path/to/file", &callback);
 sub uploadBigFile {
-	local('$handle %r $data $file $progress $total $sofar $time $start');
-
-	$total = lof($1);
-	$progress = [new javax.swing.ProgressMonitor: $null, "Upload " . getFileName($1), "Starting upload", 0, lof($1)];
-	$start = ticks();
-	$handle = openf($1);
-	$data = readb($handle, 1024 * 256);
-	%r = call($mclient, "armitage.upload", getFileName($1), $data);
-	$sofar += strlen($data);
-
-	while $data (readb($handle, 1024 * 256)) {
-		$time = (ticks() - $start) / 1000.0;
-		[$progress setProgress: $sofar];
-		[$progress setNote: "Speed: " . round($sofar / $time) . " bytes/second"];
-		call($mclient, "armitage.append", getFileName($1), $data);
-		$sofar += strlen($data);
+	# do nothing if there is no file
+	if ($1 is $null || !-exists $1) {
+		return;
 	}
-	[$progress close];
-	return %r['file'];
+
+	if ($mclient !is $client) {
+		# upload a (potentially) big file
+		[new ui.UploadFile: $mclient, [new java.io.File: $1], $2];
+	}
+	else {
+		[$2: $1];
+	}
 }
 
 sub downloadFile {

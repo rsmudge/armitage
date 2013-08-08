@@ -216,23 +216,10 @@ sub createFileBrowser {
 		$name = getFileName($file);
 		if ($file !is $null) {
 			[$setcwd];
-			if ($client !is $mclient) {
-				# some crazy gymnastics here due to how Sleep handles thread-safety...
-				local('$closure $thread');
-				$closure = lambda({
-					m_cmd($sid, "upload \" $+ $file $+ \" \" $+ $name $+ \"");
-				}, \$sid, \$name, \$file);
-				$thread = [new armitage.ArmitageThread: $closure];
-
-				fork({
-					$file = uploadBigFile($file);
-					$closure['$file'] = $file;
-					[$thread start];
-				}, \$file, \$thread, \$closure, \$mclient);
-			}
-			else {
-				m_cmd($sid, "upload \" $+ $file $+ \" \" $+ $name $+ \"");
-			}
+			uploadBigFile($file, lambda({
+				$1 = strrep($1, "\\", "\\\\");
+				m_cmd($sid, "upload \" $+ $1 $+ \" \" $+ $name $+ \"");
+			}, \$sid, \$name, \$file));
 		}
 		# refresh?!?
 	}, $sid => $1, \$setcwd)];
