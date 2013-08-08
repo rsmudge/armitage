@@ -241,7 +241,7 @@ sub createPreferencesTab {
 			}
 			else if ($type eq "file") {
 				local('$file');
-				$file = chooseFile();
+				$file = chooseFile($always => 1);
 				if ($file !is $null) {
 					[$model setValueAtRow: $row, "value", $file];
 					[$model fireListeners];
