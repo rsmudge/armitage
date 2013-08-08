@@ -13,7 +13,7 @@ public class UploadFile implements Runnable {
 	protected RpcConnection   client = null;
 	protected UploadNotify    listener = null;
 	protected Thread          thread = null;
-	protected String          rfile = "";
+	protected String          rfile = null;
 
 	public static interface UploadNotify {
 		/* call with the remote path of the file */
@@ -39,6 +39,9 @@ public class UploadFile implements Runnable {
 		}
 		catch (InterruptedException iex) {
 		}
+
+		if (rfile == null)
+			throw new RuntimeException("user canceled upload of file");
 		return rfile;
 	}
 
