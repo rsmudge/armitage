@@ -12,6 +12,8 @@ public class UploadFile implements Runnable {
 	protected File            file = null;
 	protected RpcConnection   client = null;
 	protected UploadNotify    listener = null;
+	protected Thread          thread = null;
+	protected String          rfile = "";
 
 	public static interface UploadNotify {
 		/* call with the remote path of the file */
@@ -22,7 +24,22 @@ public class UploadFile implements Runnable {
 		this.file = file;
 		this.client = client;
 		this.listener = listener;
-		new Thread(this).start();
+		this.thread = new Thread(this);
+		thread.start();
+	}
+
+	/* wait for the upload to finish and return our file */
+	public String getRemoteFile() {
+		if (SwingUtilities.isEventDispatchThread()) {
+			System.err.println("DiSS! upload of " + file + " is happening in EDT (unsafe)");
+		}
+
+		try {
+			thread.join();
+		}
+		catch (InterruptedException iex) {
+		}
+		return rfile;
 	}
 
 	protected Object[] argz(byte[] data, long length) {
@@ -89,6 +106,9 @@ public class UploadFile implements Runnable {
 			/* call our listener, if it's not null */
 			if (listener != null)
 				listener.complete(result.get("file") + "");
+
+			/* set the remote file */
+			rfile = result.get("file") + "";
 		}
 		catch (Exception ioex) {
 			JOptionPane.showMessageDialog(null, "Aborted upload of: " + file.getName() + "\n" + ioex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
