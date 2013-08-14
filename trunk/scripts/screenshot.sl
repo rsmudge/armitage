@@ -101,9 +101,15 @@ sub createWebcamViewer {
 	return lambda({
 		m_cmd_callback($sid, "webcam_list", {
 			if ($0 eq "end") {
-				local('$cams');
+				local('$cams $cam');
 				$cams = map({ return %(Camera => $1); }, split("\n", ["$2" trim]));
-				pop($cams);
+
+				# get rid of non-camera entries please
+				foreach $cam ($cams) {
+					if ($cam !ismatch '\d+: .*') {
+						remove();
+					}
+				}
 
 				# no camera... do nothing.
 				if (size($cams) == 0) {
