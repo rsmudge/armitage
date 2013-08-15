@@ -20,6 +20,7 @@ In Progress
   wdigest command, to retrieve plaintext creds.
 - Armitage now uses a better method to shuttle files to team server and
   notify you of the progress of this action.
+- Made multiplexing code smarter about load and use commands.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

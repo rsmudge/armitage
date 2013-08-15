@@ -140,7 +140,11 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("use ") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilLoaded(c);
+				return;
+			}
+			else if (c.text.startsWith("load ") && !teammode) {
+				readUntilLoaded(c);
 				return;
 			}
 			else if (c.text.startsWith("run ") && !teammode) {
@@ -297,6 +301,31 @@ public class MeterpreterSession implements Runnable {
 	private void readUntilSuccessful(Command c, boolean pieces) throws Exception {
 		long timeout = pieces ? 2000 : 500;
 		readUntilSuccessful(c, pieces, timeout);
+	}
+
+	private void readUntilLoaded(Command c) throws Exception {
+		/* our first read gets the default wait period at least... */
+		long start = System.currentTimeMillis() + DEFAULT_WAIT;
+
+		StringBuffer buffer = new StringBuffer();
+		Map read = null;
+
+		/* keep reading until we see nothing (up to the timeout) */
+		while ((System.currentTimeMillis() - start) < 30000) {
+			read = readResponse();
+			String data = read.get("data") + "";
+			if (data.length() > 0) {
+				buffer.append(data);
+				start = System.currentTimeMillis();
+			}
+
+			if (buffer.toString().endsWith("\n")) {
+				break;
+			}
+		}
+
+		read.put("data", buffer.toString());
+		fireEvent(c, read, false);
 	}
 
 	/* keep reading until we get no data for a set period... this is a more aggressive
