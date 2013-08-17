@@ -168,7 +168,7 @@ sub createDefaultHandler {
 	local('$port');
 	$port = randomPort();
 	setg("LPORT", $port);
-	warn("Creating a default reverse handler... 0.0.0.0: $+ $port");
+	print_info("Creating a default reverse handler... 0.0.0.0: $+ $port");
 	call_async($client, "module.execute", "exploit", "multi/handler", %(
 		PAYLOAD => "windows/meterpreter/reverse_tcp",
 		LHOST => "0.0.0.0",
@@ -180,7 +180,7 @@ sub createDefaultHandler {
 sub setupHandlers {
 	find_job("Exploit: multi/handler", {
 		if ($cortana !is $null) {
-			warn("Starting Cortana on $MY_ADDRESS");
+			print_info("Starting Cortana on $MY_ADDRESS");
 			[$cortana start: $MY_ADDRESS];
 		}
 
@@ -240,7 +240,7 @@ sub getBindAddress {
 	local('$queue');
 	if ('LHOST' in %MSF_GLOBAL) {
 		$MY_ADDRESS = %MSF_GLOBAL['LHOST'];
-		warn("Used the incumbent: $MY_ADDRESS");
+		print_info("Used the incumbent: $MY_ADDRESS");
 		setupHandlers();
 	}
 	else {
@@ -265,7 +265,7 @@ sub getBindAddress {
 				}];
 			}
 			else {
-				warn("Used the tab method: $address");
+				print_info("Used the tab method: $address");
 				setg("LHOST", $address);
 				$MY_ADDRESS = $address;
 				setupHandlers();
@@ -290,7 +290,7 @@ sub startMetasploit {
 	local('$exception $user $pass $port');
 	($user, $pass, $port) = @_;
 	try {
-		println("Starting msfrpcd for you.");
+		print_info("Starting msfrpcd for you.");
 
 		if (isWindows()) {
 			local('$handle $data $msfdir');
@@ -371,7 +371,7 @@ sub startMetasploit {
 
 				sleep(1024);
 			}
-			println("msfrpcd is shut down!");
+			print_error("msfrpcd is shut down!");
 		}, \$msfrpc_handle, $msfrpc_error => [SleepUtils getIOHandle: [[$msfrpc_handle getSource] getErrorStream], $null], \$frame);
 	}
 	catch $exception {

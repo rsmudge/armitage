@@ -189,7 +189,7 @@ sub createFileBrowser {
 	[$up addActionListener: lambda({ 
 		this('$last');
 		if ((ticks() - $last) < 500) {
-			warn("Dropping cd .. -- too fast");
+			print_error("Dropping cd .. -- too fast");
 			$last = ticks();
 			return;
 		}

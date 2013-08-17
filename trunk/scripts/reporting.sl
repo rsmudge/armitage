@@ -12,7 +12,7 @@ import javax.swing.event.*;
 sub dumpTSVData {
 	local('$handle $entry $key $value');
 	if ($3 is $null) {
-		warn("No data for $1");
+		print_error("No data for $1");
 		return;
 	}
 
@@ -31,7 +31,7 @@ sub dumpTSVData {
 sub dumpXMLData {
 	local('$handle $entry $key $value');
 	if ($3 is $null) {
-		warn("No data for $1");
+		print_error("No data for $1");
 		return;
 	}
 	$handle = openf("> $+ $1 $+ .xml");

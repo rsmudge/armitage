@@ -98,7 +98,7 @@ sub loadPreferences {
 			$motd = @ARGV[1];
 			@ARGV = sublist(@ARGV, 2);
 			if (!-exists $motd) {
-				warn("$motd file does not exist. Clients will not see MOTD.");
+				print_error("$motd file does not exist. Clients will not see MOTD.");
 			}
 		}
 		else if (@ARGV[0] eq "--server") {
@@ -108,7 +108,7 @@ sub loadPreferences {
 			$CLIENT_CONFIG = @ARGV[1];
 			@ARGV = sublist(@ARGV, 2);
 			if (!-exists $CLIENT_CONFIG) {
-				warn("$CLIENT_CONFIG file does not exist. Will show something else.");
+				print_error("$CLIENT_CONFIG file does not exist. Will show something else.");
 			}
 		}
 		else {
@@ -395,7 +395,7 @@ sub dataDirectory {
 
 	$f = [$preferences getProperty: "armitage.log_data_here.folder"];
 	if (-exists $f && !-canwrite $f) {
-		println("I do not have permission to write to:\n $+ $f");
+		print_error("I do not have permission to write to:\n $+ $f");
 	}
 
 	return $f;

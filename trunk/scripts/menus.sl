@@ -317,6 +317,6 @@ sub init_menus {
 				);
 			}
 		}
-		warn("Remote Exploits Synced");
+		print_info("Remote Exploits Synced");
 	});
 }

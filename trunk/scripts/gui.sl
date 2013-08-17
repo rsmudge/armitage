@@ -124,7 +124,7 @@ sub chooseFile {
 			local('$file');
 			$file = chooseFile(\$title, \$file, \$sel, \$dir, \$dirsonly, \$multi, \$fc, $always => 1);
 			if (-exists $file) {
-				warn("Uploading $file");
+				print_info("uploading $file");
 				return uploadFile($file);
 			}
 			return "";

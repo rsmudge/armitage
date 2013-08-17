@@ -242,7 +242,14 @@ sub _connectToMetasploit {
 	local('$sanity');
 	$sanity = call($mclient, "module.options", "exploit", "windows/smb/ms08_067_netapi");
 	if ($sanity is $null) {
-		warn("Detected corrupt module cache... forcing rebuild");
+		print_error("detected corrupt module cache... forcing rebuild");
+		call($mclient, "db.clear_cache");
+	}
+
+	# check for comingled module data... and fix it.
+	$sanity = call($mclient, "module.post");
+	if ("pro/cisco/gather/ios_info" in $sanity['modules']) {
+		print_error("detected corrupt module cache... restart Metasploit for fix to take effect");
 		call($mclient, "db.clear_cache");
 	}
 
@@ -318,7 +325,7 @@ sub postSetup {
 		[[$cortana getSharedData] put: "&createFileBrowser",  &createFileBrowser];
 
 		if ($MY_ADDRESS ne "") {
-			warn("Starting Cortana on $MY_ADDRESS ...");
+			print_info("Starting Cortana on $MY_ADDRESS");
 			[$cortana start: $MY_ADDRESS];
 		}
 
@@ -386,7 +393,7 @@ sub checkDir {
 			mkdir($dir);
 		}
 		chdir($dir);
-		warn("Saving files to $dir");
+		print_info("I will use $dir as a working directory");
 	}
 }
 

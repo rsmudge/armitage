@@ -32,7 +32,7 @@ sub oneTimeShow {
 
 sub m_cmd_callback {
 	if ($mclient is $null) {
-		warn("Dropping: " . @_ . " - collab check not complete!");
+		print_error("Dropping: " . @_ . " - collab check not complete! (&m_cmd_callback)");
 		return;
 	}
 
@@ -42,7 +42,7 @@ sub m_cmd_callback {
 # m_cmd("session", "command here")
 sub m_cmd {
 	if ($mclient is $null) {
-		warn("Dropping: " . @_ . " - collab check not complete!");
+		print_error("Dropping: " . @_ . " - collab check not complete! (&m_cmd)");
 		return;
 	}
 
