@@ -61,19 +61,19 @@ sub client {
 		($user, $pass, $eid, $app, $ver) = $args;
 
 		if ($user ne $_user || $pass ne $_pass) {
-			warn("Rejected $eid (invalid login)");
+			print_error("Rejected $eid (invalid login)");
 			writeObject($handle, result(%(error => 1, message => "Invalid login.")));
 			[[$handle getOutputStream] flush];
 			return;
 		}
 		else if ($app ne "armitage") {
-			warn("Rejected $eid (wrong application)");
+			print_error("Rejected $eid (wrong application)");
 			writeObject($handle, result(%(error => 1, message => "Your client is not compatible with this server.\nPlease use the latest version of Armitage.")));
 			[[$handle getOutputStream] flush];
 			return;
 		}
 		else if ($ver < 130521) {
-			warn("Rejected $eid (old software -- srsly, update people!)");
+			print_error("Rejected $eid (old software -- srsly, update people!)");
 			writeObject($handle, result(%(error => 1, message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
 			[[$handle getOutputStream] flush];
 			return;
@@ -89,7 +89,7 @@ sub client {
 
 		if ($eid !is $null) {
 			event("*** $eid joined\n");
-			warn("*** $eid joined");
+			print_good("$eid joined");
 		}
 		[[$handle getOutputStream] flush];
 	}
@@ -374,7 +374,7 @@ sub main {
 	# some sanity checking
 	#
 	if ($host eq "127.0.0.1") {
-		println("Do not specify 127.0.0.1 as your msfrpcd host. This IP address\nis given to clients and they use it to connect to this server.");
+		print_error("Do not specify 127.0.0.1 as your msfrpcd host. This IP address\nis given to clients and they use it to connect to this server.");
 		[System exit: 0];
 	}
 
@@ -439,7 +439,7 @@ sub main {
 	%sessions = ohash();
 	wait(fork({
 		setMissPolicy(%sessions, { 
-			warn("Creating a thread for $2");
+			print_info("Creating a thread for $2");
 			local('$session');
 			$session = [new MeterpreterSession: $client, $2, 0]; 
 			[$session addListener: lambda({
@@ -504,20 +504,20 @@ service framework-postgres start");
 
 	$server = [new SecureServerSocket: int($sport)];
 	if (checkError($error)) {
-		println("[-] Could not listen on $sport $+ : $error");
+		print_error("Could not listen on $sport $+ : $error");
 		[System exit: 0];
 	}
 
 	#
 	# spit out the details
 	#
-	println("Use the following connection details to connect your clients:");
+	print_info("Use the following connection details to connect your clients:");
 	println("\tHost: $host");
 	println("\tPort: $sport");
 	println("\tUser: $user");
-	println("\tPass: $pass");
-	println("\n\tFingerprint (check for this string when you connect):\n\t" . [$server fingerprint]);
-	println("\n" . rand(@("I'm ready to accept you or other clients for who they are",
+	println("\tPass: $pass\n");
+	print_info("Fingerprint (check for this string when you connect):\n\t" . [$server fingerprint]);
+	print_good(rand(@("I'm ready to accept you or other clients for who they are",
 		"multi-player metasploit... ready to go",
 		"hacking is such a lonely thing, until now",
 		"feel free to connect now, Armitage is ready for collaboration")));
