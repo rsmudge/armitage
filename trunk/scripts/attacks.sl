@@ -355,6 +355,9 @@ sub best_payload {
 		else if ("php/meterpreter_reverse_tcp" in $compatible) {
 			return "php/meterpreter_reverse_tcp";
 		}
+		else if ("cmd/unix/reverse" in $compatible) {
+			return "cmd/unix/reverse";
+		}
 		else {
 			return "generic/shell_reverse_tcp";
 		}
