@@ -21,6 +21,12 @@ In Progress
 - Armitage now uses a better method to shuttle files to team server and
   notify you of the progress of this action.
 - Made multiplexing code smarter about load and use commands.
+- Added a check to detect commercial MSF modules in the module cache and 
+  to automatically clear it. When this happens you will need to restart the
+  Metasploit Framework. A corrupt cache causes some RPC calls to throw 
+  errors as plain msfrpcd is not allowed to interact with commercial modules.
+- Added ANSI color markup to armitage's console output. It's less scary 
+  than the default messages and it's nicer to look at.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

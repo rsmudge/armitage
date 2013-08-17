@@ -52,7 +52,7 @@ sub logFile {
 			closef($handle);
 		}
 		else {
-			warn("Could not find file: $1");
+			print_error("Could not find file: $1");
 		}
 	}
 }

@@ -371,7 +371,7 @@ sub show_login_dialog {
 			%options["PASSWORD"] = [$pass getText];
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";
-			warn("$srvc $+ : $port => " . %options);
+			print_info("$srvc $+ : $port => " . %options);
 			elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
 			module_execute("auxiliary", $module, %options);
 		}

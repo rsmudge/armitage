@@ -55,7 +55,6 @@ public class ArmitageApplication extends JComponent {
 
 	public void setupMenu(JComponent parent, String key, Stack args) {
 		if (builder == null) {
-			System.err.println("Menu builder was never installed! " + key);
 			return;
 		}
 
@@ -63,7 +62,6 @@ public class ArmitageApplication extends JComponent {
 	}
 
 	public void setMenuBuilder(MenuBuilder b) {
-		System.err.println("Setting up menu builder: " + b);
 		builder = b;
 	}
 

@@ -329,7 +329,6 @@ sub listen_for_shellz {
         [$dialog setVisible: 1];
 }
 
-
 sub connect_for_shellz {
         local('$dialog $host $port $type $panel $button');
         $dialog = dialog("Connect", 640, 480);
@@ -351,7 +350,6 @@ sub connect_for_shellz {
 		%options["PAYLOAD"] = iff([$type getSelectedItem] eq "shell", "generic/shell_bind_tcp", "windows/meterpreter/bind_tcp");
 		%options["LPORT"] = [$port getText];
 		%options["RHOST"] = [$host getText];
-		warn(%options);
 		call_async($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
 	}, \$dialog, \$port, \$type, \$host)];

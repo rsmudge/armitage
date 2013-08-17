@@ -33,6 +33,15 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 
 			return SleepUtils.getScalar(temp);
 		}
+		else if (name.equals("&print_error")) {
+			System.err.println("\u001B[01;31m[-]\u001B[0m " + args.pop());
+		}
+		else if (name.equals("&print_good")) {
+			System.err.println("\u001B[01;32m[+]\u001B[0m " + args.pop());
+		}
+		else if (name.equals("&print_info")) {
+			System.err.println("\u001B[01;34m[*]\u001B[0m " + args.pop());
+		}
 		else {
 			try {
 				String file = BridgeUtilities.getString(args, "");
@@ -49,6 +58,7 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 				throw new RuntimeException(ex.getMessage());
 			}
 		}
+		return SleepUtils.getEmptyScalar();
 	}
 
 	protected ScriptVariables variables = new ScriptVariables();
@@ -111,6 +121,9 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 		Hashtable environment = new Hashtable();
 		environment.put("&resource", this);
 		environment.put("&_args", this);
+		environment.put("&print_error", this);
+		environment.put("&print_good", this);
+		environment.put("&print_info", this);
 
 		/* set our command line arguments into a var */
 		variables.putScalar("@ARGV", ObjectUtilities.BuildScalar(false, args));
