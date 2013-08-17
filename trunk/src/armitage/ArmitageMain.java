@@ -34,13 +34,13 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			return SleepUtils.getScalar(temp);
 		}
 		else if (name.equals("&print_error")) {
-			System.err.println("\u001B[01;31m[-]\u001B[0m " + args.pop());
+			System.out.println("\u001B[01;31m[-]\u001B[0m " + args.pop());
 		}
 		else if (name.equals("&print_good")) {
-			System.err.println("\u001B[01;32m[+]\u001B[0m " + args.pop());
+			System.out.println("\u001B[01;32m[+]\u001B[0m " + args.pop());
 		}
 		else if (name.equals("&print_info")) {
-			System.err.println("\u001B[01;34m[*]\u001B[0m " + args.pop());
+			System.out.println("\u001B[01;34m[*]\u001B[0m " + args.pop());
 		}
 		else {
 			try {
