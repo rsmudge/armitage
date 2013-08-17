@@ -18,8 +18,9 @@ public class RpcQueue implements Runnable {
 	protected LinkedList    requests  = new LinkedList();
 
 	private static class Request {
-		public String   method;
-		public Object[] args;
+		public String      method;
+		public Object[]    args;
+		public RpcCallback callback = null;
 	}
 
 	public RpcQueue(RpcConnection connection) {
@@ -29,7 +30,10 @@ public class RpcQueue implements Runnable {
 
 	protected void processRequest(Request r) {
 		try {
-			connection.execute(r.method, r.args);
+			Object result = connection.execute(r.method, r.args);
+			if (r.callback != null) {
+				r.callback.result(result);
+			}
 		}
 		catch (Exception ex) {
 			System.err.println("-------------------");
@@ -42,10 +46,18 @@ public class RpcQueue implements Runnable {
 	}
 
 	public void execute(String method, Object[] args) {
+		execute(method, args, null);
+	}
+
+	public void execute(String method, Object[] args, RpcCallback callback) {
 		synchronized (this) {
-			Request temp = new Request();
-			temp.method = method;
-			temp.args   = args;
+			Request temp  = new Request();
+			temp.method   = method;
+			if (args == null)
+				temp.args = new Object[0];
+			else
+				temp.args = args;
+			temp.callback = callback;
 			requests.add(temp);
 		}
 	}

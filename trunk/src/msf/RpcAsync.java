@@ -12,14 +12,18 @@ public class RpcAsync implements RpcConnection, Async {
 	}
 
 	public void execute_async(String methodName) {
-		execute_async(methodName, new Object[]{});
+		execute_async(methodName, new Object[]{}, null);
 	}
 
 	public void execute_async(String methodName, Object[] args) {
+		execute_async(methodName, args, null);
+	}
+
+	public void execute_async(String methodName, Object[] args, RpcCallback callback) {
 		if (queue == null) {
 			queue = new RpcQueue(connection);
 		}
-		queue.execute(methodName, args);
+		queue.execute(methodName, args, callback);
 	}
 
 	public Object execute(String methodName) throws IOException {
