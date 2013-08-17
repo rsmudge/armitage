@@ -69,14 +69,18 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	}
 
 	public void execute_async(String methodName) {
-		execute_async(methodName, new Object[]{});
+		execute_async(methodName, new Object[]{}, null);
 	}
 
 	public void execute_async(String methodName, Object[] args) {
+		execute_async(methodName, args, null);
+	}
+
+	public void execute_async(String methodName, Object[] args, RpcCallback callback) {
 		if (queue == null) {
 			queue = new RpcQueue(this);
 		}
-		queue.execute(methodName, args);
+		queue.execute(methodName, args, callback);
 	}
 
 	/** Runs command with no args */

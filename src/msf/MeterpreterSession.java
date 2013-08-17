@@ -187,31 +187,31 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("kerberos") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("livessp") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("mimikatz_command") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("msv") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("ssp") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("tspkg") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("wdigest") && !teammode) {
-				readUntilSuccessful(c, false);
+				readUntilSuccessful(c, false, 1500);
 				return;
 			}
 			else if (c.text.startsWith("enumdesktops") && !teammode) {

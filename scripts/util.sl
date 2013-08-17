@@ -24,6 +24,15 @@ sub call_async {
 	}
 }
 
+sub call_async_callback {
+	if (size(@_) > 3) {
+		[$1 execute_async: $2, cast(sublist(@_, 3), ^Object), $3];
+	}
+	else {
+		[$1 execute_async: $2, $null, $3];
+	}
+}
+
 # invokes an RPC call: call($console, "function", arg1, arg2, ...)
 sub call {
 	local('$exception');
