@@ -193,7 +193,7 @@ sub _connectToMetasploit {
 				local('$x $cc');
 				for ($x = 0; $x < 6; $x++) {
 					$cc = c_client($1, $2);
-					call($cc, "armitage.validate", $3, $4, $null, "armitage", 130522);
+					call($cc, "armitage.validate", $3, $4, $null, "armitage", 130822);
 					push(@POOL, $cc);
 				}
 			}

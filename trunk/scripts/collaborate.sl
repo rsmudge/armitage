@@ -90,13 +90,13 @@ sub setup_collaboration {
 	}
 
 	$mclient = c_client($3, $4);
-	%r = call($mclient, "armitage.validate", $1, $2, $nick, "armitage", 130522);
+	%r = call($mclient, "armitage.validate", $1, $2, $nick, "armitage", 130822);
 	if (%r["error"] eq "1") {
 		showErrorAndQuit(%r["message"]);
 		return $null;
 	}
 
-	%r = call($client, "armitage.validate", $1, $2, $null, "armitage", 130522);
+	%r = call($client, "armitage.validate", $1, $2, $null, "armitage", 130822);
 	$NICK = $nick;
 	$DESCRIBE = "$nick $+ @ $+ $3";
 	return $mclient;
