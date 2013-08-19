@@ -172,7 +172,6 @@ public class DatabaseImpl implements RpcConnection  {
 
 			/* extract our BASE64 encoded data */
 			String data = ((Map)rows.get(0)).get("data") + "";
-			System.err.println("Read: " + data.length() + " bytes");
 
 			/* turn our data into raw data */
 			byte[] raw  = Base64.decode(data);
@@ -389,7 +388,7 @@ public class DatabaseImpl implements RpcConnection  {
 				Map results = new HashMap();
 				String key = params[0] + "";
 				if (!key.matches("[0-9a-zA-Z\\._]+")) {
-					System.err.println("Key '" + key + "' did not validate!");
+					armitage.ArmitageMain.print_error("DatabaseImpl.java - Key '" + key + "' did not validate!");
 					return new HashMap();
 				}
 				results.put("values", executeQuery("SELECT DISTINCT * FROM notes WHERE ntype = '" + key + "' ORDER BY id ASC"));
@@ -459,7 +458,7 @@ public class DatabaseImpl implements RpcConnection  {
 				if (values.containsKey("hosts") && (values.get("hosts") + "").length() > 0) {
 					String h = values.get("hosts") + "";
 					if (!h.matches("[0-9a-fA-F\\.:\\%\\_/, ]+")) {
-						System.err.println("Host value did not validate!");
+						armitage.ArmitageMain.print_error("DatabaseImpl.java - Host value '" + h + "' did not validate!");
 						return new HashMap();
 					}
 					String[] routes = h.split(",\\s*");
@@ -575,11 +574,11 @@ public class DatabaseImpl implements RpcConnection  {
 				return result;
 			}
 			else {
-				System.err.println("Need to implement: " + methodName);
+				armitage.ArmitageMain.print_error("DatabaseImpl.java - need to implement: " + methodName);
 			}
 		}
 		catch (Exception ex) {
-			System.err.println(ex);
+			armitage.ArmitageMain.print_error("DatabaseImpl.java - exception: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 

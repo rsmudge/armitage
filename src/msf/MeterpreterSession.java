@@ -78,7 +78,6 @@ public class MeterpreterSession implements Runnable {
 		int expectedReads = 1;
 		try {
 			emptyRead();
-			//System.err.println("Processing: " + c.text);
 			response = (Map)connection.execute("session.meterpreter_write", new Object[] { session, c.text });
 
 			/* white list any commands that are not expected to return output */
@@ -219,8 +218,6 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 
-			//System.err.println("(" + session + ") latency: " + (System.currentTimeMillis() - c.start) + " -- " + c.text);
-
 			for (int x = 0; x < expectedReads; x++) {
 				read = readResponse();
 				start = System.currentTimeMillis();
@@ -228,7 +225,7 @@ public class MeterpreterSession implements Runnable {
 					/* our goal here is to timeout any command after 10 seconds if it returns nothing */
 					if ((System.currentTimeMillis() - start) > maxwait) {
 						fireEvent(c, read, true);
-						System.err.println("(" + session + ") - '" + c.text + "' - timed out");
+						armitage.ArmitageMain.print_error("command timed out (session " + session + ") - '" + c.text + "'");
 						return;
 					}
 
@@ -247,7 +244,7 @@ public class MeterpreterSession implements Runnable {
 			}
 		}
 		catch (Exception ex) {
-			System.err.println(session + " -> " + c.text + " ( " + response + ")");
+			armitage.ArmitageMain.print_error("Meterpreter " + session + " error while executing '" + c.text.trim() + "': " + ex.getMessage() + "\n\tlast response: " + response);
 			ex.printStackTrace();
 		}
 	}
@@ -266,9 +263,6 @@ public class MeterpreterSession implements Runnable {
 
 	protected Command grabCommand() {
 		synchronized (this) {
-			/*if (commands.size() > 0) {
-				System.err.println("Queue size is: " + commands.size());
-			}*/
 			return (Command)commands.pollFirst();
 		}
 	}
@@ -292,7 +286,8 @@ public class MeterpreterSession implements Runnable {
 				}
 			}
 			catch (Exception ex) {
-				System.err.println("This session appears to be dead! " + session + ", " + ex);
+				armitage.ArmitageMain.print_error("Meterpreter session " + session + " is dead: " + ex.getMessage());
+				ex.printStackTrace();
 				return;
 			}
 		}

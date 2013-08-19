@@ -30,7 +30,7 @@ public class RpcCacheImpl implements Runnable {
 			/* throttle the next call if this takes too long to execute */
 			if (executeTime > 500) {
 				wait = 5000L;
-				System.err.println("* " + method + " took " + executeTime + "ms - throttling next call");
+				armitage.ArmitageMain.print_info(method + " took " + executeTime + "ms - throttling next call");
 			}
 			else {
 				wait = 2000L;

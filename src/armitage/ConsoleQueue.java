@@ -152,19 +152,19 @@ public class ConsoleQueue implements Runnable {
 							display.append(lines[x] + "\n");
 						}
 						else {
-							System.err.println("Batch read unexpected: " + lines[x]);
+							armitage.ArmitageMain.print_error("Batch read unexpected: " + lines[x]);
 						}
 					}
 				}
 				else if ((System.currentTimeMillis() - start) > 10000) {
 					/* this is a safety check to keep a console from spinning waiting for one command to complete. Shouldn't trigger--unless I mess up :) */
-					System.err.println("Timed out: " + c.assign + " vs. " + expected);
+					armitage.ArmitageMain.print_error("Console Command Timed out: '" + c.assign + "' wanted: " + expected);
 					break;
 				}
 			}
 		}
 		catch (Exception ex) {
-			System.err.println(consoleid + " -> " + c.text);
+			armitage.ArmitageMain.print_error("Console " + consoleid + " Exception '" + c.text + "': " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
@@ -214,7 +214,7 @@ public class ConsoleQueue implements Runnable {
 					}
 					else if ((System.currentTimeMillis() - start) > 10000) {
 						/* this is a safety check to keep a console from spinning waiting for one command to complete. Shouldn't ever trigger. */
-						System.err.println("Timed out: " + c.text);
+						armitage.ArmitageMain.print_error("Timed out while executing '" + c.text + "' last read = " + read + "; current prompt = '" + prompt + "'");
 						break;
 					}
 				}
@@ -234,7 +234,7 @@ public class ConsoleQueue implements Runnable {
 			fireEvent(c, output.toString());
 		}
 		catch (Exception ex) {
-			System.err.println(consoleid + " -> " + c.text + " ( " + read + ")");
+			armitage.ArmitageMain.print_error("Exception when executing '" + c.text + "' in console " + consoleid + ": " + ex.getMessage() + "\n\tlast read: " + read);
 			ex.printStackTrace();
 		}
 	}
@@ -319,7 +319,7 @@ public class ConsoleQueue implements Runnable {
 			connection.execute(destroyCommand, new Object[] { consoleid });
 		}
 		catch (Exception ex) {
-			System.err.println("This console appears to be dead! " + consoleid + ", " + ex);
+			armitage.ArmitageMain.print_error("console " + consoleid + " is dead: " + ex.getMessage());
 			return;
 		}
 	}

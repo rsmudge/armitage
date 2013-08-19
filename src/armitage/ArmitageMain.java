@@ -19,7 +19,19 @@ import ui.*;
  */
 public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 	public void processScriptWarning(ScriptWarning warning) {
-		System.out.println(warning);
+		print_info(warning + "");
+	}
+
+	public static final void print_error(String message) {
+		System.out.println("\u001B[01;31m[-]\u001B[0m " + message);
+	}
+
+	public static final void print_good(String message) {
+		System.out.println("\u001B[01;32m[+]\u001B[0m " + message);
+	}
+
+	public static final void print_info(String message) {
+		System.out.println("\u001B[01;34m[*]\u001B[0m " + message);
 	}
 
 	public Scalar evaluate(String name, ScriptInstance script, Stack args) {
@@ -34,13 +46,13 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 			return SleepUtils.getScalar(temp);
 		}
 		else if (name.equals("&print_error")) {
-			System.out.println("\u001B[01;31m[-]\u001B[0m " + args.pop());
+			print_error(args.pop() + "");
 		}
 		else if (name.equals("&print_good")) {
-			System.out.println("\u001B[01;32m[+]\u001B[0m " + args.pop());
+			print_good(args.pop() + "");
 		}
 		else if (name.equals("&print_info")) {
-			System.out.println("\u001B[01;34m[*]\u001B[0m " + args.pop());
+			print_info(args.pop() + "");
 		}
 		else {
 			try {
