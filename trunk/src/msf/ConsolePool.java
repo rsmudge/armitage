@@ -49,11 +49,10 @@ public class ConsolePool implements RpcConnection {
 
 				/* this is a sanity check to make sure this console is not dead or hung */
 				if ("failure".equals(temp.get("result")) || "true".equals(temp.get("busy") + "") || "".equals(temp.get("prompt") + "")) {
-					System.err.println("Kill Console: " + rv + " => " + temp);
+					armitage.ArmitageMain.print_info("kill Console: " + rv + " => " + temp);
 					client.execute("console.destroy", new Object[] { rv.get("id") + "" });
 				}
 				else {
-					//System.err.println("Reusing: " + rv + " => " + temp);
 					return rv;
 				}
 			}
@@ -72,7 +71,6 @@ public class ConsolePool implements RpcConnection {
 		/* swallow the banner... making sure this is done will be part of the
 		   contract of the console pool */
 		client.execute("console.read", new Object[] { result.get("id") });
-		//System.err.println("New console: " + result);
 		return result;
 	}
 
@@ -87,14 +85,12 @@ public class ConsolePool implements RpcConnection {
 		}
 
 		if (b) {
-			//System.err.println("Added: " + rv + " to pool");
 			client.execute("console.write", new Object[] { id, "back\n" });
 			synchronized (this) {
 				inactive.add(rv);
 			}
 		}
 		else {
-			//System.err.println("Destroyed: " + id);
 			client.execute("console.destroy", new Object[] { id });
 		}
 	}

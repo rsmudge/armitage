@@ -36,8 +36,7 @@ public class RpcQueue implements Runnable {
 			}
 		}
 		catch (Exception ex) {
-			System.err.println("-------------------");
-			System.err.println("Method: " + r.method);
+			armitage.ArmitageMain.print_error("RpcQueue Method '" + r.method + "' failed: " + ex.getMessage());
 			for (int x = 0; x < r.args.length; x++) {
 				System.err.println("\t" + x + ": " + r.args[x]);
 			}

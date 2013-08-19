@@ -112,7 +112,7 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 			}
 
 			if (((Map)out).containsKey("error") && ((Map)out).containsKey("error_class")) {
-				System.out.println(((Map)out).get("error_backtrace"));
+				armitage.ArmitageMain.print_error("Metasploit Framework Exception: " + ((Map)out).get("error_message").toString() + "\n" + ((Map)out).get("error_backtrace"));
 				throw new RuntimeException(((Map)out).get("error_message").toString());
 			}
 		}
