@@ -29,6 +29,7 @@ In Progress
   than the default messages and it's nicer to look at.
 - Added cmd/unix/reverse to payload selection logic.
 - Updated the payload output formats to match what's now possible in MSF
+- Armitage -> Listeners actions now show commands/output in a tab
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------

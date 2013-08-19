@@ -318,8 +318,9 @@ sub listen_for_shellz {
 		%options["LHOST"] = "0.0.0.0";
 		%options["LPORT"] = [$port getText];
 		%options["ExitOnSession"] = "false";
-		call_async($client, "module.execute", "exploit", "multi/handler", %options);
+		
 		[$dialog setVisible: 0];
+		module_execute("exploit", "multi/handler", %options);
 	}, \$dialog, \$port, \$type)];
 
         [$dialog add: $panel, [BorderLayout CENTER]];
@@ -350,8 +351,8 @@ sub connect_for_shellz {
 		%options["PAYLOAD"] = iff([$type getSelectedItem] eq "shell", "generic/shell_bind_tcp", "windows/meterpreter/bind_tcp");
 		%options["LPORT"] = [$port getText];
 		%options["RHOST"] = [$host getText];
-		call_async($client, "module.execute", "exploit", "multi/handler", %options);
 		[$dialog setVisible: 0];
+		module_execute("exploit", "multi/handler", %options);
 	}, \$dialog, \$port, \$type, \$host)];
 
         [$dialog add: $panel, [BorderLayout CENTER]];
