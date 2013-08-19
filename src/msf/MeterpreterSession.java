@@ -244,7 +244,7 @@ public class MeterpreterSession implements Runnable {
 			}
 		}
 		catch (Exception ex) {
-			armitage.ArmitageMain.print_error("Meterpreter " + session + " error while executing '" + c.text.trim() + "': " + ex.getMessage() + "\n\tlast response: " + response);
+			armitage.ArmitageMain.print_error("Meterpreter " + session + " error while executing '" + (c.text + "").trim() + "': " + ex.getMessage() + "\n\tlast response: " + response);
 			ex.printStackTrace();
 		}
 	}
