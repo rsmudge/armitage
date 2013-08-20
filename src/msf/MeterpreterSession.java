@@ -186,31 +186,31 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("kerberos") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("livessp") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("mimikatz_command") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("msv") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("ssp") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("tspkg") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("wdigest") && !teammode) {
-				readUntilSuccessful(c, false, 1500);
+				readUntilSuccessful(c, true);
 				return;
 			}
 			else if (c.text.startsWith("enumdesktops") && !teammode) {
@@ -294,7 +294,7 @@ public class MeterpreterSession implements Runnable {
 	}
 
 	private void readUntilSuccessful(Command c, boolean pieces) throws Exception {
-		long timeout = pieces ? 2000 : 500;
+		long timeout = pieces ? 3000 : 500;
 		readUntilSuccessful(c, pieces, timeout);
 	}
 
