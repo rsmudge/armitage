@@ -215,6 +215,10 @@ sub _launch_dialog {
 		else if ($key eq "RHOST" && size($5) > 0) {
 			$default = $5[0];
 		}
+		# this should *NOT* be set to true
+		else if ($key eq "DB_ALL_CREDS") {
+			$default = "false";
+		}
 		else if ($key eq "EXE::Custom") {
 			$value["advanced"] = '0';
 			$value["evasion"]  = '0';
