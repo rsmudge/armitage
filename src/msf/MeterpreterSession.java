@@ -139,11 +139,11 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("use ") && !teammode) {
-				readUntilLoaded(c);
+				readUntilSuccessful(c, false, "\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("load ") && !teammode) {
-				readUntilLoaded(c);
+				readUntilSuccessful(c, false, "\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("run ") && !teammode) {
@@ -186,11 +186,11 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("kerberos") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("livessp") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("mimikatz_command") && !teammode) {
@@ -198,19 +198,19 @@ public class MeterpreterSession implements Runnable {
 				return;
 			}
 			else if (c.text.startsWith("msv") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("ssp") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("tspkg") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("wdigest") && !teammode) {
-				readUntilSuccessful(c, true);
+				readUntilSuccessful(c, true, "\n\n", 60000);
 				return;
 			}
 			else if (c.text.startsWith("enumdesktops") && !teammode) {
@@ -298,34 +298,13 @@ public class MeterpreterSession implements Runnable {
 		readUntilSuccessful(c, pieces, timeout);
 	}
 
-	private void readUntilLoaded(Command c) throws Exception {
-		/* our first read gets the default wait period at least... */
-		long start = System.currentTimeMillis() + DEFAULT_WAIT;
-
-		StringBuffer buffer = new StringBuffer();
-		Map read = null;
-
-		/* keep reading until we see nothing (up to the timeout) */
-		while ((System.currentTimeMillis() - start) < 30000) {
-			read = readResponse();
-			String data = read.get("data") + "";
-			if (data.length() > 0) {
-				buffer.append(data);
-				start = System.currentTimeMillis();
-			}
-
-			if (buffer.toString().endsWith("\n")) {
-				break;
-			}
-		}
-
-		read.put("data", buffer.toString());
-		fireEvent(c, read, false);
+	private void readUntilSuccessful(Command c, boolean pieces, long timeout) throws Exception {
+		readUntilSuccessful(c, pieces, null, timeout);
 	}
 
 	/* keep reading until we get no data for a set period... this is a more aggressive
 	   alternate read strategy for commands that I can't predict the end point well */
-	private void readUntilSuccessful(Command c, boolean pieces, long timeout) throws Exception {
+	private void readUntilSuccessful(Command c, boolean pieces, String theend, long timeout) throws Exception {
 		/* our first read gets the default wait period at least... */
 		long start = System.currentTimeMillis() + DEFAULT_WAIT;
 
@@ -344,6 +323,11 @@ public class MeterpreterSession implements Runnable {
 					buffer.append(data);
 				}
 				start = System.currentTimeMillis();
+
+				/* should we stop? */
+				if (theend != null && (data.toString().endsWith(theend) || data.startsWith("[-] Unknown command:"))) {
+					break;
+				}
 			}
 		}
 
