@@ -74,10 +74,10 @@ public class RpcQueue implements Runnable {
 				Request next = grabRequest();
 				if (next != null) {
 					processRequest(next);
-					Thread.sleep(25);
+					Thread.sleep(50);
 				}
 				else {
-					Thread.sleep(100);
+					Thread.sleep(200);
 				}
 			}
 		}
