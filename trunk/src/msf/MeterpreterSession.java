@@ -185,32 +185,32 @@ public class MeterpreterSession implements Runnable {
 				readUntilSuccessful(c, false);
 				return;
 			}
-			else if (c.text.startsWith("kerberos") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("kerberos")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
-			else if (c.text.startsWith("livessp") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("livessp")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
-			else if (c.text.startsWith("mimikatz_command") && !teammode) {
+			else if (c.text.startsWith("mimikatz_command")) {
 				readUntilSuccessful(c, true);
 				return;
 			}
-			else if (c.text.startsWith("msv") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("msv")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
-			else if (c.text.startsWith("ssp") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("ssp")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
-			else if (c.text.startsWith("tspkg") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("tspkg")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
-			else if (c.text.startsWith("wdigest") && !teammode) {
-				readUntilSuccessful(c, true, "\n\n", 60000);
+			else if (c.text.startsWith("wdigest")) {
+				readUntilSuccessful(c, true, "\n\n", 10000);
 				return;
 			}
 			else if (c.text.startsWith("enumdesktops") && !teammode) {
