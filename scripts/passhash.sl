@@ -268,6 +268,7 @@ sub pass_the_hash {
 		local('$u $p %options $host');
 		%options["SMBDomain"] = [$domain getText];
 		%options['RPORT']     = "445";
+		%options["DB_ALL_CREDS"] = "false";
 		
 		if ([$brute isSelected]) {
 			%options["RHOSTS"] = join(", ", $hosts);
@@ -359,6 +360,8 @@ sub show_login_dialog {
 		local('$u $p %options $host');
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
+		%options["DB_ALL_CREDS"] = "false";
+
 		if ([$brute isSelected]) {
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";

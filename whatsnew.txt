@@ -30,6 +30,8 @@ Armitage Changelog
 - Added cmd/unix/reverse to payload selection logic.
 - Updated the payload output formats to match what's now possible in MSF
 - Armitage -> Listeners actions now show commands/output in a tab
+- [host] -> Login options now set DB_ALL_CREDS to false. Making this option
+  default to true is not the decision I would have made.
 
 6 Jun 13 (tested against msf git revision: c705928052)
 --------
