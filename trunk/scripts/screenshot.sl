@@ -106,7 +106,7 @@ sub createWebcamViewer {
 
 				# get rid of non-camera entries please
 				foreach $cam ($cams) {
-					if ($cam !ismatch '\d+: .*') {
+					if ($cam['Camera'] !ismatch '\d+: .*') {
 						remove();
 					}
 				}
