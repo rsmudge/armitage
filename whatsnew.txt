@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Fixed webcam selection logic that I broke last update. Go me!
+
 21 Jun 13 (tested against msf git revision: 0af2f1c611)
 ---------
 - Removed sunrpc and dcerpc modules from MSF Scans feature
