@@ -79,6 +79,12 @@ public class Hosts extends ManagedData {
 			Map data = (Map)i.next();
 			String address = data.get("address") + "";
 
+			/* skip this address... I will always use 127.0.0.10 for hardcoded stuff */
+			if ("127.0.0.10".equals(address)) {
+				i.remove();
+				continue;
+			}
+
 			Host temp;
 			if (hosts.containsKey(address)) {
 				temp = (Host)hosts.get(address);
