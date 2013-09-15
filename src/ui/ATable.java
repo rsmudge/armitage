@@ -72,6 +72,7 @@ public class ATable extends JTable {
 		specialitems.add("PASSWORD");
 		specialitems.add("SMBUser");
 		specialitems.add("SMBPass");
+		specialitems.add("PATH");
 
 		return new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {
