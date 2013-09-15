@@ -742,6 +742,7 @@ sub addFileListener {
 	$actions["EXE::Template"] = $actions["*FILE*"];
 	$actions["WORDLIST"]   = $actions["*FILE*"];
 	$actions["REXE"]   = $actions["*FILE*"];
+	$actions["PATH"]   = $actions["*FILE*"];
 
 	# set up an action to choose a session
 	$actions["SESSION"] = lambda(&chooseSession);
