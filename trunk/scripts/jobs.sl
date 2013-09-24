@@ -123,24 +123,32 @@ sub _launch_service {
 
 # launch_dialog("title", "type", "name", "visible", "hosts...", %options)
 sub launch_dialog {
-	local('$info $options $6');
-	$info = call($mclient, "module.info", $2, $3);
-	$options = call($mclient, "module.options", $2, $3);
+	local('$6');
+	[lambda({
+		local('$info $options');
+		call_async_callback($mclient, "module.info", $this, $b, $c);
+		yield;
+		$info = convertAll($1);
 
-	# give callers the ability to set any options before we pass things on.
-	if (-ishash $6) {
-		local('$key $value');
-		foreach $key => $value ($6) {
-			if ($key in $options) {
-				$options[$key]["default"] = $value;
-				$options[$key]["advanced"] = "0";
+		call_async_callback($mclient, "module.options", $this, $b, $c);
+		yield;
+		$options = convertAll($1);
+
+		# give callers the ability to set any options before we pass things on.
+		if (-ishash $f) {
+			local('$key $value');
+			foreach $key => $value ($f) {
+				if ($key in $options) {
+					$options[$key]["default"] = $value;
+					$options[$key]["advanced"] = "0";
+				}
 			}
 		}
-	}
 
-	dispatchEvent(lambda({
-		invoke(lambda(&_launch_dialog, \$info, \$options), $args);
-	}, \$info, \$options, $args => @_));
+		dispatchEvent(lambda({
+			invoke(lambda(&_launch_dialog, \$info, \$options), $args);
+		}, \$info, \$options, \$args));
+	}, $a => $1, $b => $2, $c => $3, $d => $4, $e => $5, $f => $6, $args => @_)];
 }
 
 # $1 = model, $2 = exploit, $3 = selected target

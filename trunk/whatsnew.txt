@@ -10,6 +10,7 @@ In Progress
 - Connect dialog now masks the password field.
 - Armitage no longer allows you to start msfrpcd on Windows. It shows an
   error stating that you need to connect to a team server on Linux.
+- Fixed a potential deadlock when opening a module launcher dialog.
 
 21 Jun 13 (tested against msf git revision: 0af2f1c611)
 ---------
