@@ -446,7 +446,12 @@ sub connectDialog {
 				closef(connect("127.0.0.1", $p, 1000));
 			}
 			catch $ex {
-				if (!askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?")) {
+				if (isWindows()) {
+					showError("You must connect to a team server hosted on Linux.\nConnecting to a Metasploit RPC server on Windows is\nnot supported.");
+					[$dialog setVisible: 1];
+					return;
+				}
+				else if (!askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?")) {
 					startMetasploit($u, $s, $p);
 				}
 			}

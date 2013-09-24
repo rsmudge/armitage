@@ -8,6 +8,8 @@ In Progress
 - Java 1.6 is no longer a supported environment to run Armitage. Added
   a warning message to indicate as much. You should update to Java 1.7
 - Connect dialog now masks the password field.
+- Armitage no longer allows you to start msfrpcd on Windows. It shows an
+  error stating that you need to connect to a team server on Linux.
 
 21 Jun 13 (tested against msf git revision: 0af2f1c611)
 ---------
