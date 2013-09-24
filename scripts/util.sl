@@ -404,7 +404,7 @@ sub connectDialog {
 	$port = [new ATextField: [$preferences getProperty: "connect.port.string", "55553"], 10];
 	
 	$user = [new ATextField: [$preferences getProperty: "connect.user.string", "msf"], 20];
-	$pass = [new ATextField: [$preferences getProperty: "connect.pass.string", "test"], 20];
+	$pass = [new APasswordField: [$preferences getProperty: "connect.pass.string", "test"], 20];
 
 	$button = [new JButton: "Connect"];
 	[$button setToolTipText: "<html>Connects to Metasploit.</html>"];
@@ -429,7 +429,7 @@ sub connectDialog {
 		local('$h $p $u $s @o');
 
 		# clean up the user options...
-		@o = @([$host getText], [$port getText], [$user getText], [$pass getText]);
+		@o = @([$host getText], [$port getText], [$user getText], [$pass getPass]);
 		@o = map({ return ["$1" trim]; }, @o);
 		($h, $p, $u, $s) = @o;
 
@@ -647,3 +647,6 @@ sub fixPass {
 	return replace(strrep($1, '\\', '\\\\'), '(\p{Punct})', '\\\\$1');
 }
 
+if (systemProperties()["java.specification.version"] eq "1.6") {
+	print_error("Java 1.6 is not supported with this tool. Please upgrade to Java 1.7");
+}
