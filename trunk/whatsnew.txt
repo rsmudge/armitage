@@ -5,6 +5,9 @@ In Progress
 ---------
 - Fixed webcam selection logic that I broke last update. Go me!
 - Added a helper for PATH option
+- Java 1.6 is no longer a supported environment to run Armitage. Added
+  a warning message to indicate as much. You should update to Java 1.7
+- Connect dialog now masks the password field.
 
 21 Jun 13 (tested against msf git revision: 0af2f1c611)
 ---------
