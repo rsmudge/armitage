@@ -12,7 +12,7 @@ In Progress
   error stating that you need to connect to a team server on Linux.
 - Fixed a potential deadlock when opening a module launcher dialog.
 
-21 Jun 13 (tested against msf git revision: 0af2f1c611)
+21 Aug 13 (tested against msf git revision: 0af2f1c611)
 ---------
 - Removed sunrpc and dcerpc modules from MSF Scans feature
 - Fixed a potential deadlock when updating the host display
