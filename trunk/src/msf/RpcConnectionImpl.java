@@ -171,6 +171,14 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 			buffer.reset();
 			return new HashMap();
 		}
+		else if (methodName.equals("armitage.sleep")) {
+			try {
+				Thread.sleep(Integer.parseInt(params[0] + ""));
+			}
+			catch (Exception ex) {
+			}
+			return new HashMap();
+		}
 		else if (hooks.containsKey(methodName)) {
 			RpcConnection con = (RpcConnection)hooks.get(methodName);
 			return con.execute(methodName, params);
