@@ -132,7 +132,7 @@ sub loadDatabasePreferences {
 	}
 
 	if (!-exists $yaml_file) {
-		throw [new RuntimeException: "I can not find a database.yml file. I *really* need it.\nTry setting MSF_DATABASE_CONFIG to a file that exists."];
+		throw [new RuntimeException: "I can not find a database.yml file. I *really* need it.\nHere's how to fix this:\n\n1. Try setting MSF_DATABASE_CONFIG to a file that exists.\n2. Did you use sudo to start this program? Try sudo -E\n3. Kali Linux users, try this:\n\n\tservice metasploit start\n\tservice metasploit stop"];
 	}
 	else if (!-canread $yaml_file) {
 		throw [new RuntimeException: "I do not have permission to read: $yaml_file $+ .\nRun me as root please."];
