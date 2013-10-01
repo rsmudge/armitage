@@ -242,14 +242,25 @@ sub _connectToMetasploit {
 	local('$sanity');
 	$sanity = call($mclient, "module.options", "exploit", "windows/smb/ms08_067_netapi");
 	if ($sanity is $null) {
-		print_error("detected corrupt module cache... forcing rebuild");
+		print_error("detected corrupt module cache... restart Metasploit for fix to take effect (#1)");
 		call($mclient, "db.clear_cache");
 	}
 
 	# check for comingled module data... and fix it.
 	$sanity = call($mclient, "module.post");
 	if ("pro/cisco/gather/ios_info" in $sanity['modules']) {
-		print_error("detected corrupt module cache... restart Metasploit for fix to take effect");
+		print_error("detected corrupt module cache... restart Metasploit for fix to take effect (#2)");
+		call($mclient, "db.clear_cache");
+	}
+
+	# is some other stupidity happening?
+	try {
+		# this RPC call likes to fail when the module cache is broken too
+		[$mclient execute: "session.compatible_modules", cast(@("0"), ^Object)];
+	}
+	catch $sanity {
+		warn($sanity);
+		print_error("detected corrupt module cache... restart Metasploit for fix to take effect (#3)");
 		call($mclient, "db.clear_cache");
 	}
 
