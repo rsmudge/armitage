@@ -11,6 +11,9 @@ In Progress
 - Armitage no longer allows you to start msfrpcd on Windows. It shows an
   error stating that you need to connect to a team server on Linux.
 - Fixed a potential deadlock when opening a module launcher dialog.
+- Missing MSF_DATABASE_CONFIG error now gives troubleshooting steps with
+  the error message.
+- Added another check to detect and correct a corrupt module cache.
 
 21 Aug 13 (tested against msf git revision: 0af2f1c611)
 ---------
