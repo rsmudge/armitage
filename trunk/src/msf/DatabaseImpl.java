@@ -549,29 +549,30 @@ public class DatabaseImpl implements RpcConnection  {
 				/* before we change this hosts info, kill its notes. We do this so future normalized data isn't ignored */
 				executeUpdate("DELETE FROM notes WHERE EXISTS (SELECT id, address FROM hosts WHERE notes.host_id = id AND address = '" + host + "'::text::inet AND workspace_id = " + workspaceid + ")");
 
+				/* update os flavor and name */
 				if (values.containsKey("os_name") && values.containsKey("os_flavor")) {
 					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = ?, os_sp = '' WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("os_name") + "");
 					stmt.setString(2, values.get("os_flavor") + "");
 					stmt.setString(3, host);
+					stmt.executeUpdate();
 				}
 				else if (values.containsKey("os_name")) {
 					stmt = db.prepareStatement("UPDATE hosts SET os_name = ?, os_flavor = '', os_sp = '' WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("os_name") + "");
 					stmt.setString(2, host);
+					stmt.executeUpdate();
 				}
-				else if (values.containsKey("purpose")) {
+
+				/* update purpose value */
+				if (values.containsKey("purpose")) {
 					stmt = db.prepareStatement("UPDATE hosts SET purpose = ? WHERE hosts.address = ?::text::inet AND hosts.workspace_id = " + workspaceid);
 					stmt.setString(1, values.get("purpose") + "");
 					stmt.setString(2, host);
-				}
-				else {
-					return new HashMap();
+					stmt.executeUpdate();
 				}
 
-				Map result = new HashMap();
-				result.put("rows", new Integer(stmt.executeUpdate()));
-				return result;
+				return new HashMap();
 			}
 			else {
 				armitage.ArmitageMain.print_error("DatabaseImpl.java - need to implement: " + methodName);
