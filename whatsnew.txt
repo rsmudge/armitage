@@ -14,6 +14,7 @@ In Progress
 - Missing MSF_DATABASE_CONFIG error now gives troubleshooting steps with
   the error message.
 - Added another check to detect and correct a corrupt module cache.
+- [host] -> Operating System -> Firewall works again.
 
 21 Aug 13 (tested against msf git revision: 0af2f1c611)
 ---------
