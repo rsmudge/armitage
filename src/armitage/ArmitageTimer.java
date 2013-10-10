@@ -102,6 +102,8 @@ public class ArmitageTimer implements Runnable {
 					Thread.sleep(sleepPeriod);
 				}
 			}
+
+			armitage.ArmitageMain.print_error("Read for " + command + " is null. Stopping thread");
 		}
 		catch (Exception javaSucksBecauseItMakesMeCatchEverythingFuckingThing) {
 			System.err.println("Thread id: " + command + " -> " + read);
