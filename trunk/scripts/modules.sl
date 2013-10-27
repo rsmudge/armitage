@@ -101,7 +101,7 @@ sub moduleAction {
 
 		if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
 			if ($type eq "exploit") {
-				if (isClientside($path) || $path eq "windows/local/current_user_psexec") {
+				if (isClientside($path) || $path eq "windows/local/current_user_psexec" || $path eq "windows/local/wmi") {
 					launch_dialog($path, $type, $path, 1, $hosts);
 				}
 				else {
