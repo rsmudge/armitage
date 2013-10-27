@@ -15,6 +15,7 @@ In Progress
   the error message.
 - Added another check to detect and correct a corrupt module cache.
 - [host] -> Operating System -> Firewall works again.
+- You can now set PAYLOAD for windows/local/wmi exploit
 
 21 Aug 13 (tested against msf git revision: 0af2f1c611)
 ---------
