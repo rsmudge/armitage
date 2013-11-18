@@ -16,6 +16,7 @@ In Progress
 - Added another check to detect and correct a corrupt module cache.
 - [host] -> Operating System -> Firewall works again.
 - You can now set PAYLOAD for windows/local/wmi exploit
+- Default meterpreter/reverse_tcp listener now encodes its second stage
 
 21 Aug 13 (tested against msf git revision: 0af2f1c611)
 ---------
