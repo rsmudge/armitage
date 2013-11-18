@@ -232,7 +232,7 @@ sub _connectToMetasploit {
 			initReporting();
 		}
 		catch $exception {
-			[JOptionPane showMessageDialog: $null, "Could not connect to database.\nClick Help button for troubleshooting help.\n\n" . [$exception getMessage]];
+			[JOptionPane showMessageDialog: $null, "Could not connect to database.\n\nKali Linux users, try:\n\nservice metasploit start\nservice metasploit stop\nservice postgresql start\n\n" . [$exception getMessage]];
 			if ($msfrpc_handle) { closef($msfrpc_handle); }
 			[System exit: 0];
 		}
