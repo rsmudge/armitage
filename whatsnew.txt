@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+21 Nov 13 (tested against msf git revision: 597eb56dcf)
 ---------
 - Fixed webcam selection logic that I broke last update. Go me!
 - Added a helper for PATH option
