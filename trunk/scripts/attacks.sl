@@ -661,7 +661,8 @@ sub host_attack_items {
 		foreach $port => $service (%hosts[$host]['services']) {
 			$name = $service['name'];
 			if ($port == 445 && "*Windows*" iswm getHostOS($host)) {
-				%options["psexec"] = lambda(&pass_the_hash, $hosts => $2);
+				%options["psexec"] = lambda(&pass_the_hash, $hosts => $2, $module => "windows/smb/psexec");
+				%options["psexec (psh)"] = lambda(&pass_the_hash, $hosts => $2, $module => "windows/smb/psexec_psh");
 			}
 			else if ($port == 902) {
 				%options["vmauthd"] = lambda(&show_login_dialog, $hosts => $2, $module => "scanner/vmware/vmauthd_login", $service => %(port => 902, name => "vmauthd"));
