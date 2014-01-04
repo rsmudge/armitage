@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Armitage console is now a mouse hot spot. Right-click a host in the
+  console to see its menu. Click a module to open the module's launcher
+
 21 Nov 13 (tested against msf git revision: 597eb56dcf)
 ---------
 - Fixed webcam selection logic that I broke last update. Go me!
