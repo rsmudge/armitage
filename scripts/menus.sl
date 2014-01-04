@@ -180,6 +180,22 @@ sub armitage_items {
 	$m = menu($1, 'Listeners', 'L');
 		item($m, 'Bind (connect to)', 'B', &connect_for_shellz);
 		item($m, 'Reverse (wait for)', 'R', &listen_for_shellz); 
+		separator($m);
+		item($m, 'Set LHOST...', 'L', {
+			local('$new');
+			$new = ask("What is the IP address of this system?", $MY_ADDRESS);
+			if ($new is $null) {
+				return;
+			}
+
+			# update the address in the right place.
+			$MY_ADDRESS = $new;
+			[$cortana updateLocalHost: $MY_ADDRESS];
+			setg("LHOST", $MY_ADDRESS);
+
+			# change LHOST for the user...
+			showError("LHOST changed");
+		});
 
 	item($1, 'Scripts...', 'S', { showScriptManager(); });
 
