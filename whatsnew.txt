@@ -9,6 +9,8 @@ In Progress
   msfrpcd after a successful exploit job is run.
 - hashdump and wdigest menus now add usernames with spaces to database
   thanks to Steve Pinkham for reporting this issue *with* a fix.
+- Added [host] -> Login -> psexec (psh) to use psexec_psh to authenticate
+  to a host.
 
 21 Nov 13 (tested against msf git revision: 597eb56dcf)
 ---------
