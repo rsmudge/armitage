@@ -171,7 +171,7 @@ sub createCredentialsTab {
 				foreach $entry ($entries) {
 					($user, $pass, $host) = $entry;
 					$pass = fixPass($pass);
-					[$queue addCommand: $null, "creds -d $host -u $user -P $pass"];
+					[$queue addCommand: $null, "creds -d $host -u ' $+ $user $+ ' -P $pass"];
 				}
 
 				[$queue addCommand: "x", "creds -h"];
