@@ -336,7 +336,13 @@ public class ConsoleQueue implements Runnable {
 
 		if (display != null && !isEmptyData(temp.get("prompt") + "")) {
 			String prompt = ConsoleClient.cleanText(temp.get("prompt") + "");
-			display.updatePrompt(prompt);
+
+			/* MSF always returns Meterpreter prompt even if we ran the module
+			   as a background job. This confuses a lot of people. So we will
+			   ignore this prompt in the Console Queue (usually auto-launched by
+			   Armitage) to work around this problem */
+			if (!"meterpreter > ".equals(prompt))
+				display.updatePrompt(prompt);
 		}
 
 		return temp;
