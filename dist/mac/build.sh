@@ -5,7 +5,7 @@
 rm -rf dist
 mkdir dist
 cp -r Armitage.app dist
-cp armitage/armitage.jar dist/Armitage.app/Contents/Resources/Java
+cp armitage/armitage.jar dist/Armitage.app/Contents/Java
 cp armitage/*.txt dist/
 cp *.rtf dist/
 rm -rf armitage

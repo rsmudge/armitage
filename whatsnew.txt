@@ -11,6 +11,7 @@ In Progress
   thanks to Steve Pinkham for reporting this issue *with* a fix.
 - Added [host] -> Login -> psexec (psh) to use psexec_psh to authenticate
   to a host.
+- Armitage.app for MacOS X now works with Oracle's Java 1.7
 
 21 Nov 13 (tested against msf git revision: 597eb56dcf)
 ---------
