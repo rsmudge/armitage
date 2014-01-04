@@ -127,15 +127,37 @@ sub createConsolePanel {
 		}
 	}];
 
+	[$console setPopupMenu: {
+		# eliminate parens and brackets
+		if ("(*)" iswm $1 || "[*]" iswm $1) {
+			$1 = substr($1, 1, -1);
+		}
+
+		# user right-clicked a host
+		if ($1 in %hosts) {
+			targetPopup(@($1), $2);
+		}
+	}];
+
 	[$console addWordClickListener: lambda({
-		local('$word');
+		local('$word $type $path');
 		$word = [$1 getActionCommand];
 
-		if ($word in @exploits || $word in @auxiliary) {
-			[$thread sendString: "use $word $+ \n"];
+		if ($word ismatch '(auxiliary|post|exploit|payload)/(.*)') {
+			($type, $path) = matched();
+			moduleAction($type, $path, @());
+		}
+		else if ($word in @auxiliary) {
+			moduleAction("auxiliary", $word, @());
+		}
+		else if ($word in @exploits) {
+			moduleAction("exploit", $word, @());
 		}
 		else if ($word in @payloads) {
-			[$thread sendString: "set PAYLOAD $word $+ \n"];
+			moduleAction("payload", $word, @());
+		}
+		else if ($word in @post) {
+			moduleAction("post", $word, @());
 		}
 	}, \$thread)];
 
