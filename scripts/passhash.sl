@@ -36,7 +36,7 @@ sub wdigest_callback {
 			($u, $p) = values($cred, @('User', 'Password'));
 			if ($u ne "" && $p ne "") {
 				$p = fixPass($p);
-				[$queue addCommand: $null, "creds -a $host -p 445 -t password -u $u -P $p"];
+				[$queue addCommand: $null, "creds -a $host -p 445 -t password -u ' $+ $u $+ ' -P $p"];
 			}
 		}
 		[$queue stop];
@@ -74,7 +74,7 @@ sub hashdump_callback {
 		# strip any funky characters that will cause this call to throw an exception
 		$hash = fixPass($hash);
 
-		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u $user -P $hash"];
+		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u ' $+ $user $+ ' -P $hash"];
 		[$m append: "[+] \t $+ $2 $+ \n"];
 	}
 	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
