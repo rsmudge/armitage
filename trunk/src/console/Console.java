@@ -78,7 +78,7 @@ public class Console extends JPanel implements FocusListener {
 		public void checkPopup(MouseEvent ev) {
 			if (ev.isPopupTrigger()) {
 				if (popup != null && console.getSelectedText() == null) {
-					String result = resolveWord();
+					String result = resolveWord(ev.getPoint());
 					popup.showPopup(result, ev);
 				}
 				else {
@@ -89,7 +89,7 @@ public class Console extends JPanel implements FocusListener {
 
 		public void mouseClicked(MouseEvent ev) {
 			if (!ev.isPopupTrigger()) {
-				String result = resolveWord();
+				String result = resolveWord(ev.getPoint());
 				Iterator i = listeners.iterator();
 				ActionEvent event = new ActionEvent(parent, 0, result);
 
@@ -105,9 +105,9 @@ public class Console extends JPanel implements FocusListener {
 			}
 		}
 
-		public String resolveWord() {
-			int position = console.getCaretPosition();
-			String data  = console.getText();
+		public String resolveWord(Point pt) {
+			int position = console.viewToModel(pt);
+			String data  = console.getText().replace("\n", " ").replaceAll("\\s", " ");
 
 			int start = data.lastIndexOf(" ", position);
 			int end = data.indexOf(" ", position);
@@ -120,10 +120,6 @@ public class Console extends JPanel implements FocusListener {
 
 			if (end >= start) {
 				String temp = data.substring(start, end).trim();
-				int a = temp.indexOf("\n");
-				if (a > 0) {
-					return temp.substring(0, a);
-				}
 				return temp;
 			}
 
