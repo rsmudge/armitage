@@ -62,6 +62,19 @@ public class Sessions extends ManagedData {
 		}
 	}
 
+	private static final void fixIPv6(Map data, String key) {
+		if (!data.containsKey(key))
+			return;
+
+		/* strip scopeid out of address--so it doesn't mess up how we
+		   associate session information with host */
+		String value = data.get(key) + "";
+		if (value.contains("%") && value.contains(":") && !value.startsWith("%")) {
+			value = value.split("%")[0];
+			data.put(key, value);
+		}
+	}
+
 	public void processSessions(Map results) {
 		if (hosts.isInitial())
 			return;
@@ -97,6 +110,11 @@ public class Sessions extends ManagedData {
 			Map.Entry temp    = (Map.Entry)k.next();
 			String    sid     = temp.getKey() + "";
 			Map       session = (Map)temp.getValue();
+
+			/* fix a few things */
+			fixIPv6(session, "session_host");
+			fixIPv6(session, "target_host");
+			fixIPv6(session, "tunnel_peer");
 
 			/* extract the address */
 			String address = session.get("session_host") + "";
