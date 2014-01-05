@@ -14,6 +14,7 @@ In Progress
 - Armitage.app for MacOS X now works with Oracle's Java 1.7
 - Long awaited! I've added a feature to change LHOST in Armitage. Go to
   Armitage -> Listeners -> Set LHOST.
+- IPv6 reverse sessions now associate with their host properly.
 
 21 Nov 13 (tested against msf git revision: 597eb56dcf)
 ---------
