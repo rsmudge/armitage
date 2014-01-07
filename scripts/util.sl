@@ -512,8 +512,8 @@ sub module_execute {
 }
 
 sub _module_execute {
-	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true") {
-		local('$host');
+	local('$host $title');
+	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true" || $title) {
 
 		# for logging purposes, we should figure out the remote host being targeted
 
@@ -540,7 +540,7 @@ sub _module_execute {
 
 		local('$queue $key $value');
 
-		$queue = createDisplayTab($1, \$host);
+		$queue = createDisplayTab(iff($title, $title, $1), \$host);
 
 		[$queue addCommand: $null, "use $1 $+ / $+ $2"];
 		[$queue setOptions: $3];
