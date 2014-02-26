@@ -96,7 +96,7 @@ sub dispatchEvent {
 sub showError {
 	fork({
 		dispatchEvent(lambda({
-			[JOptionPane showMessageDialog: $__frame__, $message];
+			[JOptionPane showMessageDialog: $null, $message];
 		}, \$message));
 	}, $message => $1, \$__frame__);
 }
@@ -253,10 +253,11 @@ sub left {
 
 sub dialog {
 	local('$dialog $4');
-        $dialog = [new JDialog: $null, $1, 0];
-        [$dialog setSize: $2, $3];
-        [$dialog setLayout: [new BorderLayout]];
-        [$dialog setLocationRelativeTo: $__frame__];
+	$dialog = [new JFrame: $1];
+	[$dialog setIconImage: [ImageIO read: resource("resources/armitage-icon.gif")]];
+	[$dialog setSize: $2, $3];
+	[$dialog setLayout: [new BorderLayout]];
+	[$dialog setLocationRelativeTo: $__frame__];
 	return $dialog;
 }
 
