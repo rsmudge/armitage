@@ -10,6 +10,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import cortana.gui.MenuBuilder;
+import java.io.*;
 
 import ui.*;
 
@@ -199,6 +200,30 @@ public class ArmitageApplication extends JComponent {
 		apptabs.add(t);
 	}
 
+	private static Image myicon = null;
+
+	private Image getMyIcon() {
+		if (myicon != null)
+			return myicon;
+
+		try {
+			String file = "resources/armitage-icon.gif";
+			InputStream i = null;
+			if (new File(file).exists()) {
+				i = new FileInputStream(file);
+			}
+			else {
+				i = this.getClass().getClassLoader().getResourceAsStream(file);
+			}
+
+			myicon = javax.imageio.ImageIO.read(i);
+		}
+		catch (Exception ex) {
+		}
+
+		return myicon;
+	}
+
 	public void popAppTab(Component tab) {
 		Iterator i = apptabs.iterator();
 		while (i.hasNext()) {
@@ -209,7 +234,7 @@ public class ArmitageApplication extends JComponent {
 
 				/* pop goes the tab! */
 				final JFrame r = new JFrame(t.title);
-				//r.setIconImages(getIconImages());
+				r.setIconImage(getMyIcon());
 				r.setLayout(new BorderLayout());
 				r.add(t.component, BorderLayout.CENTER);
 				r.pack();

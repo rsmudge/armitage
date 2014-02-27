@@ -15,6 +15,7 @@ Armitage Changelog
 - Long awaited! I've added a feature to change LHOST in Armitage. Go to
   Armitage -> Listeners -> Set LHOST.
 - IPv6 reverse sessions now associate with their host properly.
+- Windows open with Ctrl+W now show the Armitage icon
 - Armitage now uses a JFrame to display its dialogs. This will give each
   window its own button in the taskbar regardless of window manager.
 
