@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
 - Armitage console is now a mouse hot spot. Right-click a host in the
   console to see its menu. Click a module to open the module's launcher
