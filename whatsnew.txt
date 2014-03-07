@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Added Ctrl+L to quickly add an entry to timeline.[xml|tsv] (exported 
+  through View -> Reporting -> Export Data)
+
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
 - Armitage console is now a mouse hot spot. Right-click a host in the

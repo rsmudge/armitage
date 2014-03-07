@@ -308,6 +308,13 @@ sub init_menus {
 	[$frame bindKey: "Ctrl+D", { [$frame closeActiveTab]; }];
 	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
 	[$frame bindKey: "Ctrl+T", { [$frame snapActiveTab]; }];
+	[$frame bindKey: "Ctrl+L", {
+		local('$text');
+		$text = ask("What would you like to add to log?");
+		if ($text ne "") {
+			elog($text);
+		}
+	}];
 	[$frame bindKey: "Ctrl+Left", { [$frame previousTab]; }];
 	[$frame bindKey: "Ctrl+Right", { [$frame nextTab]; }];
 	setupWorkspaceShortcuts(workspaces());
