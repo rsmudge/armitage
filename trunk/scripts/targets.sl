@@ -15,7 +15,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-global('%hosts $targets');
+global('%hosts $targets @routes');
 
 sub getHostOS {
 	return iff($1 in %hosts, %hosts[$1]['os_name'], $null);
@@ -63,6 +63,9 @@ sub sessionToHost {
 }
 
 on sessions {
+	# clear!
+	@routes = @();
+
 	local('$address $key $session $data $highlight $id $host $route $mask $peer %addr $refresh $route');
 	$data = $1;
 
