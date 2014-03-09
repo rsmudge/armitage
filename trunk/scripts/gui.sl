@@ -524,17 +524,6 @@ sub isShift {
 	return iff(([$1 getModifiers] & [ActionEvent SHIFT_MASK]) == [ActionEvent SHIFT_MASK], 1);
 }
 
-inline safetyCheck {
-	local('$__time');
-	if ($__time == 0) {
-		$__time = ticks();
-	}
-	if ((ticks() - $__time) > 250) {
-		yield 50;
-		$__time = ticks();
-	}
-}
-
 sub addMouseListener {
 	[$1 addMouseListener: [new SafeMouseListener: $2]];
 }
