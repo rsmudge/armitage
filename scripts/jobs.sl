@@ -41,26 +41,33 @@ sub find_job {
 }
 
 sub generatePayload {
-	local('$file');
-	$file = saveFile2();
-	if ($file is $null) {
-		return;
-	}
+	local('$module $options $format');
+	($module, $options, $format) = @_;
 
-	thread(lambda({
-		local('$module $options $format $handle $data');
-		($module, $options, $format) = $args;
-		$options["Format"] = $format;
-		$data = call($client, "module.execute", "payload", $module, $options);
-
-		if ($data !is $null) {
-			$handle = openf("> $+ $file");
-			writeb($handle, $data["payload"]);
-			closef($handle);
-
-			showError("Saved $file");
+	[lambda({
+		local('$file $handle $data');
+		$file = saveFile2();
+		if ($file is $null) {
+			return;
 		}
-	}, $args => @_, \$file));
+
+		$options["Format"] = $format;
+
+		# make our async call!
+		call_async_callback($client, "module.execute", $this, "payload", $module, $options);
+		yield;
+		$data = convertAll($1);
+
+		if ($data is $null) {
+			return;
+		}
+
+		$handle = openf("> $+ $file");
+		writeb($handle, $data["payload"]);
+		closef($handle);
+
+		showError("Saved $file");
+	}, \$module, \$options, \$format)];
 }
 
 # pass the module launch to another thread please.
