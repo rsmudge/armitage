@@ -41,6 +41,13 @@ public class RpcQueue implements Runnable {
 				System.err.println("\t" + x + ": " + r.args[x]);
 			}
 			ex.printStackTrace();
+
+			/* let the user know something went wrong */
+			if (r.callback != null) {
+				Map result = new HashMap();
+				result.put("error", ex.getMessage());
+				r.callback.result((Object)result);
+			}
 		}
 	}
 
