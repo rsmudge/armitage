@@ -321,7 +321,7 @@ sub launch_msf_scans {
 		return;
 	}
 
-	thread(lambda({
+	[lambda({
 		local('$scanner $index $queue %ports %discover $port %o $temp $x');
 		%ports = ohash();
 		%discover = ohash();
@@ -337,7 +337,9 @@ sub launch_msf_scans {
 		# build up a list of scan ports
 		foreach $index => $scanner (@modules) {
 			if ($scanner ismatch 'scanner/(.*?)/\1_version') {
-				%o = call($client, "module.options", "auxiliary", $scanner);
+				call_async_callback($client, "module.options", $this, "auxiliary", $scanner);
+				yield;
+				%o = convertAll($1);
 				if ('RPORT' in %o) {
 					$port = %o['RPORT']['default'];
 					push(%ports[$port], $scanner);
@@ -345,8 +347,6 @@ sub launch_msf_scans {
 						push(%ports['443'], $scanner);
 					}
 				}
-
-				safetyCheck();
 			}
 		}
 
@@ -421,5 +421,5 @@ sub launch_msf_scans {
 		}, \$hosts, \%ports, \@modules, \%discover, \$queue, $time => ticks())];
 
 		[$queue start];
-	}, \$hosts, \@modules));
+	}, \$hosts, \@modules)];
 }
