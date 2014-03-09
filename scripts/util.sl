@@ -164,12 +164,12 @@ sub createConsolePanel {
 }
 
 sub createConsoleTab {
-	local('$1 $2 $host');
-	[lambda(&_createConsoleTab): $1, $2, \$host];
+	local('$1 $2');
+	[lambda(&_createConsoleTab): $1, $2];
 }
 
 sub _createConsoleTab {
-	local('$id $console $thread $title $banner $host $file $result');
+	local('$id $console $thread $title $banner $result');
 	($title, $banner) = @_;
 
 	call_async_callback($client, "console.create", $this);
@@ -181,14 +181,8 @@ sub _createConsoleTab {
 		\$result
 	);
 
-	if ($host is $null && $file is $null) {
-		logCheck($console, "all", "console");
-	}
-	else {
-		logCheck($console, $host, $file);
-	}
-
-	[$frame addTab: iff($title is $null, "Console", $title), $console, $thread, $host];
+	logCheck($console, "all", "console");
+	[$frame addTab: iff($title is $null, "Console", $title), $console, $thread, $null];
 }
 
 sub setg {
