@@ -281,10 +281,13 @@ sub createShellSessionTab {
 	[$console setDefaultPrompt: '$ '];
         [$console setPopupMenu: lambda(&shellPopup, \$session, \$sid)];
 
-	thread(lambda({
+	[lambda({
 		local('%r $thread');
 
-		%r = call($mclient, "armitage.lock", $sid, "tab is already open");
+		call_async_callback($mclient, "armitage.lock", $this, $sid, "tab is already open");
+		yield;
+		%r = convertAll($1);
+
 		if (%r["error"]) {
 			showError(%r["error"]);
 			return;
@@ -295,7 +298,7 @@ sub createShellSessionTab {
 			call_async($mclient, "armitage.unlock", $sid);
 			[$thread kill];
 		}, \$sid, \$thread), "Shell " . sessionToHost($sid)];
-	}, \$sid, \$console));
+	}, \$sid, \$console)];
 }
 
 sub listen_for_shellz {
