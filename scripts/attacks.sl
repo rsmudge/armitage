@@ -93,7 +93,7 @@ sub getOS {
 # findAttacks("p", "good|great|excellent", &callback) - port analysis 
 # findAttacks("x", "good|great|excellent", &callback) - vulnerability analysis
 sub resolveAttacks {
-	thread(lambda(&_resolveAttacks, $args => @_));
+	[lambda(&_resolveAttacks, $args => @_)];
 }
 
 sub _resolveAttacks {
@@ -103,7 +103,9 @@ sub _resolveAttacks {
 	[$progress setProgress: 0];
 
 	# force a service data refresh before hail mary or find attacks.
-	_refreshServices(call($mclient, "db.services")['services']);
+	call_async_callback($mclient, "db.services", $this);
+	yield;
+	_refreshServices(convertAll($1)['services']);
 
 	%results = ohash();
 	%results2 = ohash();
@@ -123,8 +125,9 @@ sub _resolveAttacks {
 		if (%exploits[$module]["rankScore"] >= $s) { 
 			[$progress setNote: "$module"];
 			[$progress setProgress: $x];
-			$r = call($client, "module.options", "exploit", $module);
-			yield 2;
+			call_async_callback($client, "module.options", $this, "exploit", $module);
+			yield;
+			$r = convertAll($1);
 			if ("RPORT" in $r && "default" in $r["RPORT"]) {
 				$p = $r["RPORT"]["default"];
 				push(%r[$p], $module);
@@ -165,7 +168,6 @@ sub _resolveAttacks {
 	}
 
 	[$progress close];
-	yield 100;
 	[$args[2]];
 }
 
