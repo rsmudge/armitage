@@ -111,9 +111,9 @@ sub ask {
 	return [JOptionPane showInputDialog: "$1", "$2"];
 }
 
-# askYesNo("title", "text")
+# askYesNo("title", "text", &callback)
 sub askYesNo {
-	return [JOptionPane showConfirmDialog: $null, $1, $2, [JOptionPane YES_NO_OPTION]];
+	[ui.SafeDialogs askYesNo: $1, $2, $3];
 }
 
 sub chooseFile {

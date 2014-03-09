@@ -328,10 +328,10 @@ sub clearHostFunction {
 }
 
 sub clearDatabase {
-	if (!askYesNo("This action will clear the database. You will lose all information\ncollected up to this point. You will not be able to get it back.\nWould you like to clear the database?", "Clear Database")) {
+	askYesNo("This action will clear the database. You will lose all information\ncollected up to this point. You will not be able to get it back.\nWould you like to clear the database?", "Clear Database", {
 		elog("cleared the database");
 		call_async($mclient, "db.clear");
-	}
+	});
 }
 
 # called when a target is clicked on...
