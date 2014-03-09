@@ -610,12 +610,16 @@ sub host_attack_items {
 			$e = menu($a, $service, $null);
 			foreach $name => $exploit  ($exploits) {
 				item($e, $name, $null, lambda({
-					thread(lambda({ 
-						local('$a $b'); 
-						$a = call($mclient, "module.info", "exploit", $exploit);
-						$b = call($mclient, "module.options", "exploit", $exploit);
-						attack_dialog($a, $b, $hosts, $exploit);
-					}, \$exploit, \$hosts));
+					local('$a $b'); 
+					call_async_callback($mclient, "module.info", $this, "exploit", $exploit);
+					yield;
+					$a = convertAll($1);
+
+					call_async_callback($mclient, "module.options", $this, "exploit", $exploit);
+					yield;
+					$b = convertAll($1);
+
+					attack_dialog($a, $b, $hosts, $exploit);
 				}, \$exploit, $hosts => $2));
 
 				# too many items? do something about it
