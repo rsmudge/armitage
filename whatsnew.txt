@@ -7,7 +7,10 @@ In Progress
   through View -> Reporting -> Export Data)
 - Added osx-app to Output: type for payloads. Outputs a zipped MacOS X
   app archive. 
-
+- Scrubbed Armitage to eliminate unnecessary blocking calls from Sleep
+  source code. This improves Armitage's responsiveness and takes away
+  many opportunities for deadlock.
+  
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
 - Armitage console is now a mouse hot spot. Right-click a host in the
