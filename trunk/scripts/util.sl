@@ -104,11 +104,10 @@ sub createDisplayTab {
 
 # creates a new metasploit console (with all the trimmings)
 sub createConsolePanel {
-	local('$console $result $thread $1');
+	local('$console $thread $1');
 	$console = [new Console: $preferences];
 	setupConsoleStyle($console);
 
-	$result = call($client, "console.create");
 	$thread = [new ConsoleClient: $console, rand(@POOL), "console.read", "console.write", "console.destroy", $result['id'], $1];
 	[$thread setMetasploitConsole];
 
@@ -165,9 +164,21 @@ sub createConsolePanel {
 }
 
 sub createConsoleTab {
-	local('$id $console $thread $1 $2 $host $file');
+	local('$1 $2 $host');
+	[lambda(&_createConsoleTab): $1, $2, \$host];
+}
+
+sub _createConsoleTab {
+	local('$id $console $thread $title $banner $host $file $result');
+	($title, $banner) = @_;
+
+	call_async_callback($client, "console.create", $this);
+	yield;
+	$result = convertAll($1);
+
 	($id, $console, $thread) = createConsolePanel(
-		iff([$preferences getProperty: "armitage.no_msf_banner.boolean", "false"] eq "true", 1, $2)
+		iff([$preferences getProperty: "armitage.no_msf_banner.boolean", "false"] eq "true", 1, $banner),
+		\$result
 	);
 
 	if ($host is $null && $file is $null) {
@@ -177,8 +188,7 @@ sub createConsoleTab {
 		logCheck($console, $host, $file);
 	}
 
-	[$frame addTab: iff($1 is $null, "Console", $1), $console, $thread, $host];
-	return $thread;
+	[$frame addTab: iff($title is $null, "Console", $title), $console, $thread, $host];
 }
 
 sub setg {
