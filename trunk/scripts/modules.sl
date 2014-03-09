@@ -95,9 +95,10 @@ sub moduleAction {
 	local('$type $path $hosts');
 	($type, $path, $hosts) = @_;
 
-	thread(lambda({
-		# pause for 100ms to make sure the mouse event goes away... allows dialog to be active
-		yield 100;
+	[lambda({
+		# populate our local data cache to make isClientside return an answer right away...
+		call_async_callback($mclient, "module.options", $this, $type, $path);
+		yield;
 
 		if ($path in @exploits || $path in @auxiliary || $path in @payloads || $path in @post) {
 			if ($type eq "exploit") {
@@ -106,8 +107,14 @@ sub moduleAction {
 				}
 				else {
 					local('$a $b');
-					$a = call($mclient, "module.info", "exploit", $path);
-					$b = call($mclient, "module.options", "exploit", $path);
+					call_async_callback($mclient, "module.info", $this, "exploit", $path);
+					yield;
+					$a = convertAll($1);
+
+					call_async_callback($mclient, "module.options", $this, "exploit", $path);
+					yield;
+					$b = convertAll($1); 
+
 					dispatchEvent(lambda({
 						attack_dialog($a, $b, $hosts, $path);
 					}, \$a, \$b, \$hosts, \$path));
@@ -117,7 +124,7 @@ sub moduleAction {
 				launch_dialog($path, $type, $path, 1, $hosts);
 			}
 		}
-	}, \$type, \$path, \$hosts));
+	}, \$type, \$path, \$hosts)];
 }
 
 sub createModuleList {
