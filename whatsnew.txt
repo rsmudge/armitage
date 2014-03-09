@@ -5,6 +5,8 @@ In Progress
 ---------
 - Added Ctrl+L to quickly add an entry to timeline.[xml|tsv] (exported 
   through View -> Reporting -> Export Data)
+- Added osx-app to Output: type for payloads. Outputs a zipped MacOS X
+  app archive. 
 
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
