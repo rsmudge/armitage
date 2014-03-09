@@ -36,12 +36,14 @@ sub showModulePopup {
 
 sub _showModulePopup {
 	local('$menu');
-	if (($type eq "exploit" && !isClientside($path)) || ($type eq "auxiliary" && "*_login" iswm $path)) {
+	if (($type eq "exploit" && $path in @exploits && !isClientside($path)) || ($type eq "auxiliary" && "*_login" iswm $path)) {
 		$menu = [new JPopupMenu];
 		item($menu, "Relevant Targets", 'R', lambda({
-			thread(lambda({
+			[lambda({
 				local('$options %filter $os');
-				$options = call($mclient, "module.options", $type, $module);
+				call_async_callback($mclient, "module.options", $this, $type, $module);
+				yield;
+				$options = convertAll($1);
 				
 				if ("RPORT" in $options) {
 					%filter["ports"] = $options['RPORT']['default'];
@@ -66,16 +68,14 @@ sub _showModulePopup {
 				}
 
 				if (size(%filter) > 0) {
-					thread(lambda({
-						call($mclient, "db.filter", %filter);
-					}, \%filter));
+					call_async($mclient, "db.filter", %filter);
 					[$frame setTitle: "$TITLE - $module"]
 					showError("Created a dynamic workspace for this module.\nUse Workspaces -> Show All to see all hosts.");
 				}
 				else {
 					showError("I'm sorry, this option doesn't work for\nthis module.");
 				}
-			}, \$module, \$type));
+			}, \$module, \$type)];
 		}, $module => $path, \$type));
 
 		setupMenu($menu, "module", @($type, $path));
