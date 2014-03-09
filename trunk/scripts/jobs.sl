@@ -123,7 +123,7 @@ sub _launch_service {
 
 # launch_dialog("title", "type", "name", "visible", "hosts...", %options)
 sub launch_dialog {
-	local('$6');
+	local('$5 $6');
 	[lambda({
 		local('$info $options');
 		call_async_callback($mclient, "module.info", $this, $b, $c);
@@ -277,7 +277,7 @@ sub _launch_dialog {
 	}
 
 	$center = [new JScrollPane: $table];
-	$combo = select(sorta(split(',', "raw,ruby,rb,perl,pl,bash,sh,c,csharp,js_be,js_le,java,python,py,dll,exe,exe-small,exe-only,elf,macho,vba,vba-exe,vbs,loop-vbs,asp,aspx,war,psh,psh-net,multi/handler")), "multi/handler");
+	$combo = select(sorta(split(',', "osx-app,raw,ruby,rb,perl,pl,bash,sh,c,csharp,js_be,js_le,java,python,py,dll,exe,exe-small,exe-only,elf,macho,vba,vba-exe,vbs,loop-vbs,asp,aspx,war,psh,psh-net,multi/handler")), "multi/handler");
 	$button = [new JButton: "Launch"];
 
 	# setup some default options on a output type basis.
