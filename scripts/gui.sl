@@ -111,6 +111,11 @@ sub ask {
 	return [JOptionPane showInputDialog: "$1", "$2"];
 }
 
+# safe version of ask...
+sub ask_async {
+	[ui.SafeDialogs ask: "$1", "$2", $3];
+}
+
 # askYesNo("title", "text", &callback)
 sub askYesNo {
 	[ui.SafeDialogs askYesNo: $1, $2, $3];
@@ -502,11 +507,11 @@ sub gotoFile {
 					[[Desktop getDesktop] open: $f];
 				}
 				catch $ex {
-					ask("Browse to this file:", $f);
+					ask_async("Browse to this file:", $f, {});
 				}
 			}
 			else {
-				ask("Browse to this file:", $f);
+				ask_async("Browse to this file:", $f, {});
 			}
 		}
 		catch $exception {

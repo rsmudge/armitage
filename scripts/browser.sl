@@ -225,11 +225,12 @@ sub createFileBrowser {
 
 	$mkdir = [new JButton: "Make Directory"];
 	[$mkdir addActionListener: lambda({
-		local('$name');
-		$name = ask("Directory name:");
-		if ($name !is $null) {
+		ask_async("Directory name:", "", $this);
+		yield;
+
+		if ($1 !is $null) {
 			[$setcwd];
-			m_cmd($sid, "mkdir \" $+ $name $+ \"");
+			m_cmd($sid, "mkdir \" $+ $1 $+ \"");
 			m_cmd($sid, "ls");
 		}
 		# refresh?
@@ -377,18 +378,19 @@ sub buildFileBrowserMenu {
 	}, $file => $2, \$sid, \%types, \$setcwd, \$text));
 
 	item($1, "Execute", 'E', lambda({ 
-		local('$f $args');
+		local('$f');
 		[$setcwd];
 
-		$args = ask("Arguments?");
+		ask_async("Arguments?", "", $this);
+		yield;
 
 		foreach $f ($file) {
-			if ($args eq "") {
+			if ($1 eq "") {
 				m_cmd($sid, "execute -t -f \" $+ $f $+ \" -k"); 
 			}
 			else {
-				$args = strrep($args, '\\', '\\\\');
-				m_cmd($sid, "execute -t -f \" $+ $f $+ \" -k -a \" $+ $args $+ \""); 
+				$1 = strrep($1, '\\', '\\\\');
+				m_cmd($sid, "execute -t -f \" $+ $f $+ \" -k -a \" $+ $1 $+ \""); 
 			}
 		}
 	}, $file => $2, \$sid, \$setcwd));
