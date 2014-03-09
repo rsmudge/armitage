@@ -253,15 +253,15 @@ sub cmd_safe {
 
 sub createNmapFunction {
 	return lambda({
-		local('$address');
-		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(" ", [$targets getSelectedHosts]));
-		if ($address eq "") { return; }
+		ask_async("Enter scan range (e.g., 192.168.1.0/24):", join(" ", [$targets getSelectedHosts]), $this);
+		yield;
+		if ($1 eq "") { return; }
 
 		local('$queue');
 		$queue = createDisplayTab("nmap");
-		elog("started a scan: nmap $args $address");
+		elog("started a scan: nmap $args $1");
 
-		[$queue addCommand: "x", "db_nmap $args $address"];
+		[$queue addCommand: "x", "db_nmap $args $1"];
 		[$queue addListener: {
 			showError("Scan Complete!\n\nUse Attacks->Find Attacks to suggest\napplicable exploits for your targets.");
 		}];
@@ -285,17 +285,17 @@ sub getBindAddress {
 			$address = split('\\s+', $address[0])[2];
 	
 			if ($address eq "127.0.0.1") {
-				[SwingUtilities invokeLater: {
-					local('$address');
-					$address = ask("Could not determine attack computer IP\nWhat is it?");
-					if ($address ne "") {
-						$MY_ADDRESS = $address;
+				[lambda({
+					ask_async("Could not determine attack computer IP\nWhat is it?", "", $this);
+					yield;
+					if ($1 ne "") {
+						$MY_ADDRESS = $1;
 						thread({
 							setg("LHOST", $MY_ADDRESS);
 							setupHandlers();
 						});
 					}
-				}];
+				})];
 			}
 			else {
 				print_info("Used the tab method: $address");

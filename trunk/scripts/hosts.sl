@@ -56,10 +56,10 @@ sub host_items {
 		item($j, "Comprehensive", $null, createNmapFunction("--min-hostgroup 96 -sS -n -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53"));
 
 	item($1, "MSF Scans...", "M", {
-		local('$address');
-		$address = ask("Enter scan range (e.g., 192.168.1.0/24):", join(", ", [$targets getSelectedHosts]));
-		if ($address eq "") { return; }
-		launch_msf_scans($address);
+		ask_async("Enter scan range (e.g., 192.168.1.0/24):", join(", ", [$targets getSelectedHosts]), $this);
+		yield;
+		if ($1 eq "") { return; }
+		launch_msf_scans($1);
 	});
 
 	item($1, "DNS Enumerate", 'D', {

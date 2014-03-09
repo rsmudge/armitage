@@ -26,4 +26,13 @@ public class SafeDialogs {
 			}
 		}).start();
 	}
+
+	public static void ask(final String text, final String initial, final SafeDialogCallback callback) {
+		new Thread(new Runnable() {
+			public void run() {
+				String result = JOptionPane.showInputDialog(text, initial);
+				callback.result(result);
+			}
+		}).start();
+	}
 }

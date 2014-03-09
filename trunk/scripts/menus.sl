@@ -67,10 +67,12 @@ sub host_selected_items {
 			}
 
 			# ask for a label 
-			$label = ask("Set label to:", $label);
-			if ($label !is $null) {
+			ask_async("Set label to:", $label, $this);
+			yield;
+
+			if ($1 !is $null) {
 				foreach $host ($hosts) {
-					%l[$host] = ["$label" trim];
+					%l[$host] = ["$1" trim];
 				}
 				call_async($mclient, "db.report_labels", %l);
 			}
@@ -182,14 +184,14 @@ sub armitage_items {
 		item($m, 'Reverse (wait for)', 'R', &listen_for_shellz); 
 		separator($m);
 		item($m, 'Set LHOST...', 'L', {
-			local('$new');
-			$new = ask("What is the IP address of this system?", $MY_ADDRESS);
-			if ($new is $null) {
+			ask_async("What is the IP address of this system?", $MY_ADDRESS, $this);
+			yield;
+			if ($1 is $null) {
 				return;
 			}
 
 			# update the address in the right place.
-			$MY_ADDRESS = $new;
+			$MY_ADDRESS = $1;
 			[$cortana updateLocalHost: $MY_ADDRESS];
 			setg("LHOST", $MY_ADDRESS);
 
@@ -239,7 +241,7 @@ sub gotoURL {
 			[[Desktop getDesktop] browse: $url];
 		}
 		else {
-			ask("Browse to this URL:", $url);
+			ask_async("Browse to this URL:", $url, {});
 		}
 	}, $url => [[new URL: $1] toURI]);
 }
@@ -309,10 +311,11 @@ sub init_menus {
 	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
 	[$frame bindKey: "Ctrl+T", { [$frame snapActiveTab]; }];
 	[$frame bindKey: "Ctrl+L", {
-		local('$text');
-		$text = ask("What would you like to add to log?");
-		if ($text ne "") {
-			elog($text);
+		ask_async("What would you like to add to log?", "", $this);
+		yield;
+
+		if ($1) {
+			elog($1);
 		}
 	}];
 	[$frame bindKey: "Ctrl+Left", { [$frame previousTab]; }];
