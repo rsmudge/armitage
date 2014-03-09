@@ -66,14 +66,16 @@ sub createServiceBrowser {
 
 	$refresh = [new JButton: "Refresh"];
 	[$refresh addActionListener: lambda({
-		thread(lambda({
+		[lambda({
 			local('$services');
-			$services = call($mclient, "db.services");
+			call_async_callback($mclient, "db.services", $this);
+			yield;
+			$services = convertAll($1);
 			if ('services' in $services) {
 				_refreshServices($services['services']);
 				updateServiceModel(\$hosts, \$model);
 			}
-		}, \$hosts, \$model));
+		}, \$hosts, \$model)];
 	}, \$model, $hosts => $1)];
 
 	$copy = [new JButton: "Copy"];
