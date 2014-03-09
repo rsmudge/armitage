@@ -237,11 +237,6 @@ sub createConsole {
 	return $r['id'];
 }
 
-sub getWorkspaces 
-{
-	return sorta(filter({ return $1["name"]; }, call($mclient, "db.workspaces")["workspaces"]));
-}
-
 # creates a new console and execs a cmd in it.
 # cmd_safe("command to execute");
 sub cmd_safe {
