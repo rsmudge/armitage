@@ -46,7 +46,7 @@ sub verify_server {
 		return $null;
 	}
 
-	$check = askYesNo("The team server's fingerprint is:\n\n<html><body><b> $+ $1 $+ </b></body></html>\n\nDoes this match the fingerprint shown\nwhen the team server started?", "Verify Fingerprint");
+	$check = [javax.swing.JOptionPane showConfirmDialog: $null, "The team server's fingerprint is:\n\n<html><body><b> $+ $1 $+ </b></body></html>\n\nDoes this match the fingerprint shown\nwhen the team server started?", "Verify Fingerprint", [javax.swing.JOptionPane YES_NO_OPTION]];
 
 	if ($check) {
 		%rejected[$1] = 1;

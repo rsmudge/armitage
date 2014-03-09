@@ -383,9 +383,9 @@ sub startMetasploit {
 					$text = readb($msg, -1);
 					closef($msg);
 
-					if (!askYesNo($text, "Uh oh!")) {
+					askYesNo($text, "Uh oh!", {
 						[gotoURL("http://www.fastandeasyhacking.com/nomsfrpcd")];
-					}
+					});
 					return;
 				}
 				catch $ex {
@@ -473,11 +473,16 @@ sub connectDialog {
 				if (isWindows()) {
 					showError("You must connect to a team server hosted on Linux.\nConnecting to a Metasploit RPC server on Windows is\nnot supported.");
 					[$dialog setVisible: 1];
-					return;
 				}
-				else if (!askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?")) {
-					startMetasploit($u, $s, $p);
+				else {
+					askYesNo("A Metasploit RPC server is not running or\nnot accepting connections yet. Would you\nlike me to start Metasploit's RPC server\nfor you?", "Start Metasploit?", lambda({
+						startMetasploit($u, $s, $p);
+
+						# this is the only path to connect to a local metasploit
+						connectToMetasploit($h, $p, $u, $s);
+					}, \$u, \$s, \$p, \$h));
 				}
+				return;
 			}
 		}
 
