@@ -148,9 +148,7 @@ sub workspaceDialog {
 
 sub reset_workspace {
 	[$frame setTitle: $TITLE];
-	thread({
-		call($mclient, "db.filter", %());
-	});
+	call_async($mclient, "db.filter", %());
 }
 
 sub client_workspace_items {
@@ -192,9 +190,7 @@ sub set_workspace {
 	local('$x $workspace');
 	foreach $x => $workspace (workspaces()) {
 		if ($workspace['name'] eq $1) {
-			thread(lambda({
-				call($mclient, "db.filter", $workspace);
-			}, \$workspace));
+			call_async($mclient, "db.filter", $workspace);
 			[$frame setTitle: "$TITLE - $1"];
 			return;
 		}
