@@ -265,7 +265,9 @@ sub pass_the_hash {
 	[$bottom add: left($reverse)];
 
 	[$button addActionListener: lambda({
-		local('$u $p %options $host');
+		local('$u $p %options $host $e');
+		($e) = @_;
+
 		%options["SMBDomain"] = [$domain getText];
 		%options['RPORT']     = "445";
 		%options["DB_ALL_CREDS"] = "false";
@@ -274,7 +276,9 @@ sub pass_the_hash {
 			%options["RHOSTS"] = join(", ", $hosts);
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";
-			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]), "smb_hash");
+			createUserPassFile(convertAll([$model getRows]), "smb_hash", $this);
+			yield;
+			%options["USERPASS_FILE"] = $1;
 			elog("brute force smb @ " . %options["RHOSTS"]);
 			launchBruteForce("auxiliary", "scanner/smb/smb_login", %options, "brute smb");
 		}
@@ -301,7 +305,7 @@ sub pass_the_hash {
 			elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
 		}
 
-		if (!isShift($1)) {
+		if (!isShift($e)) {
 			[$dialog setVisible: 0];
 		}
 	}, \$dialog, \$user, \$domain, \$pass, \$reverse, \$hosts, \$brute, \$model, \$module)];
@@ -357,7 +361,9 @@ sub show_login_dialog {
 	}
 
 	[$button addActionListener: lambda({
-		local('$u $p %options $host');
+		local('$u $p %options $host $e');
+		($e) = @_;
+
 		%options["RHOSTS"] = join(', ', $hosts);
 		%options["RPORT"] = $port;
 		%options["DB_ALL_CREDS"] = "false";
@@ -365,7 +371,9 @@ sub show_login_dialog {
 		if ([$brute isSelected]) {
 			%options["BLANK_PASSWORDS"] = "false";
 			%options["USER_AS_PASS"] = "false";
-			%options["USERPASS_FILE"] = createUserPassFile(convertAll([$model getRows]));
+			createUserPassFile(convertAll([$model getRows]), $null, $this);
+			yield;
+			%options["USERPASS_FILE"] = $1;
 			elog("brute force $srvc @ " . %options["RHOSTS"]);
 			launchBruteForce("auxiliary", $module, %options, "brute $srvc");
 		}
@@ -378,7 +386,7 @@ sub show_login_dialog {
 			elog("login $srvc with " . [$user getText] . ":" . [$pass getText] . " @ " . %options["RHOSTS"]);
 			module_execute("auxiliary", $module, %options);
 		}
-		if (!isShift($1)) {
+		if (!isShift($e)) {
 			[$dialog setVisible: 0];
 		}
 	}, \$dialog, \$user, \$pass, \$hosts, \$srvc, \$port, \$brute, \$model, \$module)];
@@ -398,7 +406,8 @@ sub show_login_dialog {
 }
 
 sub createUserPassFile {
-	local('$handle $user $pass $type $row $2 $name %entries');
+	local('$handle $user $pass $type $row $name %entries');
+
 	$name = "userpass" . rand(10000) . ".txt";
 
 	# loop through our entries and store them
@@ -419,13 +428,16 @@ sub createUserPassFile {
 	closef($handle);
 
 	if ($client !is $mclient) {
-		local('$file');
-		$file = uploadFile($name);
+		uploadBigFile($name, lambda({
+			[$cb: $1];
+		}, $cb => $3));
 		deleteOnExit($name);
-		return $file;
 	}
 	else {
-		return getFileProper($name);
+		# has to happen async in a local context
+		thread(lambda({
+			[$cb: getFileProper($name)];
+		}, $cb => $3, \$name));
 	}
 }
 
