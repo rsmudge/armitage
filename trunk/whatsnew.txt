@@ -10,6 +10,7 @@ In Progress
 - Scrubbed Armitage to eliminate unnecessary blocking calls from Sleep
   source code. This improves Armitage's responsiveness and takes away
   many opportunities for deadlock.
+- Sync Files for Loot and Downloads is now much better with large files
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
