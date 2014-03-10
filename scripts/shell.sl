@@ -211,16 +211,16 @@ sub showShellMenu {
 				local('$progress');
 				$progress = [new ProgressMonitor: $null, "Uploading $name", "Uploading $name", 0, lof($file)];
 
-				call($client, "session.shell_write", $sid, "rm -f $name $+ \n");
+				[lambda({
+					# remove the old file first..
+					call_async_callback($client, "session.shell_write", $this, $sid, "rm -f $name $+ \n");
+					yield;
 
-				thread(lambda({
 					local('$handle $bytes $string $t $start $n $cancel');
 					$handle = openf($file);
 					$start = ticks();
 
 					while $bytes (readb($handle, 768)) {
-						yield 1;
-
 						if ([$progress isCanceled]) {
 							call_async($client, "session.shell_write", $sid, "rm -f $name $+ \n");
 							closef($handle);
@@ -232,7 +232,8 @@ sub showShellMenu {
 							return "\\" . formatNumber($1, 10, 8); 
 						}, unpack("B*", $bytes)));
 
-						call($client, "session.shell_write", $sid, "`which printf` \" $+ $string $+ \" >> $+ $name $+ \n");
+						call_async_callback($client, "session.shell_write", $this, $sid, "`which printf` \" $+ $string $+ \" >> $+ $name $+ \n");
+						yield;
 
 						$t += strlen($bytes);
 						[$progress setProgress: $t]; 
@@ -249,7 +250,7 @@ sub showShellMenu {
 
 					closef($handle);
 					return;
-				}, \$file, \$sid, \$progress, \$name));
+				}, \$file, \$sid, \$progress, \$name)];
 			}
 		}, \$sid));
 		item($1, "Pass Session", 'S', lambda({
