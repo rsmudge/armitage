@@ -95,6 +95,9 @@ public class UploadFile implements Runnable {
 
 				/* upload the data to the team server */
 				client.execute("armitage.append", argz(buffer, read));
+
+				/* give it a break */
+				Thread.yield();
 			}
 
 			/* update our progress bar */
