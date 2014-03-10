@@ -28,25 +28,47 @@ sub updateLootModel {
 }
 
 sub downloadLoot {
-	thread(lambda({
+	[lambda({
 		local('$dest');
-		#$dest = chooseFile($title => "Where shall I save these files?", $dirsonly => 1, $always => 1);
 		$dest = getFileProper(dataDirectory(), $type);
 		mkdir($dest);
-		_downloadLoot(\$model, \$table, \$getme, \$dest, $dtype => $type);
-	}, \$model, \$table, \$getme, \$type));
+		[lambda(&_downloadLoot): \$model, \$table, \$getme, \$dest, $dtype => $type];
+	}, \$model, \$table, \$getme, \$type)];
 }
 
 sub _downloadLoot {
-	local('$progress $entries $index $host $location $name $type $when $loot $path');
+	local('$total $index $loot $entries $host $location $name $type $when $path @downloads @errors $progress $size $did $download $handle $data $file $x $read $pct');
+
 	$entries = [$model getSelectedValuesFromColumns: $table, @('host', $getme, 'name', 'content_type', 'updated_at', 'path')];
-	$progress = [new ProgressMonitor: $frame, "Download Data", "", 0, size($entries)];
+	$total = 0;
+	$read  = 0;
+
+	# get our download ids and figure out how much data we have to download
 	foreach $index => $loot ($entries) {
 		($host, $location, $name, $type, $when, $path) = $loot;
-		[$progress setNote: $name];
+
+		call_async_callback($mclient, "armitage.download_start", $this, $location);
+		yield;
+		$1 = convertAll($1);
+		if ('error' in $1) {
+			push(@errors, "$name $+ : $1");
+		}
+		else {
+			push(@downloads, @($host, $path, $name, $type, $1['size'], $1['id']));
+			$total += $1['size'];
+		}
+	}
+
+	# create our progress monitor...
+	$progress = [new ProgressMonitor: $frame, "Download Data", "", 0, $total];
+
+	# go through each file, one at a time, and grab it...
+	foreach $download (@downloads) {
+		($host, $path, $name, $type, $size, $did) = $download;
+
+		[$progress setNote: "$name"];
 
 		# make the folder to store our downloads into
-		local('$handle $data $file');
 		if ($dtype eq "downloads") {
 			$file = getFileProper($dest, $host, strrep($path, ':', ''), $name);
 		}
@@ -55,17 +77,35 @@ sub _downloadLoot {
 		}
 		mkdir(getFileParent($file));
 
-		# dump the file contents there...
-		$data = getFileContent($location);
+		# start to download the file contents...
 		$handle = openf("> $+ $file");
-		writeb($handle, $data);
-		closef($handle);
 
-		[$progress setProgress: $index + 1];
+		for ($x = 0; $x < $size && ![$progress isCanceled];) {
+			call_async_callback($mclient, "armitage.download_next", $this, $did);
+			yield;
+			$1 = convertAll($1);
+
+			writeb($handle, $1['data']);
+			$read += strlen($1['data']);
+			$x    += strlen($1['data']);
+			[$progress setProgress: $read];
+			$pct   = round((double($x) / $size) * 100, 1);
+
+			[$progress setNote: "$[-4]pct $+ % of $name"];
+		}
+
+		# are we there yet?
+		closef($handle);
 
 		if ([$progress isCanceled]) {
 			break;
 		}
+	}
+
+	# let's clean up after ourselves...
+	foreach $download (@downloads) {
+		($host, $path, $name, $type, $size, $did) = $download;
+		call_async($mclient, "armitage.download_stop", $this, $did);
 	}
 
 	dispatchEvent(lambda({

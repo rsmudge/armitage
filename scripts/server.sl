@@ -39,7 +39,7 @@ sub event {
 }
 
 sub client {
-	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver %async %consoles');
+	local('$temp $result $method $eid $sid $args $data $session $index $rv $valid $h $channel $key $value $file $response $time $address $app $ver %async %consoles %downloads');
 
 	# do these things asynchronously so we don't tie up a client's thread
 	%async['module.execute'] = 1;
@@ -217,6 +217,40 @@ sub client {
 
 			writeObject($handle, result(%(file => getFileProper($file))));
 		}
+		else if ($method eq "armitage.download_next") {
+			($did) = $args;
+
+			# read up to 256KB at a time...
+			$data = readb(%downloads[$did], 256 * 1024);
+			writeObject($handle, result(%(data => $data)));
+		}
+		else if ($method eq "armitage.download_stop") {
+			($did) = $args;
+
+			# clean up after ourselves
+			closef(%downloads[$did]);
+			%downloads[$did] = $null;
+			writeObject($handle, result(%()));
+		}
+		else if ($method eq "armitage.download_start") {
+			local('$did');
+			($file) = $args;
+
+			if (!-exists $file) {
+				writeObject($handle, result(%(error => "file does not exist")));
+			}
+			else if (!-canread $file) {
+				writeObject($handle, result(%(error => "I can't read the file")));
+			}
+			else {
+				# generate a download id
+				$did = (rand() * 100000) . "";
+				
+				# open the file...
+				%downloads[$did] = openf($file);
+				writeObject($handle, result(%(id => $did, size => lof($file))));
+			}
+		}
 		else if ($method eq "armitage.download") {
 			if (-exists $args[0] && -isFile $args[0]) {
 				$h = openf($args[0]);
@@ -340,6 +374,11 @@ sub client {
 	# cleanup any consoles created by not let go of.
 	foreach $key => $value (%consoles) {
 		[$client execute_async: "console.release", cast(@("$key"), ^Object)];
+	}
+
+	# cleanup any downloads that are in progress
+	foreach $key => $value (%downloads) {
+		closef($value);
 	}
 }
 
