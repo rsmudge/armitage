@@ -96,25 +96,22 @@ sub showScriptManager {
 	}, \$table, \$model)];
 
 	[$load addActionListener: lambda({
-		local('$file');
-		$file = chooseFile($always => 1);
-		if ($file is $null) {
-			return;
-		}
-
-		try {
-			[$cortana loadScript: $file];
-			addScript($file);
-			updateScriptList($table, $model);
-		}
-		catch $exception {
-			if ($exception isa ^sleep.error.YourCodeSucksException) {
-				showScriptError("Could not load $file $+ :\n\n" . [$exception formatErrors]);
+		openFile(lambda({
+			local('$exception');
+			try {
+				[$cortana loadScript: $1];
+				addScript($1);
+				updateScriptList($table, $model);
 			}
-			else {
-				showError($exception);
+			catch $exception {
+				if ($exception isa ^sleep.error.YourCodeSucksException) {
+					showScriptError("Could not load $1 $+ :\n\n" . [$exception formatErrors]);
+				}
+				else {
+					showError($exception);
+				}
 			}
-		}
+		}, \$table, \$model));
 	}, \$table, \$model)];
 
 	[$scripts addActionListener: gotoURL("https://github.com/rsmudge/cortana-scripts")];
