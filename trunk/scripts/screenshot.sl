@@ -62,26 +62,32 @@ sub update_viewer {
 		showError($2);
 	}
 	else if ($0 eq "update" && $2 ismatch "$type saved to: (.*?)") {
-		local('$file $image $panel');
+		local('$file');
 		($file) = matched();
 
-		# we're collaborating, so download the file please...
-		if ($client !is $mclient) {
-			$file = getFileProper(cwd(), downloadFile($file));
-		}
+		[lambda({
+			local('$image $panel');
 
-		logFile($file, sessionToHost($1), $type);
-		$image = [ImageIO read: [new File: $file]];
+			# we're collaborating, so download the file please...
+			if ($client !is $mclient) {
+				downloadFile($file, $null, $this);
+				yield;
+				$file = getFileProper(cwd(), $1);
+			}
 
-		fire_event_async("user_" . lc(strrep($type, " ", "_")), $1, $file);
+			logFile($file, sessionToHost($sid), $type);
+			$image = [ImageIO read: [new File: $file]];
 
-		dispatchEvent(lambda({
-			[$container[$id] setIcon: [new ImageIcon: $image]];
-		}, \$container, \$image, $id => $1));
+			fire_event_async("user_" . lc(strrep($type, " ", "_")), $sid, $file);
 
-		if (-isFile $file && "*.jpeg" iswm $file) { 
-			deleteOnExit($file);
-		}
+			dispatchEvent(lambda({
+				[$container[$id] setIcon: [new ImageIcon: $image]];
+			}, \$container, \$image, $id => $sid));
+
+			if (-isFile $file && "*.jpeg" iswm $file) { 
+				deleteOnExit($file);
+			}
+		}, \$file, $sid => $1, \$type, \$title, \$container)];
 	}
 }
 
