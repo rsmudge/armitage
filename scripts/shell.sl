@@ -203,12 +203,11 @@ sub showShellMenu {
 	}
 	else {
 		item($1, "Upload...", 'U', lambda({
-			local('$file $name $n');
-			$file = chooseFile($title => "Select file to upload", $always => 1);
-			$name = getFileName($file);
+			openFile(lambda({
+				local('$file $name $progress');
+				$file = $1;
+				$name = getFileName($file);
 
-			if ($file !is $null) {
-				local('$progress');
 				$progress = [new ProgressMonitor: $null, "Uploading $name", "Uploading $name", 0, lof($file)];
 
 				[lambda({
@@ -251,7 +250,7 @@ sub showShellMenu {
 					closef($handle);
 					return;
 				}, \$file, \$sid, \$progress, \$name)];
-			}
+			}, \$sid), $title => "Select file to upload");
 		}, \$sid));
 		item($1, "Pass Session", 'S', lambda({
 			launch_dialog("Pass Session", "post", "multi/manage/system_session", 1, $null, %(SESSION => $sid, LPORT => randomPort(), HANDLER => "1"));
