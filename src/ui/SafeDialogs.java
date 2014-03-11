@@ -38,22 +38,41 @@ public class SafeDialogs {
 		}).start();
 	}
 
-	/* prompt the user with a saveFile dialog */
-	public static void saveFile(final JFrame frame, final String selection, final SafeDialogCallback callback) {
+	public static void openFile(final String title, final String sel, final String dir, final boolean multi, final boolean dirsonly, final SafeDialogCallback callback) {
 		new Thread(new Runnable() {
 			public void run() {
 				JFileChooser fc = new JFileChooser();
 
-				if (selection != null) {
-					fc.setSelectedFile(new File(selection));
-				}
+				if (title != null)
+					fc.setDialogTitle(title);
 
-				if (fc.showSaveDialog(frame) == 0) {
-					File file = fc.getSelectedFile();
-					if (file != null) {
-						callback.result(file + "");
-						return;
+				if (sel != null)
+					fc.setSelectedFile(new File(sel));
+
+				if (dir != null)
+					fc.setCurrentDirectory(new File(dir));
+
+				fc.setMultiSelectionEnabled(multi);
+
+				if (dirsonly)
+					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				if (fc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+					return;
+
+				if (multi) {
+					StringBuffer buffer = new StringBuffer();
+					File[] r = fc.getSelectedFiles();
+
+					for (int x = 0; x < r.length; x++) {
+						buffer.append(r[x]);
+						if ((x + 1) < r.length)
+							buffer.append(",");
 					}
+					callback.result(buffer.toString());
+				}
+				else {
+					callback.result(fc.getSelectedFile() + "");
 				}
 			}
 		}).start();

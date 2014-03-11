@@ -121,6 +121,12 @@ sub askYesNo {
 	[ui.SafeDialogs askYesNo: $1, $2, $3];
 }
 
+# openFile(&callback, $title => "foo");
+sub openFile {
+	local('$title $sel $dir $multi $dirsonly');
+	[ui.SafeDialogs openFile: $title, $sel, $dir, $multi, $dirsonly, $1];
+}
+
 sub chooseFile {
 	local('$fc $file $title $sel $dir $multi $always $dirsonly');
 
