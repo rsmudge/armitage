@@ -728,16 +728,25 @@ sub addFileListener {
 
 	# set up an action to pop up a file chooser for different file type values.
 	$actions["*FILE*"] = {
-		local('$title $temp');
-		$title = "Select $1";
+		[lambda({
+			local('$title $temp');
+			$title = "Select $a";
 
-		# select a file, but always choose a local one
-		$temp = iff($2 eq "", chooseFile(\$title, $dir => $DATA_DIRECTORY, $always => 1), chooseFile(\$title, $sel => $2, $always => 1));
+			# select a file, but always choose a local one
+			if ($b eq "") {
+				openFile($this, \$title, $dir => $DATA_DIRECTORY);
+			}
+			else {
+				openFile($this, \$title, $sel => $b);
+			}
+			yield;
+			$temp = $1;
 
-		# upload our file (in a thread safe way)
-		uploadBigFile($temp, lambda({
-			[$f: strrep($1, "\\", "\\\\")];
-		}, $f => $4));
+			# upload our file (in a thread safe way)
+			uploadBigFile($temp, lambda({
+				[$f: strrep($1, "\\", "\\\\")];
+			}, $f => $d));
+		}, $a => $1, $b => $2, $c => $3, $d => $4)];
 	};
 	$actions["NAMELIST"] = $actions["*FILE*"];
 	$actions["DICTIONARY"] = $actions["*FILE*"];
