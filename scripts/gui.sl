@@ -127,63 +127,6 @@ sub openFile {
 	[ui.SafeDialogs openFile: $title, $sel, $dir, $multi, $dirsonly, $1];
 }
 
-sub chooseFile {
-	local('$fc $file $title $sel $dir $multi $always $dirsonly');
-
-	if ($REMOTE && $always is $null) {
-		if ($client !is $mclient) {
-			local('$file');
-			$file = chooseFile(\$title, \$file, \$sel, \$dir, \$dirsonly, \$multi, \$fc, $always => 1);
-			if (-exists $file) {
-				print_info("uploading $file");
-				return uploadFile($file);
-			}
-			return "";
-		}
-		else {
-			return ask("Please type a file name:");
-		}
-	}
-
-
-	$fc = [new JFileChooser];
-
-	if ($title !is $null) {
-		[$fc setDialogTitle: $title];
-	}
-
-	if ($sel !is $null) {
-		[$fc setSelectedFile: [new java.io.File: $sel]];
-	}
-
-	if ($dir !is $null) {
-		[$fc setCurrentDirectory: [new java.io.File: $dir]];
-	}
-
-	if ($multi !is $null) {
-		[$fc setMultiSelectionEnabled: 1];
-	}
-
-	if ($dirsonly !is $null) {
-		[$fc setFileSelectionMode: [JFileChooser DIRECTORIES_ONLY]];
-	}
-
-	[$fc showOpenDialog: $null];
-
-	if ($multi) {
-		return [$fc getSelectedFiles];
-	}
-	else {
-		$file = [$fc getSelectedFile];
-		if ($file !is $null) {
-			if (-exists $file) {
-				return $file;
-			}
-			showError("$file does not exist!");
-		}
-	}
-}
-
 # the newer... async version of saveFile2
 sub saveFile2 {
 	local('$sel');
