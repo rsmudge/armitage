@@ -118,13 +118,17 @@ sub interpretMeterpreterCommand {
 	}
 	else if ($c eq "upload") {
 		# let user choose a file and upload it with this name...
-		local('$file $name');
-		$file = chooseFile($always => iff($client !is $mclient));
-		$name = getFileName($file);
-		uploadBigFile($file, lambda({
-			[$console append: "[*] attempting to upload $1 => $name $+ \n"];
-			m_cmd($sid, "upload \" $+ $1 $+ \" \" $+ $name $+ \"");
-		}, \$sid, \$name, \$file, $console => [$1 getSource]));
+		[lambda({
+			local('$file $name');
+			openFile($this);
+			yield;
+			$file = $1;
+			$name = getFileName($file);
+			uploadBigFile($file, lambda({
+				[$console append: "[*] attempting to upload $1 => $name $+ \n"];
+				m_cmd($sid, "upload \" $+ $1 $+ \" \" $+ $name $+ \"");
+			}, \$sid, \$name, \$file, $console => [$ev getSource]));
+		}, $ev => $1, \$sid)];
 	}
 }
 

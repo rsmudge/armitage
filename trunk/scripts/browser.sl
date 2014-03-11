@@ -211,16 +211,18 @@ sub createFileBrowser {
 
 	$upload = [new JButton: "Upload..."];
 	[$upload addActionListener: lambda({
-		local('$file $name');
-		$file = chooseFile($always => iff($client !is $mclient));
-		$name = getFileName($file);
-		if ($file !is $null) {
+		[lambda({
+			local('$file $name');
+			openFile($this);
+			yield;
+			$file = $1;
+			$name = getFileName($file);
 			[$setcwd];
 			uploadBigFile($file, lambda({
 				m_cmd($sid, "upload \" $+ $1 $+ \" \" $+ $name $+ \"");
+				m_cmd($sid, "ls");
 			}, \$sid, \$name, \$file));
-		}
-		# refresh?!?
+		}, \$sid, \$setcwd)];
 	}, $sid => $1, \$setcwd)];
 
 	$mkdir = [new JButton: "Make Directory"];
