@@ -263,20 +263,21 @@ sub _importHosts {
 
 # need to pass this function a $command local...
 sub importHosts {
-	local('$file $files $thread $closure');
-	$files = iff(size(@_) > 0, @($1), chooseFile($multi => 1, $always => 1));
-	if ($files is $null || size($files) == 0) {
-		return;
-	}
-
-	foreach $file ($files) {
-		# upload file, wait for it, update this magical list
-		uploadBigFile($file, $this);
+	[lambda({
+		local('$file $files $thread $closure');
+		openFile($this, $multi => 1);
 		yield;
-		$file = $1;
-	}
+		$files = split(",", $1);
 
-	thread(lambda(&_importHosts, \$files));
+		foreach $file ($files) {
+			# upload file, wait for it, update this magical list
+			uploadBigFile($file, $this);
+			yield;
+			$file = $1;
+		}
+
+		thread(lambda(&_importHosts, \$files));
+	})];
 }
 
 # setHostValueFunction(@hosts, varname, value)
