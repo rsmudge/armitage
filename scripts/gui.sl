@@ -184,23 +184,6 @@ sub saveFile2 {
 	[ui.SafeDialogs saveFile: $__frame__, $sel, $1];
 }
 
-sub saveFile {
-	local('$fc $file');
-	$fc = [new JFileChooser];
-	[$fc showSaveDialog: $__frame__];
-	$file = [$fc getSelectedFile];
-	if ($file !is $null) {
-		local('$ihandle $data $ohandle');
-		$ihandle = openf($1);
-		$ohandle = openf("> $+ $file");
-		while $data (readb($ihandle, 8192)) {
-			writeb($ohandle, $data);
-		}
-		closef($ihandle);
-		closef($ohandle);
-	}
-}
-
 # label_for("text", width, component)
 sub label_for {
 	local('$panel $label $size');
