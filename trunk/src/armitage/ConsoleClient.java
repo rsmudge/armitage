@@ -20,6 +20,7 @@ public class ConsoleClient implements Runnable, ActionListener {
 	protected LinkedList	listeners = new LinkedList();
 	protected boolean       echo = true;
 	protected boolean	go_read = true;
+	protected boolean       swallow = false;
 	protected ActionListener sessionListener = null; /* one off listener to catch "sessions -i ##" */
 
 	public void setSessionListener(ActionListener l) {
@@ -72,17 +73,9 @@ public class ConsoleClient implements Runnable, ActionListener {
 		this.writeCommand = writeCommand;
 		this.destroyCommand = destroyCommand;
 		this.session = session;
+		this.swallow = swallow;
 
 		setupListener();
-
-		if (swallow) {
-			try {
-				readResponse();
-			}
-			catch (Exception ex) {
-				System.err.println(ex);
-			}
-		}
 
 		new Thread(this).start();
 	}
@@ -179,7 +172,14 @@ public class ConsoleClient implements Runnable, ActionListener {
 	}
 
 	private Map readResponse() throws Exception {
-		return (Map)(connection.execute(readCommand, new Object[] { session }));
+		try {
+			return (Map)(connection.execute(readCommand, new Object[] { session }));
+		}
+		catch (NullPointerException nex) {
+			/* this probably means we were disconnected, which means it's a good time
+			   to quietly kill this thread */
+			return null;
+		}
 	}
 
 	private long lastRead = 0L;
@@ -218,6 +218,11 @@ public class ConsoleClient implements Runnable, ActionListener {
 		long last = 0;
 
 		try {
+			/* swallow the banner if requested to do so */
+			if (swallow) {
+				readResponse();
+			}
+
 			while (shouldRead) {
 				synchronized (listeners) {
 					if (commands.size() > 0) {

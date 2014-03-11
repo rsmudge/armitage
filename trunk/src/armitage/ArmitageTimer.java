@@ -60,28 +60,34 @@ public class ArmitageTimer implements Runnable {
 	}
 
 	private Map readFromClient() throws java.io.IOException {
-		Object arguments[];
-		if (cacheProtocol) {
-			arguments = new Object[1];
-			arguments[0] = new Long(lastCode);
-		}
-		else {
-			arguments = new Object[0];
-		}
+		try {
+			Object arguments[];
+			if (cacheProtocol) {
+				arguments = new Object[1];
+				arguments[0] = new Long(lastCode);
+			}
+			else {
+				arguments = new Object[0];
+			}
 
-		Map result = (Map)connection.execute(command, arguments);
+			Map result = (Map)connection.execute(command, arguments);
 
-		if (!result.containsKey("nochange")) {
-			lastRead = result;
-			lastCode = dataIdentity(result);
-			changed  = true;
-		}
-		else {
-			//System.err.println("No change: " + command + ", " + lastCode);
-			changed = false;
-		}
+			if (!result.containsKey("nochange")) {
+				lastRead = result;
+				lastCode = dataIdentity(result);
+				changed  = true;
+			}
+			else {
+				//System.err.println("No change: " + command + ", " + lastCode);
+				changed = false;
+			}
 
-		return lastRead;
+			return lastRead;
+		}
+		catch (NullPointerException nex) {
+			/* this means the connection is dead, let's start to respond accordingly */
+			return null;
+		}
 	}
 
 	public void run() {
