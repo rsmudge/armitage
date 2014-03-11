@@ -232,20 +232,16 @@ sub createPreferencesTab {
 				}
 			}
 			else if ($type eq "folder") {
-				local('$file');
-				$file = chooseFile($dirsonly => 1);
-				if ($file !is $null) {
-					[$model setValueAtRow: $row, "value", $file];
+				openFile(lambda({
+					[$model setValueAtRow: $row, "value", $1];
 					[$model fireListeners];
-				}
+				}, \$model, \$row), $dirsonly => 1);
 			}
 			else if ($type eq "file") {
-				local('$file');
-				$file = chooseFile($always => 1);
-				if ($file !is $null) {
-					[$model setValueAtRow: $row, "value", $file];
+				openFile(lambda({
+					[$model setValueAtRow: $row, "value", $1];
 					[$model fireListeners];
-				}
+				}, \$model, \$row));
 			}
 			else if ($type eq "font") {
 				local('$dialog $select $style $size $ok $cancel $preview $graphics $l $font $_style');
