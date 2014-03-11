@@ -41,6 +41,11 @@ sub _showModulePopup {
 		item($menu, "Relevant Targets", 'R', lambda({
 			[lambda({
 				local('$options %filter $os');
+
+				# I guess this is the RPC way to sleep...
+				call_async_callback($mclient, "armitage.sleep", $this, 50);
+				yield;
+
 				call_async_callback($mclient, "module.options", $this, $type, $module);
 				yield;
 				$options = convertAll($1);
