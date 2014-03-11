@@ -6,6 +6,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
+import java.io.*;
+
 /* Spawn common dialogs in their own thread (so they don't block Sleep interpreter)
    and report their results to a callback function */
 public class SafeDialogs {
@@ -32,6 +34,27 @@ public class SafeDialogs {
 			public void run() {
 				String result = JOptionPane.showInputDialog(text, initial);
 				callback.result(result);
+			}
+		}).start();
+	}
+
+	/* prompt the user with a saveFile dialog */
+	public static void saveFile(final JFrame frame, final String selection, final SafeDialogCallback callback) {
+		new Thread(new Runnable() {
+			public void run() {
+				JFileChooser fc = new JFileChooser();
+
+				if (selection != null) {
+					fc.setSelectedFile(new File(selection));
+				}
+
+				if (fc.showSaveDialog(frame) == 0) {
+					File file = fc.getSelectedFile();
+					if (file != null) {
+						callback.result(file + "");
+						return;
+					}
+				}
 			}
 		}).start();
 	}

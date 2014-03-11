@@ -409,11 +409,11 @@ sub createDashboard {
 	# now we can tell the scripting engine to start pulling data from metasploit...
 	[$graph setGraphPopup: lambda(&targetPopup, \$graph)];
 	[$graph addActionForKeySetting: "graph.save_screenshot.shortcut", "ctrl pressed P", lambda({
-		local('$location');
-		$location = saveFile2($sel => "hosts.png");
-		if ($location !is $null) {
-			makeScreenshot($location);
-		}
+		[lambda({
+			saveFile2($this, $sel => "hosts.png"); # will not return if user doesn't pick a file
+			yield;
+			makeScreenshot($1);
+		})];
 	}, \$graph)];
 
 	let(&makeScreenshot, \$graph);
