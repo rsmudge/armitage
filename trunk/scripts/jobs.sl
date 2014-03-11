@@ -46,10 +46,9 @@ sub generatePayload {
 
 	[lambda({
 		local('$file $handle $data');
-		$file = saveFile2();
-		if ($file is $null) {
-			return;
-		}
+		saveFile2($this); # will not return if user didn't choose a file!
+		yield;
+		$file = $1;
 
 		$options["Format"] = $format;
 
@@ -381,12 +380,13 @@ sub _launch_dialog {
 					foreach $temp (split("\n", $3)) {
 						if ($temp ismatch '... (.*?) stored at (.*)') {
 							($file, $path) = matched();
-							$saveas = saveFile2();
-							if ($saveas) {
-								downloadFile($path, $saveas, {
+							[lambda({
+								saveFile2($this); # will not return if user doesn't choose a file!
+								yield;
+								downloadFile($path, $1, {
 									showError("File saved");
 								});
-							}
+							}, \$path)];
 						}
 					}					
 				};

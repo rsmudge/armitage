@@ -178,20 +178,10 @@ sub chooseFile {
 	}
 }
 
+# the newer... async version of saveFile2
 sub saveFile2 {
-	local('$fc $file $sel');
-	$fc = [new JFileChooser];
-
-	if ($sel !is $null) {
-		[$fc setSelectedFile: [new java.io.File: $sel]];
-	}
-
-	if ([$fc showSaveDialog: $__frame__] == 0) {
-		$file = [$fc getSelectedFile];
-		if ($file !is $null) {
-			return $file;
-		}
-	}
+	local('$sel');
+	[ui.SafeDialogs saveFile: $__frame__, $sel, $1];
 }
 
 sub saveFile {
