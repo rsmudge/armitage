@@ -65,14 +65,19 @@ public class SafeDialogs {
 					File[] r = fc.getSelectedFiles();
 
 					for (int x = 0; x < r.length; x++) {
-						buffer.append(r[x]);
-						if ((x + 1) < r.length)
-							buffer.append(",");
+						/* probably always true, but a little defensive coding
+						   never hurt anyone */
+						if (r[x] != null && r[x].exists()) {
+							buffer.append(r[x]);
+							if ((x + 1) < r.length)
+								buffer.append(",");
+						}
 					}
 					callback.result(buffer.toString());
 				}
 				else {
-					callback.result(fc.getSelectedFile() + "");
+					if (fc.getSelectedFile() != null && fc.getSelectedFile().exists())
+						callback.result(fc.getSelectedFile() + "");
 				}
 			}
 		}).start();

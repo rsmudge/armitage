@@ -771,17 +771,20 @@ sub addFileListener {
 
 	# set up an action to pop up a file chooser for different file type values.
 	$actions["RHOST"] = {
-		local('$title $temp');
-		$title = "Select $1";
-		$temp = chooseFile(\$title, $dir => ".", $always => "1");
-		if ($temp !is $null) {
-			local('$handle');
+		[lambda({
+			local('$title $temp $handle @addresses');
+			$title = "Select $a";
+
+			openFile($this, \$title, $dir => ".");
+			yield;
+			$temp = $1;
+
 			$handle = openf($temp);
 			@addresses = readAll($handle);	
 			closef($handle);
 
-			[$4: join(", ", @addresses)];
-		}
+			[$d: join(", ", @addresses)];
+		}, $a => $1, $b => $2, $c => $3, $d => $4)];
 	};
 
 	$actions["RHOSTS"] = $actions["RHOST"];
