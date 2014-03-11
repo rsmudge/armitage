@@ -38,6 +38,27 @@ public class SafeDialogs {
 		}).start();
 	}
 
+	/* prompt the user with a saveFile dialog */
+	public static void saveFile(final JFrame frame, final String selection, final SafeDialogCallback callback) {
+		new Thread(new Runnable() {
+			public void run() {
+				JFileChooser fc = new JFileChooser();
+
+				if (selection != null) {
+					fc.setSelectedFile(new File(selection));
+				}
+
+				if (fc.showSaveDialog(frame) == 0) {
+					File file = fc.getSelectedFile();
+					if (file != null) {
+						callback.result(file + "");
+						return;
+					}
+				}
+			}
+		}).start();
+	}
+
 	public static void openFile(final String title, final String sel, final String dir, final boolean multi, final boolean dirsonly, final SafeDialogCallback callback) {
 		new Thread(new Runnable() {
 			public void run() {
