@@ -325,43 +325,7 @@ sub startMetasploit {
 		print_info("Starting msfrpcd for you.");
 
 		if (isWindows()) {
-			local('$handle $data $msfdir');
-			$msfdir = [$preferences getProperty: "armitage.metasploit_install.string", ""];
-			while (!-exists $msfdir || $msfdir eq "" || !-exists getFileProper($msfdir, "msf3")) {
-				$msfdir = chooseFile($title => "Where is Metasploit installed?", $dirsonly => 1);
-
-				if ($msfdir eq "") {
-					[System exit: 0];
-				}
-
-				# if the user chooses c:\metasploit AND we're in the 4.5 environment... adjust
-				if (-exists getFileProper($msfdir, "apps", "pro", "msf3")) {
-					$msfdir = getFileProper($msfdir, "apps", "pro");
-				}
-
-				if (charAt($msfdir, -1) ne "\\") {
-					$msfdir = "$msfdir $+ \\";
-				}
-
-				[$preferences setProperty: "armitage.metasploit_install.string", $msfdir];
-				savePreferences();
-			}
-
-			if ("*apps*pro*" iswm $msfdir) {
-				$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd_new.bat"), $null];
-			}
-			else {
-				$handle = [SleepUtils getIOHandle: resource("resources/msfrpcd.bat"), $null];
-			}
-			$data = join("\r\n", readAll($handle, -1));
-			closef($handle);
-
-			$handle = openf(">msfrpcd.bat");
-			writeb($handle, strrep($data, '$$USER$$', $1, '$$PASS$$', $2, '$$BASE$$', $msfdir, '$$PORT$$', $port));
-			closef($handle);
-			deleteOnExit("msfrpcd.bat");
-
-			$msfrpc_handle = exec(@("cmd.exe", "/C", getFileProper("msfrpcd.bat")), convertAll([System getenv]));
+			warn("Metasploit on Windows is not supported by this tool");
 		}
 		else {
 			$msfrpc_handle = exec("msfrpcd -f -a 127.0.0.1 -U $user -P $pass -S -p $port", convertAll([System getenv]));
