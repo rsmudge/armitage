@@ -206,16 +206,17 @@ sub createCredentialsTab {
 
 	$export = [new JButton: "Export"];
 	[$export addActionListener: {
+		local('$file');
+		$file = saveFile2();
+
 		if ($client !is $mclient) {
-			cmd_safe("db_export -f pwdump -a creds.export", {
-				thread({
-					downloadFile("creds.export", saveFile2());
+			cmd_safe("db_export -f pwdump -a creds.export", lambda({
+				downloadFile("creds.export", $file, {
+					showError("Saved credentials");
 				});
-			});
+			}, \$file));
 		}
 		else {
-			local('$file');
-			$file = saveFile2();
 			$file = strrep($file, '\\', '\\\\');
 			cmd_safe("db_export -f pwdump -a $file", {
 				showError("Saved credentials");
@@ -438,6 +439,7 @@ sub createUserPassFile {
 		thread(lambda({
 			[$cb: getFileProper($name)];
 		}, $cb => $3, \$name));
+		deleteOnExit(getFileProper($name));
 	}
 }
 

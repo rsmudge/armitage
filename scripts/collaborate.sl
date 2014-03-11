@@ -133,13 +133,17 @@ sub uploadBigFile {
 }
 
 sub downloadFile {
-	local('$file $handle %r $2');
-	%r = call($mclient, "armitage.download", $1);
-	$file = iff($2, $2, getFileName($1));	
-	$handle = openf("> $+ $file");
-	writeb($handle, %r['data']);
-	closef($handle);
-	return $file;
+	[lambda({
+		local('$file $handle %r');
+		call_async_callback($mclient, "armitage.download", $this, $a);
+		yield;
+		%r = convertAll($1);
+		$file = iff($b, $b, getFileName($a));	
+		$handle = openf("> $+ $file");
+		writeb($handle, %r['data']);
+		closef($handle);
+		[$c: $file];
+	}, $a => $1, $b => $2, $c => $3)];
 }
 
 sub getFileContent {

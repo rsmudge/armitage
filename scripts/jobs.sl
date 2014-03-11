@@ -377,11 +377,16 @@ sub _launch_dialog {
 			else if ("*/fileformat/*" iswm $command && 'FILENAME' in $options) {
 				local('$listener');
 				$listener = {
-					local('$temp $file $path');
+					local('$temp $file $path $saveas');
 					foreach $temp (split("\n", $3)) {
 						if ($temp ismatch '... (.*?) stored at (.*)') {
 							($file, $path) = matched();
-							downloadFile($path, saveFile2());
+							$saveas = saveFile2();
+							if ($saveas) {
+								downloadFile($path, $saveas, {
+									showError("File saved");
+								});
+							}
 						}
 					}					
 				};
