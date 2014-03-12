@@ -200,6 +200,24 @@ public class ArmitageApplication extends JComponent {
 		apptabs.add(t);
 	}
 
+	public void disconnected() {
+		JButton close = new JButton("Close");
+		close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				window.quit();
+			}
+		});
+
+		JPanel announce = new JPanel();
+		announce.setLayout(new BorderLayout());
+		announce.setBackground(Color.RED);
+		announce.add(new JLabel("<html><body><strong>Disconnected from server</strong></body></html>"), BorderLayout.CENTER);
+		announce.add(close, BorderLayout.EAST);
+		announce.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		add(announce, BorderLayout.SOUTH);
+		revalidate();
+	}
+
 	private static Image myicon = null;
 
 	private Image getMyIcon() {

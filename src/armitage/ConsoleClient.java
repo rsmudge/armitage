@@ -175,6 +175,10 @@ public class ConsoleClient implements Runnable, ActionListener {
 		try {
 			return (Map)(connection.execute(readCommand, new Object[] { session }));
 		}
+		catch (java.net.SocketException sex) {
+			/* this definitely means we were disconnected */
+			return null;
+		}
 		catch (NullPointerException nex) {
 			/* this probably means we were disconnected, which means it's a good time
 			   to quietly kill this thread */
