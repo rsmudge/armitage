@@ -23,6 +23,46 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 		public ArmitageApplication app;
 		public JToggleButton       button;
 		public RpcConnection       client;
+		public boolean             serviced = false;
+	}
+
+	public void actOnDisconnect(final ArmitageInstance i) {
+		if (i.serviced) {
+			return;
+		}
+
+		i.serviced = true;
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				i.button.setForeground(Color.RED);
+				i.app.disconnected();
+			}
+		});
+	}
+
+	public void watchDog() {
+		/* watch for any disconnected sessions and warn the user */
+		new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					synchronized (buttons) {
+						Iterator i = buttons.iterator();
+						while (i.hasNext()) {
+							ArmitageInstance temp = (ArmitageInstance)i.next();
+							if (!((Async)temp.client).isConnected()) {
+								actOnDisconnect(temp);
+							}
+						}
+					}
+
+					try {
+						Thread.sleep(1000);
+					}
+					catch (Exception ex) {}
+				}
+			}
+		}).start();
 	}
 
 	public void setPreferences(Properties prefs) {
@@ -40,7 +80,9 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 			Iterator i = buttons.iterator();
 			while (i.hasNext()) {
 				ArmitageInstance temp = (ArmitageInstance)i.next();
-				r.put(temp.button.getText(), temp.client);
+				if (((Async)temp.client).isConnected()) {
+					r.put(temp.button.getText(), temp.client);
+				}
 			}
 			return r;
 		}
@@ -156,6 +198,9 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 
 		/* all your keyboard shortcuts are belong to me */
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+
+		/* start our thread to watch for disconnected session */
+		watchDog();
 	}
 
 	protected void set(JToggleButton button) {

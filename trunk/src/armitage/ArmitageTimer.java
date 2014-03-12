@@ -84,6 +84,10 @@ public class ArmitageTimer implements Runnable {
 
 			return lastRead;
 		}
+		catch (java.net.SocketException sex) {
+			/* this definitely means we were booted */
+			return null;
+		}
 		catch (NullPointerException nex) {
 			/* this means the connection is dead, let's start to respond accordingly */
 			return null;
@@ -110,6 +114,7 @@ public class ArmitageTimer implements Runnable {
 			}
 
 			armitage.ArmitageMain.print_error("Read for " + command + " is null. Stopping thread");
+			((Async)connection).disconnect();
 		}
 		catch (Exception javaSucksBecauseItMakesMeCatchEverythingFuckingThing) {
 			System.err.println("Thread id: " + command + " -> " + read);

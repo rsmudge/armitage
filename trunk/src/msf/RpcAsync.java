@@ -6,9 +6,18 @@ import java.util.*;
 public class RpcAsync implements RpcConnection, Async {
 	protected RpcQueue queue;
 	protected RpcConnection connection;
+	protected boolean connected = true;
+
+	public boolean isConnected() {
+		return connected;
+	}
 
 	public RpcAsync(RpcConnection connection) {
 		this.connection = connection;
+	}
+
+	public void disconnect() {
+		connected = false;
 	}
 
 	public void execute_async(String methodName) {

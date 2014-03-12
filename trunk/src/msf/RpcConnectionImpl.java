@@ -14,7 +14,7 @@ import armitage.ArmitageBuffer;
 
 /**
  * This is a modification of msfgui/RpcConnection.java by scriptjunkie. Taken from 
- * the Metasploit Framework Java GUI. 
+ * the Metasploit Framework Java GUI.
  */
 public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	protected String rpcToken;
@@ -22,6 +22,15 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 	protected RpcConnection database = null;
 	protected Map hooks = new HashMap();
 	protected RpcQueue queue = null;
+	protected boolean connected = true;
+
+	public boolean isConnected() {
+		return connected;
+	}
+
+	public void disconnect() {
+		connected = false;
+	}
 
 	public void addHook(String name, RpcConnection hook) {
 		hooks.put(name, hook);
