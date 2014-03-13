@@ -238,7 +238,9 @@ sub main_attack_items {
 sub gotoURL {
 	return lambda({ 
 		if ([Desktop isDesktopSupported]) {
-			[[Desktop getDesktop] browse: $url];
+			fork({
+				[[Desktop getDesktop] browse: $url];
+			}, \$url);
 		}
 		else {
 			ask_async("Browse to this URL:", $url, {});
