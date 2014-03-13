@@ -68,11 +68,21 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 					return temp;
 				}
 			}
-		} 
-		catch (RuntimeException rex) { 
-			throw rex;
 		}
-		catch (Exception ex) { 
+		catch (RuntimeException rex) {
+			if ("module.execute".equals(methname)) {
+				/* give my code a chance to respond to the error for payload generation */
+				Map temp = new HashMap();
+				temp.put("error", rex.getMessage());
+				return temp;
+			}
+			else {
+				/* other code (e.g., session and console threads) depend on an exception
+				   to know when they may stop */
+				throw rex;
+			}
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
