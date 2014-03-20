@@ -226,11 +226,12 @@ sub overlay_images {
 		closef($resource);
 		[$graphics drawImage: $image, 0, 0, 1000, 776, $null];
 	}
+	[$graphics dispose];
 
 	$buffered = [$buffered getScaledInstance: 250 / $scale, 194 / $scale, [Image SCALE_SMOOTH]];
 
 	%cache[join(';', $1)] = $buffered;
-        return $buffered;
+	return $buffered;
 }
 
 sub iconToImage {

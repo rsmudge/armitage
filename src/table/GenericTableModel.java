@@ -4,6 +4,8 @@ import java.util.*;
 import javax.swing.table.*;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import java.awt.image.*;
+import java.awt.Image;
 
 public class GenericTableModel extends AbstractTableModel {
 	protected String[] columnNames;
@@ -101,10 +103,37 @@ public class GenericTableModel extends AbstractTableModel {
 		}
 	}
 
+	protected Map imageCache = new HashMap();
+	protected float zoom     = 1.0f;
+
+	public Object getImageAt(JTable t, int row, String column, float zoomnow) {
+		Image i = (Image)getValueAt(t, row, column);
+
+		/* clear old whateverz */
+		if (zoom != zoomnow) {
+			zoom = zoomnow;
+			imageCache = new HashMap();
+		}
+
+		/* check our cache */
+		synchronized (this) {
+			if (imageCache.containsKey(i)) {
+				return (Image)imageCache.get(i);
+			}
+		}
+
+		Image rs = i.getScaledInstance((int)Math.floor((i.getWidth(null) / 11.0) * zoom), (int)Math.floor((i.getHeight(null) / 11.0) * zoom),  java.awt.Image.SCALE_SMOOTH);
+
+		synchronized (this) {
+			imageCache.put(i, rs);
+		}
+		return rs;
+	}
+
 	public Object getValueAt(JTable t, int row, String column) {
 		synchronized (this) {
 			row = t.convertRowIndexToModel(row);
-			if (row == -1) 
+			if (row == -1)
 				return null;
 
 			return ( (Map)rows.get(row) ).get(column);

@@ -49,6 +49,7 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 
 	protected GenericTableModel model;
 	protected JTable table;
+	protected int    height;
 
 	public NetworkTable(Properties display) {
 		this.display = display;
@@ -85,26 +86,24 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 		table.setRowSorter(sorter);
 		table.setColumnSelectionAllowed(false);
 
-		table.getColumn("Address").setPreferredWidth(125);
-		table.getColumn("Label").setPreferredWidth(125);
-		table.getColumn("Pivot").setPreferredWidth(125);
-		table.getColumn(" ").setPreferredWidth(32);
-		table.getColumn(" ").setMaxWidth(32);
-		table.getColumn("Description").setPreferredWidth(500);
+		setupWidths();
+
+		height = table.getRowHeight();
 
 		final TableCellRenderer parent = table.getDefaultRenderer(Object.class);
 		final TableCellRenderer phear  = new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 				JLabel component = (JLabel)parent.getTableCellRendererComponent(table, value, isSelected, false, row, col);
+				float  size      = component.getFont().getSize2D() * zoom;
 
 				if (col == 4 && Boolean.TRUE.equals(model.getValueAt(table, row, "Active"))) {
-					component.setFont(component.getFont().deriveFont(Font.BOLD));
+					component.setFont(component.getFont().deriveFont(Font.BOLD).deriveFont(size));
 				}
 				else if (col == 1 && !"".equals(model.getValueAt(table, row, "Description"))) {
-					component.setFont(component.getFont().deriveFont(Font.BOLD));
+					component.setFont(component.getFont().deriveFont(Font.BOLD).deriveFont(size));
 				}
 				else {
-					component.setFont(component.getFont().deriveFont(Font.PLAIN));
+					component.setFont(component.getFont().deriveFont(Font.PLAIN).deriveFont(size));
 				}
 
 				String tip = model.getValueAt(table, row, "Tooltip") + "";
@@ -125,7 +124,9 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 		table.getColumn(" ").setCellRenderer(new TableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 				JLabel component = (JLabel)parent.getTableCellRendererComponent(table, value, isSelected, false, row, col);
-				component.setIcon(new ImageIcon((Image)model.getValueAt(table, row, "Image")));
+
+				Image original = (Image)model.getImageAt(table, row, "Image", zoom);
+				component.setIcon(new ImageIcon(original));
 				component.setText("");
 
 				String tip = model.getValueAt(table, row, "Tooltip") + "";
@@ -154,7 +155,18 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 		setLayout(new BorderLayout());
 		scroller = new JScrollPane(table);
 		add(scroller, BorderLayout.CENTER);
+
+		setupShortcuts();
         }
+
+	public void setupWidths() {
+		table.getColumn("Address").setPreferredWidth((int)(125 * zoom));
+		table.getColumn("Label").setPreferredWidth((int)(125 * zoom));
+		table.getColumn("Pivot").setPreferredWidth((int)(125 * zoom));
+		table.getColumn(" ").setPreferredWidth((int)(32 * zoom));
+		table.getColumn(" ").setMaxWidth((int)(32 * zoom));
+		table.getColumn("Description").setPreferredWidth((int)(500 * zoom));
+	}
 
 	protected LinkedList rows = new LinkedList();
 
@@ -257,9 +269,6 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 	public void setAutoLayout(String layout) {
 	}
 
-        public void addActionForKeySetting(String key, String dvalue, Action action) {
-	}
-
 	public Object addNode(String id, String label, String description, Image image, String tooltip) {
 		if (id == null || label == null)
 			return null;
@@ -279,4 +288,58 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 		rows.add(map);
 		return map;
 	}
+
+	protected float zoom = 1.0f;
+
+        public void zoom(double factor) {
+		if (factor == 0.0f)
+			zoom = 1.0f;
+		else
+			zoom += factor;
+
+		table.setRowHeight((int) Math.ceil(height * zoom));
+
+		/* update table widths to reflect the zoom factor */
+		table.getColumn("Address").setPreferredWidth((int)(125 * zoom));
+		table.getColumn(" ").setMaxWidth((int)(32 * zoom));
+		table.getColumn(" ").setPreferredWidth((int)(32 * zoom));
+
+		validate();
+        }
+
+	private void setupShortcuts() {
+		addActionForKeySetting("graph.zoom_in.shortcut", "ctrl pressed EQUALS", new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				zoom(0.1);
+			}
+		});
+
+		addActionForKeySetting("graph.zoom_out.shortcut", "ctrl pressed MINUS", new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				zoom(-0.1);
+			}
+		});
+
+		addActionForKeySetting("graph.zoom_reset.shortcut", "ctrl pressed 0", new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				zoom(0.0);
+			}
+		});
+	}
+
+        public void addActionForKeyStroke(KeyStroke key, Action action) {
+		table.getActionMap().put(key.toString(), action);
+		table.getInputMap().put(key, key.toString());
+        }
+
+        public void addActionForKey(String key, Action action) {
+                addActionForKeyStroke(KeyStroke.getKeyStroke(key), action);
+        }
+
+        public void addActionForKeySetting(String key, String dvalue, Action action) {
+                KeyStroke temp = KeyStroke.getKeyStroke(display.getProperty(key, dvalue));
+                if (temp != null) {
+                        addActionForKeyStroke(temp, action);
+                }
+        }
 }

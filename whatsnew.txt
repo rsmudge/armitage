@@ -13,6 +13,7 @@ In Progress
 - Sync Files for Loot and Downloads is now much better with large files
 - REJOICE! After more than three years of a team server capability, 
   Armitage now tells you when you are disconnected from a server. 
+- Keyboard shortcuts to change text size now work in table view
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------

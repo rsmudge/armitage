@@ -382,7 +382,7 @@ sub createDashboard {
 		$graph = [new NetworkGraph: $preferences];
 	}
 	else {
-                setf('&overlay_images', lambda(&overlay_images, $scale => 11.0));
+                setf('&overlay_images', lambda(&overlay_images, $scale => 1.0));
 	        $graph = [new NetworkTable: $preferences];
 	}
 
