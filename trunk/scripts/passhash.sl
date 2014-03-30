@@ -156,7 +156,7 @@ sub show_hashes {
 }
 
 sub createCredentialsTab {
-	local('$dialog $table $model $panel $export $crack $refresh');
+	local('$dialog $table $model $panel $export $crack $refresh $copy');
 	($dialog, $table, $model) = show_hashes("", 320, 1);
 	[$dialog removeAll];
 
@@ -197,6 +197,19 @@ sub createCredentialsTab {
 		refreshCredsTableLocal($model, $null);
 	}, \$model)];
 
+	$copy = [new JButton: "Copy"];
+	[$copy addActionListener: lambda({
+		local('%r $entries $val $u $p');
+		%r = ohash();
+		$entries = [$model getSelectedValuesFromColumns: $table, @("user", "pass")];
+		foreach $val ($entries) {
+			($u, $p) = $val;
+			%r["$u $p"] = 1;
+		}
+		setClipboard(join("\n", keys(%r)));
+		showError("Copied selected creds to clipboard");
+	}, \$model, \$table)];
+
 	$crack = [new JButton: "Crack Passwords"];
 	[$crack addActionListener: {
 		thread({
@@ -228,7 +241,7 @@ sub createCredentialsTab {
 		})];
 	}];
 
-	[$panel add: center($refresh, $crack, $export), [BorderLayout SOUTH]];
+	[$panel add: center($refresh, $copy, $crack, $export), [BorderLayout SOUTH]];
 	[$frame addTab: "Credentials", $panel, $null];
 }
 
