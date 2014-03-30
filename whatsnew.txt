@@ -14,6 +14,7 @@ In Progress
 - REJOICE! After more than three years of a team server capability, 
   Armitage now tells you when you are disconnected from a server. 
 - Keyboard shortcuts to change text size now work in table view
+- Added Copy button to View -> Creds
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
