@@ -574,6 +574,28 @@ public class DatabaseImpl implements RpcConnection  {
 
 				return new HashMap();
 			}
+			else if (methodName.equals("db.remove_service")) {
+				Map values = (Map)params[0];
+				PreparedStatement stmt = null;
+				stmt = db.prepareStatement("DELETE FROM services WHERE id = ?");
+				stmt.setInt(1, Integer.parseInt(values.get("id") + ""));
+				stmt.executeUpdate();
+				return new HashMap();
+			}
+			else if (methodName.equals("db.report_service")) {
+				Map values = (Map)params[0];
+				PreparedStatement stmt = null;
+
+				/* update purpose value */
+				if (values.containsKey("info")) {
+					stmt = db.prepareStatement("UPDATE services SET info = ? WHERE services.id = ?");
+					stmt.setString(1, values.get("info") + "");
+					stmt.setInt(2, Integer.parseInt(values.get("id") + ""));
+					stmt.executeUpdate();
+				}
+
+				return new HashMap();
+			}
 			else {
 				armitage.ArmitageMain.print_error("DatabaseImpl.java - need to implement: " + methodName);
 			}
