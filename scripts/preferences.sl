@@ -18,17 +18,27 @@ import ui.*;
 global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE $CLIENT_CONFIG');
 
 sub iHateYaml {
-	local('$handle %result $current $text $key $value');
+	local('$handle %result $current $text $key $value $line');
 	$handle = openf($1);
 	$current = "default";
+	$line = 1;
 	while $text (readln($handle)) {
+		$text = ["$text" trim];
+
 		if ($text ismatch '(\w+):') {
 			$current = matched()[0];
-		} 
-		else if ($text ismatch '\s+([\w\\.]+): [\'"]{0,1}([\w\\.]+)[\'"]{0,1}') {
+		}
+		else if ($text ismatch '\w+: &(.*)') {
+			print_error("Can not parse $1 $+ : $+ $line - $text\n\tThis YAML parser does not handle aliases. Please simplify your file");
+		}
+		else if ($text ismatch '&(.*)') {
+			print_error("Can not parse $1 $+ : $+ $line - $text\n\tThis YAML parser does not handle aliases. Please simplify your file");
+		}
+		else if ($text ismatch '([\w\\.]+): [\'"]{0,1}([\w\\.]+)[\'"]{0,1}') {
 			($key, $value) = matched();
 			%result[$current][$key] = $value;
 		}
+		$line++;
 	}
 	return %result;
 }
@@ -362,7 +372,7 @@ sub connectToDatabase {
 	$dbstring = loadDatabasePreferences($preferences);
 
 	if ($dbstring eq "") {
-		throw [new RuntimeException: "could not find database settings"];
+		throw [new RuntimeException: "Could not find database settings for $yaml_entry from $yaml_file $+ . Check your YAML file."];
 	}
 
 	($dbuser, $dbpass, $dburl) = matches($dbstring, '(.*?):.(.*?).@(.*)');

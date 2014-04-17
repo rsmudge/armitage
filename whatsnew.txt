@@ -17,6 +17,9 @@ In Progress
 - Added Copy button to View -> Creds
 - Services tab right-click menu now has options to edit a service's info
   and to delete a service from the database.
+- Updated Armitage's YAML parser to better deal with unexpected whitespace
+  and to provide better errors when YAML file contains constructs that
+  Armitage's YAML parser can't deal with.
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
