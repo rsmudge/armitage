@@ -76,7 +76,8 @@ public class MeterpreterClient implements ActionListener, MeterpreterSession.Met
 				String text = window.getInput().getText() + "\n";
 				window.getInput().setText("");
 
-				if (shellCommand != null && text.trim().equals("shell")) {
+				/* too many users typing "shell whatever" inside of a meterpreter window... need to prevent problems */
+				if (shellCommand != null && text.trim().startsWith("shell")) {
 					shellCommand.actionPerformed(new ActionEvent(window, 0, "shell"));
 				}
 				else if (shellCommand != null && text.trim().equals("screenshot")) {

@@ -20,6 +20,9 @@ In Progress
 - Updated Armitage's YAML parser to better deal with unexpected whitespace
   and to provide better errors when YAML file contains constructs that
   Armitage's YAML parser can't deal with.
+- Armitage's intercept of the shell command now intercepts shell when 
+  arguments are present too. This prevents meterp sessions from getting 
+  messed up.
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
