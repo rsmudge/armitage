@@ -23,6 +23,7 @@ In Progress
 - Armitage's intercept of the shell command now intercepts shell when 
   arguments are present too. This prevents meterp sessions from getting 
   messed up.
+- Logging now deals with IPv6 addresses better for Windows users
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
