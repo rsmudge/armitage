@@ -15,19 +15,21 @@ sub logNow {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
 		local('$today $stream');
 		$today = formatDate("yyMMdd");
-		mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $2));
-		$stream = %logs[ getFileProper(dataDirectory(), $today, $DESCRIBE, $2, "$1 $+ .log") ];
+		$host  = strrep($2, ':', '_');
+		mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $host));
+		$stream = %logs[ getFileProper(dataDirectory(), $today, $DESCRIBE, $host, "$1 $+ .log") ];
 		[$stream println: $3];
 	}
 }
 
 sub logCheck {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
-		local('$today');
+		local('$today $host');
+		$host  = strrep($2, ':', '_');
 		$today = formatDate("yyMMdd");
-		if ($2 ne "") {
-			mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $2));
-			[$1 writeToLog: %logs[ getFileProper(dataDirectory(), $today, $DESCRIBE, $2, "$3 $+ .log") ]];
+		if ($host ne "") {
+			mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $host));
+			[$1 writeToLog: %logs[ getFileProper(dataDirectory(), $today, $DESCRIBE, $host, "$3 $+ .log") ]];
 		}
 	}
 }
@@ -35,10 +37,11 @@ sub logCheck {
 # logFile("filename", "all|host", "type")
 sub logFile {
 	if ([$preferences getProperty: "armitage.log_everything.boolean", "true"] eq "true") {
-		local('$today $handle $data $out');
+		local('$today $handle $data $out $host');
+		$host  = strrep($2, ':', '_');
 		$today = formatDate("yyMMdd");
 		if (-exists $1 && -canread $1) {
-			mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $2, $3));
+			mkdir(getFileProper(dataDirectory(), $today, $DESCRIBE, $host, $3));
 
 			# read in the file
 			$handle = openf($1);
@@ -46,7 +49,7 @@ sub logFile {
 			closef($handle);
 
 			# write it out.
-			$out = getFileProper(dataDirectory(), $today, $DESCRIBE, $2, $3, getFileName($1));
+			$out = getFileProper(dataDirectory(), $today, $DESCRIBE, $host, $3, getFileName($1));
 			$handle = openf("> $+ $out");
 			writeb($handle, $data);
 			closef($handle);
