@@ -65,6 +65,7 @@ sub _downloadLoot {
 	# go through each file, one at a time, and grab it...
 	foreach $download (@downloads) {
 		($host, $path, $name, $type, $size, $did) = $download;
+		$host = strrep($host, ':', '_');
 
 		[$progress setNote: "$name"];
 
