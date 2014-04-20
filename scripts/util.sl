@@ -480,8 +480,13 @@ sub module_execute {
 }
 
 sub _module_execute {
-	local('$host $title');
-	if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true" || $title) {
+	local('$host $title $4');
+	if ($4 >= 4) {
+		# if we're applying this function against a lot of hosts ($4); then we don't want a new window
+		# for each run.
+		call_async($client, "module.execute", $1, $2, $3);
+	}
+	else if ([$preferences getProperty: "armitage.show_all_commands.boolean", "true"] eq "true" || $title) {
 
 		# for logging purposes, we should figure out the remote host being targeted
 
