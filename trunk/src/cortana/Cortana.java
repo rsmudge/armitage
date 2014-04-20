@@ -12,13 +12,14 @@ import sleep.runtime.*;
 import sleep.interfaces.*;
 import sleep.error.*;
 import sleep.bridges.io.*;
+import sleep.bridges.BridgeUtilities;
 import java.io.*;
 
 import java.text.*;
 
 import armitage.*;
 
-public class Cortana implements Loadable, RuntimeWarningWatcher {
+public class Cortana implements Loadable, RuntimeWarningWatcher, Function {
 	/** log all module launches and post-exploitation interaction */
 	public static final int DEBUG_INTERACT_LOG = 256;
 
@@ -63,6 +64,9 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 	public void scriptLoaded(ScriptInstance si) {
 		if (cortana_io != null)
 			IOObject.setConsole(si.getScriptEnvironment(), cortana_io);
+
+		si.getScriptEnvironment().getEnvironment().put("&script_load", this);
+		si.getScriptEnvironment().getEnvironment().put("&script_unload", this);
 	}
 
 	/* setup a pointer to our armitage app. This will tell Cortana to start loading all
@@ -90,6 +94,31 @@ public class Cortana implements Loadable, RuntimeWarningWatcher {
 
 	public Shared getSharedData() {
 		return shared;
+	}
+
+	public Scalar evaluate(String function, ScriptInstance script, Stack args) {
+		if (function.equals("&script_load")) {
+			try {
+				loadScript(BridgeUtilities.getString(args, ""));
+			}
+			catch (YourCodeSucksException yex) {
+				throw new RuntimeException(yex.formatErrors());
+			}
+			catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+		else if (function.equals("&script_unload")) {
+			String scriptf = findScript(BridgeUtilities.getString(args, ""));
+			if (scriptf == null) {
+				throw new RuntimeException("Could not find script");
+			}
+			else {
+				unloadScript(scriptf);
+			}
+		}
+
+		return SleepUtils.getEmptyScalar();
 	}
 
 	public Cortana(RpcConnection client, RpcConnection dserver, EventManager events, FilterManager filters, String description) {

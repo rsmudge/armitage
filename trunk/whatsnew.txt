@@ -24,6 +24,11 @@ In Progress
   arguments are present too. This prevents meterp sessions from getting 
   messed up.
 - Logging now deals with IPv6 addresses better for Windows users
+
+Cortana Updates (for scripters)
+--------
+- Added &script_load to load a script (as if the user did this)
+- Added &script_unload to unload a script
   
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
