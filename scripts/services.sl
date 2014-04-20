@@ -95,9 +95,9 @@ sub createServiceBrowser {
 			if (size($hosts) > 0) {
 				host_selected_items($popup, $hosts);
 				[$popup addSeparator];
-				$m = menu($popup, "Service", 'S');
-					item($m, "Set Info", 'I', $info); 
-					item($m, "Remove", 'R', $remove);
+				#$m = menu($popup, "Service", 'S');
+					item($popup, "Service Info", 'I', $info); 
+					#item($m, "Remove", 'R', $remove);
 				[$popup show: [$1 getSource], [$1 getX], [$1 getY]];
 			}
 		}
