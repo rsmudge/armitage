@@ -25,6 +25,8 @@ In Progress
   messed up.
 - Logging now deals with IPv6 addresses better for Windows users
 - Launching psexec at 4+ hosts will no longer open a tab for each host
+- Armitage no longer allows two buttons with the same name in its team
+  server button bar.
 
 Cortana Updates (for scripters)
 --------

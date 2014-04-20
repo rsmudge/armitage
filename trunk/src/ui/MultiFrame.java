@@ -97,11 +97,17 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 
 	/* is localhost running? */
 	public boolean checkLocal() {
+		return checkCollision("localhost");
+	}
+
+
+	/* is localhost running? */
+	public boolean checkCollision(String name) {
 		synchronized (buttons) {
 			Iterator i = buttons.iterator();
 			while (i.hasNext()) {
 				ArmitageInstance temp = (ArmitageInstance)i.next();
-				if ("localhost".equals(temp.button.getText())) {
+				if (name.equals(temp.button.getText())) {
 					return true;
 				}
 			}
@@ -226,6 +232,12 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 	}
 
 	public void addButton(String title, final ArmitageApplication component, RpcConnection conn) {
+		/* check if there's another button with the same name */
+		if (checkCollision(title)) {
+			addButton(title + " (2)", component, conn);
+			return;
+		}
+
 		synchronized (buttons) {
 			final ArmitageInstance a = new ArmitageInstance();
 			a.button = new JToggleButton(title);
