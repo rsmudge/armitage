@@ -24,6 +24,7 @@ In Progress
   arguments are present too. This prevents meterp sessions from getting 
   messed up.
 - Logging now deals with IPv6 addresses better for Windows users
+- Launching psexec at 4+ hosts will no longer open a tab for each host
 
 Cortana Updates (for scripters)
 --------

