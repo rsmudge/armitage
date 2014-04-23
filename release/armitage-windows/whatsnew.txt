@@ -1,6 +1,37 @@
 Armitage Changelog
 ==================
 
+23 Apr 14 (tested against msf git revision: 0a4c10876d)
+---------
+- Added Ctrl+L to quickly add an entry to timeline.[xml|tsv] (exported 
+  through View -> Reporting -> Export Data)
+- Added osx-app to Output: type for payloads. Outputs a zipped MacOS X
+  app archive. 
+- Scrubbed Armitage to eliminate unnecessary blocking calls from Sleep
+  source code. This improves Armitage's responsiveness and takes away
+  many opportunities for deadlock.
+- Sync Files for Loot and Downloads is now much better with large files
+- REJOICE! After more than three years of a team server capability, 
+  Armitage now tells you when you are disconnected from a server. 
+- Keyboard shortcuts to change text size now work in table view
+- Added Copy button to View -> Creds
+- Services tab right-click menu now has options to edit a service's info
+- Updated Armitage's YAML parser to better deal with unexpected whitespace
+  and to provide better errors when YAML file contains constructs that
+  Armitage's YAML parser can't deal with.
+- Armitage's intercept of the shell command now intercepts shell when 
+  arguments are present too. This prevents meterp sessions from getting 
+  messed up.
+- Logging now deals with IPv6 addresses better for Windows users
+- Launching psexec at 4+ hosts will no longer open a tab for each host
+- Armitage no longer allows two buttons with the same name in its team
+  server button bar.
+
+Cortana Updates (for scripters)
+--------
+- Added &script_load to load a script (as if the user did this)
+- Added &script_unload to unload a script
+  
 27 Feb 14 (tested against msf git revision: 72da8299a5)
 ---------
 - Armitage console is now a mouse hot spot. Right-click a host in the
