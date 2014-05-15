@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+15 May 14 (tested against msf git revision: 0a4c10876d)
+---------
+- Worked around invisible text selection bug with latest Java on Kali
+
 23 Apr 14 (tested against msf git revision: 0a4c10876d)
 ---------
 - Added Ctrl+L to quickly add an entry to timeline.[xml|tsv] (exported 
