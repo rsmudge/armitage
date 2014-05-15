@@ -104,6 +104,13 @@ public class Display extends JPanel {
 		console.setEditable(false);
 		//console.setLineWrap(true);
 
+		/* don't let the default Caret hide our selection! */
+		console.setCaret(new DefaultCaret() {
+			public void setSelectionVisible(boolean visible) {
+				super.setSelectionVisible(true);
+			}
+		});
+
 		JScrollPane scroll = new JScrollPane(
 					console, 
 					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
