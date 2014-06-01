@@ -1,6 +1,11 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Command Shell experience on Windows Meterpreter is much better now
+- Java Meterpreter may now interact with a bash shell
+
 15 May 14 (tested against msf git revision: 0a4c10876d)
 ---------
 - Worked around invisible text selection bug with latest Java on Kali

@@ -245,7 +245,7 @@ sub showMeterpreterMenu {
 				item($j, "Command Shell", 'C', lambda({ createShellTab($sid); }, $sid => "$sid"));
 			}
 			else {
-				#item($j, "Command Shell", 'C', lambda({ createCommandTab($sid, "/bin/bash"); }, $sid => "$sid"));
+				item($j, "Command Shell", 'C', lambda({ createCommandTab($sid, "sh"); }, $sid => "$sid"));
 			}
 
 			item($j, "Meterpreter Shell", 'M', lambda({ createMeterpreterTab($sid); }, $sid => "$sid"));

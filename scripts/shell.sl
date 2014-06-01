@@ -16,6 +16,37 @@ import msf.*;
 import ui.*;
 
 global('%shells $ashell $achannel %maxq %wait');
+%wait = ohash();
+setMissPolicy(%wait, { return @(); });
+
+sub _shell_command {
+	local('$handle $file $sid $channel $text $ashell');
+	($sid, $channel, $text) = @_;
+
+	# this is the command we're executing!
+	push(%wait["$sid $channel"], $text);
+
+	if ($client !is $mclient) {
+		m_cmd($sid, "write -c $channel $text");
+	}
+	else {
+		$handle = openf(">command $+ $sid $+ .txt");
+		deleteOnExit("command $+ $sid $+ .txt");
+		if ("*indows*" iswm sessionToOS($sid)) {
+			writeb($handle, "$text $+ \r\n");
+		}
+		else {
+			$ashell = %shells[$sid][$channel];
+			[$ashell append: "\$ " . $text . "\n"];
+			writeb($handle, "$text $+ \necho ZZZZZZZZZZ==-\n");
+		}
+		closef($handle);
+		$file = getFileProper("command $+ $sid $+ .txt");
+
+		m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+	}
+	m_cmd($sid, "read $channel");
+}
 
 %handlers["execute"] = {
 	this('$command $channel $pid');
@@ -51,29 +82,16 @@ global('%shells $ashell $achannel %maxq %wait');
 				$text = [[$console getInput] getText];
 				[[$console getInput] setText: ""];
 
-				if (%wait[$channel]) {
-					[$console append: "[*] Dropped. Waiting for previous command to finish.\n" . [[$console getPromptText] trim]];
-					return;
-				}
-	
 				# work around for a whacky behavior with Java meterpreter...
 				if ([$text trim] eq "" && "*java*" iswm sessionPlatform($sid)) {
 					return;
 				}
 
-				if ($client !is $mclient) {
-					%wait[$channel] = 1;
-					m_cmd($sid, "write -c $channel $text");
+				if (size(%wait["$sid $channel"]) > 0) {
+					push(%wait["$sid $channel"], $text);
 				}
 				else {
-					$handle = openf(">command $+ $sid $+ .txt");
-					deleteOnExit("command $+ $sid $+ .txt");
-					writeb($handle, "$text $+ \r\n");
-					closef($handle);
-					$file = getFileProper("command $+ $sid $+ .txt");
-
-					%wait[$channel] = 1;
-					m_cmd($sid, "write -f \"" . strrep($file, "\\", "/") . "\" $channel");
+					_shell_command($sid, $channel, $text);
 				}
 			}, \$sid, \$console, \$channel)];
 
@@ -83,7 +101,14 @@ global('%shells $ashell $achannel %maxq %wait');
 				%shells[$sid][$channel] = $null;
 			}, \$sid, \$channel, \$console, \$pid, \$console), "$command $pid $+ @" . sessionToHost($sid)];
 
-			m_cmd($sid, "read $channel");
+			# do our initial read!
+			if ("*indows*" iswm sessionToOS($sid)) {
+				push(%wait["$sid $channel"], ""); # this will get popped off, needs to be here
+				m_cmd($sid, "read $channel");
+			}
+			else {
+				[$console updatePrompt: '$ '];
+			}
 		}, \$command, \$channel, \$pid, $sid => $1));
 	}
 	else if ($0 eq "end") {
@@ -107,7 +132,6 @@ global('%shells $ashell $achannel %maxq %wait');
 
 		local('$channel $ashell');
 		($channel) = matched();
-		m_cmd($1, "read $channel");
 	}
 	else if ($0 eq "update" && $2 ismatch '\[\-\] .*?' && $ashell !is $null) {
 		[$ashell append: "\n $+ $2"];
@@ -115,7 +139,6 @@ global('%shells $ashell $achannel %maxq %wait');
 	}
 	else if ($0 eq "timeout") {
 		deleteFile("command $+ $1 $+ .txt");
-		m_cmd($1, "read $channel");
 	}
 };
 
@@ -129,49 +152,68 @@ global('%shells $ashell $achannel %maxq %wait');
 		}
 	}
 	else if ($0 eq "end" && $ashell !is $null) {
-		local('$v $count');
+		local('$v $count $x $sz $last');
 		$v = split("\n", [$2 trim]);
 		$count = size($v);
-		shift($v);
+		$x = shift($v);
+
+		# pull the size of our output
+		if ($x ismatch 'Read (\\d+) bytes from .*?') {
+			($sz) = matched();
+			$sz = long($sz);
+		}
 	
-		while (size($v) > 0 && $v[0] eq "") {
+		# kill our preamble
+		if (size($v) > 0 && $v[0] eq "") {
 			shift($v);
 		}
-		#$v = substr($v, join("\n", $v));
-		[$ashell append: [$ashell getPromptText] . join("\n", $v)];
-		$ashell = $null;
 
-		# look for a prompt at the end of the text... if there isn't one,
-		# then it's time to do another read.
-		if (size($v) > 0 && $v[-1] ismatch '.*?[>]{1,2}\s*[\w\d.]+') {
-			# this is to catch cases like dir /s c:\ >>somefile.txt
-			# doing an immediate read sometimes creates problems.
-			# this prevents the read from being immediate so the 
-			# channel doesn't lock up.
+		# see if we need another read...
+		if ("*indows*" iswm sessionToOS($1)) {
+			# append our dataz
+			[$ashell append: [$ashell getPromptText] . join("\n", $v)];
+			$ashell = $null;
 
-			# if the command returns faster (e.g., echo "whatever" >somefile)
-			# then this condition will never trigger as the prompt will end 
-			# the text.
-			sleep(1500);
-			m_cmd($1, "read $achannel");
-		} 
-		else if (size($v) > 0 && $v[-1] ismatch '.*?\\? \\(Yes/No/All\\):') {
-			# make our shell heuristic tolerant of prompts like this.
-			%wait[$achannel] = $null;
+			# 4096 and ending is not a prompt? Probably more data.
+			if ($sz > 4096 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
+				m_cmd($1, "read $achannel");
+				return;
+			}
+			# java meterpreter needs another read
+			else if ("*java*" iswm sessionPlatform($1) && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
+				m_cmd($1, "read $achannel");
+				return;
+			}
 		}
-		else if (size($v) > 0 && $v[-1] ismatch '.*?\\(Y/N\\)\\?') {
-			# make our shell heuristic tolerant of prompts like this.
-			%wait[$achannel] = $null;
+		else if (size($v) > 0) {
+			$last = $v[-1];
+			if ([$last endsWith: "ZZZZZZZZZZ==-"]) {
+				$v[-1] = substr($v[-1], 0, -13);
+				$last = [join("\n", $v) trim];
+				if ($last ne "") {
+					[$ashell append: "$last $+ \n"];
+				}
+				[$ashell updatePrompt: '$ '];
+				$ashell = $null;
+			}
+			else {
+				$last = [join("\n", $v) trim];
+				if ($last ne "") {
+					[$ashell append: "$last $+ \n"];
+				}
+
+				m_cmd($1, "read $achannel");
+				$ashell = $null;
+				return;
+			}
 		}
-		else if (size($v) > 0 && $v[-1] ismatch '.*?:') {
-			# make our shell heuristic tolerant of more prompts... this is from the time command
-			%wait[$achannel] = $null;
-		}
-		else if (size($v) > 0 && $v[-1] !ismatch '(.*?):\\\\.*?\\>') {
-			m_cmd($1, "read $achannel");
-		}
-		else {
-			%wait[$achannel] = $null;
+
+		# we're done with this command...
+		shift(%wait["$1 $achannel"]);
+
+		# execute the next command in the queue if there is one
+		if (size(%wait["$1 $achannel"]) > 0) {
+			_shell_command($1, $achannel, shift(%wait["$1 $achannel"]));
 		}
 	}
 };
