@@ -180,11 +180,6 @@ sub showMeterpreterMenu {
 	if ("*win*" iswm $platform) {
 		$j = menu($1, "Access", 'A');
 	
-		item($j, "Migrate Now!", 'M', lambda({
-			oneTimeShow("run");
-			m_cmd($sid, "run migrate -f");
-		}, $sid => "$sid"));
-
 		item($j, "Escalate Privileges", 'E', lambda({
 			showPostModules($sid, "*escalate*", 
 				ohash(exploit => buildTree(filter({ return iff("*windows/local/*" iswm $1, $1); }, @exploits)))
