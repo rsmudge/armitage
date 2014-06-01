@@ -137,6 +137,17 @@ sub client {
 
 				[$session addCommand: $id, "write -f \"" . strrep($file, "\\", "/") . "\" $channel $+ \n"];
 			}
+			else if ($data ismatch "write -s -c (\\d+) (.*)\n") {
+				($channel, $data) = matched();
+
+				$file = getFileProper("command $+ $sid $+ . $+ $channel $+ .txt");
+				$h = openf("> $+ $file");
+				writeb($h, "$data $+ \necho ZZZZZZZZZZ==-\n");
+				closef($h);
+				deleteOnExit($file);
+
+				[$session addCommand: $id, "write -f \"" . strrep($file, "\\", "/") . "\" $channel $+ \n"];
+			}
 			else {
 				[$session addCommand: $id, $data];
 			}

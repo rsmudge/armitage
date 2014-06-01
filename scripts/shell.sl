@@ -27,7 +27,14 @@ sub _shell_command {
 	push(%wait["$sid $channel"], $text);
 
 	if ($client !is $mclient) {
-		m_cmd($sid, "write -c $channel $text");
+		if ("*indows*" iswm sessionToOS($sid)) {
+			m_cmd($sid, "write -c $channel $text");
+		}
+		else {
+			$ashell = %shells[$sid][$channel];
+			[$ashell append: "\$ " . $text . "\n"];
+			m_cmd($sid, "write -s -c $channel $text");
+		}
 	}
 	else {
 		$handle = openf(">command $+ $sid $+ .txt");
