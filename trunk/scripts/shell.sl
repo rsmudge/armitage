@@ -24,7 +24,7 @@ sub _shell_command {
 	($sid, $channel, $text) = @_;
 
 	# this is the command we're executing!
-	push(%wait["$sid $channel"], $text);
+	add(%wait["$sid $channel"], $text, 0);
 
 	if ($client !is $mclient) {
 		if ("*indows*" iswm sessionToOS($sid)) {
