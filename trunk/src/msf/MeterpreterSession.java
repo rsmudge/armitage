@@ -74,7 +74,6 @@ public class MeterpreterSession implements Runnable {
 	protected void processCommand(Command c) {
 		Map response = null, read = null;
 		long start;
-		long maxwait = DEFAULT_WAIT;
 		int expectedReads = 1;
 		try {
 			emptyRead();
@@ -223,7 +222,7 @@ public class MeterpreterSession implements Runnable {
 				start = System.currentTimeMillis();
 				while ("".equals(read.get("data")) || read.get("data").toString().startsWith("[-] Error running command read")) {
 					/* our goal here is to timeout any command after 10 seconds if it returns nothing */
-					if ((System.currentTimeMillis() - start) > maxwait) {
+					if ((System.currentTimeMillis() - start) > DEFAULT_WAIT) {
 						fireEvent(c, read, true);
 						armitage.ArmitageMain.print_error("command timed out (session " + session + ") - '" + c.text + "'");
 						return;
