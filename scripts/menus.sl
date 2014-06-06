@@ -324,6 +324,22 @@ sub init_menus {
 	[$frame bindKey: "Ctrl+Right", { [$frame nextTab]; }];
 	setupWorkspaceShortcuts(workspaces());
 
+       [$frame bindKey: "Ctrl+Escape", {
+		# if we're connected to a team server, ask it to do the same thing...
+		if ($client !is $mclient) {
+			call_async($mclient, "armitage.break_queue");
+		}
+
+                # force stalled meterp commands to timeout more quickly...
+		fork({
+			print_info("Meterpreter queue timeout is now 5s");
+			setField(^msf.MeterpreterSession, DEFAULT_WAIT => 5000L);
+			sleep(30000);
+			print_good("Meterpreter queue timeout is now 120s");
+			setField(^msf.MeterpreterSession, DEFAULT_WAIT => 120000L);
+		});
+	}];
+
 	cmd_safe("show exploits", {
 		local('$line $os $type $id $rank $name $k $date $exploit');
 

@@ -6,6 +6,9 @@ In Progress
 - Command Shell experience on Windows Meterpreter is much better now
 - Java Meterpreter may now interact with a bash shell
 - Removed [host] -> Meterpreter -> Access -> Migrate Now! menu item
+- Ctrl+Escape temporarily drops the timeout times for Meterpreter 
+  commands to 5s, across the board. If a Meterpreter session appears
+  unresponsive, try this to force any hung commands to timeout
 
 15 May 14 (tested against msf git revision: 0a4c10876d)
 ---------

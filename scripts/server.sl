@@ -179,6 +179,16 @@ sub client {
 			release($lock_lock);
 			writeObject($handle, result(%()));
 		}
+		else if ($method eq "armitage.break_queue") {
+			fork({
+				print_info("Meterpreter queue timeout is now 5s");
+				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 5000L);
+				sleep(30000);
+				print_good("Meterpreter queue timeout is now 120s");
+				setField(^msf.MeterpreterSession, DEFAULT_WAIT => 120000L);
+			});
+			writeObject($handle, result(%()));
+                }
 		else if ($method eq "armitage.log") {
 			($data, $address) = $args;
 			event("* $eid $data $+ \n");
