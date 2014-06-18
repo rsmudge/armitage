@@ -28,6 +28,10 @@ public abstract class RpcConnectionImpl implements RpcConnection, Async {
 		return connected;
 	}
 
+	public boolean isResponsive() {
+		return true;
+	}
+
 	public void disconnect() {
 		connected = false;
 	}

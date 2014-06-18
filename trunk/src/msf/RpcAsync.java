@@ -7,9 +7,15 @@ public class RpcAsync implements RpcConnection, Async {
 	protected RpcQueue queue;
 	protected RpcConnection connection;
 	protected boolean connected = true;
+	protected long    last = 0;
 
 	public boolean isConnected() {
 		return connected;
+	}
+
+	/* if we've talked in the last 10s, assume that we're OK */
+	public boolean isResponsive() {
+		return (System.currentTimeMillis() - last) < 10000;
 	}
 
 	public RpcAsync(RpcConnection connection) {
@@ -36,6 +42,7 @@ public class RpcAsync implements RpcConnection, Async {
 	}
 
 	public Object execute(String methodName) throws IOException {
+		last = System.currentTimeMillis();
 		return connection.execute(methodName);
 	}
 
@@ -55,11 +62,13 @@ public class RpcAsync implements RpcConnection, Async {
 				return result;
 			}
 
+			last = System.currentTimeMillis();
 			result = connection.execute(methodName, params);
 			cache.put(key, result);
 			return result;
 		}
 		else {
+			last = System.currentTimeMillis();
 			return connection.execute(methodName, params);
 		}
 	}
