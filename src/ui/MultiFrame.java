@@ -41,6 +41,30 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 		});
 	}
 
+	protected Set idle = new HashSet();
+
+	public void actOnIdle(final ArmitageInstance i) {
+		if (idle.contains(i)) { return; }
+
+		idle.add(i);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				i.button.setForeground(Color.MAGENTA);
+			}
+		});
+	}
+
+	public void actOnNotIdle(final ArmitageInstance i) {
+		idle.remove(i);
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				i.button.setForeground(Color.BLACK);
+			}
+		});
+	}
+
 	public void watchDog() {
 		/* watch for any disconnected sessions and warn the user */
 		new Thread(new Runnable() {
@@ -52,6 +76,12 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 							ArmitageInstance temp = (ArmitageInstance)i.next();
 							if (!((Async)temp.client).isConnected()) {
 								actOnDisconnect(temp);
+							}
+							else if (!((Async)temp.client).isResponsive()) {
+								actOnIdle(temp);
+							}
+							else if (idle.contains(temp)) {
+								actOnNotIdle(temp);
 							}
 						}
 					}
@@ -80,7 +110,8 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 			Iterator i = buttons.iterator();
 			while (i.hasNext()) {
 				ArmitageInstance temp = (ArmitageInstance)i.next();
-				if (((Async)temp.client).isConnected()) {
+				/* only return clients that are connected AND responsive */
+				if (((Async)temp.client).isConnected() && ((Async)temp.client).isResponsive()) {
 					r.put(temp.button.getText(), temp.client);
 				}
 			}

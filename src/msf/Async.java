@@ -8,4 +8,5 @@ public interface Async {
 	public void execute_async(String methodName, Object[] args, RpcCallback callback);
 	public boolean isConnected();
 	public void disconnect();
+	public boolean isResponsive();
 }
