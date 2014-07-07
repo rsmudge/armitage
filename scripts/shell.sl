@@ -104,7 +104,9 @@ sub _shell_command {
 
 			[$frame addTab: "$command $pid $+ @ $+ $sid", $console, lambda({
 				m_cmd($sid, "close $channel");
-				m_cmd($sid, "kill $pid");
+				if ("*java*" !iswm sessionPlatform($sid)) {
+					m_cmd($sid, "kill $pid");
+				}
 				%shells[$sid][$channel] = $null;
 			}, \$sid, \$channel, \$console, \$pid, \$console), "$command $pid $+ @" . sessionToHost($sid)];
 
