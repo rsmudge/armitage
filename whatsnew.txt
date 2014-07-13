@@ -13,6 +13,7 @@ In Progress
   its server button purple. When the server is responsive again, the 
   button will turn its normal color again. This requires that you're
   connected to multiple team servers.
+- Windows EXE launcher for Armitage now finds 64-bit Java.
 
 15 May 14 (tested against msf git revision: 0a4c10876d)
 ---------
