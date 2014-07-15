@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Command Shell experience on Windows Meterpreter is much better now
 - Java Meterpreter may now interact with a bash shell
@@ -9,6 +9,11 @@ In Progress
 - Ctrl+Escape temporarily drops the timeout times for Meterpreter 
   commands to 5s, across the board. If a Meterpreter session appears
   unresponsive, try this to force any hung commands to timeout
+- Armitage now warns when a team server is non-responsive by making
+  its server button purple. When the server is responsive again, the 
+  button will turn its normal color again. This requires that you're
+  connected to multiple team servers.
+- Windows EXE launcher for Armitage now finds 64-bit Java.
 
 15 May 14 (tested against msf git revision: 0a4c10876d)
 ---------
