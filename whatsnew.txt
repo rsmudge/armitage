@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Command Shell experience on Windows Meterpreter is much better now
 - Java Meterpreter may now interact with a bash shell
