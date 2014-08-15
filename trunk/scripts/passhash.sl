@@ -12,37 +12,6 @@ import msf.*;
 import table.*;
 import ui.*;
 
-sub wdigest_callback {
-	if ($0 eq "update") {
-		[$m append: "$2 $+ \n"];
-	}
-	else if ($0 eq "end") {
-		local('$cred $u $p $queue $host $creds');
-
-		# parse creds...
-		$creds = parseTextTable($2, @('AuthID', 'Package', 'Domain', 'User', 'Password'));
-		if (size($creds) == 0) {
-			return;
-		}
-
-		# notify team that this has happened
-		$host = sessionToHost($1);
-		elog("dumped credentials on $host");
-
-		# add to database
-		$queue = [new armitage.ConsoleQueue: $client];
-		[$queue start];
-		foreach $cred ($creds) {
-			($u, $p) = values($cred, @('User', 'Password'));
-			if ($u ne "" && $p ne "") {
-				$p = fixPass($p);
-				[$queue addCommand: $null, "creds -a $host -p 445 -t password -u ' $+ $u $+ ' -P $p"];
-			}
-		}
-		[$queue stop];
-	}
-}
-
 sub hashdump_callback {
 	this('$host $safe $queue');
 
@@ -74,7 +43,12 @@ sub hashdump_callback {
 		# strip any funky characters that will cause this call to throw an exception
 		$hash = fixPass($hash);
 
-		[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u ' $+ $user $+ ' -P $hash"];
+		if ($MSFVERSION >= 41000) {
+			[$queue addCommand: $null, "creds add-ntlm ' $+ $user $+ ' $hash $+ \nversion"];
+		}
+		else {
+			[$queue addCommand: $null, "creds -a $host -p 445 -t smb_hash -u ' $+ $user $+ ' -P $hash"];
+		}
 		[$m append: "[+] \t $+ $2 $+ \n"];
 	}
 	else if ($0 eq "end" && ("*Error running*" iswm $2 || "*Operation failed*" iswm $2)) {
@@ -97,10 +71,10 @@ sub refreshCredsTable {
 			$creds = call($aclient, "db.creds2", [new HashMap])["creds2"];
 			foreach $cred ($creds) {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
-				if ($key in %check || $cred['ptype'] eq "ssh_key") {
+				if ($key in %check || isSSHKey($cred['ptype'])) {
 
 				}
-				else if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
+				else if ($title ne "login" || !isHash($cred['ptype'])) {
 					[$model addEntry: $cred];
 					%check[$key] = 1;
 				}
@@ -110,6 +84,14 @@ sub refreshCredsTable {
 	}, $model => $1, $title => $2, \$__frame__);
 }
 
+sub isHash {
+	return iff($1 eq "smb_hash" || $1 eq "Metasploit::Credential::NTLMHash");
+}
+
+sub isSSHKey {
+	return iff($1 eq "ssh_key" || $1 eq "Metasploit::Credential::SSHKey");
+}
+
 sub refreshCredsTableLocal {
 	fork({
 		local('$creds $cred $desc $aclient %check $key');
@@ -117,9 +99,9 @@ sub refreshCredsTableLocal {
 		$creds = call($client, "db.creds2", [new HashMap])["creds2"];
 		foreach $cred ($creds) {
 			$key = join("~~", values($cred, @("user", "pass", "host")));
-			if ($key in %check || $cred['ptype'] eq "ssh_key") {
+			if ($key in %check || isSSHKey($cred['ptype'])) {
 			}
-			else if ($title ne "login" || $cred['ptype'] ne "smb_hash") {
+			else if ($title ne "login" || !isHash($cred['ptype'])) {
 				[$model addEntry: $cred];
 				%check[$key] = 1;
 			}

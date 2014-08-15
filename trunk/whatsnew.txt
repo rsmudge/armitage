@@ -1,11 +1,13 @@
 Armitage Changelog
 ==================
 
-In Progress (Metasploit 4.10)
+In Progress
 ---------
-- Added hard-coded database.yml path for Kali Linux users
+- Added hard-coded database.yml path as fallback for Kali users
 - Updated internal db.creds/db.creds2 calls to pull from new creds
   model in database.
+- [meterpreter] -> Access -> Dump Hashes -> wdigest uses sso post 
+  module now. New creds model makes this better.
 
 15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------

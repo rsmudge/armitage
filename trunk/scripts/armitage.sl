@@ -15,7 +15,7 @@ import graph.*;
 
 import java.awt.image.*;
 
-global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL $NICK');
+global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL $NICK $MSFVERSION');
 
 sub describeHost {
 	local('$desc');
@@ -233,6 +233,20 @@ sub _connectToMetasploit {
 		}
 		catch $exception {
 			[JOptionPane showMessageDialog: $null, "Could not connect to database.\n\nKali Linux users, try:\n\nservice postgresql start\nservice metasploit start\nservice metasploit stop\n\n" . [$exception getMessage]];
+			if ($msfrpc_handle) { closef($msfrpc_handle); }
+			[System exit: 0];
+		}
+	}
+
+	# check version information
+	local('$rep $major $minor $update');
+	$rep = call($mclient, "core.version");
+
+	if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
+		($major, $minor, $update) = matched();
+		$MSFVERSION = ($major * 10000) + ($minor * 100) + $update;
+		if ($MSFVERSION <= 40900) {
+			[JOptionPane showMessageDialog: $null, "Metasploit $major $+ . $+ $minor is too old. Get 4.9 or later."];
 			if ($msfrpc_handle) { closef($msfrpc_handle); }
 			[System exit: 0];
 		}
