@@ -1,6 +1,12 @@
 Armitage Changelog
 ==================
 
+In Progress (Metasploit 4.10)
+---------
+- Added hard-coded database.yml path for Kali Linux users
+- Updated internal db.creds/db.creds2 calls to pull from new creds
+  model in database.
+
 15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Command Shell experience on Windows Meterpreter is much better now

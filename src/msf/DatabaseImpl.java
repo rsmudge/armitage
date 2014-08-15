@@ -276,8 +276,26 @@ public class DatabaseImpl implements RpcConnection  {
 		return rows;
 	}
 
+	/* let's assume no */
+	protected boolean newdatamodel = false;
+
+	/* account for whether we're in Metasploit 4.10+ */
+	public boolean isNewDataModel() {
+		return newdatamodel;
+	}
+
 	public void connect(String dbstring, String user, String password) throws Exception {
 		db = DriverManager.getConnection(dbstring, user, password);
+
+		/* check which kind of data model we've got */
+		try {
+			executeQuery("SELECT * FROM metasploit_credential_privates");
+			newdatamodel = true;
+		}
+		catch (Exception ex) {
+			newdatamodel = false;
+		}
+
 		setWorkspace("default");
 		loadLabels();
 	}
@@ -295,10 +313,17 @@ public class DatabaseImpl implements RpcConnection  {
 		int limit1 = rFilter == null && oFilter == null && lFilter == null ? maxhosts : 30000;
 		int limit2 = rFilter == null && oFilter == null && lFilter == null ? maxservices : 100000;
 
-		temp.put("db.creds", "SELECT DISTINCT creds.*, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
-
-		/* db.creds2 exists to prevent duplicate entries for the stuff I care about */
-		temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto, creds.ptype FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
+		if (newdatamodel) {
+			/* account for Metasploit 4.10's new data model for creds */
+			String nastyquery = "SELECT metasploit_credential_cores.id AS id, metasploit_credential_cores.realm_id AS realm_id, metasploit_credential_publics.username AS user, metasploit_credential_privates.type AS ptype, metasploit_credential_privates.data AS pass, 0 AS port, '' AS host, '' AS sname, '' AS proto FROM metasploit_credential_publics, metasploit_credential_privates, metasploit_credential_cores, metasploit_credential_origin_imports WHERE metasploit_credential_cores.origin_id = metasploit_credential_origin_imports.id AND metasploit_credential_cores.origin_type = 'Metasploit::Credential::Origin::Import' AND metasploit_credential_cores.public_id = metasploit_credential_publics.id AND metasploit_credential_cores.private_id = metasploit_credential_privates.id UNION SELECT metasploit_credential_cores.id AS id, metasploit_credential_cores.realm_id AS realm_id, metasploit_credential_publics.username AS user, metasploit_credential_privates.type AS ptype, metasploit_credential_privates.data AS pass, 0 AS port, '' AS host, '' AS sname, '' AS proto FROM metasploit_credential_publics, metasploit_credential_privates, metasploit_credential_cores, metasploit_credential_origin_cracked_passwords WHERE metasploit_credential_cores.origin_id = metasploit_credential_origin_cracked_passwords.id AND metasploit_credential_cores.origin_type = 'Metasploit::Credential::Origin::Cracked_Password' AND metasploit_credential_cores.public_id = metasploit_credential_publics.id AND metasploit_credential_cores.private_id = metasploit_credential_privates.id UNION SELECT metasploit_credential_cores.id AS id, metasploit_credential_cores.realm_id AS realm_id, metasploit_credential_publics.username AS user, metasploit_credential_privates.type AS ptype, metasploit_credential_privates.data AS pass, services.port AS port, host(hosts.address) AS host, services.name AS sname, services.proto AS proto FROM metasploit_credential_publics, metasploit_credential_privates, metasploit_credential_cores, hosts, services, metasploit_credential_origin_services WHERE metasploit_credential_cores.origin_id = metasploit_credential_origin_services.id AND metasploit_credential_cores.origin_type = 'Metasploit::Credential::Origin::Service' AND metasploit_credential_cores.public_id = metasploit_credential_publics.id AND metasploit_credential_cores.private_id = metasploit_credential_privates.id AND metasploit_credential_origin_services.service_id = services.id AND services.host_id = hosts.id AND hosts.workspace_id = " + workspaceid + " UNION SELECT metasploit_credential_cores.id AS id, metasploit_credential_cores.realm_id AS realm_id, metasploit_credential_publics.username AS user, metasploit_credential_privates.type AS ptype, metasploit_credential_privates.data AS pass, sessions.port AS port, host(hosts.address) AS host, '' AS sname, '' AS proto FROM metasploit_credential_publics, metasploit_credential_privates, metasploit_credential_cores, hosts, sessions, metasploit_credential_origin_sessions WHERE metasploit_credential_cores.origin_id = metasploit_credential_origin_sessions.id AND metasploit_credential_cores.origin_type = 'Metasploit::Credential::Origin::Session' AND metasploit_credential_cores.public_id = metasploit_credential_publics.id AND metasploit_credential_cores.private_id = metasploit_credential_privates.id AND metasploit_credential_origin_sessions.session_id = sessions.id AND sessions.host_id = hosts.id AND hosts.workspace_id = " + workspaceid + " UNION SELECT metasploit_credential_cores.id AS id, metasploit_credential_cores.realm_id AS realm_id, metasploit_credential_publics.username AS user, metasploit_credential_privates.type AS ptype, metasploit_credential_privates.data AS pass, 0 AS port, '' AS host, '' AS sname, '' AS proto FROM metasploit_credential_publics, metasploit_credential_privates, metasploit_credential_cores, metasploit_credential_origin_manuals WHERE metasploit_credential_cores.origin_id = metasploit_credential_origin_manuals.id AND metasploit_credential_cores.origin_type = 'Metasploit::Credential::Origin::Manual' AND metasploit_credential_cores.public_id = metasploit_credential_publics.id AND metasploit_credential_cores.private_id = metasploit_credential_privates.id";
+			temp.put("db.creds", nastyquery);
+			temp.put("db.creds2", nastyquery);
+		}
+		else {
+			/* db.creds2 exists to prevent duplicate entries for the stuff I care about */
+			temp.put("db.creds", "SELECT DISTINCT creds.*, hosts.address as host, services.name as sname, services.port as port, services.proto as proto FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
+			temp.put("db.creds2", "SELECT DISTINCT creds.user, creds.pass, hosts.address as host, services.name as sname, services.port as port, services.proto as proto, creds.ptype FROM creds, services, hosts WHERE services.id = creds.service_id AND hosts.id = services.host_id AND hosts.workspace_id = " + workspaceid);
+		}
 
 		if (hFilter != null) {
 			List tables = new LinkedList();
@@ -595,6 +620,9 @@ public class DatabaseImpl implements RpcConnection  {
 				}
 
 				return new HashMap();
+			}
+			else if (methodName.equals("db.raw")) {
+				return executeQuery("" + params[0]);
 			}
 			else {
 				armitage.ArmitageMain.print_error("DatabaseImpl.java - need to implement: " + methodName);
