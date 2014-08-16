@@ -420,7 +420,10 @@ sub createUserPassFile {
 	%entries = ohash();
 	foreach $row ($1) {
 		($user, $pass, $type) = values($row, @("user", "pass", "ptype"));
-		if ($type eq "password" || $type eq $2) {
+		if ($type eq "password") {
+			%entries["$user $pass"] = "$user $pass";
+		}
+		else if ($2 eq "smb_hash" && isHash($type)) {
 			%entries["$user $pass"] = "$user $pass";
 		}
 		else {
@@ -474,7 +477,7 @@ sub credentialHelper {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
 				if ($key in %check) {
 				}
-				else if ($PASS eq "SMBPass" || $cred['ptype'] ne "smb_hash") {
+				else if ($PASS eq "SMBPass" || !isHash($cred['ptype'])) {
 					push(@creds, $cred);
 					%check[$key] = 1;
 				}
