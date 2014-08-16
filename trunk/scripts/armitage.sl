@@ -245,7 +245,7 @@ sub _connectToMetasploit {
 	if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
 		($major, $minor, $update) = matched();
 		$MSFVERSION = ($major * 10000) + ($minor * 100) + $update;
-		if ($MSFVERSION <= 40900) {
+		if ($MSFVERSION < 40900) {
 			[JOptionPane showMessageDialog: $null, "Metasploit $major $+ . $+ $minor is too old. Get 4.9 or later."];
 			if ($msfrpc_handle) { closef($msfrpc_handle); }
 			[System exit: 0];
