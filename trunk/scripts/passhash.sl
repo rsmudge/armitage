@@ -73,7 +73,7 @@ sub refreshCredsTable {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
 				if ($key in %check || isSSHKey($cred['ptype'])) {
 				}
-				else if ($title eq "login" && isHash($cred['ptype'])) {
+				else if ($title eq "login" && isHash($cred['ptype'], $cred['pass'])) {
 				}
 				else {
 					[$model addEntry: $cred];
@@ -86,7 +86,9 @@ sub refreshCredsTable {
 }
 
 sub isHash {
-	return iff($1 eq "smb_hash" || $1 eq "Metasploit::Credential::NTLMHash");
+	# $2 = use regex to check if "password" is a hash.
+	# this works around: https://dev.metasploit.com/redmine/issues/8841
+	return iff($1 eq "smb_hash" || $1 eq "Metasploit::Credential::NTLMHash" || $2 ismatch '\w{32}:\w{32}');
 }
 
 sub isSSHKey {
@@ -106,7 +108,7 @@ sub refreshCredsTableLocal {
 			$key = join("~~", values($cred, @("user", "pass", "host")));
 			if ($key in %check || isSSHKey($cred['ptype'])) {
 			}
-			else if ($title eq "login" && isHash($cred['ptype'])) {
+			else if ($title eq "login" && isHash($cred['ptype'], $cred['pass'])) {
 				# we don't want hashes in normal login dialog
 			}
 			else {
@@ -431,7 +433,7 @@ sub createUserPassFile {
 		if (isPassword($type)) {
 			%entries["$user $pass"] = "$user $pass";
 		}
-		else if ($2 eq "smb_hash" && isHash($type)) {
+		else if ($2 eq "smb_hash" && isHash($type, $pass)) {
 			%entries["$user $pass"] = "$user $pass";
 		}
 		else {
@@ -486,7 +488,7 @@ sub credentialHelper {
 				if ($key in %check || isSSHKey($cred['ptype'])) {
 					# we don't want duplicate entries and we don't want SSH keys
 				}
-				else if ($PASS ne "SMBPass" && isHash($cred['ptype'])) {
+				else if ($PASS ne "SMBPass" && isHash($cred['ptype'], $cred['pass'])) {
 					# don't show hashes when pass type isn't SMBPass
 				}
 				else {
