@@ -72,9 +72,10 @@ sub refreshCredsTable {
 			foreach $cred ($creds) {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
 				if ($key in %check || isSSHKey($cred['ptype'])) {
-
 				}
-				else if ($title ne "login" || !isHash($cred['ptype'])) {
+				else if ($title eq "login" && isHash($cred['ptype'])) {
+				}
+				else {
 					[$model addEntry: $cred];
 					%check[$key] = 1;
 				}
@@ -92,6 +93,10 @@ sub isSSHKey {
 	return iff($1 eq "ssh_key" || $1 eq "Metasploit::Credential::SSHKey");
 }
 
+sub isPassword {
+	return iff($1 eq "password" || $1 eq "Metasploit::Credential::Password");
+}
+
 sub refreshCredsTableLocal {
 	fork({
 		local('$creds $cred $desc $aclient %check $key');
@@ -101,7 +106,10 @@ sub refreshCredsTableLocal {
 			$key = join("~~", values($cred, @("user", "pass", "host")));
 			if ($key in %check || isSSHKey($cred['ptype'])) {
 			}
-			else if ($title ne "login" || !isHash($cred['ptype'])) {
+			else if ($title eq "login" && isHash($cred['ptype'])) {
+				# we don't want hashes in normal login dialog
+			}
+			else {
 				[$model addEntry: $cred];
 				%check[$key] = 1;
 			}
@@ -420,7 +428,7 @@ sub createUserPassFile {
 	%entries = ohash();
 	foreach $row ($1) {
 		($user, $pass, $type) = values($row, @("user", "pass", "ptype"));
-		if ($type eq "password") {
+		if (isPassword($type)) {
 			%entries["$user $pass"] = "$user $pass";
 		}
 		else if ($2 eq "smb_hash" && isHash($type)) {
@@ -475,9 +483,13 @@ sub credentialHelper {
 			$creds = call($aclient, "db.creds2", [new HashMap])["creds2"];
 			foreach $cred ($creds) {
 				$key = join("~~", values($cred, @("user", "pass", "host")));
-				if ($key in %check) {
+				if ($key in %check || isSSHKey($cred['ptype'])) {
+					# we don't want duplicate entries and we don't want SSH keys
 				}
-				else if ($PASS eq "SMBPass" || !isHash($cred['ptype'])) {
+				else if ($PASS ne "SMBPass" && isHash($cred['ptype'])) {
+					# don't show hashes when pass type isn't SMBPass
+				}
+				else {
 					push(@creds, $cred);
 					%check[$key] = 1;
 				}
