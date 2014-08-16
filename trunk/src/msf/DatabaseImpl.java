@@ -440,18 +440,43 @@ public class DatabaseImpl implements RpcConnection  {
 				labels = new HashMap();
 
 				/* clear the database */
-				executeUpdate(
-					"BEGIN;" +
-					"DELETE FROM hosts;" +
-					"DELETE FROM services;" +
-					"DELETE FROM events;" +
-					"DELETE FROM notes;" +
-					"DELETE FROM creds;" +
-					"DELETE FROM loots;" +
-					"DELETE FROM vulns;" +
-					"DELETE FROM sessions;" +
-					"DELETE FROM clients;" +
-					"COMMIT");
+				if (isNewDataModel()) {
+					executeUpdate(
+						"BEGIN;" +
+						"DELETE FROM hosts;" +
+						"DELETE FROM services;" +
+						"DELETE FROM events;" +
+						"DELETE FROM notes;" +
+						"DELETE FROM creds;" +
+						"DELETE FROM loots;" +
+						"DELETE FROM vulns;" +
+						"DELETE FROM sessions;" +
+						"DELETE FROM clients;" +
+						"DELETE FROM metasploit_credential_origin_manuals;" +
+						"DELETE FROM metasploit_credential_origin_imports;" +
+						"DELETE FROM metasploit_credential_origin_sessions;" +
+						"DELETE FROM metasploit_credential_origin_services;" +
+						"DELETE FROM metasploit_credential_origin_cracked_passwords;" +
+						"DELETE FROM metasploit_credential_publics;" +
+						"DELETE FROM metasploit_credential_privates;" +
+						"DELETE FROM metasploit_credential_cores;" +
+						"DELETE FROM metasploit_credential_realms;" +
+						"COMMIT");
+				}
+				else {
+					executeUpdate(
+						"BEGIN;" +
+						"DELETE FROM hosts;" +
+						"DELETE FROM services;" +
+						"DELETE FROM events;" +
+						"DELETE FROM notes;" +
+						"DELETE FROM creds;" +
+						"DELETE FROM loots;" +
+						"DELETE FROM vulns;" +
+						"DELETE FROM sessions;" +
+						"DELETE FROM clients;" +
+						"COMMIT");
+				}
 				return new HashMap();
 			}
 			else if (methodName.equals("db.filter")) {
