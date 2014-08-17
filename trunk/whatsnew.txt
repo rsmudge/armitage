@@ -8,6 +8,7 @@ In Progress
   model in database.
 - [meterpreter] -> Access -> Dump Hashes -> wdigest uses sso post 
   module now. New creds model makes this better.
+- Added Import option to View -> Credentials dialog.
 
 15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------

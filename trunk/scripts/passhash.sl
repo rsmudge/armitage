@@ -148,7 +148,7 @@ sub show_hashes {
 }
 
 sub createCredentialsTab {
-	local('$dialog $table $model $panel $export $crack $refresh $copy');
+	local('$dialog $table $model $panel $export $crack $refresh $import $copy');
 	($dialog, $table, $model) = show_hashes("", 320, 1);
 	[$dialog removeAll];
 
@@ -233,7 +233,61 @@ sub createCredentialsTab {
 		})];
 	}];
 
-	[$panel add: center($refresh, $copy, $crack, $export), [BorderLayout SOUTH]];
+	$import = [new JButton: "Import"];
+	[$import addActionListener: lambda({
+		# I don't want to manage two data models for this dialog. We'll go with the
+		# newest stuff.
+		if ($MSFVERSION < 41000) {
+			showError("This feature requires Metasploit 4.10 or later");
+			return;
+		}
+
+		local('$dialog $label $text $finish $button');
+		$dialog = dialog("Add Credentials", 320, 240);
+
+		$label = [new JLabel: "Enter one username and password/line:"];
+		$text = [new JTextArea];
+
+		$finish = [new JPanel];
+		[$finish setLayout: [new FlowLayout: [FlowLayout CENTER]]];
+	
+		$button = [new JButton: "Add"];
+		[$finish add: $button];
+
+		[$button addActionListener: lambda({
+			local('$entry $user $pass $x $queue $all');
+			$queue = [new armitage.ConsoleQueue: $client];
+
+			# get our creds...
+			$all = split("\n", [[$text getText] trim]);
+
+			$x = 0;
+			foreach $entry ($all) {
+				($user, $pass) = split('\s+', ["$entry" trim]);
+                                $pass = fixPass($pass);
+				[$queue addCommand: $null, "creds add-password $user $pass $+ \nversion"];
+				$x += 1;
+                        }
+
+			[$queue addCommand: "x", "creds -h"];
+			[$queue addListener: lambda({
+				[$queue stop];
+				elog("added $x credential" . iff($x == 1, "", "s") . " to the database");
+				showError("Added $x entr" . iff($x == 1, "y", "ies"));
+				refreshCredsTable($model, $null);
+			}, \$queue, \$model, \$x)];
+			[$queue start];
+			[$dialog setVisible: 0];
+		}, \$text, \$dialog, \$model)];
+	
+		[$dialog add: $label, [BorderLayout NORTH]];
+		[$dialog add: [new JScrollPane: $text], [BorderLayout CENTER]];
+		[$dialog add: $finish, [BorderLayout SOUTH]];
+
+		[$dialog setVisible: 1];
+	}, \$model, \$dialog)];
+
+	[$panel add: center($refresh, $copy, $crack, $import, $export), [BorderLayout SOUTH]];
 	[$frame addTab: "Credentials", $panel, $null];
 }
 
