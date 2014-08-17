@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+17 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added hard-coded database.yml path as fallback for Kali users
 - Updated internal db.creds/db.creds2 calls to pull from new creds
