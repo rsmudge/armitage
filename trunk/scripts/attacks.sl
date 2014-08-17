@@ -760,6 +760,9 @@ sub addFileListener {
 	$actions["REXE"]   = $actions["*FILE*"];
 	$actions["PATH"]   = $actions["*FILE*"];
 
+	# can't set this as a file. Needs B64 data.
+	$actions["SSH_KEYFILE_B64"] = $null;
+
 	# set up an action to choose a session
 	$actions["SESSION"] = lambda(&chooseSession);
 
