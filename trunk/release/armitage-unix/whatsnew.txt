@@ -1,6 +1,15 @@
 Armitage Changelog
 ==================
 
+18 Aug 14 (tested against msf git revision: 55ef5dd484)
+---------
+- Added hard-coded database.yml path as fallback for Kali users
+- Updated internal db.creds/db.creds2 calls to pull from new creds
+  model in database.
+- [meterpreter] -> Access -> Dump Hashes -> wdigest uses sso post 
+  module now. New creds model makes this better.
+- Added Import option to View -> Credentials dialog.
+
 15 Jul 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Command Shell experience on Windows Meterpreter is much better now
