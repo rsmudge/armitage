@@ -309,6 +309,8 @@ sub init_menus {
 	}];
 	[$frame bindKey: "Ctrl+N", { thread(&createConsoleTab); }];
 	[$frame bindKey: "Ctrl+W", { [$frame openActiveTab]; }];
+	[$frame bindKey: "Ctrl+B", { [$frame dockActiveTab]; }];
+	[$frame bindKey: "Ctrl+E", { [$frame noDock]; }];
 	[$frame bindKey: "Ctrl+D", { [$frame closeActiveTab]; }];
 	[$frame bindKey: "Ctrl+O", { thread(&createPreferencesTab); }];
 	[$frame bindKey: "Ctrl+T", { [$frame snapActiveTab]; }];

@@ -22,7 +22,10 @@ public class ArmitageApplication extends JComponent {
 	protected KeyBindings keys = new KeyBindings();
 	protected MenuBuilder builder = null;
 	protected String      title = "";
+
 	protected MultiFrame  window = null;
+	protected JSplitPane  split2 = null;
+	protected ApplicationTab docked = null;
 
 	public KeyBindings getBindings() {
 		return keys;
@@ -181,6 +184,28 @@ public class ArmitageApplication extends JComponent {
 		}
 	}
 
+
+	public void noDock() {
+		if (docked != null) {
+			if (docked.removeListener != null) {
+				docked.removeListener.actionPerformed(new ActionEvent(docked.component, 0, "close"));
+			}
+
+			split2.setBottomComponent(null);
+			split2.setDividerSize(0);
+			split2.setResizeWeight(1.0);
+			validate();
+			docked = null;
+		}
+	}
+
+	public void dockActiveTab() {
+		JComponent tab = (JComponent)tabs.getSelectedComponent();
+		if (tab != null) {
+			dockAppTab(tab);
+		}
+	}
+
 	public void snapActiveTab() {
 		JComponent tab = (JComponent)tabs.getSelectedComponent();
 		Iterator i = apptabs.iterator();
@@ -280,6 +305,36 @@ public class ArmitageApplication extends JComponent {
 		}
 	}
 
+	public void dockAppTab(Component tab) {
+		Iterator i = apptabs.iterator();
+		while (i.hasNext()) {
+			final ApplicationTab t = (ApplicationTab)i.next();
+			if (t.component == tab) {
+				tabs.remove(t.component);
+				i.remove();
+
+				Dimension size = new Dimension(100, 150);
+
+				/* fire old docked items listener (necessary for some cleanup) */
+				if (docked != null) {
+					size = docked.component.getSize();
+					if (docked.removeListener != null)
+						docked.removeListener.actionPerformed(new ActionEvent(docked.component, 0, "close"));
+				}
+
+				/* pop goes the tab! */
+				split2.setBottomComponent(t.component);
+				split2.setDividerSize(10);
+				split2.setResizeWeight(1.0);
+				t.component.setPreferredSize(size);
+				t.component.setSize(size);
+				validate();
+
+				docked = t;
+			}
+		}
+	}
+
 	public void snapAppTab(String title, Component tab) {
 		/* capture the current tab in an image */
 		BufferedImage image = new BufferedImage(tab.getWidth(), tab.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -363,6 +418,13 @@ public class ArmitageApplication extends JComponent {
 						}
 					});
 
+					JMenuItem dd = new JMenuItem("Send to bottom", 'b');
+					dd.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							dockAppTab(component);
+						}
+					});
+
 					JMenuItem d = new JMenuItem("Rename Tab", 'R');
 					d.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent ev) {
@@ -374,6 +436,7 @@ public class ArmitageApplication extends JComponent {
 
 					menu.add(a);
 					menu.add(c);
+					menu.add(dd);
 					menu.add(d);
 					menu.addSeparator();
 					menu.add(b);
@@ -449,7 +512,11 @@ public class ArmitageApplication extends JComponent {
 		/* add our menubar */
 		add(menus, BorderLayout.NORTH);
 
-		split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panel, tabs);
+		split2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tabs, null);
+		split2.setDividerSize(0);
+		split2.setOneTouchExpandable(true);
+
+		split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panel, split2);
 		split.setOneTouchExpandable(true);
 
 		/* add our tabbed pane */

@@ -4,6 +4,9 @@ Armitage Changelog
 In Progress
 ---------
 - Added helper for SCRIPT option.
+- Right-click a tab's X button and use "Send to bottom" or Ctrl+B to 
+  dock a tab to the bottom of the Armitage window. Use Ctrl+E to get
+  get rid of the docked tab..
 
 18 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
