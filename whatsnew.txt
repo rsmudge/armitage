@@ -1,6 +1,10 @@
 Armitage Changelog
 ==================
 
+In Progress
+---------
+- Added helper for SCRIPT option.
+
 18 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added hard-coded database.yml path as fallback for Kali users

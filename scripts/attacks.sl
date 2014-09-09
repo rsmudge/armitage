@@ -759,6 +759,7 @@ sub addFileListener {
 	$actions["WORDLIST"]   = $actions["*FILE*"];
 	$actions["REXE"]   = $actions["*FILE*"];
 	$actions["PATH"]   = $actions["*FILE*"];
+	$actions["SCRIPT"] = $actions["*FILE*"];
 
 	# can't set this as a file. Needs B64 data.
 	$actions["SSH_KEYFILE_B64"] = $null;
