@@ -34,6 +34,10 @@ public class ArmitageMain implements RuntimeWarningWatcher, Loadable, Function {
 		System.out.println("\u001B[01;34m[*]\u001B[0m " + message);
 	}
 
+	public static final void print_warn(String message) {
+		System.out.println("\u001B[01;33m[!]\u001B[0m " + message);
+	}
+
 	public Scalar evaluate(String name, ScriptInstance script, Stack args) {
 		if (name.equals("&_args")) {
 			ScalarArray a = BridgeUtilities.getArray(args);
