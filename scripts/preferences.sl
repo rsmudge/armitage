@@ -55,8 +55,15 @@ sub parseYaml {
 		if ($object !is $null) {
 			($user, $pass, $database, $driver, $host, $port) = values($object, @("username", "password", "database", "adapter", "host", "port"));
 
+			if ($pass eq "") {
+				print_error("You need to set a password for your database. I can't connect to it without one.");
+			}
+
 			[$1 setProperty: "connect.db_connect.string", "$user $+ :\" $+ $pass $+ \"@ $+ $host $+ : $+ $port $+ / $+ $database"];
 			[$1 setProperty: "connect.db_driver.string", $driver];
+		}
+		else {
+			print_error("Could not find ' $+ $setting $+ ' in $file");
 		}
 	}
 	catch $exception {
