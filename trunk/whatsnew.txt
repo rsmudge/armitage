@@ -9,6 +9,10 @@ In Progress
   get rid of the docked tab..
 - Added more YAML warnings to save heartache for custom installs
 
+Cortana Updates (for scripters)
+--------
+- &credential_add, &credential_delete use Metasploit 4.10 conventions
+
 18 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added hard-coded database.yml path as fallback for Kali users
