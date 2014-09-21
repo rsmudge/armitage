@@ -32,6 +32,11 @@ public abstract class GenericTabCompletion {
 
 	public abstract Collection getOptions(String text);
 
+	/* give tab completion routine a chance to change the text */
+	public String transformText(String text) {
+		return text;
+	}
+
 	private void tabCompleteFirst(String text) {
 		try {
 			LinkedHashSet responses = new LinkedHashSet();

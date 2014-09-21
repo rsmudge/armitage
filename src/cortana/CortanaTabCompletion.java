@@ -13,6 +13,10 @@ import javax.swing.*;
 public class CortanaTabCompletion extends GenericTabCompletion {
 	protected Cortana engine;
 
+	public String transformText(String text) {
+		return text.replace(" ~", " " + System.getProperty("user.home"));
+	}
+
 	public CortanaTabCompletion(Console window, Cortana engine) {
 		super(window);
 		this.engine = engine;
