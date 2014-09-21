@@ -199,8 +199,6 @@ public class Cortana implements Loadable, RuntimeWarningWatcher, Function {
 	}
 
 	public void filterList(List l, String filter) {
-		filter = filter.replace(" ~", " " + System.getProperty("user.home"));
-
 		Iterator i = l.iterator();
 		while (i.hasNext()) {
 			String cmd = i.next() + "";
@@ -249,8 +247,6 @@ public class Cortana implements Loadable, RuntimeWarningWatcher, Function {
 			return res;
 		}
 		else if ("load".equals(data[0]) && filter.length() > 5) {
-			filter = filter.replace("~", System.getProperty("user.home"));
-
 			/* construct list of potential reload commands */
 			String file = filter.substring(5);
 			File   temp = new File(file);
