@@ -390,7 +390,7 @@ sub connectToDatabase {
 
 	($dbuser, $dbpass, $dburl) = matches($dbstring, '(.*?):.(.*?).@(.*)');
 	$database = [new DatabaseImpl];
-	[$database connect: "jdbc:postgresql:// $+ $dburl", $dbuser, $dbpass];
+	[$database connect: "jdbc:postgresql:// $+ $dburl", $dbuser, $dbpass, int($MSFVERSION)];
 
 	# connect to the database from metasploit if need be.
 	cmd_safe("db_status", lambda({
