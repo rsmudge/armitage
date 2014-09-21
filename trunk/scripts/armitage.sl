@@ -324,7 +324,7 @@ sub postSetup {
 		[$progress setNote: "Connected: Starting script engine"];
 		[$progress setProgress: 95];
 
-		$cortana = [new cortana.Cortana: $client, $mclient, $__events__, $__filters__, $DESCRIBE];
+		$cortana = [new cortana.Cortana: $client, $mclient, $__events__, $__filters__, $DESCRIBE, $MSFVERSION];
 		[$cortana setupCallbackIO];
 
 		[$progress close];

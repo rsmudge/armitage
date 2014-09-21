@@ -252,23 +252,33 @@ sub _fix_pass {
 
 # credential_add("host", "port", "user, "pass", "type")
 sub credential_add {
-	# new creds command doesn't let us specify host/port, so we're going to ignore
-	# those parameters for now [but still accept them for backwards compat]
-	if ($5 eq "password") {
-		cmd_safe("creds add-password $3 " . _fix_pass($4) . "\nversion");
-	}
-	else if ($5 eq "smb_hash") {
-		cmd_safe("creds add-ntlm $3 " . _fix_pass($4) . "\nversion");
-	}
+	if ($__msfversion__ >= 41000) {
+		# new creds command doesn't let us specify host/port, so we're going to ignore
+		# those parameters for now [but still accept them for backwards compat]
+		if ($5 eq "password") {
+			cmd_safe("creds add-password $3 " . _fix_pass($4) . "\nversion");
+		}
+		else if ($5 eq "smb_hash") {
+			cmd_safe("creds add-ntlm $3 " . _fix_pass($4) . "\nversion");
+		}
 
-	# we pad with the version command because creds command doesn't produce output
-	# so our safe command executor thing does not know when it's done.
+		# we pad with the version command because creds command doesn't produce output
+		# so our safe command executor thing does not know when it's done.
+	}
+	else {
+		cmd_safe("creds -a $1 -p $2 -t $5 -u $3 -P " . _fix_pass($4));
+	}
 }
 
 # credential_delete("host", port, "user", "pass");
 sub credential_delete {
-	# same as above, be compat with MSF 4.10's new creds stuff...
-	cmd_safe("creds -d $1 -u $3 -P " . _fix_pass($4));
+	if ($__msfversion__ >= 41000) {
+		# same as above, be compat with MSF 4.10's new creds stuff...
+		cmd_safe("creds -d $1 -u $3 -P " . _fix_pass($4));
+	}
+	else {
+		cmd_safe("creds -a $1 -p $2 -u $3 -P " . _fix_pass($4) . " -d");
+	}
 }
 
 sub credential_list {
