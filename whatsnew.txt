@@ -10,6 +10,7 @@ In Progress
 - Added more YAML warnings to save heartache for custom installs
 - Database layer now uses core.version results to decide which MSF 
   data model to use. 
+- File tab completion (Cortana console) better handles ~
 
 Cortana Updates (for scripters)
 --------

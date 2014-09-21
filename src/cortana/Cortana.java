@@ -199,6 +199,8 @@ public class Cortana implements Loadable, RuntimeWarningWatcher, Function {
 	}
 
 	public void filterList(List l, String filter) {
+		filter = filter.replace(" ~", " " + System.getProperty("user.home"));
+
 		Iterator i = l.iterator();
 		while (i.hasNext()) {
 			String cmd = i.next() + "";
