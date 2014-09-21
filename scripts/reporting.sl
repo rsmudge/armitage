@@ -360,5 +360,5 @@ sub initReporting {
 		global('$db');
 		[$client addHook: "armitage.export_data", &api_export_data];
 		[$client addHook: "armitage.prep_export", &api_prep_export];
-	}, \$client, $mclient => $client, \$preferences, \$yaml_file, \$BASE_DIRECTORY, \$yaml_entry));
+	}, \$client, $mclient => $client, \$preferences, \$yaml_file, \$BASE_DIRECTORY, \$yaml_entry, \$MSFVERSION));
 }
