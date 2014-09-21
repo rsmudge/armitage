@@ -60,7 +60,7 @@ sub setupHandlers {
 
 sub main {
 	global('$client $mclient');
-	local('%r $exception $lhost $temp $c');
+	local('%r $exception $lhost $temp $c $version');
 
 	setField(^msf.MeterpreterSession, DEFAULT_WAIT => 20000L);
 
@@ -102,8 +102,17 @@ sub main {
 	}
 	call($client, "console.release", $c);
 
+	#
+	local('$rep $major $minor $update');
+	$rep = call($client, "core.version");
+
+        if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
+                ($major, $minor, $update) = matched();
+                $version = ($major * 10000) + ($minor * 100) + $update;
+	}
+
 	# pass some objects back yo.
-	[$loader passObjects: $client, $mclient, $lhost];
+	[$loader passObjects: $client, $mclient, $lhost, $version];
 
 	# don't make previous messages available...
 	call($mclient, "armitage.skip");

@@ -15,7 +15,7 @@ public class Loader implements Loadable {
 	protected ScriptLoader    loader;
 	protected Hashtable       shared  = new Hashtable();
 	protected ScriptVariables vars    = new ScriptVariables();
-	protected Object[]        passMe  = new Object[3];
+	protected Object[]        passMe  = new Object[4];
 	protected List		  scripts = new LinkedList();
 
 	public void unsetDebugLevel(int flag) {
@@ -51,11 +51,12 @@ public class Loader implements Loadable {
 		}
 	}
 
-	public void passObjects(Object o, Object p, Object q) {
+	public void passObjects(Object o, Object p, Object q, Object r) {
 		synchronized (this) {
 			passMe[0] = o;
 			passMe[1] = p;
 			passMe[2] = q;
+			passMe[3] = r;
 		}
 	}
 
