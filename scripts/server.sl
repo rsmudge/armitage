@@ -72,7 +72,7 @@ sub client {
 			[[$handle getOutputStream] flush];
 			return;
 		}
-		else if ($ver < 130818) {
+		else if ($ver < 140921) {
 			print_error("Rejected $eid (old software -- srsly, update people!)");
 			writeObject($handle, result(%(error => 1, message => "Your client is outdated.\nPlease use the latest version of Armitage.")));
 			[[$handle getOutputStream] flush];
@@ -404,7 +404,7 @@ sub client {
 }
 
 sub main {
-	global('$client $mclient');
+	global('$client $mclient $MSFVERSION');
 	local('$server %sessions $sess_lock $read_lock $lock_lock %locks %readq $id $error $auth %cache $cach_lock $client_cache $handle $console $events');
 
 	$auth = unpack("H*", digest(rand() . ticks(), "MD5"))[0];
@@ -527,6 +527,21 @@ sub main {
 	# get base directory
 	#
 	setupBaseDirectory();
+
+	#
+	# check metasploit version
+	#
+	local('$rep $major $minor $update');
+	$rep = call($mclient, "core.version");
+
+	if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
+		($major, $minor, $update) = matched();
+		$MSFVERSION = ($major * 10000) + ($minor * 100) + $update;
+		if ($MSFVERSION < 40900) {
+			print_error("Metasploit $major $+ . $+ $minor is too old. Get 4.9 or later.");
+			[System exit: 0];
+		}
+	}
 
 	#
 	# setup the database

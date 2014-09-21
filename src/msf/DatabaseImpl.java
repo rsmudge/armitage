@@ -284,17 +284,11 @@ public class DatabaseImpl implements RpcConnection  {
 		return newdatamodel;
 	}
 
-	public void connect(String dbstring, String user, String password) throws Exception {
+	public void connect(String dbstring, String user, String password, int version) throws Exception {
 		db = DriverManager.getConnection(dbstring, user, password);
 
 		/* check which kind of data model we've got */
-		try {
-			executeQuery("SELECT * FROM metasploit_credential_privates");
-			newdatamodel = true;
-		}
-		catch (Exception ex) {
-			newdatamodel = false;
-		}
+		newdatamodel  = version >= 41000;
 
 		setWorkspace("default");
 		loadLabels();
