@@ -8,6 +8,8 @@ In Progress
   dock a tab to the bottom of the Armitage window. Use Ctrl+E to get
   get rid of the docked tab..
 - Added more YAML warnings to save heartache for custom installs
+- Database layer now uses core.version results to decide which MSF 
+  data model to use. 
 
 Cortana Updates (for scripters)
 --------
