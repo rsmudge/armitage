@@ -193,7 +193,7 @@ sub _connectToMetasploit {
 				local('$x $cc');
 				for ($x = 0; $x < 6; $x++) {
 					$cc = c_client($1, $2);
-					call($cc, "armitage.validate", $3, $4, $null, "armitage", 130822);
+					call($cc, "armitage.validate", $3, $4, $null, "armitage", 140921);
 					push(@POOL, $cc);
 				}
 			}
@@ -207,6 +207,21 @@ sub _connectToMetasploit {
 		}
 	}
 
+	# first things first, get version information...
+	local('$rep $major $minor $update');
+	$rep = call($mclient, "core.version");
+
+	if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
+		($major, $minor, $update) = matched();
+		$MSFVERSION = ($major * 10000) + ($minor * 100) + $update;
+		if ($MSFVERSION < 40900) {
+			[JOptionPane showMessageDialog: $null, "Metasploit $major $+ . $+ $minor is too old. Get 4.9 or later."];
+			if ($msfrpc_handle) { closef($msfrpc_handle); }
+			[System exit: 0];
+		}
+	}
+
+	# now go and do everything else...
 	let(&postSetup, \$progress);
 
 	[$progress setNote: "Connected: Getting base directory"];
@@ -233,20 +248,6 @@ sub _connectToMetasploit {
 		}
 		catch $exception {
 			[JOptionPane showMessageDialog: $null, "Could not connect to database.\n\nKali Linux users, try:\n\nservice postgresql start\nservice metasploit start\nservice metasploit stop\n\n" . [$exception getMessage]];
-			if ($msfrpc_handle) { closef($msfrpc_handle); }
-			[System exit: 0];
-		}
-	}
-
-	# check version information
-	local('$rep $major $minor $update');
-	$rep = call($mclient, "core.version");
-
-	if ($rep['version'] ismatch '(\d+)\.(\d+)\.(.*?)') {
-		($major, $minor, $update) = matched();
-		$MSFVERSION = ($major * 10000) + ($minor * 100) + $update;
-		if ($MSFVERSION < 40900) {
-			[JOptionPane showMessageDialog: $null, "Metasploit $major $+ . $+ $minor is too old. Get 4.9 or later."];
 			if ($msfrpc_handle) { closef($msfrpc_handle); }
 			[System exit: 0];
 		}
