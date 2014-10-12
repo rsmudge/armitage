@@ -15,6 +15,7 @@ In Progress
 Cortana Updates (for scripters)
 --------
 - &credential_add, &credential_delete use Metasploit 4.10 conventions
+- name field for hosts is now available.
 
 18 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
