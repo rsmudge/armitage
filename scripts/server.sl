@@ -438,6 +438,11 @@ sub main {
 		[System exit: 0];
 	}
 
+	if ($host !ismatch "\\d+.\\d+.\\d+.\\d+") {
+		print_error("Please specify $host as an IPv4 address. K? Thx.");
+		[System exit: 0];
+	}
+
 	#
 	# Connect to Metasploit's RPC Daemon
 	#
