@@ -11,6 +11,7 @@ In Progress
 - Database layer now uses core.version results to decide which MSF 
   data model to use. 
 - File tab completion (Cortana console) better handles ~
+- team server startup verifies default host is an IPv4 address.
 
 Cortana Updates (for scripters)
 --------
