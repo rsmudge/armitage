@@ -12,6 +12,9 @@ In Progress
   data model to use. 
 - File tab completion (Cortana console) better handles ~
 - team server startup verifies default host is an IPv4 address.
+- Prompt for default address is now more aggressive and continues to
+  ask until an address is put in. If a user hit cancel on this dialog,
+  threads to poll the database never get started. Bad day, for sure.
 
 Cortana Updates (for scripters)
 --------

@@ -294,6 +294,9 @@ sub getBindAddress {
 							setupHandlers();
 						});
 					}
+					else {
+						[$this];
+					}
 				})];
 			}
 			else {
