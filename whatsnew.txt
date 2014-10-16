@@ -15,6 +15,8 @@ In Progress
 - Prompt for default address is now more aggressive and continues to
   ask until an address is put in. If a user hit cancel on this dialog,
   threads to poll the database never get started. Bad day, for sure.
+- Armitage now sends a keep-alive every 1-2mins over an idle team 
+  server connection to combat disconnection by a NAT device
 
 Cortana Updates (for scripters)
 --------
