@@ -3,7 +3,7 @@ package msf;
 import java.io.*;
 import java.util.*;
 
-public class RpcAsync implements RpcConnection, Async {
+public class RpcAsync implements RpcConnection, Async, Runnable {
 	protected RpcQueue queue;
 	protected RpcConnection connection;
 	protected boolean connected = true;
@@ -20,6 +20,7 @@ public class RpcAsync implements RpcConnection, Async {
 
 	public RpcAsync(RpcConnection connection) {
 		this.connection = connection;
+		new Thread(this).start();
 	}
 
 	public void disconnect() {
@@ -47,6 +48,21 @@ public class RpcAsync implements RpcConnection, Async {
 	}
 
 	protected Map cache = new HashMap();
+
+	/* issue a keep-alive every 1-2 minutes, if we're idle */
+	public void run() {
+		try {
+			while (isConnected()) {
+				Thread.sleep((60 * 1000) + (int)(Math.random() * 60 * 1000));
+				if (!isResponsive()) {
+					execute_async("core.version", new Object[0]);
+				}
+			}
+		}
+		catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
 
 	public Object execute(String methodName, Object[] params) throws IOException {
 		if (methodName.equals("module.info") || methodName.equals("module.options") || methodName.equals("module.compatible_payloads")) {
