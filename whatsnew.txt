@@ -17,6 +17,8 @@ In Progress
   threads to poll the database never get started. Bad day, for sure.
 - Armitage now sends a keep-alive every 1-2mins over an idle team 
   server connection to combat disconnection by a NAT device
+- Armitage client now shows Disconnect message when it loses any of
+  its connections to the team server.
 
 Cortana Updates (for scripters)
 --------

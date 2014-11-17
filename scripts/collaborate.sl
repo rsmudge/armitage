@@ -68,12 +68,18 @@ sub c_client {
 	return wait(fork({
 		local('$client');
 		$client = newInstance(^RpcConnection, lambda({
-			writeObject($handle, @_);
-			[[$handle getOutputStream] flush];
-			return readObject($handle);
-		}, \$handle));
+			local('$ex');
+			try {
+				writeObject($handle, @_);
+				[[$handle getOutputStream] flush];
+				return readObject($handle);
+			}
+			catch $ex {
+				[$DNOTIFIER fireDisconnectEvent: "$ex"];
+			}
+		}, \$handle, \$DNOTIFIER));
 		return [new RpcAsync: $client];
-	}, \$handle));
+	}, \$handle, \$DNOTIFIER));
 }
 
 sub userFingerprint {

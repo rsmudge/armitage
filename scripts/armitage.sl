@@ -15,7 +15,7 @@ import graph.*;
 
 import java.awt.image.*;
 
-global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL $NICK $MSFVERSION');
+global('$frame $tabs $menubar $msfrpc_handle $REMOTE $cortana $MY_ADDRESS $DESCRIBE @CLOSEME @POOL $NICK $MSFVERSION $DNOTIFIER');
 
 sub describeHost {
 	local('$desc');
@@ -139,6 +139,16 @@ sub _connectToMetasploit {
 		}
 	}
 	savePreferences();
+
+	# intermediate object to track disconnect notifications
+	$DNOTIFIER = [new DisconnectNotifier];
+	[$DNOTIFIER addDisconnectListener: {
+		# print a helpful(?) message
+		print_error("Lost a connection ( $+ $1 $+ ): disconnecting all!");
+
+		# closing all connections should trigger a cascading effect of sorts, to kick in normal disconnect behavior
+		map({ closef($1); }, @CLOSEME);
+	}];
 
 	# setup progress monitor
 	local('$progress');
