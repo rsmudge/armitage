@@ -1,6 +1,30 @@
 Armitage Changelog
 ==================
 
+20 Nov 14 (tested against msf git revision: 55ef5dd484)
+---------
+- Added helper for SCRIPT option.
+- Right-click a tab's X button and use "Send to bottom" or Ctrl+B to 
+  dock a tab to the bottom of the Armitage window. Use Ctrl+E to get
+  get rid of the docked tab..
+- Added more YAML warnings to save heartache for custom installs
+- Database layer now uses core.version results to decide which MSF 
+  data model to use. 
+- File tab completion (Cortana console) better handles ~
+- team server startup verifies default host is an IPv4 address.
+- Prompt for default address is now more aggressive and continues to
+  ask until an address is put in. If a user hit cancel on this dialog,
+  threads to poll the database never get started. Bad day, for sure.
+- Armitage now sends a keep-alive every 1-2mins over an idle team 
+  server connection to combat disconnection by a NAT device
+- Armitage client now shows Disconnect message when it loses any of
+  its connections to the team server.
+
+Cortana Updates (for scripters)
+--------
+- &credential_add, &credential_delete use Metasploit 4.10 conventions
+- name field for hosts is now available.
+
 18 Aug 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added hard-coded database.yml path as fallback for Kali users
