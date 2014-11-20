@@ -1,7 +1,7 @@
 Armitage Changelog
 ==================
 
-In Progress
+20 Nov 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added helper for SCRIPT option.
 - Right-click a tab's X button and use "Send to bottom" or Ctrl+B to 
