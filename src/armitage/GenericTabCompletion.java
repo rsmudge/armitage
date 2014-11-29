@@ -39,6 +39,8 @@ public abstract class GenericTabCompletion {
 
 	private void tabCompleteFirst(String text) {
 		try {
+			text = transformText(text);
+
 			LinkedHashSet responses = new LinkedHashSet();
 			Collection options = getOptions(text);
 
