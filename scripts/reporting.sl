@@ -305,7 +305,7 @@ sub _generateArtifacts {
 	[$progress setProgress: 65];
 
 	# 4. hosts
-	dumpData("hosts", @("address", "mac", "state", "address", "address6", "name", "purpose", "info", "os_name", "os_flavor", "os_sp", "os_lang", "os_match", "created_at", "updated_at"), %data['hosts']);
+	dumpData("hosts", @("address", "mac", "state", "address6", "name", "purpose", "info", "os_name", "os_flavor", "os_sp", "os_lang", "os_match", "created_at", "updated_at"), %data['hosts']);
 
 	[$progress setProgress: 80];
 
