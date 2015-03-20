@@ -23,7 +23,7 @@ sub dumpTSVData {
 			$value = strrep(["$value" trim], "\t", "   ", "\n", "\\n");
 		}
 
-		println($handle, join("\t", values($entry, $2))); 
+		println($handle, join("\t", values($entry, $2)));
 	}
 	closef($handle);
 }
@@ -42,7 +42,7 @@ sub dumpXMLData {
 			$value = $entry[$key];
 			if ($key eq "info") {
 				println($handle, "\t\t< $+ $key $+ ><![CDATA[ $+ $value $+ ]]></ $+ $key $+ >");
-			}	
+			}
 			else {
 				println($handle, "\t\t< $+ $key $+ > $+ $value $+ </ $+ $key $+ >");
 			}
@@ -53,13 +53,33 @@ sub dumpXMLData {
 	closef($handle);
 }
 
+sub dumpCSVData {
+	local('$handle $entry $key $value');
+	if($3 is $null) {
+		print_error("No data for $1");
+		return;
+	}
+	$handle = openf("> $+ $1 $+ .csv");
+	println($handle, join(",", $2));
+	foreach $entry ($3) {
+		foreach $key => $value ($entry) {
+			$value = strrep(["$value" trim], ",", " ", "\n", "\\n");
+		}
+		println($handle, join(',', values($entry, $2)));
+	}
+	closef($handle);
+}
+
 sub dumpData {
 	dumpXMLData($1, $2, $3);
 	dumpTSVData($1, $2, $3);
+	dumpCSVData($1, $2, $3);
 	logFile("$1 $+ .xml", "artifacts", "xml");
 	logFile("$1 $+ .tsv", "artifacts", "tsv");
+	logFile("$1 $+ .csv", "artifacts", "csv");
 	deleteFile("$1 $+ .xml");
 	deleteFile("$1 $+ .tsv");
+	deleteFile("$1 $+ .csv");
 }
 
 sub fixHosts {
@@ -108,7 +128,7 @@ sub fixVulns {
 	%refs  = ohash();
 	setMissPolicy(%refs, { return @(); });
 
-	# let's group everything by a unique vulnerability id... we're going to collapse the 
+	# let's group everything by a unique vulnerability id... we're going to collapse the
 	# the vulns into one row with comma separated refs.
 	foreach $vuln ($1) {
 		$id = $vuln['vid'];
@@ -118,10 +138,10 @@ sub fixVulns {
 
 	# fix the references...
 	foreach $id => $vuln (%vulns) {
-		$vuln['refs'] = join(", ", %refs[$id]); 
+		$vuln['refs'] = join(", ", %refs[$id]);
 
 		if ($vuln['info'] ismatch "Exploited by (.*?)/(.*?) to create Session \\d+") {
-			($type, $module) = matched();			
+			($type, $module) = matched();
 
 			$info = call($mclient, "module.info", $type, $module);
 
@@ -147,7 +167,7 @@ sub fixVulns {
 		}
 	}
 
-	return sort({ 
+	return sort({
 		return [graph.Route ipToLong: $1['host']] <=> [graph.Route ipToLong: $2['host']];
 	}, values(%vulns));
 }
@@ -155,9 +175,9 @@ sub fixVulns {
 #
 # query all of the data that we want...
 # queryData(%workspace)
-# 
+#
 sub queryData {
-	local('%r $progress');	
+	local('%r $progress');
 
 	# 1. extract the known vulnerability information
 	%r['vulns'] = call($mclient, "db.vulns")["vulns"];
@@ -205,7 +225,7 @@ sub queryData {
 		($h, $s) = values($temp, @('hosts', 'services'));
 		addAll(@hosts, $h);
 		addAll(@services, $s);
-	
+
 		if ($progress) {
 			[$progress setProgress: 35 + $x];
 		}
@@ -240,9 +260,9 @@ sub generateArtifacts {
 				$filter = %();
 			}
 			else {
-				$filter = search(workspaces(), 
-						lambda({ 
-							return iff($1['name'] eq $item, $1); 
+				$filter = search(workspaces(),
+						lambda({
+							return iff($1['name'] eq $item, $1);
 						}, \$item));
 			}
 
@@ -263,7 +283,7 @@ sub generateArtifacts {
 sub _generateArtifacts {
 	local('%data $progress');
 
-	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "Querying Database...", 0, 100]; 
+	$progress = [new javax.swing.ProgressMonitor: $null, "Exporting Data", "Querying Database...", 0, 100];
 	%data = queryData($1, \$progress);
 
 	[$progress setProgress: 50];
@@ -276,7 +296,7 @@ sub _generateArtifacts {
 
 	# 2. credentials
 	dumpData("credentials", @("host", "port", "proto", "sname", "created_at", "active", "ptype", "user", "pass"), %data['creds']);
-		
+
 	[$progress setProgress: 60];
 
 	# 3. loot
@@ -350,7 +370,7 @@ sub api_export_data {
 		[$db nextServicesIndex];
 		$temp = call($db, "db.services")['services'];
 	}
-	
+
 	[$db nextHostsIndex];
 	return %(hosts => @hosts, services => @services);
 }
