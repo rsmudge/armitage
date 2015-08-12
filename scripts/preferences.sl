@@ -34,9 +34,12 @@ sub iHateYaml {
 		else if ($text ismatch '&(.*)') {
 			print_error("Can not parse $1 $+ : $+ $line - $text\n\tThis YAML parser does not handle aliases. Please simplify your file");
 		}
-		else if ($text ismatch '([\w\\.]+): [\'"]{0,1}([\w\\.]+)[\'"]{0,1}') {
+		else if ($text ismatch '([\w\\.]+): [\'"]{0,1}(\p{Graph}+?)[\'"]{0,1}') {
 			($key, $value) = matched();
 			%result[$current][$key] = $value;
+		}
+		else if ($text ismatch '.*?: .*') {
+			print_error("Did not parse $1 $+ : $+ $line - $text $+ \n\tMy YAML parser is a piece of garbage (like YAML). Please simplify your file.");
 		}
 		$line++;
 	}
