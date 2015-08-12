@@ -1,6 +1,13 @@
 Armitage Changelog
 ==================
 
+13 Aug 15 (tested against msf git revision: 55ef5dd484)
+---------
+- Updated MsgPack library and code that uses it.
+- Team server now authenticates client before exchanging serialized objects
+- Fixed a repaint bug when removing last server button.
+- Sped up rendering of graph view on Windows and MacOS X.
+
 20 Nov 14 (tested against msf git revision: 55ef5dd484)
 ---------
 - Added helper for SCRIPT option.
