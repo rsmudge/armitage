@@ -5,7 +5,8 @@ import java.net.*;
 import java.util.*;
 import javax.net.ssl.*;
 import org.msgpack.*;
-import org.msgpack.object.*;
+import org.msgpack.type.*;
+import org.msgpack.packer.*;
 
 /**
  * Taken from BSD licensed msfgui by scriptjunkie.
@@ -17,6 +18,7 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 	private URL u;
 	private URLConnection huc; // new for each call
 	protected int timeout = 0; /* scriptjunkie likes timeouts, I don't. :) */
+	protected MessagePack packer = new MessagePack();
 
 	/**
 	 * Creates a new URL to use as the basis of a connection.
@@ -31,10 +33,10 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 							return null;
 						}
 						public void checkClientTrusted(
-							java.security.cert.X509Certificate[] certs, String authType) {
+							java.security.cert.X509Certificate[] certs, String authValue) {
 						}
 						public void checkServerTrusted(
-							java.security.cert.X509Certificate[] certs, String authType) {
+							java.security.cert.X509Certificate[] certs, String authValue) {
 						}
 					}
 				}, new java.security.SecureRandom());
@@ -74,38 +76,38 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 	 */
 	private static Object unMsg(Object src){
 		Object out = src;
-		if (src instanceof ArrayType) {
-			List l = ((ArrayType)src).asList();
+		if (src instanceof ArrayValue) {
+			List l = (ArrayValue)src;
 			List outList = new ArrayList(l.size());
 			out = outList;
 			for(Object o : l)
 				outList.add(unMsg(o));
 		}
-		else if (src instanceof BooleanType) {
-			out = ((BooleanType)src).asBoolean();
+		else if (src instanceof BooleanValue) {
+			out = ((BooleanValue)src).getBoolean();
 		}
-		else if (src instanceof FloatType) {
-			out = ((FloatType)src).asFloat();
+		else if (src instanceof FloatValue) {
+			out = ((FloatValue)src).getFloat();
 		}
-		else if (src instanceof IntegerType) {
+		else if (src instanceof IntegerValue) {
 			try {
-				out = ((IntegerType)src).asInt();
+				out = ((IntegerValue)src).getInt();
 			}
 			catch (Exception ex) {
 				/* this is a bandaid until I have a chance to further examine what's happening */
-				out = ((IntegerType)src).asLong();
+				out = ((IntegerValue)src).getLong();
 			}
 		}
-		else if (src instanceof MapType) {
-			Set ents = ((MapType)src).asMap().entrySet();
+		else if (src instanceof MapValue) {
+			Set ents = ((MapValue)src).entrySet();
 			out = new HashMap();
 			for (Object ento : ents) {
 				Map.Entry ent = (Map.Entry)ento;
 				Object key = unMsg(ent.getKey());
 				Object val = ent.getValue();
 				// Hack - keep bytes of generated or encoded payload
-				if(ents.size() == 1 && val instanceof RawType && (key.equals("payload") || key.equals("encoded")))
-					val = ((RawType)val).asByteArray();
+				if(ents.size() == 1 && val instanceof RawValue && (key.equals("payload") || key.equals("encoded")))
+					val = ((RawValue)val).getByteArray();
 				else
 					val = unMsg(val);
 				((Map)out).put(key + "", val);
@@ -116,11 +118,11 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 				throw new RuntimeException(((Map)out).get("error_message").toString());
 			}
 		}
-		else if (src instanceof NilType) {
+		else if (src instanceof NilValue) {
 			out = null;
 		}
-		else if (src instanceof RawType) {
-			out = ((RawType)src).asString();
+		else if (src instanceof RawValue) {
+			out = ((RawValue)src).getString();
 		}
 		return out;
 	}
@@ -134,19 +136,20 @@ public class MsgRpcImpl extends RpcConnectionImpl {
 		huc.setRequestProperty("Content-Type", "binary/message-pack");
 		huc.setReadTimeout(0);
 		OutputStream os = huc.getOutputStream();
-		Packer pk = new Packer(os);
 
-		pk.packArray(args.length+1);
-		pk.pack(methodName);
-		for(Object o : args)
-			pk.pack(o);
+		LinkedList temp = new LinkedList();
+		temp.add(methodName);
+		for (Object o : args)
+			temp.add(o);
+
+		packer.write(os, temp);
 		os.close();
 	}
 
 	/** Receives an RPC response and converts to an object */
 	protected Object readResp() throws Exception {
 		InputStream is = huc.getInputStream();
-		MessagePackObject mpo = MessagePack.unpack(is);
+		Value mpo = packer.read(is);
 		return unMsg(mpo);
 	}
 }

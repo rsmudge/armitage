@@ -20,15 +20,16 @@
 			source="1.6"
 			includeantruntime="fuckno"
 		>
-		       <classpath path="./lib/jgraphx.jar;./lib/sleep.jar;./lib/msgpack-0.5.1-devel.jar;./lib/postgresql-9.1-901.jdbc4.jar" />
+		       <classpath path="./lib/jgraphx.jar;./lib/sleep.jar;./lib/msgpack-0.6.12-devel.jar;./lib/postgresql-9.1-901.jdbc4.jar;./lib/javassist-3.15.0-GA.jar" />
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile">
 		<unzip src="lib/sleep.jar" dest="bin" />
 		<unzip src="lib/jgraphx.jar" dest="bin" />
-		<unzip src="lib/msgpack-0.5.1-devel.jar" dest="bin" />
+		<unzip src="lib/msgpack-0.6.12-devel.jar" dest="bin" />
 		<unzip src="lib/postgresql-9.1-901.jdbc4.jar" dest="bin" />
+		<unzip src="lib/javassist-3.15.0-GA.jar" dest="bin" />
                 <copy todir="bin/scripts">
                         <fileset dir="scripts" />
                 </copy>
