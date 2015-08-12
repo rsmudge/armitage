@@ -185,6 +185,7 @@ public class MultiFrame extends JFrame implements KeyEventDispatcher {
 					toolbar.remove(temp.button);
 					i.remove();
 					toolbar.validate();
+					toolbar.repaint();
 					break;
 				}
 			}
