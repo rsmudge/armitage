@@ -62,8 +62,10 @@ sub verify_server {
 
 sub c_client {
 	# run this thing in its own thread to avoid really stupid deadlock situations
-	local('$handle');
-	$handle = [[new SecureSocket: $1, int($2), &verify_server] client];
+	local('$handle $socket');
+	$socket = [new SecureSocket: $1, int($2), &verify_server];
+	[$socket authenticate: $4];
+	$handle = [$socket client];
 	push(@CLOSEME, $handle);
 	return wait(fork({
 		local('$client');
@@ -95,7 +97,7 @@ sub setup_collaboration {
 		$nick = ask("You can't use a blank nickname. What do you want?");
 	}
 
-	$mclient = c_client($3, $4);
+	$mclient = c_client($3, $4, $1, $2);
 	%r = call($mclient, "armitage.validate", $1, $2, $nick, "armitage", 140921);
 	if (%r["error"] eq "1") {
 		showErrorAndQuit(%r["message"]);

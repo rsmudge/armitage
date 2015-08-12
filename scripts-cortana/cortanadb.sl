@@ -22,8 +22,10 @@ import ssl.*;
 # create an RPC client for talking to the deconfliction server.
 sub c_client {
 	# run this thing in its own thread to avoid really stupid deadlock situations
-	local('$handle');
-	$handle = [[new SecureSocket: $1, int($2), $null] client];
+	local('$handle $socket');
+	$socket = [new SecureSocket: $1, int($2), $null];
+	[$socket authenticate: $4]; # doing my job to auth to server
+	$handle = [$socket client];
 	return wait(fork({
 		local('$client');
 		$client = newInstance(^RpcConnection, lambda({
@@ -66,10 +68,10 @@ sub main {
 
 	try {
 		# connect our first thread...
-		$mclient = c_client($host, $port);
+		$mclient = c_client($host, $port, $user, $pass);
 
 		# connect our second thread with an empty nickname
-		$client = c_client($host, $port);
+		$client = c_client($host, $port, $user, $pass);
 	}
 	catch $exception {
 		println("Could not connect to $host $+ : $+ $port ( $+ $exception $+ )");

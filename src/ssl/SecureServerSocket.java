@@ -16,6 +16,8 @@ import sun.security.x509.*;
 import java.math.*;
 import java.util.*;
 
+import armitage.*;
+
 /* taken from jIRCii, I developed it, so I get to do what I want ;) */
 public class SecureServerSocket {
 	protected ServerSocket server;
@@ -37,6 +39,74 @@ public class SecureServerSocket {
 			return temp;
 		}
 		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	protected boolean authenticate(Socket client, String pass, String host) throws IOException {
+		DataInputStream authin   = new DataInputStream(client.getInputStream());
+		DataOutputStream authout = new DataOutputStream(client.getOutputStream());
+
+		/* read in magic header */
+		int magic = authin.readInt();
+		if (magic != 0xBEEF) {
+			ArmitageMain.print_error("rejected client from " + host + ": invalid auth protocol (old client?)");
+			return false;
+		}
+
+		/* read in the length of the team server password */
+		int length = authin.readUnsignedByte();
+		if (length <= 0) {
+			ArmitageMain.print_error("rejected client from " + host + ": bad password length");
+			return false;
+		}
+
+		/* read in the actual password */
+		StringBuffer mypass = new StringBuffer();
+		for (int x = 0; x < length; x++) {
+			mypass.append((char)authin.readUnsignedByte());
+		}
+
+		/* read in the padding please */
+		for (int x = length; x < 256; x++)
+			authin.readUnsignedByte();
+
+		/* check if the password matches */
+		if (mypass.toString().equals(pass)) {
+			authout.writeInt(0xCAFE); /* we're good! */
+			return true;
+		}
+		else {
+			authout.writeInt(0x0); /* auth failure */
+			ArmitageMain.print_error("rejected client from " + host + ": invalid password");
+			return false;
+		}
+	}
+
+	public IOObject acceptAuthenticated(String pass) {
+		try {
+			Socket client = server.accept();
+
+			if ( authenticate( client, pass, client.getInetAddress().getHostAddress()) ) {
+				IOObject temp = new IOObject();
+				temp.openRead(client.getInputStream());
+				temp.openWrite(new BufferedOutputStream(client.getOutputStream(), 8192 * 8));
+				last = client.getInetAddress().getHostAddress();
+				client.setSoTimeout(0);
+
+				return temp;
+			}
+			else {
+				try {
+					client.close();
+				}
+				catch (Exception ex) {
+				}
+				return null;
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
 			throw new RuntimeException(ex);
 		}
 	}

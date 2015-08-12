@@ -605,7 +605,7 @@ service framework-postgres start");
 	$id = 0;
 
 	while (1) {
-		$handle = [$server accept];
+		$handle = [$server acceptAuthenticated: $pass];
 		if ($handle !is $null) {
 			%readq[$id] = %();
 			fork(&client, \$client, \$handle, \%sessions, \$read_lock, \$sess_lock, $queue => %readq[$id], \$id, \$events, \$auth, \%locks, \$lock_lock, \$cach_lock, \%cache, \$motd, \$client_cache, $_user => $user, $_pass => $pass);

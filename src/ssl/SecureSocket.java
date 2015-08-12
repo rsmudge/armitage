@@ -27,6 +27,48 @@ public class SecureSocket {
 		socket.startHandshake();
 	}
 
+	public void authenticate(String password) {
+		try {
+			/* we're past the handshake, so let's allow reads time to happen */
+			socket.setSoTimeout(0);
+
+			DataInputStream datain   = new DataInputStream(socket.getInputStream());
+			DataOutputStream dataout = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
+			/* write our magic header */
+			dataout.writeInt(0xBEEF);
+
+			/* write our password's length */
+			dataout.writeByte(password.length());
+
+			/* write our password out */
+			for (int x = 0; x < password.length(); x++)
+				dataout.writeByte((byte)password.charAt(x));
+
+			/* pad the password please */
+			for (int x = password.length(); x < 256; x++)
+				dataout.writeByte('A');
+
+			/* flush! */
+			dataout.flush();
+
+			/* read in a byte to indicate status */
+			int result = datain.readInt();
+
+			if (result == 0xCAFE)
+				return;
+			else
+				throw new RuntimeException("authentication failure!");
+		}
+		catch (RuntimeException rex) {
+			throw rex;
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException(ex);
+		}
+	}
+
 	public IOObject client() {
 		try {
 			IOObject temp = new IOObject();

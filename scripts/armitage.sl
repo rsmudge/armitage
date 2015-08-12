@@ -187,7 +187,7 @@ sub _connectToMetasploit {
 			# we have a team server... connect and authenticate to it.
 			else {
 				[$progress setNote: "Connected: logging in"];
-				$client = c_client($1, $2);
+				$client = c_client($1, $2, $3, $4);
 				$mclient = setup_collaboration($3, $4, $1, $2);
 				$aclient = $mclient;
 
@@ -202,7 +202,7 @@ sub _connectToMetasploit {
 				# create six additional connections to team server... for balancing consoles.
 				local('$x $cc');
 				for ($x = 0; $x < 6; $x++) {
-					$cc = c_client($1, $2);
+					$cc = c_client($1, $2, $3, $4);
 					call($cc, "armitage.validate", $3, $4, $null, "armitage", 140921);
 					push(@POOL, $cc);
 				}
