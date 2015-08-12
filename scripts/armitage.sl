@@ -257,7 +257,12 @@ sub _connectToMetasploit {
 			initReporting();
 		}
 		catch $exception {
-			[JOptionPane showMessageDialog: $null, "Could not connect to database.\n\nKali Linux users, try:\n\nservice postgresql start\nservice metasploit start\nservice metasploit stop\n\n" . [$exception getMessage]];
+			if ("Kali" isin [$exception getMessage]) {
+				[JOptionPane showMessageDialog: $null, [$exception getMessage]];
+			}
+			else {
+				[JOptionPane showMessageDialog: $null, "Could not connect to database.\n\nKali Linux 1.x users, try:\n\nservice postgresql start\nservice metasploit start\nservice metasploit stop\n\nKali Linux 2.x users, try:\n\n/etc/init.d/postgresql start\n\n" . [$exception getMessage]];
+			}
 			if ($msfrpc_handle) { closef($msfrpc_handle); }
 			[System exit: 0];
 		}

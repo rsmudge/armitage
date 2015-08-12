@@ -18,7 +18,7 @@ import ui.*;
 global('$preferences $debug $motd $DATA_DIRECTORY $BASE_DIRECTORY $TITLE $CLIENT_CONFIG');
 
 sub iHateYaml {
-	local('$handle %result $current $text $key $value $line');
+	local('$handle %result $current $text $key $value $line %alias $alias $name');
 	$handle = openf($1);
 	$current = "default";
 	$line = 1;
@@ -28,8 +28,9 @@ sub iHateYaml {
 		if ($text ismatch '(\w+):') {
 			$current = matched()[0];
 		}
-		else if ($text ismatch '\w+: &(.*)') {
-			print_error("Can not parse $1 $+ : $+ $line - $text\n\tThis YAML parser does not handle aliases. Please simplify your file");
+		else if ($text ismatch '(\w+): &(.*)') {
+			($current, $alias) = matched();
+			%alias["* $+ $alias"] = $current;
 		}
 		else if ($text ismatch '&(.*)') {
 			print_error("Can not parse $1 $+ : $+ $line - $text\n\tThis YAML parser does not handle aliases. Please simplify your file");
@@ -37,6 +38,24 @@ sub iHateYaml {
 		else if ($text ismatch '([\w\\.]+): [\'"]{0,1}(\p{Graph}+?)[\'"]{0,1}') {
 			($key, $value) = matched();
 			%result[$current][$key] = $value;
+		}
+		# import settings from another alias...
+		else if ($text ismatch '<<:\s+(.*?)') {
+			$alias = matched()[0];
+			$name  = %alias[$alias];
+
+			if ($alias !in %alias) {
+				print_error("Alias $alias was not seen before $1 $+ : $+ $line [I probably won't find the database information]");
+			}
+			else if ($name !in %result) {
+				print_error("Directive $name was not seen before $1 $+ : $+ $line [I probably won't find the database information]");
+			}
+			else {
+				# import the values from whatever alias
+				foreach $key => $value (%result[$name]) {
+					%result[$current][$key] = $value;
+				}
+			}
 		}
 		else if ($text ismatch '.*?: .*') {
 			print_error("Did not parse $1 $+ : $+ $line - $text $+ \n\tMy YAML parser is a piece of garbage (like YAML). Please simplify your file.");
@@ -143,8 +162,13 @@ sub loadPreferences {
 
 sub loadDatabasePreferences {
 	if ($yaml_file eq "" || !-exists $yaml_file) {
+		# Rapid7's installer
 		if (thisIsTheirCommercialStuff()) {
 			$yaml_file = getFileProper($BASE_DIRECTORY, "ui", "config", "database.yml");
+		}
+		# Kali Linux 2.0
+		else if (-exists getFileProper($BASE_DIRECTORY, "metasploit-framework", "config", "database.yml")) {
+			$yaml_file = getFileProper($BASE_DIRECTORY, "metasploit-framework", "config", "database.yml");
 		}
 		else {
 			$yaml_file = getFileProper($BASE_DIRECTORY, "config", "database.yml");
@@ -156,9 +180,8 @@ sub loadDatabasePreferences {
 		}
 	}
 
-
 	if (!-exists $yaml_file) {
-		throw [new RuntimeException: "I can not find a database.yml file. I *really* need it.\nHere's how to fix this:\n\n1. Try setting MSF_DATABASE_CONFIG to a file that exists.\n2. Did you use sudo to start this program? Try sudo -E\n3. Kali Linux users, try this:\n\n\tservice metasploit start\n\tservice metasploit stop"];
+		throw [new RuntimeException: "I can not find a database.yml file. I *really* need it.\nHere's how to fix this:\n\n1. Try setting MSF_DATABASE_CONFIG to a file that exists.\n2. Did you use sudo to start this program? Try sudo -E\n3. Kali Linux 1.x users, try this:\n\n\tservice metasploit start\n\tservice metasploit stop\n\nKali Linux 2.x users, try this:\n\nmsfdb init"];
 	}
 	else if (!-canread $yaml_file) {
 		throw [new RuntimeException: "I do not have permission to read: $yaml_file $+ .\nRun me as root please."];
