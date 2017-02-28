@@ -15,6 +15,7 @@ import ui.ATable;
 import graph.Route;
 import graph.GraphPopup;
 import graph.Refreshable;
+import java.util.regex.PatternSyntaxException;
 
 public class NetworkTable extends JComponent implements ActionListener, Refreshable {
 	protected JScrollPane scroller = null;
@@ -48,15 +49,17 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 	}
 
 	protected GenericTableModel model;
+	protected TableRowSorter sorter;
+	protected JTextField searchField;
 	protected JTable table;
 	protected int    height;
 
 	public NetworkTable(Properties display) {
 		this.display = display;
 
-		model = new GenericTableModel(new String[] { " ", "Address", "Label", "Description", "Pivot" }, "Address", 256);
+		model = new GenericTableModel(new String[] { " ", "Address", "Services", "Label", "Description", "Pivot" }, "Address", 256);
 		table = new ATable(model);
-		TableRowSorter sorter = new TableRowSorter(model);
+		sorter = new TableRowSorter(model);
 		sorter.toggleSortOrder(1);
 
 		Comparator hostCompare = new Comparator() {
@@ -152,12 +155,46 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 			public void mouseReleased(MouseEvent ev) { all(ev); }
 		});
 
-		setLayout(new BorderLayout());
+		searchField = new JTextField("");
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {
+                fireDocumentChangeEvent();
+            }
+            @Override public void removeUpdate(DocumentEvent e) {
+                fireDocumentChangeEvent();
+            }
+            @Override public void changedUpdate(DocumentEvent e) { /* not needed */ }
+        });
+        fireDocumentChangeEvent();
+
+		JPanel searchPanel = new JPanel(new BorderLayout());
+		searchPanel.add(new JLabel("Regex filter:"),BorderLayout.WEST);
+		searchPanel.add(searchField);
+
 		scroller = new JScrollPane(table);
-		add(scroller, BorderLayout.CENTER);
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(searchPanel,BorderLayout.NORTH);
+		mainPanel.add(scroller);
+
+		setLayout(new BorderLayout());
+		add(mainPanel, BorderLayout.CENTER);
 
 		setupShortcuts();
         }
+
+    private void fireDocumentChangeEvent() {
+        searchField.setBackground(Color.WHITE);
+        String pattern = searchField.getText().trim();
+        if (pattern.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            try {
+                sorter.setRowFilter(RowFilter.regexFilter(pattern));
+            } catch (PatternSyntaxException ex) {
+                searchField.setBackground(Color.PINK);
+            }
+        }
+    }
 
 	public void setupWidths() {
 		table.getColumn("Address").setPreferredWidth((int)(125 * zoom));
@@ -269,7 +306,7 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 	public void setAutoLayout(String layout) {
 	}
 
-	public Object addNode(String id, String label, String description, Image image, String tooltip) {
+	public Object addNode(String id, String services, String label, String description, Image image, String tooltip) {
 		if (id == null || label == null)
 			return null;
 
@@ -278,6 +315,7 @@ public class NetworkTable extends JComponent implements ActionListener, Refresha
 
 		if (description.indexOf(id) > -1)
 			description = description.substring(id.length());
+		map.put("Services", services);
 		map.put("Label", label);
 		map.put("Description", description);
 		map.put("Tooltip", tooltip);

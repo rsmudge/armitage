@@ -122,6 +122,12 @@ on sessions {
 		}
 	}
 
+	# refresh our service port table
+	local('$services $service $svc_string $port_string $host2 $port $proto $name');
+	call_async_callback($mclient, "db.services", $this);
+	yield;
+	$services = convertAll($1);
+
 	# create a data structure with id, description, icon, and tooltip
 	foreach $id => $host (%hosts) { 
 		local('$tooltip');
@@ -132,8 +138,23 @@ on sessions {
 			$tooltip = "I know nothing about $id";
 		}
 
+		$svc_string = "";
+		if ('services' in $services) {
+			foreach $service ($services['services']) {
+				($host2, $port, $name) = values($service, @('host', 'port', 'name'));
+				if($host2 eq $id) {
+					$port_string = $name . "(" . $port . ")";
+					if($svc_string eq "") {
+						$svc_string = $port_string;
+					} else {
+						$svc_string = $svc_string . "," . $port_string;
+					}
+				}
+			}
+		}
+
 		if ($host['show'] eq "1") {
-			[$refresh addNode: $id, $host['label'] . "", describeHost($host), showHost($host), $tooltip];
+			[$refresh addNode: $id, $svc_string, $host['label'] . "", describeHost($host), showHost($host), $tooltip];
 		}
 	}
 
