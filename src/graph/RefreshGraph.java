@@ -17,6 +17,7 @@ public class RefreshGraph implements Runnable {
 
 	private static class Node {
 		public String id = "";
+		public String services = "";
 		public String label = "";
 		public String description = "";
 		public Image  iconz = null;
@@ -36,9 +37,10 @@ public class RefreshGraph implements Runnable {
 		routes.add(route);
 	}
 
-	public void addNode(String id, String label, String description, Image iconz, String tooltip) {
+	public void addNode(String id, String services, String label, String description, Image iconz, String tooltip) {
 		Node n = new Node();
 		n.id = id;
+		n.services = services;
 		n.label = label;
 		n.description = description;
 		n.iconz = iconz;
@@ -60,7 +62,7 @@ public class RefreshGraph implements Runnable {
 			Iterator i = nodes.iterator();
 			while (i.hasNext()) {
 				Node n = (Node)i.next();
-				graph.addNode(n.id, n.label, n.description, n.iconz, n.tooltip);
+				graph.addNode(n.id, n.services, n.label, n.description, n.iconz, n.tooltip);
 			}
 
 			/* setup routes */

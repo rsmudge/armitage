@@ -7,7 +7,7 @@ public interface Refreshable {
 	public void start();
 
 	/* add a node */
-	public Object addNode(String id, String label, String description, Image image, String tooltip);
+	public Object addNode(String id, String services, String label, String description, Image image, String tooltip);
 
 	/* setup all of our routes in one fell swoop */
 	public void setRoutes(Route[] routes);

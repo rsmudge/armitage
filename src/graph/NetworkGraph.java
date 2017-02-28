@@ -445,7 +445,7 @@ public class NetworkGraph extends JComponent implements ActionListener, Refresha
 
 	protected Map tooltips = new HashMap();
 
-	public Object addNode(String id, String label, String description, Image image, String tooltip) {
+	public Object addNode(String id, String services, String label, String description, Image image, String tooltip) {
 		nodeImages.put(id, image);
 
 		if (label.length() > 0) {
