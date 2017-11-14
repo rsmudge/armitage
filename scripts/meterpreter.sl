@@ -378,7 +378,7 @@ sub launch_msf_scans {
 			local('$text $host $port $hosts $modules $module $options');
 
 			foreach $text (split("\n", $3)) {
-				if ($text ismatch '... (.*?): +- \1:(\d+) - TCP OPEN') {
+				if ($text ismatch '... (.*?):\s+-\s+\1:(\d+)\s+-\s+TCP OPEN') {
 					($host, $port) = matched();
 					push(%discover[$port], $host);
 				}
