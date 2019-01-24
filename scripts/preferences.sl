@@ -66,7 +66,7 @@ sub iHateYaml {
 }
 
 sub parseYaml {
-	# all heil the Yaml file... holder of the database info.
+	# all hail the Yaml file... holder of the database info.
 
 	local('$database $user $pass $host $port $driver $object $file $setting');
 	($file, $setting) = $2;
