@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group 'armitage'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'armitage.ArmitageMain'
+    }
+    from {
+        configurations.compileClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    archiveName 'armitage.jar'
+}
+
+dependencies {
+    implementation files('../lib/sleep.jar', '../lib/jgraphx.jar')
+
+    implementation group: 'org.javassist', name: 'javassist', version: '3.28.0-GA'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+    implementation group: 'org.msgpack', name: 'msgpack', version: '0.6.12'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task copyJar(type: Copy) {
+    from jar
+    into "../build"
+}
+
+assemble.finalizedBy(copyJar)
