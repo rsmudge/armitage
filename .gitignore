@@ -52,4 +52,4 @@ gradle-app.setting
 .directory
 .Trash-*
 .nfs*
-release/*/*.txt
+release/
