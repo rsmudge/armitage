@@ -1,7 +1,6 @@
 package cortana.support;
 
 import cortana.core.*;
-import cortana.*;
 
 import java.util.*;
 

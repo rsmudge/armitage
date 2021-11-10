@@ -7,11 +7,8 @@ import armitage.*;
 import sleep.bridges.*;
 import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
 import java.util.*;
-
-import java.io.IOException;
 
 /* add an API for interfacing with the event log... */
 public class EventLogBridge implements Loadable, Function, ConsoleCallback {

@@ -8,13 +8,8 @@ import armitage.*;
 import sleep.bridges.*;
 import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
 import java.util.*;
-
-import java.io.IOException;
-
-import javax.swing.*;
 
 public class ConsoleBridge implements Loadable, Function, ConsoleQueue.ConsoleCallback {
 	protected EventManager  events;

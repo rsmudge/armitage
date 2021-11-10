@@ -1,8 +1,9 @@
 package armitage;
 
+import cortana.core.EventManager;
+import cortana.core.FilterManager;
 import sleep.runtime.*;
 import sleep.interfaces.*;
-import sleep.console.*;
 import sleep.bridges.*;
 import sleep.error.*;
 import sleep.engine.*;
@@ -11,7 +12,6 @@ import sleep.parser.ParserConfig;
 import java.util.*;
 import java.io.*;
 
-import cortana.core.*;
 import ui.*;
 
 /**

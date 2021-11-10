@@ -7,11 +7,8 @@ import msf.*;
 import sleep.bridges.*;
 import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
 import java.util.*;
-
-import java.io.IOException;
 
 public class MeterpreterBridge implements Loadable, Function, MeterpreterSession.MeterpreterCallback {
 	protected EventManager  events;

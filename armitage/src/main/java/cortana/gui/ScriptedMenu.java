@@ -1,13 +1,9 @@
 package cortana.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
 
 import sleep.runtime.*;
-import sleep.engine.*;
 import sleep.bridges.*;
 
 import java.util.*;

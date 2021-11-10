@@ -1,7 +1,6 @@
 package armitage;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.image.*;
 
 import java.awt.*;

@@ -2,19 +2,11 @@ package cortana.data;
 
 import cortana.core.*;
 
-import armitage.ArmitageTimerClient;
-import armitage.ArmitageTimer;
-
 import graph.Route;
 
-import sleep.bridges.*;
-import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
 import java.util.*;
-
-import java.io.IOException;
 
 import msf.*;
 

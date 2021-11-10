@@ -1,22 +1,15 @@
 package cortana.gui;
 
 import cortana.core.*;
-import msf.*;
 import armitage.*;
-import ui.*;
 
 import sleep.bridges.*;
 import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 import java.util.*;
-
-import java.io.IOException;
 
 /* some methods to help out with user interface stuff */
 public class UIBridge implements Loadable, Function {

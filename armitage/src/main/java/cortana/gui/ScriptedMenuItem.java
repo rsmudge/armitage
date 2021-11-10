@@ -3,7 +3,6 @@ package cortana.gui;
 import sleep.runtime.*;
 import sleep.bridges.*;
 
-import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;

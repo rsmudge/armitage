@@ -7,13 +7,8 @@ import msf.*;
 import sleep.bridges.*;
 import sleep.interfaces.*;
 import sleep.runtime.*;
-import sleep.engine.*;
 
 import java.util.*;
-
-import java.io.IOException;
-
-import javax.swing.*;
 
 public class ShellBridge implements Loadable, Function, ShellSession.ShellCallback {
 	protected EventManager  events;
