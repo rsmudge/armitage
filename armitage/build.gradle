@@ -39,7 +39,7 @@ test {
 
 task copyJar(type: Copy) {
     from jar
-    into "../"
+    into "../build"
 }
 
 assemble.finalizedBy(copyJar)
