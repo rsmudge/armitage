@@ -35,7 +35,7 @@
 	<key>JVMMainClassName</key>
 	<string>armitage.ArmitageMain</string>
 	<key>CFBundleIconFile</key>
-	<string>aquaicon2</string>
+	<string>macIcon</string>
 	<key>JVMOptions</key>
 	<array>
 		<string>-XX:+AggressiveHeap</string>
